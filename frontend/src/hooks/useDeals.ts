@@ -1,0 +1,47 @@
+/** Deal mutation and query hooks — wraps api.deals and api.pipeline with React Query. */
+
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
+import { api } from '@/lib/api'
+import type { DealCreateRequest, PipelineCreateRequest } from '@/types'
+
+export function useCreateDeal() {
+  const navigate = useNavigate()
+
+  return useMutation({
+    mutationFn: (data: DealCreateRequest) => api.deals.create(data),
+    onSuccess: (deal) => {
+      navigate(`/analyze/results/${deal.id}`)
+    },
+  })
+}
+
+export function useDeal(dealId: string) {
+  return useQuery({
+    queryKey: ['deals', dealId],
+    queryFn: () => api.deals.get(dealId),
+    enabled: !!dealId,
+  })
+}
+
+export function useAddToPipeline() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: PipelineCreateRequest) => api.pipeline.add(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pipeline'] })
+    },
+  })
+}
+
+export function useUpdateDeal(dealId: string) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) => api.deals.update(dealId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['deals', dealId] })
+    },
+  })
+}

@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
+import { Toaster } from '@/components/ui/sonner'
 import { useAuthStore } from '@/stores/authStore'
 
 // Lazy-loaded pages
@@ -9,8 +10,9 @@ const Landing = lazy(() => import('@/pages/Landing'))
 const Login = lazy(() => import('@/pages/Login'))
 const Register = lazy(() => import('@/pages/Register'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
-const Analyze = lazy(() => import('@/pages/Analyze'))
-const DealResults = lazy(() => import('@/pages/DealResults'))
+const StrategySelectPage = lazy(() => import('@/pages/analyze/StrategySelectPage'))
+const AnalyzerFormPage = lazy(() => import('@/pages/analyze/AnalyzerFormPage'))
+const ResultsPage = lazy(() => import('@/pages/analyze/ResultsPage'))
 const MyDeals = lazy(() => import('@/pages/MyDeals'))
 const Pipeline = lazy(() => import('@/pages/Pipeline'))
 const Portfolio = lazy(() => import('@/pages/Portfolio'))
@@ -52,8 +54,9 @@ export default function App() {
 
             {/* Protected app routes — AppShell is rendered inside each page */}
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/analyze" element={<ProtectedRoute><Analyze /></ProtectedRoute>} />
-            <Route path="/analyze/results/:dealId" element={<ProtectedRoute><DealResults /></ProtectedRoute>} />
+            <Route path="/analyze" element={<ProtectedRoute><StrategySelectPage /></ProtectedRoute>} />
+            <Route path="/analyze/results/:dealId" element={<ProtectedRoute><ResultsPage /></ProtectedRoute>} />
+            <Route path="/analyze/:strategy" element={<ProtectedRoute><AnalyzerFormPage /></ProtectedRoute>} />
             <Route path="/deals" element={<ProtectedRoute><MyDeals /></ProtectedRoute>} />
             <Route path="/pipeline" element={<ProtectedRoute><Pipeline /></ProtectedRoute>} />
             <Route path="/portfolio" element={<ProtectedRoute><Portfolio /></ProtectedRoute>} />
@@ -61,6 +64,7 @@ export default function App() {
             <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           </Routes>
+          <Toaster position="bottom-right" theme="dark" />
         </Suspense>
       </BrowserRouter>
     </QueryClientProvider>

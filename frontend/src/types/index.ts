@@ -13,3 +13,46 @@ export interface AuthResponse {
   user: User
   access_token: string
 }
+
+export type Strategy = 'wholesale' | 'creative_finance' | 'brrrr' | 'buy_and_hold' | 'flip'
+
+export interface DealCreateRequest {
+  address: string
+  zip_code: string
+  property_type: string
+  strategy: Strategy
+  inputs: Record<string, number>
+}
+
+export interface DealResponse {
+  id: string
+  user_id: string
+  team_id: string | null
+  address: string
+  zip_code: string
+  property_type: string
+  strategy: Strategy
+  inputs: Record<string, number>
+  outputs: Record<string, number | string>
+  risk_score: number | null
+  status: string
+  deleted_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface PipelineCreateRequest {
+  deal_id: string
+  stage: string
+}
+
+export interface PipelineCardResponse {
+  pipeline_id: string
+  deal_id: string
+  address: string
+  strategy: string
+  asking_price: number | null
+  stage: string
+  days_in_stage: number
+  entered_stage_at: string
+}
