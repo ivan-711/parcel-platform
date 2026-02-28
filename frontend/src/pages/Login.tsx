@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useLogin } from '@/hooks/useAuth'
 
 interface LoginForm {
   email: string
@@ -10,9 +11,9 @@ interface LoginForm {
   rememberMe: boolean
 }
 
-/** Full-screen login page — no AppShell. Submits to console and redirects to dashboard. */
+/** Full-screen login page — no AppShell. Submits credentials and redirects to dashboard on success. */
 export default function Login() {
-  const navigate = useNavigate()
+  const login = useLogin()
   const [form, setForm] = useState<LoginForm>({
     email: '',
     password: '',
@@ -21,8 +22,7 @@ export default function Login() {
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    console.log('Login form data:', form)
-    navigate('/dashboard')
+    login.mutate({ email: form.email, password: form.password })
   }
 
   return (
@@ -79,11 +79,17 @@ export default function Login() {
             <span className="text-xs text-text-secondary">Remember me</span>
           </label>
 
+          {/* Inline error */}
+          {login.error && (
+            <p className="text-accent-danger text-xs">{login.error.message}</p>
+          )}
+
           <Button
             type="submit"
+            disabled={login.isPending}
             className="w-full bg-accent-primary hover:bg-accent-hover text-white font-medium"
           >
-            Sign in
+            {login.isPending ? 'Signing in…' : 'Sign in'}
           </Button>
         </form>
 

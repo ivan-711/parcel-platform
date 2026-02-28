@@ -1,7 +1,8 @@
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
+import { useAuthStore } from '@/stores/authStore'
 
 // Lazy-loaded pages
 const Landing = lazy(() => import('@/pages/Landing'))
@@ -29,6 +30,13 @@ function PageFallback() {
   )
 }
 
+/** Redirects unauthenticated users to /login. */
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  if (!isAuthenticated) return <Navigate to="/login" replace />
+  return <>{children}</>
+}
+
 /** Root application component — sets up routing, React Query, and lazy page loading. */
 export default function App() {
   return (
@@ -36,22 +44,22 @@ export default function App() {
       <BrowserRouter>
         <Suspense fallback={<PageFallback />}>
           <Routes>
-            {/* Public routes — no AppShell */}
+            {/* Public routes — no auth guard */}
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/share/:dealId" element={<ShareDeal />} />
 
-            {/* App routes — AppShell is rendered inside each page */}
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/analyze" element={<Analyze />} />
-            <Route path="/analyze/results/:dealId" element={<DealResults />} />
-            <Route path="/deals" element={<MyDeals />} />
-            <Route path="/pipeline" element={<Pipeline />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/documents" element={<Documents />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/settings" element={<Settings />} />
+            {/* Protected app routes — AppShell is rendered inside each page */}
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/analyze" element={<ProtectedRoute><Analyze /></ProtectedRoute>} />
+            <Route path="/analyze/results/:dealId" element={<ProtectedRoute><DealResults /></ProtectedRoute>} />
+            <Route path="/deals" element={<ProtectedRoute><MyDeals /></ProtectedRoute>} />
+            <Route path="/pipeline" element={<ProtectedRoute><Pipeline /></ProtectedRoute>} />
+            <Route path="/portfolio" element={<ProtectedRoute><Portfolio /></ProtectedRoute>} />
+            <Route path="/documents" element={<ProtectedRoute><Documents /></ProtectedRoute>} />
+            <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           </Routes>
         </Suspense>
       </BrowserRouter>

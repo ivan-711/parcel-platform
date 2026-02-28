@@ -2,50 +2,51 @@
 
 import uuid
 from datetime import datetime
-from typing import Any, Optional
+from typing import Annotated, Any, Literal, Optional, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 # ---------------------------------------------------------------------------
-# Strategy-specific input schemas (for documentation / validation reference)
+# Strategy-specific input schemas (field names match CONTRACTS.md exactly)
 # ---------------------------------------------------------------------------
 
 class DealInputsWholesale(BaseModel):
     """Inputs for a wholesale deal analysis."""
 
-    asking_price: float
     arv: float
-    repair_cost: float
-    assignment_fee: float
-    closing_costs: float
+    repair_costs: float
+    desired_profit: float
+    holding_costs: float
+    closing_costs_pct: float
+    asking_price: float
 
 
 class DealInputsCreativeFinance(BaseModel):
     """Inputs for a subject-to or seller-finance deal analysis."""
 
-    asking_price: float
     existing_loan_balance: float
-    interest_rate: float
-    monthly_payment: float
-    rent_estimate: float
-    vacancy_rate: float
-    operating_expenses: float
+    existing_interest_rate: float
+    monthly_piti: float
+    monthly_rent_estimate: float
+    monthly_expenses: float
+    finance_type: Literal["subject_to", "seller_finance"]
+    new_rate: float
+    new_term_years: int
+    arv: float
 
 
 class DealInputsBRRRR(BaseModel):
     """Inputs for a BRRRR (Buy, Rehab, Rent, Refinance, Repeat) deal analysis."""
 
     purchase_price: float
-    repair_cost: float
-    arv: float
-    refinance_ltv: float
-    interest_rate: float
-    loan_term_years: int
-    rent_estimate: float
-    vacancy_rate: float
-    operating_expenses: float
-    closing_costs: float
+    rehab_costs: float
+    arv_post_rehab: float
+    refinance_ltv_pct: float
+    new_loan_rate: float
+    new_loan_term_years: int
+    monthly_rent: float
+    monthly_expenses: float
 
 
 class DealInputsBuyHold(BaseModel):
@@ -55,38 +56,70 @@ class DealInputsBuyHold(BaseModel):
     down_payment_pct: float
     interest_rate: float
     loan_term_years: int
-    rent_estimate: float
-    vacancy_rate: float
-    operating_expenses: float
-    closing_costs: float
-    annual_appreciation: float
+    monthly_rent: float
+    monthly_taxes: float
+    monthly_insurance: float
+    vacancy_rate_pct: float
+    maintenance_pct: float
+    mgmt_fee_pct: float
 
 
 class DealInputsFlip(BaseModel):
     """Inputs for a fix-and-flip deal analysis."""
 
     purchase_price: float
-    repair_cost: float
+    rehab_budget: float
     arv: float
     holding_months: int
-    financing_rate: float
-    closing_costs_buy: float
-    closing_costs_sell: float
-    carrying_costs_monthly: float
+    selling_costs_pct: float
+    financing_costs: float
 
 
 # ---------------------------------------------------------------------------
-# Request schemas
+# Request schemas — discriminated union on strategy
 # ---------------------------------------------------------------------------
 
-class DealCreateRequest(BaseModel):
-    """Request body for POST /deals — creates a new deal analysis."""
-
+class _DealCreateBase(BaseModel):
     address: str
     zip_code: str
     property_type: str
-    strategy: str
-    inputs: dict[str, Any]
+
+
+class WholesaleCreateRequest(_DealCreateBase):
+    strategy: Literal["wholesale"]
+    inputs: DealInputsWholesale
+
+
+class CreativeFinanceCreateRequest(_DealCreateBase):
+    strategy: Literal["creative_finance"]
+    inputs: DealInputsCreativeFinance
+
+
+class BRRRRCreateRequest(_DealCreateBase):
+    strategy: Literal["brrrr"]
+    inputs: DealInputsBRRRR
+
+
+class BuyHoldCreateRequest(_DealCreateBase):
+    strategy: Literal["buy_and_hold"]
+    inputs: DealInputsBuyHold
+
+
+class FlipCreateRequest(_DealCreateBase):
+    strategy: Literal["flip"]
+    inputs: DealInputsFlip
+
+
+DealCreateRequest = Annotated[
+    Union[
+        WholesaleCreateRequest,
+        CreativeFinanceCreateRequest,
+        BRRRRCreateRequest,
+        BuyHoldCreateRequest,
+        FlipCreateRequest,
+    ],
+    Field(discriminator="strategy"),
+]
 
 
 class DealUpdateRequest(BaseModel):

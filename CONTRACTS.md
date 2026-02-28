@@ -659,7 +659,8 @@ Response `200`:
   "monthly_expenses": 400,
   "finance_type": "subject_to | seller_finance",
   "new_rate": 6.0,
-  "new_term_years": 30
+  "new_term_years": 30,
+  "arv": 160000
 }
 ```
 

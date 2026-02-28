@@ -1,5 +1,6 @@
 """Deals router — CRUD for deal analyses plus a public share endpoint."""
 
+import importlib
 from datetime import datetime
 from typing import Any, Optional
 from uuid import UUID
@@ -77,18 +78,37 @@ async def create_deal(
 ) -> DealResponse:
     """Create a new deal analysis.
 
-    Stores the provided calculator inputs as JSONB; outputs default to {}.
-    The calculator will populate outputs separately (written by Ivan).
+    Dynamically imports the strategy calculator. Returns 422 if the calculator
+    has not yet been implemented for the given strategy.
     """
+    try:
+        calc_mod = importlib.import_module(f"core.calculators.{body.strategy}")
+        calc_fn = getattr(calc_mod, f"calculate_{body.strategy}")
+        risk_mod = importlib.import_module("core.calculators.risk_score")
+        risk_fn = risk_mod.calculate_risk_score
+    except (ImportError, AttributeError):
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "error": "Calculator not yet implemented for this strategy",
+                "code": "CALCULATOR_NOT_IMPLEMENTED",
+            },
+        )
+
+    inputs_dict: dict = body.inputs.model_dump()
+    outputs: dict = calc_fn(inputs_dict)
+    risk_score: int = risk_fn(body.strategy, inputs_dict, outputs)
+
     deal = Deal(
         user_id=current_user.id,
-        team_id=current_user.team_id,
+        team_id=None,
         address=body.address,
         zip_code=body.zip_code,
         property_type=body.property_type,
         strategy=body.strategy,
-        inputs=body.inputs,
-        outputs={},
+        inputs=inputs_dict,
+        outputs=outputs,
+        risk_score=risk_score,
         status="draft",
     )
     db.add(deal)

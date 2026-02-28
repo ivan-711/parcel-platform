@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
+import { useRegister } from '@/hooks/useAuth'
 
 type Role = 'wholesaler' | 'investor' | 'agent'
 
@@ -44,18 +45,23 @@ const ROLE_OPTIONS: RoleOption[] = [
 
 /** Full-screen registration page with role selection cards. */
 export default function Register() {
-  const navigate = useNavigate()
+  const register = useRegister()
   const [form, setForm] = useState<RegisterForm>({
     name: '',
     email: '',
     password: '',
     role: null,
   })
+  const [roleError, setRoleError] = useState<string | null>(null)
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    console.log('Register form data:', form)
-    navigate('/dashboard')
+    if (!form.role) {
+      setRoleError('Please select a role to continue.')
+      return
+    }
+    setRoleError(null)
+    register.mutate({ name: form.name, email: form.email, password: form.password, role: form.role })
   }
 
   return (
@@ -126,7 +132,7 @@ export default function Register() {
                   <button
                     key={option.value}
                     type="button"
-                    onClick={() => setForm({ ...form, role: option.value })}
+                    onClick={() => { setForm({ ...form, role: option.value }); setRoleError(null) }}
                     className={cn(
                       'flex flex-col items-center gap-1.5 p-3 rounded-lg border text-center transition-colors',
                       selected
@@ -143,13 +149,20 @@ export default function Register() {
                 )
               })}
             </div>
+            {roleError && <p className="text-accent-danger text-xs">{roleError}</p>}
           </div>
+
+          {/* Inline API error */}
+          {register.error && (
+            <p className="text-accent-danger text-xs">{register.error.message}</p>
+          )}
 
           <Button
             type="submit"
+            disabled={register.isPending}
             className="w-full bg-accent-primary hover:bg-accent-hover text-white font-medium"
           >
-            Create account
+            {register.isPending ? 'Creating account…' : 'Create account'}
           </Button>
         </form>
 
