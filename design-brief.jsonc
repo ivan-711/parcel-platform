@@ -1,0 +1,339 @@
+// Parcel Platform — Design System Brief v1.0
+// For real estate professionals: wholesalers, creative finance investors, agents
+// Reference: Mercury dashboard (app) + Aura/Stripe hero (landing)
+// GitHub: ivan-711/parcel-platform
+// Read this file at the start of every Claude Code session.
+
+{
+  "project": {
+    "name": "Parcel",
+    "tagline": "Close More Deals. Know Every Number.",
+    "type": "Multi-user SaaS — real estate deal analysis & workflow platform",
+    "repo": "ivan-711/parcel-platform",
+    "frontend": "React + TypeScript + Vite (deployed on Vercel)",
+    "backend": "FastAPI + PostgreSQL (deployed on Railway)",
+    "ai": "Anthropic Claude API — chat, document processing, offer generation",
+    "pages": [
+      "landing",        // public, animated hero
+      "auth",           // login + register
+      "dashboard",      // home screen after login
+      "deal-analyzer",  // multi-strategy deal calculator
+      "deal-results",   // KPI cards + risk score output
+      "my-deals",       // list/grid of all user deals
+      "pipeline",       // Kanban board — deal stages
+      "portfolio",      // closed deals, returns, equity
+      "documents",      // upload + AI analysis
+      "chat",           // AI real estate specialist
+      "settings",       // user profile + team management
+      "share/:dealId"   // public read-only deal view
+    ]
+  },
+
+  "design_philosophy": {
+    "vibe": "Bloomberg terminal meets modern SaaS",
+    "reference_apps": [
+      "Mercury (demo.mercury.com) — app layout, sidebar, card density",
+      "Stripe (stripe.com) — landing page animation, typography confidence",
+      "Linear (linear.app) — motion, keyboard shortcuts feel",
+      "Fey (fey.co) — dark financial dashboard aesthetic"
+    ],
+    "principles": [
+      "Data density over whitespace — pack meaningful info into cards",
+      "Motion only supports comprehension — never decorative",
+      "Numbers are the hero — make financial data readable at a glance",
+      "Dark only — no light mode needed"
+    ],
+    "anti_patterns": [
+      "No confetti, particles, or sparkle effects",
+      "No bouncing animations",
+      "No oversized padding or wasted whitespace",
+      "No light backgrounds inside the app",
+      "No generic SaaS 3-feature-card sections on landing",
+      "No spinning loaders — use skeleton screens instead"
+    ]
+  },
+
+  "colors": {
+    "background": {
+      "base": "#08080F",      // true near-black — page bg
+      "surface": "#0F0F1A",   // cards, panels
+      "elevated": "#16162A",  // modals, dropdowns, hover states
+      "overlay": "#1C1C30"    // tooltips, popovers
+    },
+    "border": {
+      "subtle": "#1A1A2E",
+      "default": "#252540",
+      "strong": "#303055"
+    },
+    "accent": {
+      "primary": "#6366F1",       // indigo — CTAs, selected states, links
+      "primary_hover": "#4F46E5",
+      "secondary": "#8B5CF6",     // purple — secondary actions, creative finance
+      "success": "#10B981",       // green — positive ROI, closed deals, buy+hold
+      "warning": "#F59E0B",       // amber — caution, wholesale strategy badge
+      "danger": "#EF4444",        // red — high risk, negative metrics
+      "info": "#3B82F6"           // blue — BRRRR strategy badge, neutral info
+    },
+    "text": {
+      "primary": "#F1F5F9",
+      "secondary": "#94A3B8",
+      "muted": "#475569",
+      "disabled": "#334155"
+    },
+    "strategy_badges": {
+      // Each strategy gets a distinct color for instant recognition
+      "wholesale":        { "bg": "#451A03", "text": "#FCD34D" },
+      "creative_finance": { "bg": "#2E1065", "text": "#C4B5FD" },
+      "brrrr":            { "bg": "#0C1A4A", "text": "#93C5FD" },
+      "buy_and_hold":     { "bg": "#064E3B", "text": "#6EE7B7" },
+      "flip":             { "bg": "#431407", "text": "#FCA5A1" }
+    }
+  },
+
+  "typography": {
+    "heading_font": "Inter",
+    "mono_font": "JetBrains Mono", // ALL financial numbers use this — non-negotiable
+    "google_fonts_import": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap",
+    "scale": {
+      "hero":         "clamp(48px, 7vw, 80px), weight 700", // landing page only
+      "h1":           "32px, weight 600",
+      "h2":           "24px, weight 600",
+      "h3":           "18px, weight 500",
+      "body":         "14px, weight 400",
+      "small":        "12px, weight 400",
+      "label":        "11px, weight 500, uppercase, letter-spacing 0.08em",
+      "kpi_large":    "36px JetBrains Mono, weight 600",  // main KPI numbers
+      "kpi_small":    "20px JetBrains Mono, weight 500",  // secondary metrics
+      "table_number": "13px JetBrains Mono, weight 400"   // table financial data
+    }
+  },
+
+  "layout": {
+    "app_shell": {
+      "type": "fixed sidebar + scrollable main content",
+      "sidebar": {
+        "width": "216px",
+        "bg": "#08080F",
+        "border_right": "1px solid #1A1A2E",
+        "top": "Parcel logo + workspace switcher",
+        "sections": {
+          "main":    ["Dashboard", "Pipeline", "My Deals"],
+          "tools":   ["Analyzer", "Documents", "AI Chat"],
+          "account": ["Portfolio", "Settings"]
+        },
+        "nav_item_height": "36px",
+        "nav_item_radius": "8px",
+        "nav_item_padding": "0 12px",
+        "active_state": "2px indigo left border + bg elevated + text primary",
+        "reference": "Mercury sidebar at demo.mercury.com"
+      },
+      "topbar": {
+        "height": "52px",
+        "content": "page title left + global search center (cmd+k) + notifications + avatar right",
+        "bg": "transparent",
+        "border_bottom": "1px solid border.subtle"
+      }
+    },
+    "content": {
+      "padding": "24px",
+      "max_width": "1280px",
+      "grid": "CSS Grid — 12 column base",
+      "dashboard_layout": "2-column card grid (matches Mercury)"
+    },
+    "cards": {
+      "border_radius": "12px",
+      "border": "1px solid #1A1A2E",
+      "bg": "#0F0F1A",
+      "padding": "20px",
+      "hover_transition": "border-color to #252540, 150ms ease"
+    }
+  },
+
+  "landing_page": {
+    "navbar": {
+      "height": "64px",
+      "items_left": "Parcel logo (text or SVG)",
+      "items_center": ["Features", "Pricing", "For Investors", "For Agents"],
+      "items_right": ["Sign In (ghost)", "Get Started (indigo filled CTA)"],
+      "behavior": "transparent bg → blur backdrop + border-bottom on scroll (IntersectionObserver)"
+    },
+    "hero": {
+      "layout": "centered, full viewport height (100vh)",
+      "bg_animation": {
+        "type": "Stripe-style animated gradient mesh",
+        "implementation": "3-4 absolutely positioned div blobs with radial-gradient, CSS @keyframes for slow position drift",
+        "colors": ["#6366F1 at 20% opacity", "#8B5CF6 at 15% opacity"],
+        "base_bg": "#08080F",
+        "animation_duration": "12-15 seconds per loop",
+        "feel": "slow, premium, subtle — NOT distracting",
+        "alternative": "scroll parallax on background layer if gradient performance is poor"
+      },
+      "above_headline": "Small rounded pill badge — 'Built for real estate professionals'",
+      "headline": {
+        "line1": "Close More Deals.",
+        "line2": "Know Every Number.",
+        "style": "hero size, weight 700, white"
+      },
+      "subhead": "16px, text.secondary, max 2 lines — e.g. 'Analyze deals, track your pipeline, and process documents — all in one place.'",
+      "ctas": {
+        "primary":   "Get Started Free — indigo filled, 44px height, 16px padding",
+        "secondary": "View Demo — ghost/outline, same height"
+      },
+      "below_ctas": "mini deal analyzer preview card (hardcoded realistic data, looks real)"
+    },
+    "social_proof_strip": {
+      "text": "Trusted by investors across [X] markets",
+      "style": "muted text, logo/icon strip, full width"
+    },
+    "features_section": {
+      "layout": "3-column grid",
+      "features": [
+        { "title": "Multi-Strategy Analysis",  "desc": "Wholesale, creative finance, BRRRR, buy & hold, flip" },
+        { "title": "AI Document Processing",   "desc": "Upload contracts and leases — AI extracts key terms and flags risks" },
+        { "title": "Deal Pipeline",            "desc": "Kanban board to track every deal from lead to close" }
+      ]
+    },
+    "how_it_works": "3 steps: 1. Analyze → 2. Track → 3. Close",
+    "pricing_section": {
+      "tiers": [
+        { "name": "Free",  "price": "$0",     "features": ["5 deals/month", "Basic analyzer", "AI chat"] },
+        { "name": "Pro",   "price": "$29/mo", "features": ["Unlimited deals", "Document processing", "Portfolio tracker", "Deal sharing"] },
+        { "name": "Team",  "price": "$99/mo", "features": ["Everything in Pro", "5 team members", "Shared deals & documents", "Role-based access"] }
+      ]
+    },
+    "final_cta": "Full-width dark section, large headline, single 'Get Started Free' button",
+    "footer": "minimal — nav links + copyright + 'Powered by Anthropic'"
+  },
+
+  "components": {
+    "kpi_card": {
+      "structure": "label (muted 11px uppercase) → value (JetBrains Mono large) → delta badge (▲/▼ + %)",
+      "animation": "count-up on mount, 1.2s cubic-bezier ease-out",
+      "examples": ["Cash-on-Cash Return", "Cap Rate", "Monthly Cash Flow", "Risk Score", "Total Equity"]
+    },
+    "deal_card": {
+      "structure": "property address → strategy badge → 3 key metrics row → status pill → quick actions (hover)",
+      "hover": "border transitions to border.default + scale(1.01), 150ms ease",
+      "click": "navigates to /analyze/results/:dealId"
+    },
+    "pipeline_kanban": {
+      "columns": ["Lead", "Analyzing", "Offer Sent", "Under Contract", "Due Diligence", "Closed", "Dead"],
+      "card_content": "address + strategy badge + asking price + days in stage",
+      "drag_library": "dnd-kit",
+      "drop_zone": "highlight on drag-over"
+    },
+    "risk_score_gauge": {
+      "display": "circular SVG gauge 0-100 + label text",
+      "ranges": {
+        "0-30":  { "label": "Low Risk",      "color": "#10B981" },
+        "31-60": { "label": "Medium Risk",   "color": "#F59E0B" },
+        "61-80": { "label": "High Risk",     "color": "#EF4444" },
+        "81-100":{ "label": "Critical Risk", "color": "#7F1D1D" }
+      }
+    },
+    "ai_chat_widget": {
+      "position": "dedicated /chat page + floating widget on deal detail pages",
+      "persona": "Real estate investment specialist",
+      "context_aware": true, // knows which deal or document user is viewing
+      "renders_markdown": true,
+      "suggested_questions_in_empty_state": true
+    },
+    "document_card": {
+      "structure": "filename + upload date + doc type badge + AI status pill + actions menu",
+      "status_pills": {
+        "pending":    { "color": "info",    "label": "Queued" },
+        "processing": { "color": "warning", "label": "Processing..." },
+        "ready":      { "color": "success", "label": "Ready" },
+        "error":      { "color": "danger",  "label": "Error" }
+      }
+    },
+    "concept_tooltip": {
+      "trigger": "dotted underline on any real estate term in the UI",
+      "content": "term definition + plain English example + how it affects this deal type",
+      "style": "dark popover panel, 280px wide, shadcn Tooltip component",
+      "trigger_event": "hover on desktop, click on mobile"
+    },
+    "skeleton_loader": {
+      "style": "shimmer animation — gray gradient sweeping left to right",
+      "rule": "ALWAYS use skeletons for loading states — never use spinners"
+    }
+  },
+
+  "motion": {
+    "page_transition": "fade + translateY(6px) upward on enter, 180ms ease-out — Framer Motion",
+    "card_mount": "staggered fade-in, 50ms delay between each card",
+    "kpi_count_up": "1.2s ease-out, starts on component mount",
+    "hover_effects": "150ms ease for all border and color transitions",
+    "chat_messages": "slide up from bottom 200ms — AnimatedList pattern",
+    "kanban_drag": "ghost card while dragging, destination column highlights",
+    "skeleton_shimmer": "1.5s infinite shimmer sweep",
+    "never": [
+      "spinning loaders",
+      "bounce animations",
+      "confetti or particle effects",
+      "aggressive or fast animations (under 100ms feels twitchy)"
+    ]
+  },
+
+  "auth_pages": {
+    "layout": "centered card (480px wide) on base background, no sidebar",
+    "register_fields": ["Full Name", "Email", "Password", "Role (Wholesaler / Investor / Agent)"],
+    "login_fields": ["Email", "Password", "Remember Me checkbox"],
+    "role_selection": "3 option cards with icon + label — user clicks one"
+  },
+
+  "dashboard": {
+    "empty_state": {
+      "headline": "Welcome, [Name]. Let's analyze your first deal.",
+      "primary_cta": "Analyze Your First Deal →",
+      "hint_cards": ["Pipeline — track your deals", "Documents — upload contracts", "AI Chat — ask anything"],
+      "rule": "No empty charts, no placeholder zeros — clean and intentional"
+    },
+    "populated_state": {
+      "row_1": "4 KPI cards: Total Deals · Active Pipeline · Avg Cash-on-Cash · Portfolio Cash Flow",
+      "col_left": "Recent Deals list (last 5 deals)",
+      "col_right": "Pipeline summary by stage + Quick Analyze button",
+      "bottom": "Recent Documents (if any exist)"
+    }
+  },
+
+  "tech_stack": {
+    "frontend": {
+      "framework": "React 18 + TypeScript + Vite",
+      "styling": "Tailwind CSS utility classes only",
+      "components": "shadcn/ui — forms, dialogs, dropdowns, tooltips, sheets",
+      "animation": "Framer Motion + React Bits",
+      "charts": "Recharts",
+      "drag_drop": "dnd-kit",
+      "file_upload": "react-dropzone",
+      "server_state": "React Query (TanStack Query)",
+      "ui_state": "Zustand",
+      "routing": "React Router v6"
+    },
+    "backend": {
+      "framework": "FastAPI (Python)",
+      "orm": "SQLAlchemy 2.0",
+      "migrations": "Alembic",
+      "database": "PostgreSQL (Railway)",
+      "auth": "JWT via python-jose + passlib",
+      "ai": "Anthropic Python SDK",
+      "file_handling": "python-multipart"
+    },
+    "deployment": {
+      "frontend": "Vercel (root: frontend, build: npm run build, output: dist)",
+      "backend": "Railway (root: backend, start: uvicorn main:app --host 0.0.0.0 --port $PORT)",
+      "database": "Railway PostgreSQL"
+    }
+  },
+
+  "data_model_critical_rule": {
+    "note": "Every user-owned table MUST have both user_id AND team_id from day one",
+    "reason": "Adding team features later requires zero refactoring if team_id is already present",
+    "core_tables": [
+      "users", "teams", "team_members",
+      "deals", "pipeline_entries",
+      "documents", "chat_messages",
+      "portfolio_entries"
+    ]
+  }
+}

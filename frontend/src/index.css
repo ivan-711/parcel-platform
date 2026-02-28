@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Dark theme — Parcel is dark-only */
+    --background: 240 50% 4%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 43% 8%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 43% 8%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 239 84% 67%;
+    --primary-foreground: 240 50% 4%;
+
+    --secondary: 240 30% 12%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 30% 12%;
+    --muted-foreground: 240 5% 60%;
+
+    --accent: 240 30% 16%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 30% 14%;
+    --input: 240 30% 12%;
+    --ring: 239 84% 67%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background-color: #08080f;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* JetBrains Mono for all financial numbers */
+  [data-financial],
+  .financial {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* ── Gradient blob drift animations ── */
+@keyframes drift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(80px, -60px) scale(1.1); }
+  66%       { transform: translate(-40px, 40px) scale(0.95); }
+}
+
+@keyframes drift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(-60px, 80px) scale(1.05); }
+  66%       { transform: translate(60px, -30px) scale(1.1); }
+}
+
+@keyframes drift3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(40px, 60px) scale(0.9); }
+}
+
+.blob-1 { animation: drift1 15s ease-in-out infinite; }
+.blob-2 { animation: drift2 12s ease-in-out infinite; }
+.blob-3 { animation: drift3 18s ease-in-out infinite; }
+
+/* ── Live deal ticker ── */
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.ticker-animate {
+  animation: ticker 55s linear infinite;
+  will-change: transform;
+}
+
+.ticker-animate:hover {
+  animation-play-state: paused;
+}
+
+/* ── Respect reduced motion preference ── */
+@media (prefers-reduced-motion: reduce) {
+  .blob-1, .blob-2, .blob-3 { animation: none; }
+  .ticker-animate { animation: none; }
+}
