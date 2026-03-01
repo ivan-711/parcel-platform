@@ -59,10 +59,10 @@ def _build_context_block(
             )
         return (
             f"\n\n[DOCUMENT CONTEXT]\n"
-            f"Filename: {doc.filename}\n"
+            f"Filename: {doc.original_filename}\n"
             f"Summary: {doc.ai_summary or 'Not yet processed'}\n"
-            f"Key Terms: {json.dumps(doc.ai_key_terms or [])}\n"
-            f"Risk Flags: {json.dumps(doc.ai_risk_flags or [])}\n"
+            f"Key Terms: {json.dumps(doc.key_terms or [])}\n"
+            f"Risk Flags: {json.dumps(doc.risk_flags or [])}\n"
             f"[/DOCUMENT CONTEXT]\n"
         )
 

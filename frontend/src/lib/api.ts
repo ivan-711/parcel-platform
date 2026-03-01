@@ -18,6 +18,8 @@ import type {
   AddPortfolioEntryRequest,
   UpdateProfileRequest,
   UserProfileResponse,
+  DocumentListItem,
+  DocumentResponse,
 } from '@/types'
 
 const API_URL = (import.meta.env.VITE_API_URL ?? 'https://parcel-platform-production.up.railway.app').replace('http://', 'https://')
@@ -26,7 +28,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const token = localStorage.getItem('parcel_token')
 
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    ...(options?.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
     ...(options?.headers as Record<string, string>),
   }
 
@@ -145,5 +147,16 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(data),
       }),
+  },
+  documents: {
+    list: () => request<DocumentListItem[]>('/api/v1/documents/'),
+    get: (id: string) => request<DocumentResponse>(`/api/v1/documents/${id}/`),
+    upload: (formData: FormData) =>
+      request<DocumentResponse>('/api/v1/documents/', {
+        method: 'POST',
+        body: formData,
+      }),
+    delete: (id: string) =>
+      request<{ message: string }>(`/api/v1/documents/${id}/`, { method: 'DELETE' }),
   },
 }

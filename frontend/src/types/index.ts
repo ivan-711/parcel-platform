@@ -177,3 +177,45 @@ export interface UpdateProfileRequest {
   current_password?: string
   new_password?: string
 }
+
+export interface RiskFlag {
+  severity: 'high' | 'medium' | 'low'
+  description: string
+  quote: string
+}
+
+export interface DocumentParty {
+  name: string
+  role: string
+}
+
+export interface DocumentResponse {
+  id: string
+  user_id: string
+  original_filename: string
+  file_type: string
+  file_size_bytes: number
+  status: 'pending' | 'processing' | 'completed' | 'failed'
+  document_type: string | null
+  ai_summary: string | null
+  parties: DocumentParty[]
+  risk_flags: RiskFlag[]
+  extracted_numbers: Record<string, number | string> | null
+  key_terms: string[]
+  processing_error: string | null
+  presigned_url: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface DocumentListItem {
+  id: string
+  original_filename: string
+  file_type: string
+  file_size_bytes: number
+  status: 'pending' | 'processing' | 'completed' | 'failed'
+  document_type: string | null
+  ai_summary: string | null
+  presigned_url: string | null
+  created_at: string
+}

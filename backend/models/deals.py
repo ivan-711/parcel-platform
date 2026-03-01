@@ -41,5 +41,4 @@ class Deal(TimestampMixin, Base):
     user = relationship("User", back_populates="deals", foreign_keys=[user_id])
     team = relationship("Team", back_populates="deals", foreign_keys=[team_id])
     pipeline_entries = relationship("PipelineEntry", back_populates="deal")
-    documents = relationship("Document", back_populates="deal")
     portfolio_entries = relationship("PortfolioEntry", back_populates="deal")

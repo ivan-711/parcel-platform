@@ -519,81 +519,137 @@ Notes:
 
 ## DOCUMENT ENDPOINTS
 
-### POST /api/v1/documents/upload
-**Status:** ⬜ Not built yet
+### POST /api/v1/documents/
+**Status:** ✅ Built and tested locally
 **Auth:** Required
 **Content-Type:** `multipart/form-data`
 
 Form fields:
 ```
-file: File (PDF or DOCX, max 20MB)
-doc_type: purchase_agreement | lease | assignment | subject_to | seller_finance | other
-deal_id: uuid (optional — link to a deal)
+file: File (PDF, DOCX, JPG, JPEG, PNG — max 10 MB)
 ```
 
-Response `202` (accepted, processing async):
+Validation:
+- File extension must be one of: pdf, jpg, jpeg, png, docx
+- File size must be <= 10 MB
+
+Response `201`:
 ```json
 {
   "id": "uuid",
-  "filename": "string",
-  "doc_type": "string",
-  "processing_status": "pending",
-  "created_at": "ISO8601"
+  "user_id": "uuid",
+  "original_filename": "contract.pdf",
+  "file_type": "pdf",
+  "file_size_bytes": 245000,
+  "status": "pending",
+  "document_type": null,
+  "parties": null,
+  "ai_summary": null,
+  "risk_flags": null,
+  "extracted_numbers": null,
+  "key_terms": null,
+  "processing_error": null,
+  "created_at": "ISO8601",
+  "updated_at": "ISO8601",
+  "presigned_url": "https://s3.amazonaws.com/..."
 }
 ```
 
+Errors:
+- `400 INVALID_FILE_TYPE` — unsupported file extension
+- `400 FILE_TOO_LARGE` — file exceeds 10 MB
+
+Notes:
+- File is uploaded to S3, then a background task runs Claude AI analysis
+- `status` progresses: `pending` → `processing` → `complete` (or `failed`)
+- `presigned_url` is a time-limited S3 download link (1 hour expiry)
+
 ---
 
-### GET /api/v1/documents
-**Status:** ⬜ Not built yet
+### GET /api/v1/documents/
+**Status:** ✅ Built and tested locally
 **Auth:** Required
 
-Response `200`: List of documents with processing status
+Response `200`: Array of documents, newest first
 
 Each item:
 ```json
 {
   "id": "uuid",
-  "filename": "string",
-  "doc_type": "string",
-  "processing_status": "pending | processing | ready | error",
-  "deal_id": "uuid | null",
-  "created_at": "ISO8601"
+  "original_filename": "contract.pdf",
+  "file_type": "pdf",
+  "file_size_bytes": 245000,
+  "status": "pending | processing | complete | failed",
+  "document_type": "purchase_agreement | null",
+  "ai_summary": "First 150 chars of summary... | null",
+  "created_at": "ISO8601",
+  "presigned_url": "https://s3.amazonaws.com/..."
 }
 ```
 
 ---
 
 ### GET /api/v1/documents/:id
-**Status:** ⬜ Not built yet
+**Status:** ✅ Built and tested locally
 **Auth:** Required
 
-Response `200`:
+Response `200`: Full document with AI analysis results
 ```json
 {
   "id": "uuid",
-  "filename": "string",
-  "doc_type": "string",
-  "processing_status": "ready",
-  "ai_summary": "Plain English summary of the document...",
-  "ai_risk_flags": [
+  "user_id": "uuid",
+  "original_filename": "contract.pdf",
+  "file_type": "pdf",
+  "file_size_bytes": 245000,
+  "status": "complete",
+  "document_type": "purchase_agreement",
+  "parties": [
+    {"name": "John Smith", "role": "buyer"},
+    {"name": "Jane Doe", "role": "seller"}
+  ],
+  "ai_summary": "This is a residential purchase agreement between...",
+  "risk_flags": [
     {
-      "clause": "string",
-      "severity": "low | medium | high",
-      "explanation": "string"
+      "severity": "high",
+      "description": "No inspection contingency clause found",
+      "quote": "Buyer accepts property in as-is condition..."
     }
   ],
-  "ai_key_terms": [
-    {
-      "term": "string",
-      "value": "string",
-      "page": 2
-    }
+  "extracted_numbers": {
+    "purchase_price": 185000,
+    "earnest_money_deposit": 5000,
+    "closing_date": "2026-04-15",
+    "inspection_period_days": 10
+  },
+  "key_terms": [
+    "Closing contingent on buyer financing approval",
+    "Seller to provide clear title within 30 days"
   ],
-  "deal_id": "uuid | null",
-  "created_at": "ISO8601"
+  "processing_error": null,
+  "created_at": "ISO8601",
+  "updated_at": "ISO8601",
+  "presigned_url": "https://s3.amazonaws.com/..."
 }
 ```
+
+Errors:
+- `404 DOC_NOT_FOUND` — document does not exist or belongs to another user
+
+---
+
+### DELETE /api/v1/documents/:id
+**Status:** ✅ Built and tested locally
+**Auth:** Required
+
+Deletes the document from S3 and the database (hard delete).
+
+Response `200`:
+```json
+{"message": "Document deleted"}
+```
+
+Errors:
+- `404 DOC_NOT_FOUND` — document does not exist or belongs to another user
 
 ---
 

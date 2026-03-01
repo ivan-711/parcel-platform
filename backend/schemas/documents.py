@@ -2,56 +2,45 @@
 
 import uuid
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
 
-class DocumentListItem(BaseModel):
-    """Compact document summary for list responses."""
+class DocumentResponse(BaseModel):
+    """Full document object returned for GET /documents/:id and POST /documents."""
 
     id: uuid.UUID
-    filename: str
-    doc_type: str
-    processing_status: str
-    deal_id: Optional[uuid.UUID]
+    user_id: uuid.UUID
+    original_filename: str
+    file_type: str
+    file_size_bytes: int
+    status: str
+    document_type: Optional[str]
+    parties: Optional[list[dict[str, str]]]
+    ai_summary: Optional[str]
+    risk_flags: Optional[list[dict[str, str]]]
+    extracted_numbers: Optional[dict[str, Any]]
+    key_terms: Optional[list[str]]
+    processing_error: Optional[str]
     created_at: datetime
+    updated_at: datetime
+    presigned_url: Optional[str] = None
 
     model_config = {"from_attributes": True}
 
 
-class RiskFlag(BaseModel):
-    """A single AI-identified risk clause in a document."""
-
-    clause: str
-    severity: str  # low | medium | high
-    explanation: str
-
-
-class KeyTerm(BaseModel):
-    """A key term extracted by AI from a document."""
-
-    term: str
-    value: str
-    page: Optional[int] = None
-
-
-class DocumentResponse(BaseModel):
-    """Full document response including AI-extracted data."""
+class DocumentListItem(BaseModel):
+    """Compact document summary for GET /documents list responses."""
 
     id: uuid.UUID
-    user_id: uuid.UUID
-    team_id: Optional[uuid.UUID]
-    filename: str
-    file_url: str
+    original_filename: str
     file_type: str
-    doc_type: str
+    file_size_bytes: int
+    status: str
+    document_type: Optional[str]
     ai_summary: Optional[str]
-    ai_risk_flags: Optional[list[RiskFlag]]
-    ai_key_terms: Optional[list[KeyTerm]]
-    processing_status: str
-    deal_id: Optional[uuid.UUID]
     created_at: datetime
-    updated_at: datetime
+    presigned_url: Optional[str] = None
 
     model_config = {"from_attributes": True}

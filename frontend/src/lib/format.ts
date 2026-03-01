@@ -1,5 +1,18 @@
 /** Shared formatting utilities for deal output values. */
 
+/** Format a byte count into a human-readable file size. */
+export function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+/** Format a document_type string into a readable label, with null fallback. */
+export function formatDocumentType(type: string | null): string {
+  if (!type) return 'Document'
+  return formatLabel(type)
+}
+
 /** Format an output key into a human-readable label. */
 export function formatLabel(key: string): string {
   return key
