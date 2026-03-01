@@ -79,6 +79,7 @@ export default function ResultsPage() {
   const updateDeal = useUpdateDeal(dealId ?? '')
   const [saved, setSaved] = useState(false)
   const [sharing, setSharing] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   if (isLoading || !deal) {
     return (
@@ -113,18 +114,23 @@ export default function ResultsPage() {
     )
   }
 
+  const showCopied = () => {
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   const handleShare = async () => {
     if (deal.status === 'shared') {
       const url = `${window.location.origin}/share/${deal.id}`
       await navigator.clipboard.writeText(url)
-      toast.success('Share link copied to clipboard')
+      showCopied()
       return
     }
     setSharing(true)
     try {
       const res = await api.deals.share(deal.id)
       await navigator.clipboard.writeText(res.share_url)
-      toast.success('Deal shared! Link copied to clipboard')
+      showCopied()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to share deal')
     } finally {
@@ -285,9 +291,9 @@ export default function ResultsPage() {
             <Plus size={14} />
             {addToPipeline.isPending ? 'Adding...' : 'Add to Pipeline'}
           </Button>
-          <Button variant="outline" onClick={handleShare} disabled={sharing} className="gap-2">
+          <Button variant="outline" onClick={handleShare} disabled={sharing || copied} className="gap-2">
             <Share2 size={14} />
-            {sharing ? 'Sharing...' : deal.status === 'shared' ? 'Copy Share Link' : 'Share Deal'}
+            {copied ? 'Link copied!' : sharing ? 'Sharing...' : deal.status === 'shared' ? 'Copy Share Link' : 'Share Deal'}
           </Button>
           <Button
             onClick={handleSave}
