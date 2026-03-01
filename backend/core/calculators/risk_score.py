@@ -9,6 +9,8 @@ def calculate_risk_score(strategy: str, inputs: dict, outputs: dict) -> int:
         return _score_wholesale(inputs, outputs)
     elif strategy == "buy_and_hold":
         return _score_buy_and_hold(outputs)
+    elif strategy == "flip":
+        return _score_flip(inputs, outputs)
     else:
         return 50
 
@@ -56,6 +58,53 @@ def _score_buy_and_hold(outputs: dict) -> int:
         score += 14
     else:
         score += 20
+
+    return max(0, min(100, score))
+
+
+def _score_flip(inputs: dict, outputs: dict) -> int:
+    """Flip risk: gross profit (35), ROI (30), rehab-to-ARV (20), holding months (15)."""
+    score = 0
+
+    gross_profit = outputs.get("gross_profit", 0)
+    if gross_profit >= 30000:
+        score += 0
+    elif gross_profit >= 15000:
+        score += 12
+    elif gross_profit >= 5000:
+        score += 24
+    else:
+        score += 35
+
+    roi = outputs.get("roi", 0)
+    if roi >= 20:
+        score += 0
+    elif roi >= 12:
+        score += 10
+    elif roi >= 6:
+        score += 20
+    else:
+        score += 30
+
+    rehab_to_arv_pct = outputs.get("rehab_to_arv_pct", 0)
+    if rehab_to_arv_pct <= 15:
+        score += 0
+    elif rehab_to_arv_pct <= 25:
+        score += 7
+    elif rehab_to_arv_pct <= 35:
+        score += 14
+    else:
+        score += 20
+
+    holding_months = inputs.get("holding_months", 0)
+    if holding_months <= 4:
+        score += 0
+    elif holding_months <= 6:
+        score += 5
+    elif holding_months <= 9:
+        score += 10
+    else:
+        score += 15
 
     return max(0, min(100, score))
 
