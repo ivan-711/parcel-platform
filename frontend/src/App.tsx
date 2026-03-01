@@ -18,7 +18,7 @@ const Pipeline = lazy(() => import('@/pages/Pipeline'))
 const Portfolio = lazy(() => import('@/pages/portfolio/PortfolioPage'))
 const Documents = lazy(() => import('@/pages/Documents'))
 const Chat = lazy(() => import('@/pages/chat/ChatPage'))
-const Settings = lazy(() => import('@/pages/Settings'))
+const Settings = lazy(() => import('@/pages/settings/SettingsPage'))
 const ShareDeal = lazy(() => import('@/pages/share/ShareDealPage'))
 
 const queryClient = new QueryClient()

@@ -16,6 +16,8 @@ import type {
   PortfolioSummaryResponse,
   PortfolioEntry,
   AddPortfolioEntryRequest,
+  UpdateProfileRequest,
+  UserProfileResponse,
 } from '@/types'
 
 const API_URL = (import.meta.env.VITE_API_URL ?? 'https://parcel-platform-production.up.railway.app').replace('http://', 'https://')
@@ -88,6 +90,11 @@ export const api = {
     logout: () =>
       request<{ message: string }>('/api/v1/auth/logout', { method: 'POST' }),
     me: () => request<User>('/api/v1/auth/me'),
+    updateMe: (data: UpdateProfileRequest) =>
+      request<UserProfileResponse>('/api/v1/auth/me/', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
   },
   dashboard: {
     stats: () => request<DashboardStats>('/api/v1/dashboard/stats/'),

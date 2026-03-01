@@ -162,3 +162,18 @@ export interface AddPortfolioEntryRequest {
   monthly_cash_flow: number
   notes?: string
 }
+
+export interface UserProfileResponse {
+  id: string
+  email: string
+  name: string
+  role: string
+  created_at: string
+}
+
+export interface UpdateProfileRequest {
+  name?: string
+  email?: string
+  current_password?: string
+  new_password?: string
+}
