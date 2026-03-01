@@ -30,3 +30,14 @@ export const buyAndHoldSchema = z.object({
 })
 
 export type BuyAndHoldFormValues = z.infer<typeof buyAndHoldSchema>
+
+export const flipSchema = z.object({
+  purchase_price: z.number({ message: 'Purchase price is required' }).min(10000),
+  rehab_budget: z.number({ message: 'Rehab budget is required' }).min(0),
+  arv: z.number({ message: 'ARV is required' }).min(10000),
+  holding_months: z.number({ message: 'Holding period is required' }).min(1).max(36),
+  selling_costs_pct: z.number({ message: 'Selling costs required' }).min(0).max(20),
+  financing_costs: z.number({ message: 'Financing costs required' }).min(0),
+})
+
+export type FlipFormValues = z.infer<typeof flipSchema>

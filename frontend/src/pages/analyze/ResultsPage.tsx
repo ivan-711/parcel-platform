@@ -77,6 +77,13 @@ function getStrategyKPIs(strategy: string): KPIDefinition[] {
         { key: 'monthly_cash_flow', label: 'Monthly Cash Flow', format: 'currency', renderMode: 'color_coded' },
         { key: 'noi_annual', label: 'NOI Annual', format: 'currency', renderMode: 'standard' },
       ]
+    case 'flip':
+      return [
+        { key: 'gross_profit', label: 'Gross Profit', format: 'currency', renderMode: 'standard' },
+        { key: 'roi', label: 'ROI', format: 'percent', renderMode: 'standard' },
+        { key: 'annualized_roi', label: 'Annualized ROI', format: 'percent', renderMode: 'standard' },
+        { key: 'total_cost', label: 'Total Cost', format: 'currency', renderMode: 'standard' },
+      ]
     case 'wholesale':
     default:
       return [

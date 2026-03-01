@@ -13,19 +13,21 @@ import { Button } from '@/components/ui/button'
 import {
   wholesaleSchema,
   buyAndHoldSchema,
+  flipSchema,
   type WholesaleFormValues,
   type BuyAndHoldFormValues,
+  type FlipFormValues,
 } from '@/lib/schemas'
 import { useCreateDeal } from '@/hooks/useDeals'
 import type { Strategy } from '@/types'
 
 const VALID_STRATEGIES: Strategy[] = ['wholesale', 'creative_finance', 'brrrr', 'buy_and_hold', 'flip']
-const ENABLED_STRATEGIES: Strategy[] = ['wholesale', 'buy_and_hold']
+const ENABLED_STRATEGIES: Strategy[] = ['wholesale', 'buy_and_hold', 'flip']
 
 interface FieldConfig<T extends string> {
   name: T
   label: string
-  adornment: 'dollar' | 'percent'
+  adornment: 'dollar' | 'percent' | 'none'
   tooltip: string
 }
 
@@ -129,6 +131,7 @@ const BUY_AND_HOLD_FIELDS: FieldConfig<Exclude<keyof BuyAndHoldFormValues, 'loan
 const STRATEGY_LABELS: Record<string, string> = {
   wholesale: 'Wholesale Analyzer',
   buy_and_hold: 'Buy & Hold Analyzer',
+  flip: 'Flip Analyzer',
 }
 
 /** Wholesale strategy form. */
@@ -363,6 +366,139 @@ function BuyAndHoldForm() {
   )
 }
 
+const FLIP_FIELDS: FieldConfig<keyof FlipFormValues>[] = [
+  {
+    name: 'purchase_price',
+    label: 'Purchase Price',
+    adornment: 'dollar',
+    tooltip: 'What you\'re paying to acquire the property before rehab.',
+  },
+  {
+    name: 'rehab_budget',
+    label: 'Rehab Budget',
+    adornment: 'dollar',
+    tooltip: 'Total estimated cost to renovate. Add 10-15% contingency to contractor bids.',
+  },
+  {
+    name: 'arv',
+    label: 'After Repair Value (ARV)',
+    adornment: 'dollar',
+    tooltip: 'What the property will sell for after renovations. Pull comps within 0.5 miles, same bed/bath, sold in last 90 days.',
+  },
+  {
+    name: 'holding_months',
+    label: 'Holding Period (Months)',
+    adornment: 'none',
+    tooltip: 'Purchase to sale closing. Include rehab time plus time on market.',
+  },
+  {
+    name: 'selling_costs_pct',
+    label: 'Selling Costs (% of ARV)',
+    adornment: 'percent',
+    tooltip: 'Agent commission + closing costs + staging. Typically 7-9% total.',
+  },
+  {
+    name: 'financing_costs',
+    label: 'Financing Costs ($)',
+    adornment: 'dollar',
+    tooltip: 'Hard money costs: origination points, interest, extension fees. Enter 0 if paying cash.',
+  },
+]
+
+/** Flip strategy form. */
+function FlipForm() {
+  const createDeal = useCreateDeal()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FlipFormValues>({
+    resolver: zodResolver(flipSchema),
+    defaultValues: {
+      holding_months: 6,
+      selling_costs_pct: 8,
+      financing_costs: 0,
+    },
+  })
+
+  const onSubmit = (values: FlipFormValues) => {
+    const coerced = Object.fromEntries(
+      Object.entries(values).map(([k, v]) => [k, Number(v)])
+    )
+    createDeal.mutate({
+      address: `Flip Analysis — ${new Date().toLocaleDateString()}`,
+      zip_code: '00000',
+      property_type: 'single_family',
+      strategy: 'flip',
+      inputs: coerced,
+    })
+  }
+
+  return (
+    <div className="relative rounded-xl border border-border-default bg-app-surface p-6">
+      {createDeal.isPending && (
+        <div className="absolute inset-0 rounded-xl bg-app-surface/80 z-10 flex items-center justify-center">
+          <div className="h-full w-full animate-pulse rounded-xl bg-app-elevated/30" />
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
+          {FLIP_FIELDS.map((field) => (
+            <div key={field.name} className="space-y-1.5">
+              <Label htmlFor={field.name} className="text-text-secondary">
+                <ConceptTooltip term={field.label} definition={field.tooltip}>
+                  {field.label}
+                </ConceptTooltip>
+              </Label>
+              <div className="relative">
+                {field.adornment === 'dollar' && (
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-sm font-mono">
+                    $
+                  </span>
+                )}
+                <Input
+                  id={field.name}
+                  type="number"
+                  step="any"
+                  placeholder="0"
+                  className={`font-mono bg-app-bg border-border-default text-text-primary ${
+                    field.adornment === 'dollar' ? 'pl-7' : field.adornment === 'percent' ? 'pr-8' : ''
+                  } ${errors[field.name] ? 'border-accent-danger' : ''}`}
+                  {...register(field.name, { valueAsNumber: true })}
+                />
+                {field.adornment === 'percent' && (
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted text-sm font-mono">
+                    %
+                  </span>
+                )}
+              </div>
+              {errors[field.name] && (
+                <p className="text-accent-danger text-xs">{errors[field.name]?.message}</p>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="pt-2">
+          <Button
+            type="submit"
+            disabled={createDeal.isPending}
+            className="w-full bg-accent-primary hover:bg-accent-primary/90 text-white"
+          >
+            {createDeal.isPending ? 'Calculating...' : 'Analyze Deal'}
+          </Button>
+          {createDeal.isError && (
+            <p className="text-accent-danger text-sm mt-2">
+              {createDeal.error?.message ?? 'Something went wrong. Please try again.'}
+            </p>
+          )}
+        </div>
+      </form>
+    </div>
+  )
+}
+
 export default function AnalyzerFormPage() {
   const { strategy } = useParams<{ strategy: string }>()
 
@@ -424,6 +560,7 @@ export default function AnalyzerFormPage() {
 
         {strategy === 'wholesale' && <WholesaleForm />}
         {strategy === 'buy_and_hold' && <BuyAndHoldForm />}
+        {strategy === 'flip' && <FlipForm />}
       </div>
     </AppShell>
   )
