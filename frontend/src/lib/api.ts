@@ -13,6 +13,9 @@ import type {
   ChatMessage,
   SharedDealResponse,
   ShareDealActionResponse,
+  PortfolioSummaryResponse,
+  PortfolioEntry,
+  AddPortfolioEntryRequest,
 } from '@/types'
 
 const API_URL = (import.meta.env.VITE_API_URL ?? 'https://parcel-platform-production.up.railway.app').replace('http://', 'https://')
@@ -126,5 +129,14 @@ export const api = {
   },
   chat: {
     history: () => request<{ messages: ChatMessage[] }>('/api/v1/chat/history/'),
+  },
+  portfolio: {
+    summary: () =>
+      request<PortfolioSummaryResponse>('/api/v1/portfolio/'),
+    addEntry: (data: AddPortfolioEntryRequest) =>
+      request<PortfolioEntry>('/api/v1/portfolio/', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
   },
 }

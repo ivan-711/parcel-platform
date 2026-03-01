@@ -130,3 +130,35 @@ export interface SharedDealResponse {
 export interface ShareDealActionResponse extends DealResponse {
   share_url: string
 }
+
+export interface PortfolioEntry {
+  id: string
+  deal_id: string
+  address: string
+  strategy: Strategy
+  closed_date: string
+  closed_price: number
+  profit: number
+  monthly_cash_flow: number
+  notes: string | null
+}
+
+export interface PortfolioSummaryResponse {
+  summary: {
+    total_equity: number
+    total_monthly_cash_flow: number
+    total_deals_closed: number
+    avg_annualized_return: number
+    total_profit: number
+  }
+  entries: PortfolioEntry[]
+}
+
+export interface AddPortfolioEntryRequest {
+  deal_id: string
+  closed_date: string
+  closed_price: number
+  profit: number
+  monthly_cash_flow: number
+  notes?: string
+}
