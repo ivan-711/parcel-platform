@@ -61,6 +61,41 @@ class UserResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class UserProfileResponse(BaseModel):
+    """User profile for the settings page (no sensitive fields)."""
+
+    id: uuid.UUID
+    email: str
+    name: str
+    role: str
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class UpdateProfileRequest(BaseModel):
+    """Request body for PUT /auth/me/ — all fields optional for partial updates."""
+
+    name: Optional[str] = None
+    email: Optional[str] = None
+    current_password: Optional[str] = None
+    new_password: Optional[str] = None
+
+    @field_validator("email")
+    @classmethod
+    def email_format(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and not _EMAIL_RE.match(v):
+            raise ValueError("Invalid email address")
+        return v.lower() if v else v
+
+    @field_validator("new_password")
+    @classmethod
+    def password_min_length(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and len(v) < 8:
+            raise ValueError("Password must be at least 8 characters")
+        return v
+
+
 class TokenResponse(BaseModel):
     """Response body for register and login — includes user data and JWT."""
 

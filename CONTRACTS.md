@@ -162,6 +162,50 @@ Response `200`:
 
 ---
 
+### GET /api/v1/auth/me/
+**Status:** 🚀 Deployed to production
+**Auth:** Required
+
+Response `200`:
+```json
+{
+  "id": "uuid",
+  "email": "string",
+  "name": "string",
+  "role": "wholesaler | investor | agent",
+  "created_at": "ISO8601"
+}
+```
+
+---
+
+### PUT /api/v1/auth/me/
+**Status:** 🚀 Deployed to production
+**Auth:** Required
+
+Request (all fields optional):
+```json
+{
+  "name": "string",
+  "email": "string",
+  "current_password": "string",
+  "new_password": "string"
+}
+```
+
+Response `200`: Same shape as GET /api/v1/auth/me/
+
+Errors:
+- `400 EMAIL_ALREADY_EXISTS` — new email is taken by another user
+- `400 CURRENT_PASSWORD_REQUIRED` — `new_password` provided without `current_password`
+- `400 INVALID_PASSWORD` — `current_password` does not match
+
+Notes:
+- Partial updates — only provided fields are changed
+- Password change requires both `current_password` and `new_password`
+
+---
+
 ## DEAL ENDPOINTS
 
 ### POST /api/v1/deals

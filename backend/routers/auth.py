@@ -6,7 +6,14 @@ from sqlalchemy.orm import Session
 from core.security.jwt import create_access_token, get_current_user, hash_password, verify_password
 from database import get_db
 from models.users import User
-from schemas.auth import LoginRequest, RegisterRequest, TokenResponse, UserResponse
+from schemas.auth import (
+    LoginRequest,
+    RegisterRequest,
+    TokenResponse,
+    UpdateProfileRequest,
+    UserProfileResponse,
+    UserResponse,
+)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -86,3 +93,50 @@ async def logout(response: Response) -> None:
 async def me(current_user: User = Depends(get_current_user)) -> UserResponse:
     """Return the currently authenticated user's profile."""
     return UserResponse.model_validate(current_user)
+
+
+@router.get("/me/", response_model=UserProfileResponse)
+async def get_profile(current_user: User = Depends(get_current_user)) -> UserProfileResponse:
+    """Return the current user's profile for the settings page."""
+    return UserProfileResponse.model_validate(current_user)
+
+
+@router.put("/me/", response_model=UserProfileResponse)
+async def update_profile(
+    body: UpdateProfileRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> UserProfileResponse:
+    """Update the current user's profile.
+
+    Supports partial updates — only provided fields are changed.
+    Password changes require the current password for verification.
+    """
+    if body.name is not None:
+        current_user.name = body.name
+
+    if body.email is not None and body.email != current_user.email:
+        existing = db.query(User).filter(User.email == body.email, User.id != current_user.id).first()
+        if existing:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={"error": "Email already in use", "code": "EMAIL_ALREADY_EXISTS"},
+            )
+        current_user.email = body.email
+
+    if body.new_password is not None:
+        if not body.current_password:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={"error": "Current password is required to set a new password", "code": "CURRENT_PASSWORD_REQUIRED"},
+            )
+        if not verify_password(body.current_password, current_user.password_hash):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={"error": "Current password is incorrect", "code": "INVALID_PASSWORD"},
+            )
+        current_user.password_hash = hash_password(body.new_password)
+
+    db.commit()
+    db.refresh(current_user)
+    return UserProfileResponse.model_validate(current_user)
