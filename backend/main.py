@@ -9,6 +9,7 @@ app = FastAPI(
     title="Parcel API",
     description="Backend API for Parcel — the all-in-one platform for real estate professionals.",
     version="0.1.0",
+    redirect_slashes=False,
 )
 
 app.add_middleware(
