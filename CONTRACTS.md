@@ -612,7 +612,7 @@ Response `200`: Last 50 messages for current user session
 ## PORTFOLIO ENDPOINTS
 
 ### GET /api/v1/portfolio
-**Status:** ⬜ Not built yet
+**Status:** 🚀 Deployed to production
 **Auth:** Required
 
 Response `200`:
@@ -647,7 +647,7 @@ Each entry:
 ---
 
 ### POST /api/v1/portfolio
-**Status:** ⬜ Not built yet
+**Status:** 🚀 Deployed to production
 **Auth:** Required
 
 Request:

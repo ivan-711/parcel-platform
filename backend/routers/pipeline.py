@@ -154,12 +154,12 @@ async def move_stage(
     return _build_card(entry, deal)
 
 
-@router.delete("/{entry_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{entry_id}/")
 async def remove_from_pipeline(
     entry_id: UUID,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-) -> None:
+) -> dict[str, str]:
     """Remove a deal from the pipeline (hard delete — pipeline entries are ephemeral)."""
     entry = db.query(PipelineEntry).filter(
         PipelineEntry.id == entry_id,
@@ -172,3 +172,4 @@ async def remove_from_pipeline(
         )
     db.delete(entry)
     db.commit()
+    return {"message": "Removed from pipeline"}
