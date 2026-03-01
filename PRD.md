@@ -79,7 +79,7 @@ Full App (sidebar navigation to all modules)
 - Register fields: Full Name, Email, Password, Role (Wholesaler / Investor / Agent)
 - Login fields: Email, Password
 - Role selection affects default dashboard layout and terminology
-- JWT auth stored in httpOnly cookies
+- JWT auth stored in localStorage under key 'parcel_token'. Token is attached to all requests via Bearer header in frontend/src/lib/api.ts.
 
 ---
 

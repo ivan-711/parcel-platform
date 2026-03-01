@@ -1,4 +1,12 @@
 # CONTRACTS.md — Parcel Platform API Contracts
+
+## CRITICAL: TRAILING SLASHES
+The FastAPI backend has redirect_slashes=False set in backend/main.py.
+All API endpoints are registered WITH trailing slashes.
+Frontend calls must include trailing slashes or they will 404.
+Correct:   /api/v1/deals/
+Incorrect: /api/v1/deals
+
 > This file is the source of truth for how the frontend and backend communicate.
 > Backend agent: update this file every time you create or change an endpoint.
 > Frontend agent: read this file before building any hooks or API calls.
@@ -64,7 +72,7 @@ Frontend sends cookies automatically — no manual header needed for browser req
 ## AUTH ENDPOINTS
 
 ### POST /api/v1/auth/register
-**Status:** ✅ Built and tested locally
+**Status:** 🚀 Deployed to production
 
 Request:
 ```json
@@ -98,7 +106,7 @@ Errors:
 ---
 
 ### POST /api/v1/auth/login
-**Status:** ✅ Built and tested locally
+**Status:** 🚀 Deployed to production
 
 Request:
 ```json
@@ -127,7 +135,7 @@ Errors:
 ---
 
 ### POST /api/v1/auth/logout
-**Status:** ✅ Built and tested locally
+**Status:** 🚀 Deployed to production
 
 Response `200`:
 ```json
@@ -137,7 +145,7 @@ Response `200`:
 ---
 
 ### GET /api/v1/auth/me
-**Status:** ✅ Built and tested locally
+**Status:** 🚀 Deployed to production
 **Auth:** Required
 
 Response `200`:
@@ -157,7 +165,7 @@ Response `200`:
 ## DEAL ENDPOINTS
 
 ### POST /api/v1/deals
-**Status:** ✅ Built and tested locally
+**Status:** 🚀 Deployed to production
 **Auth:** Required
 
 Request:
@@ -195,7 +203,7 @@ Response `201`:
 ---
 
 ### GET /api/v1/deals
-**Status:** ✅ Built and tested locally
+**Status:** 🚀 Deployed to production
 **Auth:** Required
 
 Query params:
@@ -230,7 +238,7 @@ Each deal item:
 ---
 
 ### GET /api/v1/deals/:id
-**Status:** ✅ Built and tested locally
+**Status:** 🚀 Deployed to production
 **Auth:** Required
 
 Response `200`: Full deal object (same as POST /deals response)
@@ -242,7 +250,7 @@ Errors:
 ---
 
 ### PUT /api/v1/deals/:id
-**Status:** ✅ Built and tested locally
+**Status:** 🚀 Deployed to production
 **Auth:** Required
 
 Request: Partial deal fields to update
@@ -251,7 +259,7 @@ Response `200`: Full updated deal object
 ---
 
 ### DELETE /api/v1/deals/:id
-**Status:** ✅ Built and tested locally
+**Status:** 🚀 Deployed to production
 **Auth:** Required
 
 Soft delete only — sets `deleted_at` timestamp, does not remove from DB.
@@ -264,7 +272,7 @@ Response `200`:
 ---
 
 ### GET /api/v1/deals/:id/share
-**Status:** ✅ Built and tested locally
+**Status:** 🚀 Deployed to production
 **Auth:** NOT required (public endpoint)
 
 Response `200`: Read-only deal object (subset of fields, no sensitive user data)
@@ -274,7 +282,7 @@ Response `200`: Read-only deal object (subset of fields, no sensitive user data)
 ## PIPELINE ENDPOINTS
 
 ### GET /api/v1/pipeline
-**Status:** ✅ Built and tested locally
+**Status:** 🚀 Deployed to production
 **Auth:** Required
 
 Response `200`:
@@ -309,7 +317,7 @@ Each pipeline card:
 ---
 
 ### POST /api/v1/pipeline
-**Status:** ✅ Built and tested locally
+**Status:** 🚀 Deployed to production
 **Auth:** Required
 
 Request:
@@ -325,7 +333,7 @@ Response `201`: Pipeline entry object
 ---
 
 ### PUT /api/v1/pipeline/:id/stage
-**Status:** ✅ Built and tested locally
+**Status:** 🚀 Deployed to production
 **Auth:** Required
 
 Request:
@@ -341,7 +349,7 @@ Response `200`: Updated pipeline entry
 ---
 
 ### DELETE /api/v1/pipeline/:id
-**Status:** ✅ Built and tested locally
+**Status:** 🚀 Deployed to production
 **Auth:** Required
 
 Response `200`:
@@ -636,6 +644,8 @@ Response `200`:
 ## CALCULATOR INPUT SPECS
 > Frontend uses these to build the analyzer forms.
 > Backend uses these to validate incoming deal inputs.
+
+NOTE: wholesale.py and risk_score.py are fully implemented and deployed. buy_and_hold.py, flip.py, brrrr.py, and creative_finance.py are not yet implemented — backend returns 422 CALCULATOR_NOT_IMPLEMENTED for these strategies.
 
 ### Wholesale
 ```json
