@@ -64,7 +64,7 @@ export const api = {
   },
   deals: {
     create: (data: DealCreateRequest) =>
-      request<DealResponse>('/api/v1/deals', { method: 'POST', body: JSON.stringify(data) }),
+      request<DealResponse>('/api/v1/deals/', { method: 'POST', body: JSON.stringify(data) }),
     get: (id: string) =>
       request<DealResponse>(`/api/v1/deals/${id}`),
     update: (id: string, data: Record<string, unknown>) =>
@@ -72,6 +72,6 @@ export const api = {
   },
   pipeline: {
     add: (data: PipelineCreateRequest) =>
-      request<PipelineCardResponse>('/api/v1/pipeline', { method: 'POST', body: JSON.stringify(data) }),
+      request<PipelineCardResponse>('/api/v1/pipeline/', { method: 'POST', body: JSON.stringify(data) }),
   },
 }
