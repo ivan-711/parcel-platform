@@ -517,7 +517,7 @@ data: {"done": true}
 ## CHAT ENDPOINTS
 
 ### POST /api/v1/chat
-**Status:** ⬜ Not built yet
+**Status:** 🚀 Deployed to production
 **Auth:** Required
 
 Request:
@@ -538,7 +538,7 @@ Response: SSE stream (same format as document chat)
 ---
 
 ### GET /api/v1/chat/history
-**Status:** ⬜ Not built yet
+**Status:** 🚀 Deployed to production
 **Auth:** Required
 
 Response `200`: Last 50 messages for current user session

@@ -1,34 +1,43 @@
-"""Pydantic schemas for AI chat messages and session history."""
+"""Pydantic schemas for the AI chat endpoints."""
+
+from __future__ import annotations
 
 import uuid
-from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
 
 
-class ChatHistoryItem(BaseModel):
-    """A single message in the chat history provided for context."""
+class ChatHistoryMessage(BaseModel):
+    """A single message passed as context history."""
 
-    role: str  # user | assistant
+    role: str
     content: str
 
 
-class ChatMessageRequest(BaseModel):
-    """Request body for sending a message to the AI chat specialist."""
+class ChatRequest(BaseModel):
+    """Request body for POST /chat/."""
 
     message: str
-    context_type: Optional[str] = None   # general | deal | document
+    context_type: str = "general"
     context_id: Optional[uuid.UUID] = None
-    history: list[ChatHistoryItem] = []
+    history: list[ChatHistoryMessage] = []
+    session_id: str = "default"
 
 
 class ChatMessageResponse(BaseModel):
-    """Response returned after a chat message is persisted."""
+    """A persisted chat message returned from the history endpoint."""
 
     id: uuid.UUID
     role: str
     content: str
-    created_at: datetime
+    context_type: Optional[str]
+    created_at: str
 
     model_config = {"from_attributes": True}
+
+
+class ChatHistoryResponse(BaseModel):
+    """Response wrapper for GET /chat/history/."""
+
+    messages: list[ChatMessageResponse]

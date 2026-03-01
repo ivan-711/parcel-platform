@@ -94,3 +94,19 @@ export interface DealsFilters {
   per_page?: number
   sort?: string
 }
+
+export interface ChatMessage {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  context_type: string | null
+  created_at: string
+}
+
+export interface ChatRequest {
+  message: string
+  context_type: 'general' | 'deal' | 'document'
+  context_id: string | null
+  history: { role: string; content: string }[]
+  session_id: string
+}

@@ -126,6 +126,10 @@ export default {
           '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
           '50%': { transform: 'translate(40px, 60px) scale(0.9)' },
         },
+        blink: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -134,6 +138,7 @@ export default {
         drift1: 'drift1 15s ease-in-out infinite',
         drift2: 'drift2 12s ease-in-out infinite',
         drift3: 'drift3 18s ease-in-out infinite',
+        blink: 'blink 1s step-end infinite',
       },
     },
   },

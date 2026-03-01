@@ -14,7 +14,7 @@ from schemas.pipeline import (
     PipelineBoardResponse,
 )
 from schemas.documents import DocumentListItem, RiskFlag, KeyTerm, DocumentResponse
-from schemas.chat import ChatHistoryItem, ChatMessageRequest, ChatMessageResponse
+from schemas.chat import ChatHistoryMessage, ChatRequest, ChatMessageResponse, ChatHistoryResponse
 from schemas.portfolio import (
     PortfolioCreateRequest,
     PortfolioEntryResponse,
@@ -35,7 +35,7 @@ __all__ = [
     "DealCreateRequest", "DealUpdateRequest", "DealResponse", "DealListItem",
     "PipelineCreateRequest", "PipelineStageUpdateRequest", "PipelineCardResponse", "PipelineBoardResponse",
     "DocumentListItem", "RiskFlag", "KeyTerm", "DocumentResponse",
-    "ChatHistoryItem", "ChatMessageRequest", "ChatMessageResponse",
+    "ChatHistoryMessage", "ChatRequest", "ChatMessageResponse", "ChatHistoryResponse",
     "PortfolioCreateRequest", "PortfolioEntryResponse", "PortfolioSummary", "PortfolioResponse",
     "TeamCreateRequest", "TeamResponse", "TeamMemberResponse", "TeamDetailResponse", "InviteRequest", "RoleUpdateRequest",
 ]
