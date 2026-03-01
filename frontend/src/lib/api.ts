@@ -87,7 +87,16 @@ export const api = {
     },
   },
   pipeline: {
+    list: () =>
+      request<{ data: Record<string, PipelineCardResponse[]> }>('/api/v1/pipeline/'),
     add: (data: PipelineCreateRequest) =>
       request<PipelineCardResponse>('/api/v1/pipeline/', { method: 'POST', body: JSON.stringify(data) }),
+    updateStage: (pipelineId: string, body: { stage: string; notes?: string }) =>
+      request<{ id: string; deal_id: string; stage: string; notes: string | null; created_at: string }>(
+        `/api/v1/pipeline/${pipelineId}/stage/`,
+        { method: 'PUT', body: JSON.stringify(body) }
+      ),
+    remove: (pipelineId: string) =>
+      request<{ message: string }>(`/api/v1/pipeline/${pipelineId}/`, { method: 'DELETE' }),
   },
 }

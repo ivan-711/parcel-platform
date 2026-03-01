@@ -26,9 +26,9 @@ import { CSS } from '@dnd-kit/utilities'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GripVertical, Plus, Inbox } from 'lucide-react'
 import { api } from '@/lib/api'
-import { AppShell } from '@/components/layout/AppShell'
-import { PageHeader } from '@/components/layout/PageHeader'
-import { PageContent } from '@/components/layout/PageContent'
+import { AppShell } from '@/components/AppShell'
+import { PageHeader } from '@/components/PageHeader'
+import { PageContent } from '@/components/PageContent'
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -52,6 +52,9 @@ interface PipelineCard {
   entered_stage_at: string
 }
 
+interface PipelineData {
+  data: Record<Stage, PipelineCard[]>
+}
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 
@@ -301,7 +304,7 @@ export default function PipelinePage() {
   )
 
   // ── Data fetching ──────────────────────────────────────────────────────
-  const { data: pipelineData, isLoading } = useQuery({
+  const { data: pipelineData, isLoading } = useQuery<PipelineData>({
     queryKey: ['pipeline'],
     queryFn: () => api.pipeline.list(),
   })
@@ -311,8 +314,8 @@ export default function PipelinePage() {
 
   const board: Record<Stage, PipelineCard[]> =
     localBoard ??
-    (pipelineData?.data as Record<Stage, PipelineCard[]> | undefined) ??
-    (Object.fromEntries(STAGES.map((s) => [s.key, []])) as unknown as Record<Stage, PipelineCard[]>)
+    pipelineData?.data ??
+    Object.fromEntries(STAGES.map((s) => [s.key, []])) as Record<Stage, PipelineCard[]>
 
   // ── Stage update mutation ──────────────────────────────────────────────
   const updateStageMutation = useMutation({

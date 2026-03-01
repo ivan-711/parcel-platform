@@ -565,6 +565,7 @@ function BRRRRForm() {
     defaultValues: {
       new_loan_term_years: 30,
       refinance_ltv_pct: 75,
+      new_loan_rate: 7.0,
     },
   })
 

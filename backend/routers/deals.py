@@ -21,11 +21,12 @@ router = APIRouter(prefix="/deals", tags=["deals"])
 # ---------------------------------------------------------------------------
 
 _METRIC_MAP: dict[str, tuple[str, str]] = {
-    "wholesale": ("Profit", "profit"),
-    "creative_finance": ("Monthly Cash Flow", "monthly_cash_flow"),
-    "brrrr": ("Cash-on-Cash Return", "cash_on_cash"),
-    "buy_and_hold": ("Cash-on-Cash Return", "cash_on_cash"),
-    "flip": ("Gross Profit", "gross_profit"),
+    # strategy       → (display_label,            output_key)
+    "wholesale":        ("Maximum Allowable Offer", "mao"),
+    "buy_and_hold":     ("Cash-on-Cash Return",     "coc_return"),
+    "flip":             ("Gross Profit",             "gross_profit"),
+    "brrrr":            ("Money Left In",            "money_left_in"),
+    "creative_finance": ("Monthly Cash Flow",        "monthly_cash_flow"),
 }
 
 

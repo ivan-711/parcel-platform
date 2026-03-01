@@ -47,11 +47,19 @@ function isPercentKey(key: string): boolean {
 /** Determine if an output key should be formatted as currency. */
 function isCurrencyKey(key: string): boolean {
   const lower = key.toLowerCase()
-  return /price|cost|payment|flow|income|rent|noi|mao|profit|equity|down|taxes|insurance|proceeds|money_left|all_in|monthly_pi/.test(lower)
+  return /price|cost|payment|flow|income|rent|noi|mao|profit|equity|down|taxes|insurance|proceeds|money_left|all_in|monthly_pi|mgmt|maintenance/.test(lower)
 }
 
 /** Format an output value based on its key name. */
 function formatOutputValue(key: string, value: number | string | null | undefined): string {
+  // Fix 5: finance_type snake_case → Title Case
+  if (key === 'finance_type' && typeof value === 'string') {
+    return value
+      .split('_')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
+
   if (value === null || value === undefined) {
     return isPercentKey(key) ? '∞' : 'N/A'
   }
