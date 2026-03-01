@@ -25,7 +25,7 @@ _METRIC_MAP: dict[str, tuple[str, str]] = {
     "creative_finance": ("Monthly Cash Flow", "monthly_cash_flow"),
     "brrrr": ("Cash-on-Cash Return", "cash_on_cash"),
     "buy_and_hold": ("Cash-on-Cash Return", "cash_on_cash"),
-    "flip": ("Net Profit", "net_profit"),
+    "flip": ("Gross Profit", "gross_profit"),
 }
 
 
