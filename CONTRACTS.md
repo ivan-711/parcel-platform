@@ -759,7 +759,7 @@ Response `200`:
 > Frontend uses these to build the analyzer forms.
 > Backend uses these to validate incoming deal inputs.
 
-NOTE: wholesale.py and risk_score.py are fully implemented and deployed. buy_and_hold.py, flip.py, brrrr.py, and creative_finance.py are not yet implemented — backend returns 422 CALCULATOR_NOT_IMPLEMENTED for these strategies.
+NOTE: All five strategy calculators (wholesale.py, buy_and_hold.py, flip.py, brrrr.py, creative_finance.py) and risk_score.py are fully implemented and deployed.
 
 ### Wholesale
 ```json

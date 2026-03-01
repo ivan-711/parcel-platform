@@ -4,7 +4,7 @@
  * Optimistic updates on stage change with rollback on error.
  * Route: /pipeline
  */
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   DndContext,
@@ -24,7 +24,7 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { motion, AnimatePresence } from 'framer-motion'
-import { GripVertical, Plus, Inbox } from 'lucide-react'
+import { GripVertical, Plus, Inbox, MoreHorizontal, Trash2 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { AppShell } from '@/components/layout/AppShell'
 import { PageHeader } from '@/components/layout/PageHeader'
@@ -149,12 +149,27 @@ function RiskBadge({ score }: { score?: number }) {
 interface DealCardProps {
   card: PipelineCard
   isDragging?: boolean
+  onRemove?: (pipelineId: string, stage: Stage) => void
 }
 
-function DealCard({ card, isDragging = false }: DealCardProps) {
+function DealCard({ card, isDragging = false, onRemove }: DealCardProps) {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [menuOpen])
+
   return (
     <div
-      className="group rounded-xl border border-[#1A1A2E] bg-[#0F0F1A] p-4 space-y-3 transition-all duration-150"
+      className="group relative rounded-xl border border-[#1A1A2E] bg-[#0F0F1A] p-4 space-y-3 transition-all duration-150"
       style={{
         opacity: isDragging ? 0.4 : 1,
         boxShadow: isDragging ? 'none' : undefined,
@@ -165,11 +180,47 @@ function DealCard({ card, isDragging = false }: DealCardProps) {
         <p className="text-[13px] font-medium text-[#F1F5F9] leading-tight line-clamp-2">
           {card.address}
         </p>
-        <GripVertical
-          size={14}
-          className="text-[#334155] group-hover:text-[#475569] mt-0.5 flex-shrink-0 cursor-grab active:cursor-grabbing transition-colors"
-        />
+        <div className="flex items-center gap-1 flex-shrink-0 mt-0.5">
+          {onRemove && (
+            <button
+              type="button"
+              className="opacity-0 group-hover:opacity-100 text-[#334155] hover:text-[#94A3B8] transition-all"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation()
+                setMenuOpen((v) => !v)
+              }}
+            >
+              <MoreHorizontal size={14} />
+            </button>
+          )}
+          <GripVertical
+            size={14}
+            className="text-[#334155] group-hover:text-[#475569] cursor-grab active:cursor-grabbing transition-colors"
+          />
+        </div>
       </div>
+
+      {/* ⋯ dropdown */}
+      {menuOpen && onRemove && (
+        <div
+          ref={menuRef}
+          className="absolute top-10 right-3 z-40 rounded-lg border border-[#1A1A2E] bg-[#0F0F1A] shadow-lg py-1"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <button
+            type="button"
+            className="flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#94A3B8] hover:bg-[#1A1A2E] hover:text-red-400 w-full transition-colors"
+            onClick={() => {
+              onRemove(card.pipeline_id, card.stage)
+              setMenuOpen(false)
+            }}
+          >
+            <Trash2 size={14} />
+            Remove from pipeline
+          </button>
+        </div>
+      )}
 
       {/* Badges row */}
       <div className="flex items-center gap-2 flex-wrap">
@@ -192,7 +243,7 @@ function DealCard({ card, isDragging = false }: DealCardProps) {
   )
 }
 
-function SortableDealCard({ card }: { card: PipelineCard }) {
+function SortableDealCard({ card, onRemove }: { card: PipelineCard; onRemove?: (pipelineId: string, stage: Stage) => void }) {
   const {
     attributes,
     listeners,
@@ -210,7 +261,7 @@ function SortableDealCard({ card }: { card: PipelineCard }) {
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <DealCard card={card} isDragging={isDragging} />
+      <DealCard card={card} isDragging={isDragging} onRemove={onRemove} />
     </div>
   )
 }
@@ -222,9 +273,10 @@ interface KanbanColumnProps {
   cards: PipelineCard[]
   isOver: boolean
   isLoading: boolean
+  onRemove?: (pipelineId: string, stage: Stage) => void
 }
 
-function KanbanColumn({ stage, cards, isOver, isLoading }: KanbanColumnProps) {
+function KanbanColumn({ stage, cards, isOver, isLoading, onRemove }: KanbanColumnProps) {
   return (
     <div className="flex flex-col min-w-[240px] max-w-[240px]">
       {/* Column header */}
@@ -276,7 +328,7 @@ function KanbanColumn({ stage, cards, isOver, isLoading }: KanbanColumnProps) {
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.18, delay: i * 0.04 }}
                 >
-                  <SortableDealCard card={card} />
+                  <SortableDealCard card={card} onRemove={onRemove} />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -319,7 +371,6 @@ export default function PipelinePage() {
     mutationFn: ({ pipelineId, stage }: { pipelineId: string; stage: Stage }) =>
       api.pipeline.updateStage(pipelineId, { stage }),
     onError: () => {
-      // Rollback: reset local state, refetch
       setLocalBoard(null)
       queryClient.invalidateQueries({ queryKey: ['pipeline'] })
     },
@@ -328,6 +379,29 @@ export default function PipelinePage() {
       setLocalBoard(null)
     },
   })
+
+  // ── Remove mutation ──────────────────────────────────────────────────
+  const removeMutation = useMutation({
+    mutationFn: (pipelineId: string) => api.pipeline.remove(pipelineId),
+    onError: () => {
+      setLocalBoard(null)
+      queryClient.invalidateQueries({ queryKey: ['pipeline'] })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pipeline'] })
+      setLocalBoard(null)
+    },
+  })
+
+  const handleRemoveCard = useCallback(
+    (pipelineId: string, stage: Stage) => {
+      const newBoard = { ...board }
+      newBoard[stage] = newBoard[stage].filter((c) => c.pipeline_id !== pipelineId)
+      setLocalBoard(newBoard)
+      removeMutation.mutate(pipelineId)
+    },
+    [board, removeMutation]
+  )
 
   // ── Drag handlers ──────────────────────────────────────────────────────
   const handleDragStart = useCallback(
@@ -448,6 +522,7 @@ export default function PipelinePage() {
                 cards={board[stage.key] ?? []}
                 isOver={overColumnKey === stage.key}
                 isLoading={isLoading}
+                onRemove={handleRemoveCard}
               />
             ))}
           </div>
