@@ -107,16 +107,17 @@ export default function ChatPage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   // Load chat history
-  const { data: history, isLoading: historyLoading } = useQuery({
+  const { data: historyData, isLoading: historyLoading } = useQuery({
     queryKey: ['chat-history', contextType, contextId],
     queryFn: () => api.chat.history(),
     staleTime: Infinity,
   })
 
   useEffect(() => {
-    if (history && history.length > 0 && messages.length === 0) {
+    const historyMessages = historyData?.messages ?? []
+    if (historyMessages.length > 0 && messages.length === 0) {
       setMessages(
-        history.map((m) => ({
+        historyMessages.map((m) => ({
           id: m.id,
           role: m.role,
           content: m.content,
@@ -124,7 +125,7 @@ export default function ChatPage() {
         }))
       )
     }
-  }, [history]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [historyData]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-scroll on new content
   useEffect(() => {
@@ -272,7 +273,7 @@ export default function ChatPage() {
                   </p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2 w-full max-w-[480px]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-[480px]">
                 {SUGGESTED_QUESTIONS.map((q) => (
                   <button
                     key={q.question}

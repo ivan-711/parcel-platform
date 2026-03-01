@@ -121,7 +121,7 @@ export function AppShell({ children, title, noPadding }: AppShellProps) {
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Topbar title={title} />
-        <main className={cn('flex-1 overflow-hidden', !noPadding && 'overflow-y-auto p-6')}>
+        <main className={cn('flex-1', noPadding ? 'overflow-hidden' : 'overflow-y-auto p-6')}>
           {children}
         </main>
       </div>

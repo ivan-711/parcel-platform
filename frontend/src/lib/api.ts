@@ -101,6 +101,6 @@ export const api = {
       request<{ message: string }>(`/api/v1/pipeline/${pipelineId}/`, { method: 'DELETE' }),
   },
   chat: {
-    history: () => request<ChatMessage[]>('/api/v1/chat/history/'),
+    history: () => request<{ messages: ChatMessage[] }>('/api/v1/chat/history/'),
   },
 }
