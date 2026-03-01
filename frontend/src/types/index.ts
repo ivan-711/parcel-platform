@@ -100,6 +100,7 @@ export interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
   context_type: string | null
+  context_id: string | null
   created_at: string
 }
 

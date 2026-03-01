@@ -11,43 +11,9 @@ import type {
   PipelineCreateRequest,
   PipelineCardResponse,
   ChatMessage,
-  ChatRequest,
 } from '@/types'
 
 const API_URL = (import.meta.env.VITE_API_URL ?? 'https://parcel-platform-production.up.railway.app').replace('http://', 'https://')
-
-// Exported separately so it can be used as an async generator (not compatible with the request() wrapper)
-export async function* streamChat(body: ChatRequest): AsyncGenerator<string> {
-  const token = localStorage.getItem('parcel_token')
-  const res = await fetch(`${API_URL}/api/v1/chat/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    credentials: 'include',
-    body: JSON.stringify(body),
-  })
-  if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`)
-
-  const reader = res.body.getReader()
-  const decoder = new TextDecoder()
-  let buffer = ''
-
-  while (true) {
-    const { done, value } = await reader.read()
-    if (done) break
-    buffer += decoder.decode(value, { stream: true })
-    const lines = buffer.split('\n')
-    buffer = lines.pop() ?? ''
-    for (const line of lines) {
-      if (!line.startsWith('data: ')) continue
-      const parsed = JSON.parse(line.slice(6)) as { delta?: string; done?: boolean }
-      if (parsed.done) return
-      if (parsed.delta) yield parsed.delta
-    }
-  }
-}
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const token = localStorage.getItem('parcel_token')
@@ -135,6 +101,6 @@ export const api = {
       request<{ message: string }>(`/api/v1/pipeline/${pipelineId}/`, { method: 'DELETE' }),
   },
   chat: {
-    history: () => request<{ messages: ChatMessage[] }>('/api/v1/chat/history/'),
+    history: () => request<ChatMessage[]>('/api/v1/chat/history/'),
   },
 }

@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils'
 interface AppShellProps {
   children: React.ReactNode
   title?: string
+  noPadding?: boolean
 }
 
 interface NavItem {
@@ -114,13 +115,15 @@ function Topbar({ title }: { title?: string }) {
  * Root layout for all authenticated app pages.
  * Renders the sidebar, topbar, and scrollable main content area.
  */
-export function AppShell({ children, title }: AppShellProps) {
+export function AppShell({ children, title, noPadding }: AppShellProps) {
   return (
     <div className="flex h-screen bg-app-bg overflow-hidden">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Topbar title={title} />
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className={cn('flex-1 overflow-hidden', !noPadding && 'overflow-y-auto p-6')}>
+          {children}
+        </main>
       </div>
     </div>
   )
