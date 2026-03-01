@@ -21,7 +21,7 @@ export interface DealCreateRequest {
   zip_code: string
   property_type: string
   strategy: Strategy
-  inputs: Record<string, number>
+  inputs: Record<string, number | string>
 }
 
 export interface DealResponse {

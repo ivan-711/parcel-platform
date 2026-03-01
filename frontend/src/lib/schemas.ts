@@ -41,3 +41,30 @@ export const flipSchema = z.object({
 })
 
 export type FlipFormValues = z.infer<typeof flipSchema>
+
+export const brrrrSchema = z.object({
+  purchase_price: z.number({ message: 'Purchase price is required' }).min(1000),
+  rehab_costs: z.number({ message: 'Rehab costs are required' }).min(0),
+  arv_post_rehab: z.number({ message: 'ARV is required' }).min(1000),
+  refinance_ltv_pct: z.number({ message: 'Refinance LTV is required' }).min(50).max(80),
+  new_loan_rate: z.number({ message: 'Loan rate is required' }).min(0.1).max(25),
+  new_loan_term_years: z.number({ message: 'Loan term is required' }),
+  monthly_rent: z.number({ message: 'Monthly rent is required' }).min(100),
+  monthly_expenses: z.number({ message: 'Monthly expenses are required' }).min(0),
+})
+
+export type BRRRRFormValues = z.infer<typeof brrrrSchema>
+
+export const creativeFinanceSchema = z.object({
+  existing_loan_balance: z.number({ message: 'Loan balance is required' }).min(0),
+  existing_interest_rate: z.number({ message: 'Interest rate is required' }).min(0).max(25),
+  monthly_piti: z.number({ message: 'Monthly PITI is required' }).min(0),
+  monthly_rent_estimate: z.number({ message: 'Rent estimate is required' }).min(100),
+  monthly_expenses: z.number({ message: 'Monthly expenses are required' }).min(0),
+  finance_type: z.enum(['subject_to', 'seller_finance']),
+  new_rate: z.number().min(0).max(25),
+  new_term_years: z.number().min(0).max(40),
+  arv: z.number({ message: 'ARV is required' }).min(1000),
+})
+
+export type CreativeFinanceFormValues = z.infer<typeof creativeFinanceSchema>

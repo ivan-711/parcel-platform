@@ -41,17 +41,20 @@ function getRecommendationColor(value: string): string {
 /** Determine if an output key should be formatted as a percentage. */
 function isPercentKey(key: string): boolean {
   const lower = key.toLowerCase()
-  return /rate|return|pct|cap_rate|coc|roi|vacancy|maintenance|mgmt/.test(lower)
+  return /rate|return|pct|cap_rate|coc|roi|vacancy|maintenance|mgmt|yield/.test(lower)
 }
 
 /** Determine if an output key should be formatted as currency. */
 function isCurrencyKey(key: string): boolean {
   const lower = key.toLowerCase()
-  return /price|cost|payment|flow|income|rent|noi|mao|profit|equity|down|taxes|insurance/.test(lower)
+  return /price|cost|payment|flow|income|rent|noi|mao|profit|equity|down|taxes|insurance|proceeds|money_left|all_in|monthly_pi/.test(lower)
 }
 
 /** Format an output value based on its key name. */
-function formatOutputValue(key: string, value: number | string): string {
+function formatOutputValue(key: string, value: number | string | null | undefined): string {
+  if (value === null || value === undefined) {
+    return isPercentKey(key) ? '∞' : 'N/A'
+  }
   if (typeof value === 'string') return value
   if (isPercentKey(key)) return formatPercent(value)
   if (isCurrencyKey(key)) return formatCurrency(value)
@@ -63,7 +66,7 @@ type RenderMode = 'standard' | 'color_coded' | 'badge'
 interface KPIDefinition {
   key: string
   label: string
-  format: 'currency' | 'percent'
+  format: 'currency' | 'percent' | 'decimal' | 'percent_or_infinite'
   renderMode: RenderMode
 }
 
@@ -83,6 +86,20 @@ function getStrategyKPIs(strategy: string): KPIDefinition[] {
         { key: 'roi', label: 'ROI', format: 'percent', renderMode: 'standard' },
         { key: 'annualized_roi', label: 'Annualized ROI', format: 'percent', renderMode: 'standard' },
         { key: 'total_cost', label: 'Total Cost', format: 'currency', renderMode: 'standard' },
+      ]
+    case 'brrrr':
+      return [
+        { key: 'money_left_in', label: 'Money Left In', format: 'currency', renderMode: 'standard' },
+        { key: 'coc_return', label: 'Cash-on-Cash', format: 'percent_or_infinite', renderMode: 'standard' },
+        { key: 'monthly_cash_flow', label: 'Monthly Cash Flow', format: 'currency', renderMode: 'color_coded' },
+        { key: 'equity_captured', label: 'Equity Captured', format: 'currency', renderMode: 'standard' },
+      ]
+    case 'creative_finance':
+      return [
+        { key: 'monthly_cash_flow', label: 'Monthly Cash Flow', format: 'currency', renderMode: 'color_coded' },
+        { key: 'dscr', label: 'DSCR', format: 'decimal', renderMode: 'standard' },
+        { key: 'equity_day_one', label: 'Equity Day One', format: 'currency', renderMode: 'standard' },
+        { key: 'effective_yield', label: 'Effective Yield', format: 'percent', renderMode: 'standard' },
       ]
     case 'wholesale':
     default:
@@ -157,6 +174,31 @@ export default function ResultsPage() {
   /** Render a single KPI card based on its definition and render mode. */
   const renderKPI = (kpi: KPIDefinition) => {
     const rawValue = outputs[kpi.key]
+
+    // Handle percent_or_infinite — null means infinite capital return
+    if (kpi.format === 'percent_or_infinite') {
+      if (rawValue === null || rawValue === undefined) {
+        return (
+          <div key={kpi.key} className="rounded-xl border border-border-subtle bg-app-surface p-5 space-y-1">
+            <p className="text-xs font-medium text-text-secondary uppercase tracking-wide">
+              {kpi.label}
+            </p>
+            <p className="text-3xl font-semibold font-mono text-accent-success">∞</p>
+          </div>
+        )
+      }
+      return (
+        <KPICard key={kpi.key} label={kpi.label} value={rawValue as number} format="percent" />
+      )
+    }
+
+    // Handle decimal (e.g., DSCR) — map to KPICard 'number' format
+    if (kpi.format === 'decimal') {
+      const numValue = typeof rawValue === 'number' ? rawValue : 0
+      return (
+        <KPICard key={kpi.key} label={kpi.label} value={numValue} format="number" />
+      )
+    }
 
     if (kpi.renderMode === 'badge') {
       const strValue = typeof rawValue === 'string' ? rawValue : 'N/A'
@@ -237,7 +279,7 @@ export default function ResultsPage() {
                     </span>
                   ) : (
                     <span className="font-mono text-[13px] text-text-primary">
-                      {formatOutputValue(key, value as number | string)}
+                      {formatOutputValue(key, value as number | string | null | undefined)}
                     </span>
                   )}
                 </div>
