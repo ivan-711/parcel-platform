@@ -359,6 +359,56 @@ Response `200`:
 
 ---
 
+## DASHBOARD ENDPOINTS
+
+### GET /api/v1/dashboard/stats/
+**Status:** 🚀 Deployed to production
+**Auth:** Required
+
+Response `200`:
+```json
+{
+  "total_deals": 12,
+  "active_pipeline_deals": 5,
+  "deals_by_strategy": {
+    "wholesale": 4,
+    "creative_finance": 2,
+    "brrrr": 3,
+    "buy_and_hold": 2,
+    "flip": 1
+  },
+  "pipeline_by_stage": {
+    "lead": 2,
+    "analyzing": 1,
+    "offer_sent": 1,
+    "under_contract": 0,
+    "due_diligence": 1,
+    "closed": 3,
+    "dead": 1
+  },
+  "recent_deals": [
+    {
+      "id": "uuid",
+      "address": "123 Main St",
+      "strategy": "wholesale",
+      "risk_score": 42,
+      "status": "saved",
+      "created_at": "ISO8601",
+      "outputs": {}
+    }
+  ]
+}
+```
+
+Notes:
+- `deals_by_strategy` always includes all 5 strategies (defaulting to 0)
+- `pipeline_by_stage` always includes all 7 stages (defaulting to 0)
+- `active_pipeline_deals` = sum of all pipeline stages except "closed" and "dead"
+- `recent_deals` returns the 5 most recent deals (newest first)
+- Only non-deleted deals are counted
+
+---
+
 ## DOCUMENT ENDPOINTS
 
 ### POST /api/v1/documents/upload
