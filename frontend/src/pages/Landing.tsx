@@ -7,7 +7,9 @@
 
 import { useEffect, useState } from 'react'
 import { ParallaxBackground } from '@/components/landing/ParallaxBackground'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowRight,
@@ -320,6 +322,25 @@ function DemoCard() {
 ═══════════════════════════════════════════════════════════════════════════ */
 
 function Hero() {
+  const navigate = useNavigate()
+  const setAuth = useAuthStore((s) => s.setAuth)
+  const [demoLoading, setDemoLoading] = useState(false)
+  const [demoError, setDemoError] = useState(false)
+
+  async function handleDemoLogin() {
+    setDemoLoading(true)
+    setDemoError(false)
+    try {
+      const { user, access_token } = await api.auth.login('demo@parcel.app', 'Demo1234!')
+      setAuth(user, access_token)
+      navigate('/dashboard')
+    } catch {
+      setDemoError(true)
+    } finally {
+      setDemoLoading(false)
+    }
+  }
+
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center pt-16 overflow-hidden">
 
@@ -409,10 +430,18 @@ function Hero() {
               <ArrowRight size={14} className="ml-1.5" />
             </Button>
           </Link>
-          <button className="h-11 px-6 text-sm text-text-secondary hover:text-text-primary border border-border-default hover:border-border-strong rounded-lg transition-colors duration-150 cursor-pointer font-medium">
-            View demo
+          <button
+            onClick={handleDemoLogin}
+            disabled={demoLoading}
+            className="h-11 px-6 text-sm text-text-secondary hover:text-text-primary border border-border-default hover:border-border-strong rounded-lg transition-colors duration-150 cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {demoLoading ? 'Loading...' : 'View demo'}
           </button>
         </motion.div>
+
+        {demoError && (
+          <p className="text-xs text-red-400 mt-2">Demo unavailable — try again shortly</p>
+        )}
 
         {/* Interactive demo card */}
         <DemoCard />

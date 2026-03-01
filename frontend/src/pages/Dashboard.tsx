@@ -1,11 +1,13 @@
+import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, GitBranch, FileText, MessageSquare, AlertCircle } from 'lucide-react'
+import { ArrowRight, GitBranch, FileText, MessageSquare, AlertCircle, X } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { KPICard } from '@/components/ui/KPICard'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { useDashboard } from '@/hooks/useDashboard'
+import { useAuthStore } from '@/stores/authStore'
 
 interface HintCard {
   icon: React.ElementType
@@ -74,11 +76,29 @@ const STAGE_LABELS: Record<string, string> = {
 export default function Dashboard() {
   const navigate = useNavigate()
   const { data: stats, isLoading, isError, error } = useDashboard()
+  const user = useAuthStore((s) => s.user)
+  const isDemoUser = user?.email === 'demo@parcel.app'
+  const [bannerDismissed, setBannerDismissed] = useState(false)
 
   /* ── Loading state ── */
+  const demoBanner = isDemoUser && !bannerDismissed ? (
+    <div className="bg-[#6366F1]/10 border border-[#6366F1]/30 rounded-xl px-4 py-3 text-[13px] text-[#C4B5FD] flex items-center justify-between mb-6">
+      <p>
+        You're viewing a demo account. Create your free account to analyze your own deals.{' '}
+        <Link to="/register" className="font-semibold text-accent-primary hover:underline">
+          Get Started &rarr;
+        </Link>
+      </p>
+      <button onClick={() => setBannerDismissed(true)} className="ml-4 shrink-0 text-[#C4B5FD]/60 hover:text-[#C4B5FD] transition-colors cursor-pointer">
+        <X size={16} />
+      </button>
+    </div>
+  ) : null
+
   if (isLoading) {
     return (
       <AppShell title="Dashboard">
+        {demoBanner}
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -96,6 +116,7 @@ export default function Dashboard() {
   if (isError) {
     return (
       <AppShell title="Dashboard">
+        {demoBanner}
         <div className="rounded-xl border border-accent-danger/30 bg-accent-danger/10 p-6 flex items-start gap-3 max-w-lg">
           <AlertCircle size={20} className="text-accent-danger shrink-0 mt-0.5" />
           <div className="space-y-1">
@@ -113,6 +134,7 @@ export default function Dashboard() {
   if (!stats || stats.total_deals === 0) {
     return (
       <AppShell title="Dashboard">
+        {demoBanner}
         <motion.div
           className="max-w-2xl space-y-6"
           variants={containerVariants}
@@ -178,6 +200,7 @@ export default function Dashboard() {
 
   return (
     <AppShell title="Dashboard">
+      {demoBanner}
       <motion.div
         className="space-y-8"
         variants={containerVariants}
