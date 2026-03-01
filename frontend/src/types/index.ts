@@ -56,3 +56,41 @@ export interface PipelineCardResponse {
   days_in_stage: number
   entered_stage_at: string
 }
+
+export interface RecentDeal {
+  id: string
+  address: string
+  strategy: Strategy
+  risk_score: number | null
+  status: string
+  created_at: string
+  outputs: Record<string, unknown>
+}
+
+export interface DashboardStats {
+  total_deals: number
+  active_pipeline_deals: number
+  deals_by_strategy: Record<string, number>
+  pipeline_by_stage: Record<string, number>
+  recent_deals: RecentDeal[]
+}
+
+export interface DealListItem {
+  id: string
+  address: string
+  zip_code: string
+  strategy: Strategy
+  primary_metric_label: string | null
+  primary_metric_value: number | null
+  risk_score: number | null
+  status: string
+  created_at: string
+}
+
+export interface DealsFilters {
+  strategy?: string
+  status?: string
+  page?: number
+  per_page?: number
+  sort?: string
+}

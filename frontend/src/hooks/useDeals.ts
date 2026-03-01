@@ -3,7 +3,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { api } from '@/lib/api'
-import type { DealCreateRequest, PipelineCreateRequest } from '@/types'
+import type { DealCreateRequest, DealsFilters, PipelineCreateRequest } from '@/types'
+
+/** Fetches a paginated, filterable list of the current user's deals. */
+export function useDeals(filters: DealsFilters) {
+  return useQuery({
+    queryKey: ['deals', filters],
+    queryFn: () => api.deals.list(filters),
+    staleTime: 30_000,
+  })
+}
 
 export function useCreateDeal() {
   const navigate = useNavigate()

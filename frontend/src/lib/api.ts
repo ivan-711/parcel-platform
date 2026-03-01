@@ -5,6 +5,9 @@ import type {
   User,
   DealCreateRequest,
   DealResponse,
+  DealListItem,
+  DealsFilters,
+  DashboardStats,
   PipelineCreateRequest,
   PipelineCardResponse,
 } from '@/types'
@@ -62,6 +65,9 @@ export const api = {
       request<{ message: string }>('/api/v1/auth/logout', { method: 'POST' }),
     me: () => request<User>('/api/v1/auth/me'),
   },
+  dashboard: {
+    stats: () => request<DashboardStats>('/api/v1/dashboard/stats/'),
+  },
   deals: {
     create: (data: DealCreateRequest) =>
       request<DealResponse>('/api/v1/deals/', { method: 'POST', body: JSON.stringify(data) }),
@@ -69,6 +75,16 @@ export const api = {
       request<DealResponse>(`/api/v1/deals/${id}`),
     update: (id: string, data: Record<string, unknown>) =>
       request<DealResponse>(`/api/v1/deals/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    list: (filters?: DealsFilters) => {
+      const params = new URLSearchParams()
+      if (filters?.strategy) params.set('strategy', filters.strategy)
+      if (filters?.status) params.set('status', filters.status)
+      if (filters?.page) params.set('page', String(filters.page))
+      if (filters?.per_page) params.set('per_page', String(filters.per_page))
+      if (filters?.sort) params.set('sort', filters.sort)
+      const qs = params.toString()
+      return request<DealListItem[]>(`/api/v1/deals/${qs ? '?' + qs : ''}`)
+    },
   },
   pipeline: {
     add: (data: PipelineCreateRequest) =>
