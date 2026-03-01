@@ -143,12 +143,15 @@ function WholesaleForm() {
   })
 
   const onSubmit = (values: WholesaleFormValues) => {
+    const coerced = Object.fromEntries(
+      Object.entries(values).map(([k, v]) => [k, Number(v)])
+    )
     createDeal.mutate({
       address: `Analysis — ${new Date().toLocaleDateString()}`,
       zip_code: '00000',
       property_type: 'single_family',
       strategy: 'wholesale',
-      inputs: { ...values },
+      inputs: coerced,
     })
   }
 
@@ -236,12 +239,15 @@ function BuyAndHoldForm() {
   })
 
   const onSubmit = (values: BuyAndHoldFormValues) => {
+    const coerced = Object.fromEntries(
+      Object.entries(values).map(([k, v]) => [k, Number(v)])
+    )
     createDeal.mutate({
       address: `Buy & Hold Analysis — ${new Date().toLocaleDateString()}`,
       zip_code: '00000',
       property_type: 'single_family',
       strategy: 'buy_and_hold',
-      inputs: { ...values },
+      inputs: coerced,
     })
   }
 
