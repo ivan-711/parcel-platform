@@ -11,63 +11,15 @@ import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { RiskGauge } from '@/components/ui/RiskGauge'
 import { Button } from '@/components/ui/button'
 import { useDeal, useAddToPipeline, useUpdateDeal } from '@/hooks/useDeals'
+import { api } from '@/lib/api'
+import {
+  formatLabel,
+  formatCurrency,
+  formatPercent,
+  formatOutputValue,
+  getRecommendationColor,
+} from '@/lib/format'
 import type { Strategy } from '@/types'
-
-/** Format an output key into a human-readable label. */
-function formatLabel(key: string): string {
-  return key
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase())
-}
-
-/** Format a numeric value as currency. */
-function formatCurrency(value: number): string {
-  return `$${value.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
-}
-
-/** Format a numeric value as a percentage. */
-function formatPercent(value: number): string {
-  return `${value.toFixed(2)}%`
-}
-
-/** Color class for recommendation badge. */
-function getRecommendationColor(value: string): string {
-  const lower = value.toLowerCase()
-  if (lower.includes('strong') || lower.includes('good')) return 'bg-emerald-500/20 text-emerald-400'
-  if (lower.includes('marginal') || lower.includes('caution')) return 'bg-amber-500/20 text-amber-400'
-  return 'bg-red-500/20 text-red-400'
-}
-
-/** Determine if an output key should be formatted as a percentage. */
-function isPercentKey(key: string): boolean {
-  const lower = key.toLowerCase()
-  return /rate|return|pct|cap_rate|coc|roi|vacancy|maintenance|mgmt|yield/.test(lower)
-}
-
-/** Determine if an output key should be formatted as currency. */
-function isCurrencyKey(key: string): boolean {
-  const lower = key.toLowerCase()
-  return /price|cost|payment|flow|income|rent|noi|mao|profit|equity|down|taxes|insurance|proceeds|money_left|all_in|monthly_pi|mgmt|maintenance/.test(lower)
-}
-
-/** Format an output value based on its key name. */
-function formatOutputValue(key: string, value: number | string | null | undefined): string {
-  // Fix 5: finance_type snake_case → Title Case
-  if (key === 'finance_type' && typeof value === 'string') {
-    return value
-      .split('_')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
-  }
-
-  if (value === null || value === undefined) {
-    return isPercentKey(key) ? '∞' : 'N/A'
-  }
-  if (typeof value === 'string') return value
-  if (isPercentKey(key)) return formatPercent(value)
-  if (isCurrencyKey(key)) return formatCurrency(value)
-  return value.toLocaleString('en-US', { maximumFractionDigits: 2 })
-}
 
 type RenderMode = 'standard' | 'color_coded' | 'badge'
 
@@ -126,6 +78,7 @@ export default function ResultsPage() {
   const addToPipeline = useAddToPipeline()
   const updateDeal = useUpdateDeal(dealId ?? '')
   const [saved, setSaved] = useState(false)
+  const [sharing, setSharing] = useState(false)
 
   if (isLoading || !deal) {
     return (
@@ -161,9 +114,22 @@ export default function ResultsPage() {
   }
 
   const handleShare = async () => {
-    const url = `${window.location.origin}/share/${deal.id}`
-    await navigator.clipboard.writeText(url)
-    toast.success('Share link copied to clipboard')
+    if (deal.status === 'shared') {
+      const url = `${window.location.origin}/share/${deal.id}`
+      await navigator.clipboard.writeText(url)
+      toast.success('Share link copied to clipboard')
+      return
+    }
+    setSharing(true)
+    try {
+      const res = await api.deals.share(deal.id)
+      await navigator.clipboard.writeText(res.share_url)
+      toast.success('Deal shared! Link copied to clipboard')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to share deal')
+    } finally {
+      setSharing(false)
+    }
   }
 
   const handleSave = () => {
@@ -319,9 +285,9 @@ export default function ResultsPage() {
             <Plus size={14} />
             {addToPipeline.isPending ? 'Adding...' : 'Add to Pipeline'}
           </Button>
-          <Button variant="outline" onClick={handleShare} className="gap-2">
+          <Button variant="outline" onClick={handleShare} disabled={sharing} className="gap-2">
             <Share2 size={14} />
-            Share Deal
+            {sharing ? 'Sharing...' : deal.status === 'shared' ? 'Copy Share Link' : 'Share Deal'}
           </Button>
           <Button
             onClick={handleSave}

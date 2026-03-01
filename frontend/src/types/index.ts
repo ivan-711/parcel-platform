@@ -111,3 +111,22 @@ export interface ChatRequest {
   history: { role: string; content: string }[]
   session_id: string
 }
+
+export interface SharedDealResponse {
+  id: string
+  address: string
+  zip_code: string
+  property_type: string
+  strategy: Strategy
+  inputs: Record<string, number | string>
+  outputs: Record<string, number | string>
+  risk_score: number | null
+  primary_metric_label: string | null
+  primary_metric_value: number | null
+  shared_by: { name: string }
+  created_at: string
+}
+
+export interface ShareDealActionResponse extends DealResponse {
+  share_url: string
+}

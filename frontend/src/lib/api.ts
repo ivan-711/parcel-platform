@@ -11,6 +11,8 @@ import type {
   PipelineCreateRequest,
   PipelineCardResponse,
   ChatMessage,
+  SharedDealResponse,
+  ShareDealActionResponse,
 } from '@/types'
 
 const API_URL = (import.meta.env.VITE_API_URL ?? 'https://parcel-platform-production.up.railway.app').replace('http://', 'https://')
@@ -38,6 +40,24 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     window.location.href = '/login'
     throw new Error('Session expired')
   }
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: 'Unknown error' }))
+    throw new Error((error as { error?: string }).error ?? `HTTP ${res.status}`)
+  }
+
+  return res.json() as Promise<T>
+}
+
+/** Public request — no auth header, no 401 redirect. Used for unauthenticated endpoints. */
+async function requestPublic<T>(path: string, options?: RequestInit): Promise<T> {
+  const res = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options?.headers as Record<string, string>),
+    },
+  })
 
   if (!res.ok) {
     const error = await res.json().catch(() => ({ error: 'Unknown error' }))
@@ -86,6 +106,10 @@ export const api = {
       const qs = params.toString()
       return request<DealListItem[]>(`/api/v1/deals/${qs ? '?' + qs : ''}`)
     },
+    getShared: (id: string) =>
+      requestPublic<SharedDealResponse>(`/api/v1/deals/${id}/share/`),
+    share: (id: string) =>
+      request<ShareDealActionResponse>(`/api/v1/deals/${id}/share/`, { method: 'PUT' }),
   },
   pipeline: {
     list: () =>

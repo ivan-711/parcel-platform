@@ -1,6 +1,7 @@
 """Deals router — CRUD for deal analyses plus a public share endpoint."""
 
 import importlib
+import os
 from datetime import datetime
 from typing import Any, Optional
 from uuid import UUID
@@ -12,7 +13,15 @@ from core.security.jwt import get_current_user
 from database import get_db
 from models.deals import Deal
 from models.users import User
-from schemas.deals import DealCreateRequest, DealListItem, DealResponse, DealUpdateRequest
+from schemas.deals import (
+    DealCreateRequest,
+    DealListItem,
+    DealResponse,
+    DealUpdateRequest,
+    ShareDealActionResponse,
+    SharedByInfo,
+    SharedDealResponse,
+)
 
 router = APIRouter(prefix="/deals", tags=["deals"])
 
@@ -213,14 +222,54 @@ async def delete_deal(
     db.commit()
 
 
-@router.get("/{deal_id}/share", response_model=DealResponse)
+@router.put("/{deal_id}/share/", response_model=ShareDealActionResponse)
+async def share_deal(
+    deal_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> ShareDealActionResponse:
+    """Mark a deal as shared and return the share URL.
+
+    Only the deal owner can share. Sets deal.status to 'shared'.
+    The share URL uses the FRONTEND_URL environment variable.
+    """
+    deal = _get_owned_deal(deal_id, current_user, db)
+
+    deal.status = "shared"
+    deal.updated_at = datetime.utcnow()
+    db.commit()
+    db.refresh(deal)
+
+    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+    share_url = f"{frontend_url}/share/{deal.id}"
+
+    return ShareDealActionResponse(
+        id=deal.id,
+        user_id=deal.user_id,
+        team_id=deal.team_id,
+        address=deal.address,
+        zip_code=deal.zip_code,
+        property_type=deal.property_type,
+        strategy=deal.strategy,
+        inputs=deal.inputs or {},
+        outputs=deal.outputs or {},
+        risk_score=deal.risk_score,
+        status=deal.status,
+        share_url=share_url,
+        created_at=deal.created_at,
+        updated_at=deal.updated_at,
+    )
+
+
+@router.get("/{deal_id}/share/", response_model=SharedDealResponse)
 async def get_shared_deal(
     deal_id: UUID,
     db: Session = Depends(get_db),
-) -> DealResponse:
-    """Public endpoint — returns a deal's details without requiring authentication.
+) -> SharedDealResponse:
+    """Public endpoint — returns a shared deal without requiring authentication.
 
-    Only deals with status 'shared' are accessible here.
+    Only deals with status 'shared' are accessible. Sensitive fields like
+    user_id and team_id are excluded from the response.
     """
     deal = db.query(Deal).filter(
         Deal.id == deal_id,
@@ -234,4 +283,20 @@ async def get_shared_deal(
             detail={"error": "Shared deal not found", "code": "DEAL_NOT_FOUND"},
         )
 
-    return DealResponse.model_validate(deal)
+    first_name = deal.user.name.split()[0] if deal.user and deal.user.name else "Unknown"
+    label, value = _primary_metric(deal.strategy, deal.outputs or {})
+
+    return SharedDealResponse(
+        id=deal.id,
+        address=deal.address,
+        zip_code=deal.zip_code,
+        property_type=deal.property_type,
+        strategy=deal.strategy,
+        inputs=deal.inputs or {},
+        outputs=deal.outputs or {},
+        risk_score=deal.risk_score,
+        primary_metric_label=label,
+        primary_metric_value=value,
+        shared_by=SharedByInfo(name=first_name),
+        created_at=deal.created_at,
+    )

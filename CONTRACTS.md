@@ -271,11 +271,75 @@ Response `200`:
 
 ---
 
-### GET /api/v1/deals/:id/share
-**Status:** 🚀 Deployed to production
+### PUT /api/v1/deals/:id/share/
+**Status:** ✅ Built and tested locally
+**Auth:** Required
+
+No request body.
+
+Response `200`:
+```json
+{
+  "id": "uuid",
+  "user_id": "uuid",
+  "team_id": "uuid | null",
+  "address": "string",
+  "zip_code": "string",
+  "property_type": "string",
+  "strategy": "string",
+  "inputs": {},
+  "outputs": {},
+  "risk_score": 42,
+  "status": "shared",
+  "share_url": "https://parcel.app/share/{deal_id}",
+  "created_at": "ISO8601",
+  "updated_at": "ISO8601"
+}
+```
+
+Errors:
+- `401 NOT_AUTHENTICATED` — no valid token
+- `404 DEAL_NOT_FOUND` — deal does not exist or is soft-deleted
+- `403 ACCESS_DENIED` — deal belongs to another user
+
+Notes:
+- Only the deal owner can share
+- Idempotent — re-sharing an already-shared deal returns success
+- `share_url` is constructed from `FRONTEND_URL` environment variable
+
+---
+
+### GET /api/v1/deals/:id/share/
+**Status:** ✅ Built and tested locally
 **Auth:** NOT required (public endpoint)
 
-Response `200`: Read-only deal object (subset of fields, no sensitive user data)
+Response `200`:
+```json
+{
+  "id": "uuid",
+  "address": "string",
+  "zip_code": "string",
+  "property_type": "string",
+  "strategy": "wholesale | creative_finance | brrrr | buy_and_hold | flip",
+  "inputs": {},
+  "outputs": {},
+  "risk_score": 42,
+  "primary_metric_label": "Cash-on-Cash Return",
+  "primary_metric_value": 8.4,
+  "shared_by": {
+    "name": "Ivan"
+  },
+  "created_at": "ISO8601"
+}
+```
+
+Errors:
+- `404 DEAL_NOT_FOUND` — deal does not exist, is not shared, or is soft-deleted
+
+Notes:
+- No user PII exposed (no email, user_id, or team_id)
+- `shared_by.name` is the deal owner's first name only
+- `primary_metric_label` and `primary_metric_value` are strategy-dependent (null if outputs are empty)
 
 ---
 

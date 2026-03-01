@@ -172,3 +172,47 @@ class DealListItem(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class SharedByInfo(BaseModel):
+    """Minimal author info for the public share page — first name only."""
+
+    name: str
+
+
+class SharedDealResponse(BaseModel):
+    """Public deal view returned by GET /deals/:id/share/ — no sensitive user data."""
+
+    id: uuid.UUID
+    address: str
+    zip_code: str
+    property_type: str
+    strategy: str
+    inputs: dict[str, Any]
+    outputs: dict[str, Any]
+    risk_score: Optional[int]
+    primary_metric_label: Optional[str]
+    primary_metric_value: Optional[float]
+    shared_by: SharedByInfo
+    created_at: datetime
+
+
+class ShareDealActionResponse(BaseModel):
+    """Response for PUT /deals/:id/share/ — full deal data plus the generated share URL."""
+
+    id: uuid.UUID
+    user_id: uuid.UUID
+    team_id: Optional[uuid.UUID]
+    address: str
+    zip_code: str
+    property_type: str
+    strategy: str
+    inputs: dict[str, Any]
+    outputs: dict[str, Any]
+    risk_score: Optional[int]
+    status: str
+    share_url: str
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
