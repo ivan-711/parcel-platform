@@ -3,7 +3,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Column, Enum, ForeignKey, String
+from sqlalchemy import Boolean, Column, Enum, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -23,6 +23,9 @@ class User(TimestampMixin, Base):
     password_hash = Column(String, nullable=False)
     role = Column(UserRole, nullable=False, default="investor")
     team_id = Column(UUID(as_uuid=True), ForeignKey("teams.id"), nullable=True)
+    email_notifications = Column(
+        Boolean, nullable=False, default=True, server_default="true"
+    )
 
     # Relationships
     deals = relationship("Deal", back_populates="user", foreign_keys="Deal.user_id")

@@ -10,6 +10,7 @@ from anthropic import Anthropic
 
 from database import SessionLocal
 from models.documents import Document
+from models.users import User
 
 logger = logging.getLogger(__name__)
 
@@ -135,6 +136,23 @@ def process_document(document_id: str, file_bytes: bytes, file_type: str) -> Non
         doc.key_terms = result.get("key_terms")
         doc.status = "complete"
         db.commit()
+
+        # Send email notification if user has notifications enabled
+        try:
+            user = db.query(User).filter(User.id == doc.user_id).first()
+            if user and user.email_notifications:
+                from core.email import send_document_complete_email
+
+                send_document_complete_email(
+                    user_email=user.email,
+                    user_name=user.name or user.email,
+                    filename=doc.original_filename,
+                    document_id=str(doc.id),
+                )
+        except Exception as e:
+            logger.warning(
+                "Email notification failed for document %s: %s", document_id, e
+            )
 
     except json.JSONDecodeError as e:
         logger.error("JSON parse error for document %s: %s", document_id, e)
