@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Search, AlertCircle, Columns, Bookmark, Check, X, Trash2 } from 'lucide-react'
+import { Plus, Search, AlertCircle, Columns, Bookmark, Check, X, Trash2, CheckSquare } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
@@ -100,6 +100,10 @@ export default function MyDeals() {
   const [page, setPage] = useState(1)
   const [compareIds, setCompareIds] = useState<Set<string>>(new Set())
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [selectionMode, setSelectionMode] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const queryClient = useQueryClient()
 
   const deleteDeal = useMutation({
@@ -143,6 +147,45 @@ export default function MyDeals() {
       }
       return next
     })
+  }
+
+  const toggleSelection = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }
+
+  const exitSelectionMode = () => {
+    setSelectionMode(false)
+    setSelectedIds(new Set())
+  }
+
+  const selectAll = () => {
+    if (!deals) return
+    const allIds = deals.map(d => d.id)
+    const allSelected = allIds.every(id => selectedIds.has(id))
+    if (allSelected) {
+      setSelectedIds(new Set())
+    } else {
+      setSelectedIds(new Set(allIds))
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return
+    setIsDeleting(true)
+    try {
+      await Promise.all(Array.from(selectedIds).map(id => api.deals.delete(id)))
+      queryClient.invalidateQueries({ queryKey: ['deals'] })
+      toast.success(`${selectedIds.size} deal${selectedIds.size > 1 ? 's' : ''} deleted`)
+    } catch {
+      toast.error('Some deals could not be deleted')
+    } finally {
+      exitSelectionMode()
+      setIsDeleting(false)
+    }
   }
 
   const filters: DealsFilters = {
@@ -205,13 +248,48 @@ export default function MyDeals() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-text-primary">My Deals</h1>
-          <Link
-            to="/analyze"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-primary hover:bg-accent-primary/90 text-white text-sm font-medium transition-colors"
-          >
-            <Plus size={16} />
-            Analyze New Deal
-          </Link>
+          <div className="flex items-center gap-2">
+            {selectionMode ? (
+              <>
+                <button
+                  onClick={selectAll}
+                  className="text-xs font-medium text-text-secondary hover:text-text-primary transition-colors"
+                >
+                  {deals && deals.every(d => selectedIds.has(d.id)) ? 'Deselect all' : 'Select all'}
+                </button>
+                <button
+                  onClick={exitSelectionMode}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border-subtle text-text-secondary hover:text-text-primary hover:border-text-muted text-sm font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => setBulkDeleteOpen(true)}
+                  disabled={selectedIds.size === 0}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Delete Selected ({selectedIds.size})
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => setSelectionMode(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border-subtle text-text-secondary hover:text-text-primary hover:border-text-muted text-sm font-medium transition-colors"
+                >
+                  <CheckSquare size={16} />
+                  Select
+                </button>
+                <Link
+                  to="/analyze"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-primary hover:bg-accent-primary/90 text-white text-sm font-medium transition-colors"
+                >
+                  <Plus size={16} />
+                  Analyze New Deal
+                </Link>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Filter bar */}
@@ -405,42 +483,62 @@ export default function MyDeals() {
               initial="hidden"
               animate="visible"
             >
-              {deals.map((deal) => (
-                <motion.div key={deal.id} variants={itemVariants}>
-                  <Link
-                    to={`/analyze/results/${deal.id}`}
-                    className="relative block p-5 rounded-xl border border-border-subtle bg-app-surface hover:border-accent-primary/40 transition-colors space-y-3 group"
-                  >
-                    {/* Delete button */}
-                    <button
-                      type="button"
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setDeletingId(deal.id) }}
-                      className="absolute top-3 right-10 p-1 rounded text-red-400/70 hover:text-red-400 hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100"
-                      aria-label="Delete deal"
-                    >
-                      <Trash2 size={14} />
-                    </button>
+              {deals.map((deal) => {
+                const isSelected = selectedIds.has(deal.id)
 
-                    {/* Compare checkbox */}
-                    <button
-                      type="button"
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleCompare(deal.id) }}
-                      className={`absolute top-3 right-3 w-5 h-5 rounded border flex items-center justify-center transition-colors ${
-                        compareIds.has(deal.id)
-                          ? 'bg-accent-primary border-accent-primary'
-                          : 'border-border-subtle hover:border-text-muted bg-transparent'
-                      }`}
-                      aria-label={compareIds.has(deal.id) ? 'Remove from comparison' : 'Add to comparison'}
-                    >
-                      {compareIds.has(deal.id) && (
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-white">
-                          <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      )}
-                    </button>
+                const cardContent = (
+                  <>
+                    {/* Selection checkbox - top left */}
+                    {selectionMode && (
+                      <div
+                        className={`absolute top-3 left-3 w-5 h-5 rounded border flex items-center justify-center transition-colors ${
+                          isSelected
+                            ? 'bg-accent-primary border-accent-primary'
+                            : 'border-border-subtle bg-transparent opacity-60 group-hover:opacity-100'
+                        }`}
+                      >
+                        {isSelected && (
+                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-white">
+                            <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Delete button - hidden in selection mode */}
+                    {!selectionMode && (
+                      <button
+                        type="button"
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setDeletingId(deal.id) }}
+                        className="absolute top-3 right-10 p-1 rounded text-red-400/70 hover:text-red-400 hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100"
+                        aria-label="Delete deal"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )}
+
+                    {/* Compare checkbox - hidden in selection mode */}
+                    {!selectionMode && (
+                      <button
+                        type="button"
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleCompare(deal.id) }}
+                        className={`absolute top-3 right-3 w-5 h-5 rounded border flex items-center justify-center transition-colors ${
+                          compareIds.has(deal.id)
+                            ? 'bg-accent-primary border-accent-primary'
+                            : 'border-border-subtle hover:border-text-muted bg-transparent'
+                        }`}
+                        aria-label={compareIds.has(deal.id) ? 'Remove from comparison' : 'Add to comparison'}
+                      >
+                        {compareIds.has(deal.id) && (
+                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-white">
+                            <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        )}
+                      </button>
+                    )}
 
                     {/* Top row: strategy + status */}
-                    <div className="flex items-center justify-between pr-6">
+                    <div className={`flex items-center justify-between ${selectionMode ? 'pl-7' : 'pr-6'}`}>
                       <StrategyBadge strategy={deal.strategy as Strategy} />
                       <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-app-elevated text-text-secondary">
                         {statusLabel(deal.status)}
@@ -467,12 +565,40 @@ export default function MyDeals() {
                     </div>
 
                     {/* View link */}
-                    <p className="text-xs font-medium text-accent-primary group-hover:text-accent-primary/80 transition-colors">
-                      View Analysis →
-                    </p>
-                  </Link>
-                </motion.div>
-              ))}
+                    {!selectionMode ? (
+                      <p className="text-xs font-medium text-accent-primary group-hover:text-accent-primary/80 transition-colors">
+                        View Analysis →
+                      </p>
+                    ) : (
+                      <span className="text-xs font-medium text-text-muted">
+                        View Analysis →
+                      </span>
+                    )}
+                  </>
+                )
+
+                return (
+                  <motion.div key={deal.id} variants={itemVariants}>
+                    {selectionMode ? (
+                      <div
+                        onClick={() => toggleSelection(deal.id)}
+                        className={`relative p-5 rounded-xl border bg-app-surface transition-colors space-y-3 group cursor-pointer ${
+                          isSelected ? 'border-accent-primary' : 'border-border-subtle hover:border-accent-primary/40'
+                        }`}
+                      >
+                        {cardContent}
+                      </div>
+                    ) : (
+                      <Link
+                        to={`/analyze/results/${deal.id}`}
+                        className="relative block p-5 rounded-xl border border-border-subtle bg-app-surface hover:border-accent-primary/40 transition-colors space-y-3 group"
+                      >
+                        {cardContent}
+                      </Link>
+                    )}
+                  </motion.div>
+                )
+              })}
             </motion.div>
 
             {/* Pagination */}
@@ -537,6 +663,28 @@ export default function MyDeals() {
                 className="bg-red-600 hover:bg-red-700 text-white"
               >
                 {deleteDeal.isPending ? 'Deleting...' : 'Delete'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Bulk delete confirmation dialog */}
+        <AlertDialog open={bulkDeleteOpen} onOpenChange={setBulkDeleteOpen}>
+          <AlertDialogContent className="bg-app-surface border-border-subtle">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-text-primary">Delete {selectedIds.size} deal{selectedIds.size > 1 ? 's' : ''}?</AlertDialogTitle>
+              <AlertDialogDescription className="text-text-secondary">
+                This will permanently delete {selectedIds.size} selected deal{selectedIds.size > 1 ? 's' : ''}. This cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="bg-app-elevated border-border-subtle text-text-primary">Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleBulkDelete}
+                disabled={isDeleting}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete All'}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
