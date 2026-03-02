@@ -248,12 +248,18 @@ export default function PortfolioPage() {
     },
   })
 
-  // Note: Backend endpoint PUT /api/v1/portfolio/:id/ doesn't exist yet
-  const handleEditSave = (_id: string, _data: EditPortfolioData) => {
-    console.warn('PUT /api/v1/portfolio/:id/ not yet implemented in backend')
-    toast('Edit feature coming soon')
-    setEditingEntry(null)
-  }
+  const editMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: EditPortfolioData }) =>
+      api.portfolio.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['portfolio'] })
+      setEditingEntry(null)
+      toast.success('Portfolio entry updated')
+    },
+    onError: () => {
+      toast.error('Failed to update entry — try again')
+    },
+  })
 
   const summary = data?.summary
   const entries = data?.entries ?? []
@@ -454,8 +460,8 @@ export default function PortfolioPage() {
         isOpen={editingEntry !== null}
         onClose={() => setEditingEntry(null)}
         entry={editingEntry}
-        onSave={handleEditSave}
-        isSaving={false}
+        onSave={(id, data) => editMutation.mutate({ id, data })}
+        isSaving={editMutation.isPending}
       />
     </AppShell>
   )
