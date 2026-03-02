@@ -117,7 +117,7 @@ async def add_to_pipeline(
     return _build_card(entry, deal)
 
 
-@router.put("/{entry_id}/stage", response_model=PipelineCardResponse)
+@router.put("/{entry_id}/stage/", response_model=PipelineCardResponse)
 async def move_stage(
     entry_id: UUID,
     body: PipelineStageUpdateRequest,
