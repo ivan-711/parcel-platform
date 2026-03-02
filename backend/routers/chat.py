@@ -26,47 +26,69 @@ def _build_context_block(
     current_user: User,
     db: Session,
 ) -> str:
-    """Load deal or document context and return an injection block string."""
-    if not context_id or context_type == "general":
+    """Load deal context and return an injection block appended to the user message.
+
+    Document context is handled separately via _build_document_system_context
+    and injected into the system prompt instead.
+    """
+    if not context_id or context_type != "deal":
         return ""
 
-    if context_type == "deal":
-        deal = db.query(Deal).filter(
-            Deal.id == context_id,
-            Deal.deleted_at.is_(None),
-        ).first()
-        if not deal or deal.user_id != current_user.id:
-            raise HTTPException(
-                status_code=404,
-                detail={"error": "Deal not found", "code": "DEAL_NOT_FOUND"},
-            )
-        return (
-            f"\n\n[DEAL CONTEXT]\n"
-            f"Address: {deal.address}\n"
-            f"Strategy: {deal.strategy}\n"
-            f"Inputs: {json.dumps(deal.inputs)}\n"
-            f"Outputs: {json.dumps(deal.outputs)}\n"
-            f"Risk Score: {deal.risk_score}\n"
-            f"[/DEAL CONTEXT]\n"
+    deal = db.query(Deal).filter(
+        Deal.id == context_id,
+        Deal.deleted_at.is_(None),
+    ).first()
+    if not deal or deal.user_id != current_user.id:
+        raise HTTPException(
+            status_code=404,
+            detail={"error": "Deal not found", "code": "DEAL_NOT_FOUND"},
         )
+    return (
+        f"\n\n[DEAL CONTEXT]\n"
+        f"Address: {deal.address}\n"
+        f"Strategy: {deal.strategy}\n"
+        f"Inputs: {json.dumps(deal.inputs)}\n"
+        f"Outputs: {json.dumps(deal.outputs)}\n"
+        f"Risk Score: {deal.risk_score}\n"
+        f"[/DEAL CONTEXT]\n"
+    )
 
-    if context_type == "document":
-        doc = db.query(Document).filter(Document.id == context_id).first()
-        if not doc or doc.user_id != current_user.id:
-            raise HTTPException(
-                status_code=404,
-                detail={"error": "Document not found", "code": "DOC_NOT_FOUND"},
-            )
-        return (
-            f"\n\n[DOCUMENT CONTEXT]\n"
-            f"Filename: {doc.original_filename}\n"
-            f"Summary: {doc.ai_summary or 'Not yet processed'}\n"
-            f"Key Terms: {json.dumps(doc.key_terms or [])}\n"
-            f"Risk Flags: {json.dumps(doc.risk_flags or [])}\n"
-            f"[/DOCUMENT CONTEXT]\n"
-        )
 
-    return ""
+def _build_document_system_context(doc: Document) -> str:
+    """Build a rich document context block for injection into the system prompt."""
+    lines = [
+        "DOCUMENT CONTEXT:",
+        f'The user is asking about a document they uploaded: "{doc.original_filename}" ({doc.document_type or "unknown"}).',
+        "",
+        "AI Summary:",
+        doc.ai_summary or "No summary available.",
+        "",
+        "Risk Flags:",
+    ]
+
+    for flag in doc.risk_flags or []:
+        severity = flag.get("severity", "unknown").upper()
+        desc = flag.get("description", "")
+        quote = flag.get("quote", "")
+        lines.append(f"- [{severity}] {desc} (quote: '{quote}')")
+
+    lines.append("")
+    lines.append("Key Terms:")
+    for term in doc.key_terms or []:
+        lines.append(f"- {term}")
+
+    lines.append("")
+    lines.append("Extracted Financial Numbers:")
+    for key, value in (doc.extracted_numbers or {}).items():
+        lines.append(f"{key}: {value}")
+
+    lines.append("")
+    lines.append(
+        "Answer questions about this document based on the above analysis. "
+        "If asked about something not covered in the analysis, say so directly."
+    )
+
+    return "\n".join(lines)
 
 
 @router.post("/", status_code=200)
@@ -75,7 +97,46 @@ async def chat(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> StreamingResponse:
-    """Stream an AI response to a chat message. Saves both messages to DB."""
+    """Stream an AI response to a chat message. Saves both messages to DB.
+
+    Context types:
+      - general: No context injection. General real estate Q&A.
+      - deal: Loads the Deal record and appends inputs/outputs/risk_score
+        to the user message as a [DEAL CONTEXT] block.
+      - document: Loads the Document record (must be status='complete') and
+        injects ai_summary, risk_flags, key_terms, and extracted_numbers
+        into the system prompt. Returns a graceful SSE error if the document
+        is not found or not yet processed.
+    """
+    sse_headers = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
+
+    # --- Document context: early validation + graceful SSE error -----------
+    document_system_context: str | None = None
+
+    if body.context_type == "document" and body.context_id:
+        doc = db.query(Document).filter(
+            Document.id == body.context_id,
+            Document.user_id == current_user.id,
+        ).first()
+
+        if not doc or doc.status != "complete":
+            def _doc_error_stream():
+                msg = (
+                    "This document hasn't finished processing yet, or "
+                    "couldn't be found. Please try again after analysis completes."
+                )
+                yield f"data: {json.dumps({'delta': msg})}\n\n"
+                yield 'data: {"done": true}\n\n'
+
+            return StreamingResponse(
+                _doc_error_stream(),
+                media_type="text/event-stream",
+                headers=sse_headers,
+            )
+
+        document_system_context = _build_document_system_context(doc)
+
+    # --- Deal context: appended to user message ----------------------------
     context_block = _build_context_block(
         body.context_type, body.context_id, current_user, db
     )
@@ -97,7 +158,11 @@ async def chat(
     def event_generator():
         full_reply: list[str] = []
         try:
-            for chunk in stream_chat_response(assembled_message, history_dicts):
+            for chunk in stream_chat_response(
+                assembled_message,
+                history_dicts,
+                system_context=document_system_context,
+            ):
                 full_reply.append(chunk)
                 yield f"data: {json.dumps({'delta': chunk})}\n\n"
         finally:
@@ -118,10 +183,7 @@ async def chat(
     return StreamingResponse(
         event_generator(),
         media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "X-Accel-Buffering": "no",
-        },
+        headers=sse_headers,
     )
 
 

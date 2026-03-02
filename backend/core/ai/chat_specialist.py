@@ -28,13 +28,27 @@ You only discuss real estate investing and directly related topics (finance, con
 </guardrails>"""
 
 
-def stream_chat_response(message: str, history: list[dict]) -> Iterator[str]:
-    """Yield text delta strings from Claude streaming response."""
+def stream_chat_response(
+    message: str,
+    history: list[dict],
+    system_context: str | None = None,
+) -> Iterator[str]:
+    """Yield text delta strings from Claude streaming response.
+
+    Args:
+        message: The user's chat message (may include deal context block).
+        history: Prior conversation messages as role/content dicts.
+        system_context: Optional additional context appended to the system
+            prompt (used for document context injection).
+    """
+    system = SYSTEM_PROMPT
+    if system_context:
+        system = SYSTEM_PROMPT + "\n\n" + system_context
     messages = history + [{"role": "user", "content": message}]
     with anthropic_client.messages.stream(
         model="claude-opus-4-5",
         max_tokens=1024,
-        system=SYSTEM_PROMPT,
+        system=system,
         messages=messages,
     ) as stream:
         for text in stream.text_stream:
