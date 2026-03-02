@@ -24,11 +24,12 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { motion, AnimatePresence } from 'framer-motion'
-import { GripVertical, Plus, Inbox, MoreHorizontal, Trash2 } from 'lucide-react'
+import { GripVertical, Plus, Inbox, MoreHorizontal, Trash2, CheckCircle2 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { AppShell } from '@/components/layout/AppShell'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { PageContent } from '@/components/layout/PageContent'
+import { CloseDealModal } from '@/components/close-deal-modal'
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -150,9 +151,10 @@ interface DealCardProps {
   card: PipelineCard
   isDragging?: boolean
   onRemove?: (pipelineId: string, stage: Stage) => void
+  onCloseDeal?: (card: PipelineCard) => void
 }
 
-function DealCard({ card, isDragging = false, onRemove }: DealCardProps) {
+function DealCard({ card, isDragging = false, onRemove, onCloseDeal }: DealCardProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -181,7 +183,7 @@ function DealCard({ card, isDragging = false, onRemove }: DealCardProps) {
           {card.address}
         </p>
         <div className="flex items-center gap-1 flex-shrink-0 mt-0.5">
-          {onRemove && (
+          {(onRemove || onCloseDeal) && (
             <button
               type="button"
               className="opacity-0 group-hover:opacity-100 text-[#334155] hover:text-[#94A3B8] transition-all"
@@ -202,23 +204,38 @@ function DealCard({ card, isDragging = false, onRemove }: DealCardProps) {
       </div>
 
       {/* ⋯ dropdown */}
-      {menuOpen && onRemove && (
+      {menuOpen && (onRemove || onCloseDeal) && (
         <div
           ref={menuRef}
           className="absolute top-10 right-3 z-40 rounded-lg border border-[#1A1A2E] bg-[#0F0F1A] shadow-lg py-1"
           onPointerDown={(e) => e.stopPropagation()}
         >
-          <button
-            type="button"
-            className="flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#94A3B8] hover:bg-[#1A1A2E] hover:text-red-400 w-full transition-colors"
-            onClick={() => {
-              onRemove(card.pipeline_id, card.stage)
-              setMenuOpen(false)
-            }}
-          >
-            <Trash2 size={14} />
-            Remove from pipeline
-          </button>
+          {onCloseDeal && card.stage !== 'dead' && (
+            <button
+              type="button"
+              className="flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#94A3B8] hover:bg-[#1A1A2E] hover:text-[#10B981] w-full transition-colors"
+              onClick={() => {
+                onCloseDeal(card)
+                setMenuOpen(false)
+              }}
+            >
+              <CheckCircle2 size={14} />
+              Close Deal
+            </button>
+          )}
+          {onRemove && (
+            <button
+              type="button"
+              className="flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#94A3B8] hover:bg-[#1A1A2E] hover:text-red-400 w-full transition-colors"
+              onClick={() => {
+                onRemove(card.pipeline_id, card.stage)
+                setMenuOpen(false)
+              }}
+            >
+              <Trash2 size={14} />
+              Remove from pipeline
+            </button>
+          )}
         </div>
       )}
 
@@ -243,7 +260,7 @@ function DealCard({ card, isDragging = false, onRemove }: DealCardProps) {
   )
 }
 
-function SortableDealCard({ card, onRemove }: { card: PipelineCard; onRemove?: (pipelineId: string, stage: Stage) => void }) {
+function SortableDealCard({ card, onRemove, onCloseDeal }: { card: PipelineCard; onRemove?: (pipelineId: string, stage: Stage) => void; onCloseDeal?: (card: PipelineCard) => void }) {
   const {
     attributes,
     listeners,
@@ -261,7 +278,7 @@ function SortableDealCard({ card, onRemove }: { card: PipelineCard; onRemove?: (
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <DealCard card={card} isDragging={isDragging} onRemove={onRemove} />
+      <DealCard card={card} isDragging={isDragging} onRemove={onRemove} onCloseDeal={onCloseDeal} />
     </div>
   )
 }
@@ -274,9 +291,10 @@ interface KanbanColumnProps {
   isOver: boolean
   isLoading: boolean
   onRemove?: (pipelineId: string, stage: Stage) => void
+  onCloseDeal?: (card: PipelineCard) => void
 }
 
-function KanbanColumn({ stage, cards, isOver, isLoading, onRemove }: KanbanColumnProps) {
+function KanbanColumn({ stage, cards, isOver, isLoading, onRemove, onCloseDeal }: KanbanColumnProps) {
   return (
     <div className="flex flex-col min-w-[240px] max-w-[240px]">
       {/* Column header */}
@@ -328,7 +346,7 @@ function KanbanColumn({ stage, cards, isOver, isLoading, onRemove }: KanbanColum
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.18, delay: i * 0.04 }}
                 >
-                  <SortableDealCard card={card} onRemove={onRemove} />
+                  <SortableDealCard card={card} onRemove={onRemove} onCloseDeal={onCloseDeal} />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -345,6 +363,11 @@ export default function PipelinePage() {
   const queryClient = useQueryClient()
   const [activeCard, setActiveCard] = useState<PipelineCard | null>(null)
   const [overColumnKey, setOverColumnKey] = useState<Stage | null>(null)
+  const [closeDealCard, setCloseDealCard] = useState<PipelineCard | null>(null)
+
+  const handleCloseDeal = useCallback((card: PipelineCard) => {
+    setCloseDealCard(card)
+  }, [])
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -523,6 +546,7 @@ export default function PipelinePage() {
                 isOver={overColumnKey === stage.key}
                 isLoading={isLoading}
                 onRemove={handleRemoveCard}
+                onCloseDeal={handleCloseDeal}
               />
             ))}
           </div>
@@ -550,6 +574,18 @@ export default function PipelinePage() {
           </DragOverlay>
         </DndContext>
       </PageContent>
+
+      {closeDealCard && (
+        <CloseDealModal
+          isOpen={!!closeDealCard}
+          onClose={() => setCloseDealCard(null)}
+          dealId={closeDealCard.deal_id}
+          address={closeDealCard.address}
+          strategy={closeDealCard.strategy}
+          askingPrice={closeDealCard.asking_price ?? 0}
+          pipelineId={closeDealCard.pipeline_id}
+        />
+      )}
 
       {/* Shimmer keyframe — injected once */}
       <style>{`
