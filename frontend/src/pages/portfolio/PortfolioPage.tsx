@@ -1,9 +1,8 @@
 /** Portfolio dashboard — KPI overview, cash-flow chart, and closed deals table. */
 
-import { useState, useMemo, lazy, Suspense, Component } from 'react'
-import type { ErrorInfo, ReactNode } from 'react'
+import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Inbox, Plus, Pencil } from 'lucide-react'
+import { Inbox, Plus } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   AreaChart,
@@ -41,25 +40,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+
 import { usePortfolio } from '@/hooks/usePortfolio'
 import { useDeals } from '@/hooks/useDeals'
 import { api } from '@/lib/api'
 import type { Strategy, AddPortfolioEntryRequest, PortfolioEntry } from '@/types'
-
-const EditPortfolioModal = lazy(() =>
-  import('@/components/edit-portfolio-modal').then((m) => ({ default: m.EditPortfolioModal }))
-)
-
-/** Error boundary to prevent the edit modal from crashing the entire page. */
-class ModalErrorBoundary extends Component<{ children: ReactNode; onError: () => void }, { hasError: boolean }> {
-  state = { hasError: false }
-  static getDerivedStateFromError() { return { hasError: true } }
-  componentDidCatch(_: Error, info: ErrorInfo) { console.error('EditPortfolioModal crashed:', info) }
-  render() {
-    if (this.state.hasError) { this.props.onError(); return null }
-    return this.props.children
-  }
-}
 
 /* ── Animation variants (same as Dashboard) ── */
 
@@ -246,7 +231,6 @@ export default function PortfolioPage() {
   const { data, isLoading } = usePortfolio()
   const queryClient = useQueryClient()
   const [sheetOpen, setSheetOpen] = useState(false)
-  const [editingEntry, setEditingEntry] = useState<PortfolioEntry | null>(null)
 
   const addMutation = useMutation({
     mutationFn: (entry: AddPortfolioEntryRequest) => api.portfolio.addEntry(entry),
@@ -389,12 +373,11 @@ export default function PortfolioPage() {
                       <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Profit</th>
                       <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Monthly CF</th>
                       <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Notes</th>
-                      <th className="w-12 px-4 py-3"><span className="sr-only">Actions</span></th>
                     </tr>
                   </thead>
                   <tbody>
                     {entries.map((entry: PortfolioEntry) => (
-                      <tr key={entry.id} className="border-b border-[#1A1A2E] last:border-0 hover:bg-[#1A1A2E]/30 transition-colors group">
+                      <tr key={entry.id} className="border-b border-[#1A1A2E] last:border-0 hover:bg-[#1A1A2E]/30 transition-colors">
                         <td className="px-4 py-3 text-sm text-[#F1F5F9]">{entry.address}</td>
                         <td className="px-4 py-3">
                           <StrategyBadge strategy={entry.strategy} />
@@ -414,14 +397,6 @@ export default function PortfolioPage() {
                         <td className="px-4 py-3 text-sm text-[#94A3B8] italic max-w-[200px]">
                           <NoteCell notes={entry.notes} />
                         </td>
-                        <td className="px-4 py-3 text-right">
-                          <button
-                            onClick={() => setEditingEntry(entry)}
-                            className="p-1 rounded text-[#94A3B8] hover:text-white hover:bg-[#1A1A2E] transition-colors opacity-0 group-hover:opacity-100"
-                          >
-                            <Pencil size={14} />
-                          </button>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -432,23 +407,6 @@ export default function PortfolioPage() {
         </motion.div>
       </motion.div>
 
-      {/* Edit Entry Modal */}
-      {editingEntry && (
-        <ModalErrorBoundary onError={() => setEditingEntry(null)}>
-          <Suspense fallback={null}>
-            <EditPortfolioModal
-              isOpen={!!editingEntry}
-              onClose={() => setEditingEntry(null)}
-              entry={editingEntry}
-              onSuccess={() => {
-                queryClient.invalidateQueries({ queryKey: ['portfolio'] })
-                setEditingEntry(null)
-              }}
-            />
-          </Suspense>
-        </ModalErrorBoundary>
-      )}
-
       {/* Add Entry Sheet */}
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent className="bg-[#0F0F1A] border-[#1A1A2E] overflow-y-auto">
@@ -458,12 +416,10 @@ export default function PortfolioPage() {
               Record a deal you've closed to track in your portfolio.
             </SheetDescription>
           </SheetHeader>
-          {sheetOpen && (
-            <AddEntryForm
-              onSubmit={(data) => addMutation.mutate(data)}
-              isSubmitting={addMutation.isPending}
-            />
-          )}
+          <AddEntryForm
+            onSubmit={(data) => addMutation.mutate(data)}
+            isSubmitting={addMutation.isPending}
+          />
         </SheetContent>
       </Sheet>
     </AppShell>
