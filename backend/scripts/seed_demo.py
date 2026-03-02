@@ -389,6 +389,209 @@ PORTFOLIO_ENTRY_SPECS: list[tuple[int, int, str, str, str | None, str]] = [
 # ---------------------------------------------------------------------------
 # Chat messages — exact content from spec
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Document specs — 3 fully-analyzed documents
+# ---------------------------------------------------------------------------
+DOCUMENT_SPECS: list[dict] = [
+    {
+        "original_filename": "1842_Oak_Street_Purchase_Agreement.pdf",
+        "file_type": "pdf",
+        "file_size_bytes": 284672,
+        "s3_key": "demo/purchase_agreement.pdf",
+        "document_type": "purchase_agreement",
+        "parties": [
+            {"name": "Marcus Webb", "role": "buyer"},
+            {"name": "Sandra Kowalski", "role": "seller"},
+        ],
+        "ai_summary": (
+            "Residential purchase agreement for a single-family property at "
+            "1842 Oak Street, Milwaukee, WI 53204. Purchase price of $147,500 "
+            "with a $3,000 earnest money deposit. Closing contingent on buyer "
+            "financing approval within 21 days. Seller agrees to provide clear "
+            "title. No inspection contingency included \u2014 property sold as-is. "
+            "30-day closing timeline."
+        ),
+        "risk_flags": [
+            {
+                "severity": "high",
+                "description": (
+                    "No inspection contingency clause \u2014 buyer accepts property "
+                    "as-is with no right to renegotiate based on inspection findings"
+                ),
+                "quote": "Buyer accepts the Property in its present condition, AS IS, WHERE IS",
+            },
+            {
+                "severity": "medium",
+                "description": (
+                    "Short financing contingency window of 21 days may be "
+                    "insufficient for conventional loan approval in current market"
+                ),
+                "quote": "Buyer shall have 21 days from execution to obtain financing commitment",
+            },
+            {
+                "severity": "low",
+                "description": (
+                    "Earnest money deposit of $3,000 is only 2% of purchase "
+                    "price \u2014 below typical 3-5% for this market"
+                ),
+                "quote": "Earnest money deposit in the amount of Three Thousand Dollars ($3,000)",
+            },
+        ],
+        "extracted_numbers": {
+            "purchase_price": 147500,
+            "earnest_money_deposit": 3000,
+            "closing_date": "2026-04-28",
+            "financing_contingency_days": 21,
+            "closing_timeline_days": 30,
+        },
+        "key_terms": [
+            "Property sold as-is \u2014 no inspection contingency",
+            "Closing contingent on buyer financing approval within 21 days",
+            "Seller to provide clear and marketable title",
+            "All appliances included in sale price",
+            "Seller responsible for property taxes through closing date",
+            "Buyer responsible for all closing costs on buyer\u2019s side",
+        ],
+        "created_offset_days": 5,
+    },
+    {
+        "original_filename": "2247_Maple_Ave_Inspection_Report.pdf",
+        "file_type": "pdf",
+        "file_size_bytes": 521216,
+        "s3_key": "demo/inspection_report.pdf",
+        "document_type": "inspection_report",
+        "parties": [
+            {"name": "Great Lakes Home Inspectors", "role": "inspector"},
+            {"name": "David Okafor", "role": "buyer"},
+        ],
+        "ai_summary": (
+            "Full home inspection report for a 1958-built duplex at 2247 Maple "
+            "Ave, Sheboygan, WI 53081. Inspector identified 14 deficiencies: "
+            "2 major, 7 moderate, 5 minor. Major issues include aging roof "
+            "(estimated 2-4 years remaining useful life) and outdated electrical "
+            "panel with aluminum wiring in the upper unit. HVAC systems functional "
+            "but near end of service life. Foundation shows minor settling cracks "
+            "\u2014 monitor but not structurally concerning. Both units have functional "
+            "plumbing with no active leaks."
+        ),
+        "risk_flags": [
+            {
+                "severity": "high",
+                "description": (
+                    "Roof has estimated 2-4 years of remaining useful life \u2014 "
+                    "replacement cost $8,000-$12,000 not reflected in current offer price"
+                ),
+                "quote": (
+                    "Asphalt shingle roof exhibits widespread granule loss and "
+                    "multiple areas of lifted flashing"
+                ),
+            },
+            {
+                "severity": "high",
+                "description": (
+                    "Aluminum wiring in upper unit is a known fire hazard \u2014 "
+                    "requires either full rewire or COPALUM connector remediation"
+                ),
+                "quote": (
+                    "Aluminum branch circuit wiring observed throughout upper "
+                    "unit \u2014 considered a safety deficiency"
+                ),
+            },
+            {
+                "severity": "medium",
+                "description": (
+                    "Both furnaces are 19 years old and approaching end of typical "
+                    "20-year service life \u2014 budget $4,000-$6,000 for replacement "
+                    "within 2 years"
+                ),
+                "quote": (
+                    "Upper and lower unit furnaces installed 2007, functioning "
+                    "but near end of service life"
+                ),
+            },
+        ],
+        "extracted_numbers": {
+            "inspection_date": "2026-02-18",
+            "property_age_years": 68,
+            "roof_remaining_life_years": 3,
+            "total_deficiencies": 14,
+            "major_deficiencies": 2,
+            "estimated_repair_minimum": 18000,
+            "estimated_repair_maximum": 27000,
+        },
+        "key_terms": [
+            "Roof replacement required within 2-4 years \u2014 $8,000-$12,000 cost",
+            "Aluminum wiring in upper unit \u2014 fire safety concern requiring remediation",
+            "Both HVAC units near end of service life \u2014 budget for replacement",
+            "Foundation settling cracks \u2014 monitor annually, not currently structural",
+            "All plumbing functional with no active leaks detected",
+            "Electrical panel is 200-amp service \u2014 adequate for duplex",
+        ],
+        "created_offset_days": 12,
+    },
+    {
+        "original_filename": "Unit_A_Lease_2026.pdf",
+        "file_type": "pdf",
+        "file_size_bytes": 198656,
+        "s3_key": "demo/lease_agreement.pdf",
+        "document_type": "lease",
+        "parties": [
+            {"name": "Cornerstone Properties LLC", "role": "landlord"},
+            {"name": "Angela Reyes", "role": "tenant"},
+        ],
+        "ai_summary": (
+            "12-month residential lease for Unit A at 2247 Maple Ave, Sheboygan, "
+            "WI 53081. Monthly rent of $875 with a $875 security deposit (1 month). "
+            "Lease runs March 1, 2026 through February 28, 2027. Tenant responsible "
+            "for electricity and internet; landlord covers water, sewer, trash, and "
+            "gas. No pets clause. Standard Wisconsin landlord-tenant terms. "
+            "Month-to-month conversion after initial term at same rent unless "
+            "60-day notice given."
+        ),
+        "risk_flags": [
+            {
+                "severity": "medium",
+                "description": (
+                    "Rent of $875/month is below current market rate of "
+                    "$950-$1,050 for comparable Sheboygan units \u2014 upside "
+                    "available at renewal but tenant has 12 months of below-market "
+                    "occupancy"
+                ),
+                "quote": "Monthly rent shall be Eight Hundred Seventy-Five Dollars ($875.00)",
+            },
+            {
+                "severity": "low",
+                "description": (
+                    "Month-to-month conversion clause does not include automatic "
+                    "rent escalation \u2014 landlord must proactively send new rent notice"
+                ),
+                "quote": (
+                    "Lease shall convert to month-to-month tenancy at the same "
+                    "rental rate unless either party provides 60 days written notice"
+                ),
+            },
+        ],
+        "extracted_numbers": {
+            "monthly_rent": 875,
+            "security_deposit": 875,
+            "lease_start": "2026-03-01",
+            "lease_end": "2027-02-28",
+            "lease_term_months": 12,
+            "notice_period_days": 60,
+        },
+        "key_terms": [
+            "12-month term: March 1, 2026 \u2014 February 28, 2027",
+            "Rent: $875/month due 1st of month, 5-day grace period",
+            "Security deposit: $875 (1 month\u2019s rent)",
+            "Tenant pays electricity and internet; landlord pays water, sewer, trash, gas",
+            "No pets allowed",
+            "Month-to-month conversion after initial term at same rate",
+            "60-day written notice required to terminate month-to-month",
+        ],
+        "created_offset_days": 20,
+    },
+]
+
 CHAT_SESSION_ID = "demo-session"
 
 CHAT_MESSAGES: list[dict] = [
@@ -544,6 +747,34 @@ def _create_portfolio_entry(db, deal_id, user_id, closed_date, closed_price, pro
     return entry
 
 
+def _create_document(db, user_id, original_filename, file_type, file_size_bytes,
+                     s3_key, document_type, parties, ai_summary, risk_flags,
+                     extracted_numbers, key_terms, created_offset_days=0):
+    """Create a fully-analyzed document record."""
+    now = datetime.utcnow()
+    created_at = now - timedelta(days=created_offset_days) if created_offset_days else now
+    doc = Document(
+        user_id=user_id,
+        original_filename=original_filename,
+        file_type=file_type,
+        file_size_bytes=file_size_bytes,
+        s3_key=s3_key,
+        s3_bucket="parcel-platform-documents",
+        status="complete",
+        document_type=document_type,
+        parties=parties,
+        ai_summary=ai_summary,
+        risk_flags=risk_flags,
+        extracted_numbers=extracted_numbers,
+        key_terms=key_terms,
+    )
+    doc.created_at = created_at
+    doc.updated_at = created_at
+    db.add(doc)
+    db.flush()
+    return doc
+
+
 def _create_chat_message(db, user_id, role, content, context_type, context_id, created_at):
     """Create a chat message with a specific timestamp."""
     msg = ChatMessage(
@@ -614,7 +845,14 @@ def seed():
             print(f"    {pdeal.address[:40]:40s} | closed ${closed_price} | profit ${profit}")
         print(f"  Created {len(PORTFOLIO_ENTRY_SPECS)} portfolio entries")
 
-        # 7. Create 4 chat messages (2 exchanges, 3 days ago)
+        # 7. Create 3 demo documents
+        print("\n  Creating documents...")
+        for spec in DOCUMENT_SPECS:
+            doc = _create_document(db, user.id, **spec)
+            print(f"    {doc.document_type:25s} | {doc.original_filename}")
+        print(f"  Created {len(DOCUMENT_SPECS)} documents")
+
+        # 8. Create 4 chat messages (2 exchanges, 3 days ago)
         print("\n  Creating chat messages...")
         three_days_ago = datetime.utcnow() - timedelta(days=3)
         for i, msg_spec in enumerate(CHAT_MESSAGES):
@@ -633,15 +871,17 @@ def seed():
         # 8. Commit
         db.commit()
 
-        # 9. Verification queries
+        # 10. Verification queries
         print("\n  --- Verification ---")
         deal_count = db.query(Deal).filter(Deal.user_id == user.id).count()
         pipeline_count = db.query(PipelineEntry).filter(PipelineEntry.user_id == user.id).count()
         portfolio_count = db.query(PortfolioEntry).filter(PortfolioEntry.user_id == user.id).count()
+        doc_count = db.query(Document).filter(Document.user_id == user.id).count()
         chat_count = db.query(ChatMessage).filter(ChatMessage.user_id == user.id).count()
         print(f"  Deals:            {deal_count} (12 active + 3 historical)")
         print(f"  Pipeline entries: {pipeline_count}")
         print(f"  Portfolio entries: {portfolio_count}")
+        print(f"  Documents:        {doc_count}")
         print(f"  Chat messages:    {chat_count}")
 
         # 10. Summary
