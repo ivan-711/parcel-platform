@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Inbox, Plus } from 'lucide-react'
+import { Inbox, Pencil, Plus } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   AreaChart,
@@ -41,10 +41,14 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 
+import { toast } from 'sonner'
+
 import { usePortfolio } from '@/hooks/usePortfolio'
 import { useDeals } from '@/hooks/useDeals'
 import { api } from '@/lib/api'
+import { EditPortfolioModal } from '@/components/edit-portfolio-modal'
 import type { Strategy, AddPortfolioEntryRequest, PortfolioEntry } from '@/types'
+import type { EditPortfolioData } from '@/components/edit-portfolio-modal'
 
 /* ── Animation variants (same as Dashboard) ── */
 
@@ -234,6 +238,7 @@ export default function PortfolioPage() {
   const { data, isLoading } = usePortfolio()
   const queryClient = useQueryClient()
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [editingEntry, setEditingEntry] = useState<PortfolioEntry | null>(null)
 
   const addMutation = useMutation({
     mutationFn: (entry: AddPortfolioEntryRequest) => api.portfolio.addEntry(entry),
@@ -242,6 +247,13 @@ export default function PortfolioPage() {
       setSheetOpen(false)
     },
   })
+
+  // Note: Backend endpoint PUT /api/v1/portfolio/:id/ doesn't exist yet
+  const handleEditSave = (_id: string, _data: EditPortfolioData) => {
+    console.warn('PUT /api/v1/portfolio/:id/ not yet implemented in backend')
+    toast('Edit feature coming soon')
+    setEditingEntry(null)
+  }
 
   const summary = data?.summary
   const entries = data?.entries ?? []
@@ -377,11 +389,12 @@ export default function PortfolioPage() {
                       <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Profit</th>
                       <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Monthly CF</th>
                       <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Notes</th>
+                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3 w-[60px]"></th>
                     </tr>
                   </thead>
                   <tbody>
                     {entries.map((entry: PortfolioEntry) => (
-                      <tr key={entry.id} className="border-b border-[#1A1A2E] last:border-0 hover:bg-[#1A1A2E]/30 transition-colors">
+                      <tr key={entry.id} className="group border-b border-[#1A1A2E] last:border-0 hover:bg-[#1A1A2E]/30 transition-colors">
                         <td className="px-4 py-3 text-sm text-[#F1F5F9]">{entry.address}</td>
                         <td className="px-4 py-3">
                           <StrategyBadge strategy={entry.strategy} />
@@ -400,6 +413,15 @@ export default function PortfolioPage() {
                         </td>
                         <td className="px-4 py-3 text-sm text-[#94A3B8] italic max-w-[200px]">
                           <NoteCell notes={entry.notes} />
+                        </td>
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={() => setEditingEntry(entry)}
+                            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-[#1A1A2E] transition-all"
+                            aria-label="Edit entry"
+                          >
+                            <Pencil size={14} />
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -426,6 +448,15 @@ export default function PortfolioPage() {
           />
         </SheetContent>
       </Sheet>
+
+      {/* Edit Entry Modal */}
+      <EditPortfolioModal
+        isOpen={editingEntry !== null}
+        onClose={() => setEditingEntry(null)}
+        entry={editingEntry}
+        onSave={handleEditSave}
+        isSaving={false}
+      />
     </AppShell>
   )
 }
