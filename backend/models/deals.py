@@ -34,6 +34,7 @@ class Deal(TimestampMixin, Base):
     inputs = Column(JSONB, nullable=False, default=dict)
     outputs = Column(JSONB, nullable=False, default=dict)
     risk_score = Column(Integer, nullable=True)
+    risk_factors = Column(JSONB, nullable=True)
     status = Column(DealStatus, nullable=False, default="draft")
     deleted_at = Column(DateTime, nullable=True)
 

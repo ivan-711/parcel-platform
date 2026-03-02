@@ -150,6 +150,7 @@ class DealResponse(BaseModel):
     inputs: dict[str, Any]
     outputs: dict[str, Any]
     risk_score: Optional[int]
+    risk_factors: Optional[dict[str, Any]] = None
     status: str
     deleted_at: Optional[datetime]
     created_at: datetime

@@ -39,7 +39,9 @@ _METRIC_MAP: dict[str, tuple[str, str]] = {
 }
 
 
-def _primary_metric(strategy: str, outputs: dict[str, Any]) -> tuple[Optional[str], Optional[float]]:
+def _primary_metric(
+    strategy: str, outputs: dict[str, Any],
+) -> tuple[Optional[str], Optional[float]]:
     """Extract the most meaningful metric from deal outputs for list display.
 
     Returns (label, value) or (None, None) if outputs are empty.
@@ -51,6 +53,78 @@ def _primary_metric(strategy: str, outputs: dict[str, Any]) -> tuple[Optional[st
     if value is None:
         return None, None
     return label_name, float(value)
+
+
+# ---------------------------------------------------------------------------
+# Risk factor derivation (read-only — does NOT touch risk_score.py)
+# ---------------------------------------------------------------------------
+
+
+def build_risk_factors(
+    strategy: str, inputs: dict, outputs: dict, risk_score: int
+) -> dict:
+    """Derive the most meaningful risk indicators from deal inputs/outputs.
+
+    Returns a flat dict of named factors keyed by strategy. Always includes
+    ``risk_score`` for convenience.
+    """
+    factors: dict[str, Any] = {"risk_score": risk_score}
+
+    if strategy == "wholesale":
+        arv = inputs.get("arv") or 0
+        asking = inputs.get("asking_price") or 0
+        repair = inputs.get("repair_costs") or 0
+        factors["spread_vs_arv_pct"] = round((arv - asking) / arv * 100, 2) if arv else None
+        factors["repair_to_arv_ratio"] = round(repair / arv * 100, 2) if arv else None
+        factors["estimated_profit"] = outputs.get("estimated_profit")
+        mao = outputs.get("mao")
+        factors["mao_vs_asking"] = round(mao - asking, 2) if mao is not None else None
+
+    elif strategy == "buy_and_hold":
+        factors["monthly_cash_flow"] = outputs.get("monthly_cash_flow")
+        factors["cash_on_cash_return"] = outputs.get("coc_return")
+        factors["cap_rate"] = outputs.get("cap_rate")
+        mortgage = outputs.get("monthly_mortgage_payment")
+        rent = outputs.get("monthly_rent") or inputs.get("monthly_rent")
+        factors["debt_service_coverage"] = (
+            round(rent / mortgage, 2) if mortgage and rent else None
+        )
+        monthly_rent = inputs.get("monthly_rent") or 0
+        vacancy = inputs.get("vacancy_rate_pct") or 0
+        factors["vacancy_impact_monthly"] = round(monthly_rent * vacancy / 100, 2)
+
+    elif strategy == "brrrr":
+        factors["equity_left_in"] = outputs.get("equity_left_in_deal") or outputs.get("money_left_in")
+        factors["monthly_cash_flow"] = outputs.get("monthly_cash_flow")
+        factors["refinance_proceeds"] = outputs.get("refinance_loan_amount")
+        purchase = inputs.get("purchase_price") or 0
+        rehab = inputs.get("rehab_costs") or 0
+        factors["total_invested"] = round(purchase + rehab, 2)
+
+    elif strategy == "flip":
+        factors["projected_profit"] = outputs.get("net_profit") or outputs.get("gross_profit")
+        factors["roi_pct"] = outputs.get("roi")
+        purchase = inputs.get("purchase_price") or 0
+        rehab = inputs.get("rehab_budget") or 0
+        financing = inputs.get("financing_costs") or 0
+        factors["total_cost"] = round(purchase + rehab + financing, 2)
+        arv = inputs.get("arv") or 0
+        net_profit = outputs.get("net_profit") or outputs.get("gross_profit")
+        factors["profit_margin_pct"] = (
+            round(net_profit / arv * 100, 2) if arv and net_profit is not None else None
+        )
+
+    elif strategy == "creative_finance":
+        rent_est = inputs.get("monthly_rent_estimate") or 0
+        piti = inputs.get("monthly_piti") or 0
+        expenses = inputs.get("monthly_expenses") or 0
+        factors["monthly_spread"] = round(rent_est - piti, 2)
+        factors["annual_cash_flow"] = round((rent_est - piti - expenses) * 12, 2)
+        arv = inputs.get("arv") or 0
+        loan_balance = inputs.get("existing_loan_balance") or 0
+        factors["equity_capture"] = round(arv - loan_balance, 2)
+
+    return factors
 
 
 # ---------------------------------------------------------------------------
@@ -108,6 +182,9 @@ async def create_deal(
     inputs_dict: dict = body.inputs.model_dump()
     outputs: dict = calc_fn(inputs_dict)
     risk_score: int = risk_fn(body.strategy, inputs_dict, outputs)
+    risk_factors = build_risk_factors(
+        body.strategy, inputs_dict, outputs, risk_score,
+    )
 
     deal = Deal(
         user_id=current_user.id,
@@ -119,6 +196,7 @@ async def create_deal(
         inputs=inputs_dict,
         outputs=outputs,
         risk_score=risk_score,
+        risk_factors=risk_factors,
         status="draft",
     )
     db.add(deal)
@@ -186,6 +264,16 @@ async def get_deal(
 ) -> DealResponse:
     """Return the full detail for a single deal owned by the current user."""
     deal = _get_owned_deal(deal_id, current_user, db)
+
+    # Backfill risk_factors for deals created before this column existed
+    if deal.risk_factors is None and deal.inputs and deal.outputs:
+        score = deal.risk_score or 0
+        deal.risk_factors = build_risk_factors(
+            deal.strategy, deal.inputs, deal.outputs, score,
+        )
+        db.commit()
+        db.refresh(deal)
+
     return DealResponse.model_validate(deal)
 
 
@@ -202,6 +290,29 @@ async def update_deal(
     update_data = body.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(deal, field, value)
+
+    # Recompute outputs + risk when inputs change
+    if "inputs" in update_data and deal.inputs:
+        try:
+            calc_mod = importlib.import_module(
+                f"core.calculators.{deal.strategy}",
+            )
+            calc_fn = getattr(calc_mod, f"calculate_{deal.strategy}")
+            risk_mod = importlib.import_module(
+                "core.calculators.risk_score",
+            )
+            risk_fn = risk_mod.calculate_risk_score
+
+            deal.outputs = calc_fn(deal.inputs)
+            deal.risk_score = risk_fn(
+                deal.strategy, deal.inputs, deal.outputs,
+            )
+            deal.risk_factors = build_risk_factors(
+                deal.strategy, deal.inputs, deal.outputs,
+                deal.risk_score,
+            )
+        except (ImportError, AttributeError):
+            pass  # calculator not available — keep existing values
 
     deal.updated_at = datetime.utcnow()
     db.commit()
