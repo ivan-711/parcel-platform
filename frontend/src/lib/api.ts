@@ -133,7 +133,7 @@ export const api = {
   },
   pipeline: {
     list: () =>
-      request<{ data: Record<string, PipelineCardResponse[]> }>('/api/v1/pipeline/'),
+      request<Record<string, PipelineCardResponse[]>>('/api/v1/pipeline/'),
     add: (data: PipelineCreateRequest) =>
       request<PipelineCardResponse>('/api/v1/pipeline/', { method: 'POST', body: JSON.stringify(data) }),
     updateStage: (pipelineId: string, body: { stage: string; notes?: string }) =>

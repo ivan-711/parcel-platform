@@ -386,7 +386,7 @@ export default function PipelinePage() {
 
   const board: Record<Stage, PipelineCard[]> =
     localBoard ??
-    (pipelineData?.data as Record<Stage, PipelineCard[]> | undefined) ??
+    (pipelineData as Record<Stage, PipelineCard[]> | undefined) ??
     (Object.fromEntries(STAGES.map((s) => [s.key, []])) as unknown as Record<Stage, PipelineCard[]>)
 
   // ── Stage update mutation ──────────────────────────────────────────────

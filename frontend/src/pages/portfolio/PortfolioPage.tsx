@@ -1,6 +1,7 @@
 /** Portfolio dashboard — KPI overview, cash-flow chart, and closed deals table. */
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, lazy, Suspense, Component } from 'react'
+import type { ErrorInfo, ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { Inbox, Plus, Pencil } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -41,7 +42,20 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 
-import { EditPortfolioModal } from '@/components/edit-portfolio-modal'
+const EditPortfolioModal = lazy(() =>
+  import('@/components/edit-portfolio-modal').then((m) => ({ default: m.EditPortfolioModal }))
+)
+
+/** Error boundary to prevent the edit modal from crashing the entire page. */
+class ModalErrorBoundary extends Component<{ children: ReactNode; onError: () => void }, { hasError: boolean }> {
+  state = { hasError: false }
+  static getDerivedStateFromError() { return { hasError: true } }
+  componentDidCatch(_: Error, info: ErrorInfo) { console.error('EditPortfolioModal crashed:', info) }
+  render() {
+    if (this.state.hasError) { this.props.onError(); return null }
+    return this.props.children
+  }
+}
 import { usePortfolio } from '@/hooks/usePortfolio'
 import { useDeals } from '@/hooks/useDeals'
 import { api } from '@/lib/api'
@@ -420,15 +434,19 @@ export default function PortfolioPage() {
 
       {/* Edit Entry Modal */}
       {editingEntry && (
-        <EditPortfolioModal
-          isOpen={!!editingEntry}
-          onClose={() => setEditingEntry(null)}
-          entry={editingEntry}
-          onSuccess={() => {
-            queryClient.invalidateQueries({ queryKey: ['portfolio'] })
-            setEditingEntry(null)
-          }}
-        />
+        <ModalErrorBoundary onError={() => setEditingEntry(null)}>
+          <Suspense fallback={null}>
+            <EditPortfolioModal
+              isOpen={!!editingEntry}
+              onClose={() => setEditingEntry(null)}
+              entry={editingEntry}
+              onSuccess={() => {
+                queryClient.invalidateQueries({ queryKey: ['portfolio'] })
+                setEditingEntry(null)
+              }}
+            />
+          </Suspense>
+        </ModalErrorBoundary>
       )}
 
       {/* Add Entry Sheet */}
