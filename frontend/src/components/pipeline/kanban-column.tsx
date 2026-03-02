@@ -1,5 +1,6 @@
 /** KanbanColumn — a single stage column in the pipeline Kanban board with sortable context. */
 
+import { useCallback } from 'react'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Inbox } from 'lucide-react'
@@ -12,20 +13,61 @@ interface KanbanColumnProps {
   cards: PipelineCard[]
   isOver: boolean
   isLoading: boolean
+  /** Column index in the Kanban board (for keyboard navigation). */
+  columnIndex?: number
+  /** Card index that currently has keyboard focus within this column (-1 = none). */
+  focusedCardIndex?: number
+  /** Whether keyboard navigation is active (controls focus ring visibility). */
+  isKeyboardActive?: boolean
+  /** Callback to register a card's DOM element for keyboard focus management. */
+  registerCardRef?: (colIndex: number, cardIndex: number, el: HTMLDivElement | null) => void
   onRemove?: (pipelineId: string, stage: Stage) => void
   onCloseDeal?: (card: PipelineCard) => void
 }
 
-export function KanbanColumn({ stage, cards, isOver, isLoading, onRemove, onCloseDeal }: KanbanColumnProps) {
+export function KanbanColumn({
+  stage,
+  cards,
+  isOver,
+  isLoading,
+  columnIndex = 0,
+  focusedCardIndex = -1,
+  isKeyboardActive = false,
+  registerCardRef,
+  onRemove,
+  onCloseDeal,
+}: KanbanColumnProps) {
+  const isColumnFocused = isKeyboardActive && focusedCardIndex >= 0
+
+  /** Create a stable ref registration callback for a specific card index. */
+  const makeRegisterRef = useCallback(
+    (cardIdx: number) => {
+      if (!registerCardRef) return undefined
+      return (el: HTMLDivElement | null) => {
+        registerCardRef(columnIndex, cardIdx, el)
+      }
+    },
+    [columnIndex, registerCardRef]
+  )
+
   return (
-    <div className="flex flex-col min-w-[240px] max-w-[240px]">
+    <div
+      className="flex flex-col min-w-[240px] max-w-[240px]"
+      role="listbox"
+      aria-label={`${stage.label} column, ${cards.length} deal${cards.length !== 1 ? 's' : ''}`}
+    >
       {/* Column header */}
       <div className="flex items-center gap-2 mb-3 px-1">
         <div
           className="w-2 h-2 rounded-full flex-shrink-0"
           style={{ backgroundColor: stage.color }}
         />
-        <span className="text-[11px] font-medium uppercase tracking-widest text-[#94A3B8]">
+        <span
+          className={[
+            'text-[11px] font-medium uppercase tracking-widest transition-colors duration-150',
+            isColumnFocused ? 'text-[#F1F5F9]' : 'text-[#94A3B8]',
+          ].join(' ')}
+        >
           {stage.label}
         </span>
         <span
@@ -68,7 +110,13 @@ export function KanbanColumn({ stage, cards, isOver, isLoading, onRemove, onClos
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.18, delay: i * 0.04 }}
                 >
-                  <SortableDealCard card={card} onRemove={onRemove} onCloseDeal={onCloseDeal} />
+                  <SortableDealCard
+                    card={card}
+                    isFocused={isKeyboardActive && focusedCardIndex === i}
+                    onRemove={onRemove}
+                    onCloseDeal={onCloseDeal}
+                    registerRef={makeRegisterRef(i)}
+                  />
                 </motion.div>
               ))}
             </AnimatePresence>

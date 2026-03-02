@@ -1,10 +1,12 @@
 /**
  * PipelinePage — Kanban board for tracking deal stages.
  * Uses @dnd-kit/core and @dnd-kit/sortable for drag-and-drop.
+ * Keyboard navigation via useKanbanKeyboard hook (arrow keys, Enter, Escape).
  * Optimistic updates on stage change with rollback on error.
  * Route: /pipeline
  */
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   DndContext,
@@ -38,6 +40,7 @@ import type { PipelineCard, Stage } from '@/components/pipeline/constants'
 import { KanbanColumn } from '@/components/pipeline/kanban-column'
 import { PipelineEmpty } from '@/components/pipeline/pipeline-empty'
 import { PipelineError } from '@/components/pipeline/pipeline-error'
+import { useKanbanKeyboard } from '@/hooks/useKanbanKeyboard'
 
 /** Strategy badge used inside the drag overlay. */
 function OverlayStrategyBadge({ strategy }: { strategy: string }) {
@@ -54,6 +57,7 @@ function OverlayStrategyBadge({ strategy }: { strategy: string }) {
 
 export default function PipelinePage() {
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const [activeCard, setActiveCard] = useState<PipelineCard | null>(null)
   const [overColumnKey, setOverColumnKey] = useState<Stage | null>(null)
   const [closeDealCard, setCloseDealCard] = useState<PipelineCard | null>(null)
@@ -82,6 +86,36 @@ export default function PipelinePage() {
     localBoard ??
     (pipelineData as Record<Stage, PipelineCard[]> | undefined) ??
     (Object.fromEntries(STAGES.map((s) => [s.key, []])) as unknown as Record<Stage, PipelineCard[]>)
+
+  // ── Keyboard navigation ────────────────────────────────────────────────
+  const cardCounts = useMemo(
+    () => STAGES.map((s) => (board[s.key]?.length ?? 0)),
+    [board]
+  )
+
+  const handleKanbanSelect = useCallback(
+    (columnIndex: number, cardIndex: number) => {
+      const stageKey = STAGES[columnIndex]?.key
+      if (!stageKey) return
+      const cards = board[stageKey] ?? []
+      const card = cards[cardIndex]
+      if (card) {
+        navigate(`/analyze/results/${card.deal_id}`)
+      }
+    },
+    [board, navigate]
+  )
+
+  const {
+    focusState,
+    isKeyboardActive,
+    registerCardRef,
+    handleKeyDown: kanbanKeyDown,
+    handleMouseDown: kanbanMouseDown,
+  } = useKanbanKeyboard({
+    cardCounts,
+    onSelect: handleKanbanSelect,
+  })
 
   // ── Stage update mutation ──────────────────────────────────────────────
   const updateStageMutation = useMutation({
@@ -242,7 +276,7 @@ export default function PipelinePage() {
       />
 
       <PageContent>
-        {/* Kanban board — horizontal scroll */}
+        {/* Kanban board — horizontal scroll with keyboard navigation */}
         <DndContext
           sensors={sensors}
           collisionDetection={closestCorners}
@@ -250,14 +284,25 @@ export default function PipelinePage() {
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
-          <div className="flex gap-4 overflow-x-auto pb-6 min-h-[calc(100vh-160px)]">
-            {STAGES.map((stage) => (
+          {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+          <div
+            className="flex gap-4 overflow-x-auto pb-6 min-h-[calc(100vh-160px)]"
+            role="grid"
+            aria-label="Pipeline Kanban board. Use arrow keys to navigate between columns and cards, Enter to open a deal, Escape to go back."
+            onKeyDown={kanbanKeyDown}
+            onMouseDown={kanbanMouseDown}
+          >
+            {STAGES.map((stage, colIndex) => (
               <KanbanColumn
                 key={stage.key}
                 stage={stage}
                 cards={board[stage.key] ?? []}
                 isOver={overColumnKey === stage.key}
                 isLoading={isLoading}
+                columnIndex={colIndex}
+                focusedCardIndex={focusState.columnIndex === colIndex ? focusState.cardIndex : -1}
+                isKeyboardActive={isKeyboardActive}
+                registerCardRef={registerCardRef}
                 onRemove={handleRemoveCard}
                 onCloseDeal={handleCloseDeal}
               />

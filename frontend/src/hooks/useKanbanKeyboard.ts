@@ -6,8 +6,6 @@
 import { useCallback, useRef, useState } from 'react'
 
 interface UseKanbanKeyboardOptions {
-  /** Number of columns in the board */
-  columnCount: number
   /** Number of cards in each column, by column index */
   cardCounts: number[]
   /** Called when Enter is pressed on a focused card */
@@ -47,12 +45,10 @@ function findNextNonEmptyColumn(
 }
 
 export function useKanbanKeyboard({
-  columnCount: _columnCount,
   cardCounts,
   onSelect,
   onEscape,
 }: UseKanbanKeyboardOptions) {
-  void _columnCount
   const [focusState, setFocusState] = useState<KanbanFocusState>({
     columnIndex: 0,
     cardIndex: 0,
