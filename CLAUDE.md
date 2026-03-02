@@ -243,6 +243,22 @@ For streaming (chat):
 - [ ] No hardcoded localhost URLs
 - [ ] Alembic migrations are up to date
 
+### Alembic Migration Rule
+
+Every time you create a new Alembic migration file, you MUST run it against the production database before or immediately after deploying. Use this command:
+
+```bash
+cd backend
+source venv/bin/activate
+DATABASE_URL="<public_url>" alembic upgrade head
+```
+
+The public DATABASE_URL can be found in Railway → Postgres service → Variables tab → `DATABASE_PUBLIC_URL`. The internal URL (`postgres.railway.internal`) only works inside Railway's network and will fail DNS lookup when run locally. Always use the public URL for local migration runs.
+
+Never assume Railway will auto-run migrations on deploy unless the Procfile explicitly contains an `alembic upgrade head` command. Check the Procfile first — if it does not run migrations, you must run them manually.
+
+This rule applies to every agent session. No exceptions.
+
 ---
 
 ## Session Workflow for Claude Code
