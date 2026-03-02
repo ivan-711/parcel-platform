@@ -76,7 +76,7 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, onRem
           {(onRemove || onCloseDeal) && (
             <button
               type="button"
-              className="opacity-0 group-hover:opacity-100 text-[#334155] hover:text-[#94A3B8] transition-all"
+              className="opacity-100 md:opacity-0 md:group-hover:opacity-100 text-[#475569] md:text-[#334155] hover:text-[#94A3B8] transition-all min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 flex items-center justify-center"
               onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation()
@@ -88,7 +88,7 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, onRem
           )}
           <GripVertical
             size={14}
-            className="text-[#334155] group-hover:text-[#475569] cursor-grab active:cursor-grabbing transition-colors"
+            className="hidden md:block text-[#334155] group-hover:text-[#475569] cursor-grab active:cursor-grabbing transition-colors"
           />
         </div>
       </div>
