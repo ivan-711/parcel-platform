@@ -1,4 +1,5 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, Component } from 'react'
+import type { ReactNode, ErrorInfo } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
@@ -40,6 +41,41 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
+/** Catches page-level errors to prevent full app crash. */
+class PageErrorBoundary extends Component<
+  { children: ReactNode; fallback?: ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  state = { hasError: false, error: null }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error }
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('Page crashed:', error, info)
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback ?? (
+        <div className="min-h-screen bg-app-bg flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <p className="text-text-primary text-lg">Something went wrong</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-accent-primary text-white rounded-lg"
+            >
+              Reload page
+            </button>
+          </div>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
 /** Root application component — sets up routing, React Query, and lazy page loading. */
 export default function App() {
   return (
@@ -61,7 +97,7 @@ export default function App() {
             <Route path="/deals" element={<ProtectedRoute><MyDeals /></ProtectedRoute>} />
             <Route path="/compare" element={<ProtectedRoute><ComparePage /></ProtectedRoute>} />
             <Route path="/pipeline" element={<ProtectedRoute><Pipeline /></ProtectedRoute>} />
-            <Route path="/portfolio" element={<ProtectedRoute><Portfolio /></ProtectedRoute>} />
+            <Route path="/portfolio" element={<ProtectedRoute><PageErrorBoundary><Portfolio /></PageErrorBoundary></ProtectedRoute>} />
             <Route path="/documents" element={<ProtectedRoute><Documents /></ProtectedRoute>} />
             <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />

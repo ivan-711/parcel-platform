@@ -134,7 +134,8 @@ interface AddEntryFormProps {
 }
 
 function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
-  const { data: deals } = useDeals({})
+  const dealsQuery = useDeals({})
+  const deals = dealsQuery?.data
   const [dealId, setDealId] = useState('')
   const [closedDate, setClosedDate] = useState('')
   const [closedPrice, setClosedPrice] = useState('')
@@ -259,6 +260,9 @@ export default function PortfolioPage() {
       setSheetOpen(false)
     },
   })
+
+  // Defensive - use optional chaining when accessing mutation properties
+  const isPending = addMutation?.isPending ?? false
 
   const summary = data?.summary
   const entries = data?.entries ?? []
@@ -462,10 +466,12 @@ export default function PortfolioPage() {
               Record a deal you've closed to track in your portfolio.
             </SheetDescription>
           </SheetHeader>
-          <AddEntryForm
-            onSubmit={(data) => addMutation.mutate(data)}
-            isSubmitting={addMutation.isPending}
-          />
+          {sheetOpen && (
+            <AddEntryForm
+              onSubmit={(data) => addMutation.mutate(data)}
+              isSubmitting={isPending}
+            />
+          )}
         </SheetContent>
       </Sheet>
     </AppShell>
