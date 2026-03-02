@@ -44,3 +44,13 @@ class DocumentListItem(BaseModel):
     presigned_url: Optional[str] = None
 
     model_config = {"from_attributes": True}
+
+
+class PaginatedDocuments(BaseModel):
+    """Paginated document list response for GET /documents."""
+
+    items: list[DocumentListItem]
+    total: int
+    page: int
+    per_page: int
+    pages: int

@@ -18,8 +18,8 @@ import type {
   AddPortfolioEntryRequest,
   UpdateProfileRequest,
   UserProfileResponse,
-  DocumentListItem,
   DocumentResponse,
+  PaginatedDocuments,
   ActivityResponse,
   OfferLetterResponse,
   NotificationPreferences,
@@ -171,7 +171,12 @@ export const api = {
       }),
   },
   documents: {
-    list: () => request<DocumentListItem[]>('/api/v1/documents/'),
+    list: (page = 1, perPage = 20) => {
+      const params = new URLSearchParams()
+      params.set('page', String(page))
+      params.set('per_page', String(perPage))
+      return request<PaginatedDocuments>(`/api/v1/documents/?${params.toString()}`)
+    },
     get: (id: string) => request<DocumentResponse>(`/api/v1/documents/${id}`),
     upload: (formData: FormData) =>
       request<DocumentResponse>('/api/v1/documents/', {

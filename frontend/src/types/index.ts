@@ -286,3 +286,12 @@ export interface DocumentListItem {
   presigned_url: string | null
   created_at: string
 }
+
+/** Paginated document list response from GET /documents. */
+export interface PaginatedDocuments {
+  items: DocumentListItem[]
+  total: number
+  page: number
+  per_page: number
+  pages: number
+}

@@ -4,7 +4,9 @@ import os
 import uuid
 from uuid import UUID
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, UploadFile, status
+import math
+
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, UploadFile, status
 from sqlalchemy.orm import Session
 
 from core.documents.processor import process_document
@@ -13,7 +15,7 @@ from core.storage.s3_service import delete_file, generate_presigned_url, upload_
 from database import get_db
 from models.documents import Document
 from models.users import User
-from schemas.documents import DocumentListItem, DocumentResponse
+from schemas.documents import DocumentListItem, DocumentResponse, PaginatedDocuments
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 
@@ -92,18 +94,24 @@ async def upload_document(
     return result
 
 
-@router.get("/", response_model=list[DocumentListItem])
+@router.get("/", response_model=PaginatedDocuments)
 async def list_documents(
+    page: int = Query(1, ge=1, description="Page number (1-indexed)"),
+    per_page: int = Query(20, ge=1, le=100, description="Items per page"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-) -> list[DocumentListItem]:
-    """List all documents for the current user, newest first."""
-    docs = (
+) -> PaginatedDocuments:
+    """List documents for the current user with pagination, newest first."""
+    base_query = (
         db.query(Document)
         .filter(Document.user_id == current_user.id)
         .order_by(Document.created_at.desc())
-        .all()
     )
+    total = base_query.count()
+    pages = max(1, math.ceil(total / per_page))
+    offset = (page - 1) * per_page
+    docs = base_query.offset(offset).limit(per_page).all()
+
     items = []
     for d in docs:
         item = DocumentListItem.model_validate(d)
@@ -112,7 +120,14 @@ async def list_documents(
             item.ai_summary = item.ai_summary[:150]
         item.presigned_url = generate_presigned_url(d.s3_key)
         items.append(item)
-    return items
+
+    return PaginatedDocuments(
+        items=items,
+        total=total,
+        page=page,
+        per_page=per_page,
+        pages=pages,
+    )
 
 
 @router.get("/{document_id}", response_model=DocumentResponse)
