@@ -267,14 +267,24 @@ async def get_deal(
     """Return the full detail for a single deal owned by the current user."""
     deal = _get_owned_deal(deal_id, current_user, db)
 
-    # Backfill risk_factors for deals created before this column existed
-    if deal.risk_factors is None and deal.inputs and deal.outputs:
-        score = deal.risk_score or 0
-        deal.risk_factors = build_risk_factors(
-            deal.strategy, deal.inputs, deal.outputs, score,
-        )
-        db.commit()
-        db.refresh(deal)
+    # Backfill risk_score and risk_factors for deals with missing values
+    if deal.inputs and deal.outputs:
+        needs_score = deal.risk_score is None or deal.risk_score == 0
+        needs_factors = deal.risk_factors is None
+        if needs_score or needs_factors:
+            try:
+                risk_mod = importlib.import_module("core.calculators.risk_score")
+                score = risk_mod.calculate_risk_score(
+                    deal.strategy, deal.inputs, deal.outputs,
+                )
+                deal.risk_score = score
+                deal.risk_factors = build_risk_factors(
+                    deal.strategy, deal.inputs, deal.outputs, score,
+                )
+                db.commit()
+                db.refresh(deal)
+            except (ImportError, AttributeError):
+                pass
 
     return DealResponse.model_validate(deal)
 
