@@ -80,6 +80,12 @@ def get_dashboard_stats(
         if stage not in INACTIVE_STAGES
     )
 
+    # 4b. Closed deals (portfolio entries)
+    closed_deals: int = db.execute(
+        select(func.count()).select_from(PortfolioEntry)
+        .where(PortfolioEntry.user_id == current_user.id)
+    ).scalar_one()
+
     # 5. Recent deals (last 5)
     recent_deal_rows = db.execute(
         select(Deal)
@@ -93,6 +99,7 @@ def get_dashboard_stats(
     return DashboardStatsResponse(
         total_deals=total_deals,
         active_pipeline_deals=active_pipeline_deals,
+        closed_deals=closed_deals,
         deals_by_strategy=deals_by_strategy,
         pipeline_by_stage=pipeline_by_stage,
         recent_deals=recent_deals,

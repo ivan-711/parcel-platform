@@ -42,6 +42,7 @@ class DashboardStatsResponse(BaseModel):
 
     total_deals: int
     active_pipeline_deals: int
+    closed_deals: int
     deals_by_strategy: dict[str, int]
     pipeline_by_stage: dict[str, int]
     recent_deals: list[RecentDealItem]
