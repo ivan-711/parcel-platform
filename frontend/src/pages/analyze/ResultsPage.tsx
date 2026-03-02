@@ -1,9 +1,10 @@
 /** Deal results page — strategy-aware KPI cards, outputs table, risk gauge, and action buttons. */
 
 import { useState, useRef, useEffect } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import jsPDF from 'jspdf'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, PlusCircle, ChevronDown, Share2, Save, Check, HelpCircle, Download, FileText } from 'lucide-react'
+import { ArrowLeft, PlusCircle, ChevronDown, Share2, Save, Check, HelpCircle, Download, FileText, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
 import { KPICard } from '@/components/ui/KPICard'
@@ -16,6 +17,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { OfferLetterModal } from '@/components/offer-letter-modal'
 
 import { useDeal, useAddToPipeline, useUpdateDeal } from '@/hooks/useDeals'
@@ -52,6 +64,17 @@ export default function ResultsPage() {
   const [stageMenuOpen, setStageMenuOpen] = useState(false)
   const [offerLetterOpen, setOfferLetterOpen] = useState(false)
   const stageMenuRef = useRef<HTMLDivElement>(null)
+
+  const deleteDeal = useMutation({
+    mutationFn: () => api.deals.delete(dealId!),
+    onSuccess: () => {
+      toast.success('Deal deleted')
+      navigate('/deals')
+    },
+    onError: () => {
+      toast.error('Failed to delete deal')
+    },
+  })
 
   useEffect(() => {
     setAddedToPipeline(false)
@@ -155,6 +178,25 @@ export default function ResultsPage() {
     )
   }
 
+  const formatPDFValue = (key: string, value: unknown): string => {
+    const num = Number(value)
+    if (isNaN(num)) return String(value ?? '')
+    const k = key.toLowerCase()
+    if (k.includes('pct') || k.includes('roi') || k.includes('rate') ||
+        k.includes('return') || k.includes('yield')) {
+      return `${num.toFixed(2)}%`
+    }
+    if (k.includes('price') || k.includes('cost') || k.includes('profit') ||
+        k.includes('flow') || k.includes('rent') || k.includes('payment') ||
+        k.includes('proceeds') || k.includes('invested') || k.includes('budget') ||
+        k.includes('fee') || k.includes('equity') || k.includes('mao') ||
+        k.includes('arv') || k.includes('noi') || k.includes('spread') ||
+        k.includes('deposit') || k.includes('loan') || k.includes('amount')) {
+      return `$${Math.round(num).toLocaleString('en-US')}`
+    }
+    return num.toLocaleString('en-US', { maximumFractionDigits: 2 })
+  }
+
   const handleExportPDF = () => {
     const doc = new jsPDF()
     const addr = deal.address
@@ -186,7 +228,7 @@ export default function ResultsPage() {
     Object.entries(deal.outputs ?? {}).forEach(([key, value]) => {
       if (y > 270) { doc.addPage(); y = 20 }
       const label = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-      doc.text(`${label}: ${value}`, 15, y)
+      doc.text(`${label}: ${formatPDFValue(key, value)}`, 15, y)
       y += 8
     })
 
@@ -200,7 +242,7 @@ export default function ResultsPage() {
     Object.entries(deal.inputs ?? {}).forEach(([key, value]) => {
       if (y > 270) { doc.addPage(); y = 20 }
       const label = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-      doc.text(`${label}: ${value}`, 15, y)
+      doc.text(`${label}: ${formatPDFValue(key, value)}`, 15, y)
       y += 8
     })
 
@@ -420,6 +462,28 @@ export default function ResultsPage() {
             <Download size={14} />
             Export PDF
           </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" className="gap-2 text-red-400 hover:text-red-300 hover:bg-red-900/20">
+                <Trash2 size={14} />
+                Delete
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="bg-app-surface border-border-subtle">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-text-primary">Delete this deal?</AlertDialogTitle>
+                <AlertDialogDescription className="text-text-secondary">
+                  This will permanently delete {deal.address}. This cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="bg-app-elevated border-border-subtle text-text-primary">Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => deleteDeal.mutate()} className="bg-red-600 hover:bg-red-700 text-white">
+                  {deleteDeal.isPending ? 'Deleting...' : 'Delete'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           <Button
             variant="outline"
             onClick={() => setOfferLetterOpen(true)}
