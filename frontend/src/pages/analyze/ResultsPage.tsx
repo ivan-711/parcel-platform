@@ -1,10 +1,9 @@
 /** Deal results page — strategy-aware KPI cards, outputs table, risk gauge, and action buttons. */
 
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useRef, useEffect, lazy, Suspense } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, PlusCircle, ChevronDown, Share2, Save, Check, HelpCircle, Download, FileText } from 'lucide-react'
 import { toast } from 'sonner'
-import { PDFDownloadLink } from '@react-pdf/renderer'
 import { AppShell } from '@/components/layout/AppShell'
 import { KPICard } from '@/components/ui/KPICard'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
@@ -16,8 +15,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { DealPDF } from '@/components/deal-pdf'
 import { OfferLetterModal } from '@/components/offer-letter-modal'
+
+const LazyExportPDFButton = lazy(() => import('@/components/export-pdf-button'))
 import { useDeal, useAddToPipeline, useUpdateDeal } from '@/hooks/useDeals'
 import { api } from '@/lib/api'
 import {
@@ -92,7 +92,6 @@ export default function ResultsPage() {
   const outputEntries = Object.entries(outputs)
   const sanitizeFilename = (name: string) =>
     name.replace(/[\s,.\\/]+/g, '-').replace(/-+/g, '-').toLowerCase()
-  const pdfDocument = useMemo(() => <DealPDF deal={deal} />, [deal])
 
   const handleAddToPipeline = (stage: string) => {
     setStageMenuOpen(false)
@@ -357,17 +356,13 @@ export default function ResultsPage() {
             <Share2 size={14} />
             {copied ? 'Link copied!' : sharing ? 'Sharing...' : deal.status === 'shared' ? 'Copy Share Link' : 'Share Deal'}
           </Button>
-          <PDFDownloadLink
-            document={pdfDocument}
-            fileName={`parcel-analysis-${sanitizeFilename(deal.address)}.pdf`}
-          >
-            {({ loading }) => (
-              <Button variant="outline" disabled={loading} className="gap-2">
-                <Download size={14} />
-                {loading ? 'Preparing...' : 'Export PDF'}
-              </Button>
-            )}
-          </PDFDownloadLink>
+          <Suspense fallback={
+            <Button variant="outline" disabled className="gap-2">
+              <Download size={14} /> Export PDF
+            </Button>
+          }>
+            <LazyExportPDFButton deal={deal} filename={`parcel-analysis-${sanitizeFilename(deal.address)}.pdf`} />
+          </Suspense>
           <Button
             variant="outline"
             onClick={() => setOfferLetterOpen(true)}

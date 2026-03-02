@@ -1,10 +1,9 @@
 /** Modal for AI-generated offer letter with copy-to-clipboard and PDF download. */
 
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { Copy, Check, Download, RefreshCw } from 'lucide-react'
-import { PDFDownloadLink } from '@react-pdf/renderer'
 import {
   Dialog,
   DialogContent,
@@ -14,8 +13,9 @@ import {
 } from '@/components/ui/dialog'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { Button } from '@/components/ui/button'
-import { OfferLetterPDF } from '@/components/offer-letter-pdf'
 import { api } from '@/lib/api'
+
+const LazyOfferLetterPDFButton = lazy(() => import('@/components/offer-letter-pdf-button'))
 import type { Strategy } from '@/types'
 
 interface OfferLetterModalProps {
@@ -126,23 +126,18 @@ export function OfferLetterModal({
                     {copied ? <Check size={14} /> : <Copy size={14} />}
                     {copied ? 'Copied' : 'Copy to Clipboard'}
                   </Button>
-                  <PDFDownloadLink
-                    document={
-                      <OfferLetterPDF
-                        address={data.address}
-                        letterText={data.offer_letter}
-                        generatedAt={data.generated_at}
-                      />
-                    }
-                    fileName={`offer-letter-${data.address.replace(/[\s,.]+/g, '-').toLowerCase()}.pdf`}
-                  >
-                    {({ loading }) => (
-                      <Button className="gap-2 bg-accent-primary hover:bg-accent-primary/90 text-white">
-                        <Download size={14} />
-                        {loading ? 'Preparing...' : 'Download as PDF'}
-                      </Button>
-                    )}
-                  </PDFDownloadLink>
+                  <Suspense fallback={
+                    <Button className="gap-2 bg-accent-primary hover:bg-accent-primary/90 text-white" disabled>
+                      <Download size={14} /> Download as PDF
+                    </Button>
+                  }>
+                    <LazyOfferLetterPDFButton
+                      address={data.address}
+                      letterText={data.offer_letter}
+                      generatedAt={data.generated_at}
+                      filename={`offer-letter-${data.address.replace(/[\s,.]+/g, '-').toLowerCase()}.pdf`}
+                    />
+                  </Suspense>
                 </div>
               </div>
             )}
