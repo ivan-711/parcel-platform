@@ -7,6 +7,7 @@ import { AlertTriangle } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
+import { ComparisonRadar } from '@/components/charts/ComparisonRadar'
 import {
   Select,
   SelectContent,
@@ -211,6 +212,25 @@ export default function ComparePage() {
               These deals use different strategies — comparison may not be meaningful
             </p>
           </div>
+        )}
+
+        {/* Radar chart — shown when both deals are loaded */}
+        {!isLoading && dealA && dealB && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut', delay: 0.1 }}
+          >
+            <ComparisonRadar
+              deals={[dealA, dealB].map((d) => ({
+                id: d.id,
+                address: d.address,
+                strategy: d.strategy as Strategy,
+                outputs: d.outputs as Record<string, number | string>,
+                riskScore: d.risk_score,
+              }))}
+            />
+          </motion.div>
         )}
 
         {/* Comparison table */}
