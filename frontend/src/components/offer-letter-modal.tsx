@@ -1,6 +1,6 @@
 /** Modal for AI-generated offer letter with copy-to-clipboard and PDF download. */
 
-import { useState, lazy, Suspense } from 'react'
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { Copy, Check, Download, RefreshCw } from 'lucide-react'
@@ -14,9 +14,12 @@ import {
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api'
-
-const LazyOfferLetterPDFButton = lazy(() => import('@/components/offer-letter-pdf-button'))
+import jsPDF from 'jspdf'
 import type { Strategy } from '@/types'
+
+/** Strip markdown bold/italic markers from AI-generated text. */
+const cleanLetter = (text: string) =>
+  text.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1')
 
 interface OfferLetterModalProps {
   isOpen: boolean
@@ -51,9 +54,19 @@ export function OfferLetterModal({
 
   const handleCopy = async () => {
     if (!data?.offer_letter) return
-    await navigator.clipboard.writeText(data.offer_letter)
+    await navigator.clipboard.writeText(cleanLetter(data.offer_letter))
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleDownloadPDF = () => {
+    if (!data?.offer_letter) return
+    const doc = new jsPDF()
+    const cleanText = cleanLetter(data.offer_letter)
+    const lines = doc.splitTextToSize(cleanText, 180)
+    doc.setFontSize(11)
+    doc.text(lines, 15, 20)
+    doc.save(`offer-letter-${address.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`)
   }
 
   return (
@@ -114,7 +127,7 @@ export function OfferLetterModal({
             {data && !isLoading && !isError && (
               <div className="space-y-4">
                 <pre className="max-h-[400px] overflow-y-auto rounded-lg border border-[#1A1A2E] bg-[#08080F] p-4 text-sm text-[#E2E8F0] font-mono whitespace-pre-wrap leading-relaxed">
-                  {data.offer_letter}
+                  {cleanLetter(data.offer_letter)}
                 </pre>
 
                 <div className="flex gap-3 justify-end">
@@ -126,18 +139,13 @@ export function OfferLetterModal({
                     {copied ? <Check size={14} /> : <Copy size={14} />}
                     {copied ? 'Copied' : 'Copy to Clipboard'}
                   </Button>
-                  <Suspense fallback={
-                    <Button className="gap-2 bg-accent-primary hover:bg-accent-primary/90 text-white" disabled>
-                      <Download size={14} /> Download as PDF
-                    </Button>
-                  }>
-                    <LazyOfferLetterPDFButton
-                      address={data.address}
-                      letterText={data.offer_letter}
-                      generatedAt={data.generated_at}
-                      filename={`offer-letter-${data.address.replace(/[\s,.]+/g, '-').toLowerCase()}.pdf`}
-                    />
-                  </Suspense>
+                  <Button
+                    onClick={handleDownloadPDF}
+                    className="gap-2 bg-accent-primary hover:bg-accent-primary/90 text-white"
+                  >
+                    <Download size={14} />
+                    Download as PDF
+                  </Button>
                 </div>
               </div>
             )}
