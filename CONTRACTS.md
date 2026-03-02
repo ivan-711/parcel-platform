@@ -416,6 +416,39 @@ Notes:
 
 ---
 
+### POST /api/v1/deals/:id/offer-letter/
+
+**Status:** ✅ Built and tested locally
+**Auth:** Required
+
+No request body — all data comes from the deal record.
+
+Response `200`:
+```json
+{
+  "deal_id": "uuid",
+  "address": "string",
+  "strategy": "string",
+  "offer_letter": "string",
+  "generated_at": "ISO8601"
+}
+```
+
+Errors:
+
+- `404 DEAL_NOT_FOUND` — deal does not exist or is soft-deleted
+- `403 ACCESS_DENIED` — deal belongs to another user
+- `500 GENERATION_FAILED` — Claude API call failed (details logged server-side)
+
+Notes:
+
+- Generates a 3-4 paragraph professional offer letter using Claude AI
+- Prompt is built dynamically from deal strategy, inputs, and outputs
+- Letter is signed off as "Parcel Investment Group"
+- Not stored in the database — generated fresh on each call
+
+---
+
 ## PIPELINE ENDPOINTS
 
 ### GET /api/v1/pipeline

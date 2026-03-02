@@ -217,3 +217,13 @@ class ShareDealActionResponse(BaseModel):
     updated_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class OfferLetterResponse(BaseModel):
+    """Response for POST /deals/:id/offer-letter/ — AI-generated offer letter."""
+
+    deal_id: uuid.UUID
+    address: str
+    strategy: str
+    offer_letter: str
+    generated_at: datetime

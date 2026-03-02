@@ -1,6 +1,7 @@
 """Deals router — CRUD for deal analyses plus a public share endpoint."""
 
 import importlib
+import logging
 import os
 from datetime import datetime
 from typing import Any, Optional
@@ -18,6 +19,7 @@ from schemas.deals import (
     DealListItem,
     DealResponse,
     DealUpdateRequest,
+    OfferLetterResponse,
     ShareDealActionResponse,
     SharedByInfo,
     SharedDealResponse,
@@ -410,4 +412,46 @@ async def get_shared_deal(
         primary_metric_value=value,
         shared_by=SharedByInfo(name=first_name),
         created_at=deal.created_at,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Offer Letter Generation
+# ---------------------------------------------------------------------------
+
+logger = logging.getLogger(__name__)
+
+
+@router.post(
+    "/{deal_id}/offer-letter/",
+    response_model=OfferLetterResponse,
+)
+async def generate_deal_offer_letter(
+    deal_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> OfferLetterResponse:
+    """Generate a professional offer letter for a deal using Claude AI."""
+    deal = _get_owned_deal(deal_id, current_user, db)
+
+    try:
+        from core.ai.offer_letter import generate_offer_letter
+
+        letter_text = generate_offer_letter(deal)
+    except Exception:
+        logger.exception("Offer letter generation failed for deal %s", deal_id)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "error": "Failed to generate offer letter",
+                "code": "GENERATION_FAILED",
+            },
+        )
+
+    return OfferLetterResponse(
+        deal_id=deal.id,
+        address=deal.address,
+        strategy=deal.strategy,
+        offer_letter=letter_text,
+        generated_at=datetime.utcnow(),
     )
