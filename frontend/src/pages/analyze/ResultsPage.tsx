@@ -2,9 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useMutation } from '@tanstack/react-query'
+import { motion } from 'framer-motion'
 import jsPDF from 'jspdf'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, PlusCircle, ChevronDown, Share2, Save, Check, HelpCircle, Download, FileText, Trash2 } from 'lucide-react'
+import { ArrowLeft, PlusCircle, ChevronDown, Share2, Save, Check, HelpCircle, Download, FileText, Trash2, MessageSquare } from 'lucide-react'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
 import { KPICard } from '@/components/ui/KPICard'
@@ -32,6 +33,7 @@ import { OfferLetterModal } from '@/components/offer-letter-modal'
 
 import { useDeal, useAddToPipeline, useUpdateDeal } from '@/hooks/useDeals'
 import { api } from '@/lib/api'
+import { staggerContainer, staggerItem, slideUp } from '@/lib/motion'
 import {
   formatLabel,
   formatCurrency,
@@ -332,20 +334,25 @@ export default function ResultsPage() {
 
   return (
     <AppShell title="Deal Results">
-      <div className="max-w-5xl mx-auto space-y-6">
+      <motion.div
+        className="max-w-5xl mx-auto space-y-6"
+        variants={staggerContainer(60)}
+        initial="hidden"
+        animate="visible"
+      >
         {/* Header */}
-        <div className="flex items-center gap-3">
+        <motion.div variants={staggerItem} className="flex items-center gap-3">
           <StrategyBadge strategy={deal.strategy as Strategy} />
           <h2 className="text-lg font-semibold text-text-primary">{deal.address}</h2>
-        </div>
+        </motion.div>
 
         {/* Section 1: KPI Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <motion.div variants={staggerItem} className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {kpis.map(renderKPI)}
-        </div>
+        </motion.div>
 
         {/* Section 2: Two Columns */}
-        <div className="grid md:grid-cols-5 gap-6">
+        <motion.div variants={staggerItem} className="grid md:grid-cols-5 gap-6">
           {/* Left — Outputs Table */}
           <div className="md:col-span-3 rounded-xl border border-border-subtle bg-app-surface overflow-hidden">
             <div className="px-4 py-3 border-b border-[#1A1A2E]">
@@ -407,10 +414,10 @@ export default function ResultsPage() {
             </div>
             <RiskGauge score={riskScore} />
           </div>
-        </div>
+        </motion.div>
 
         {/* Section 3: Actions */}
-        <div className="flex gap-3 justify-end flex-wrap">
+        <motion.div variants={slideUp} className="flex gap-3 justify-end flex-wrap">
           <Button variant="ghost" asChild>
             <Link to="/analyze" className="gap-2">
               <ArrowLeft size={14} />
@@ -486,6 +493,14 @@ export default function ResultsPage() {
           </AlertDialog>
           <Button
             variant="outline"
+            onClick={() => navigate(`/chat?dealId=${deal.id}`)}
+            className="gap-2"
+          >
+            <MessageSquare size={14} />
+            Chat about Deal
+          </Button>
+          <Button
+            variant="outline"
             onClick={() => setOfferLetterOpen(true)}
             className="gap-2"
           >
@@ -509,8 +524,8 @@ export default function ResultsPage() {
               </>
             )}
           </Button>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       <OfferLetterModal
         isOpen={offerLetterOpen}

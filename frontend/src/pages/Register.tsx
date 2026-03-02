@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -66,7 +67,12 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-app-bg flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-[480px] bg-app-surface border border-border-subtle rounded-xl p-8 space-y-6">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+        className="w-full max-w-[480px] bg-app-surface border border-border-subtle rounded-xl p-8 space-y-6"
+      >
         {/* Header */}
         <div className="space-y-1 text-center">
           <p className="text-2xl font-semibold text-accent-primary tracking-tight">Parcel</p>
@@ -174,7 +180,7 @@ export default function Register() {
             Sign in
           </Link>
         </p>
-      </div>
+      </motion.div>
     </div>
   )
 }

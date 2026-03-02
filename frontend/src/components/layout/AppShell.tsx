@@ -12,12 +12,14 @@ import {
   Settings,
   LogOut,
   Menu,
+  Search,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/authStore'
 import { useLogout } from '@/hooks/useAuth'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
+import { CommandPalette } from '@/components/command-palette'
 
 interface AppShellProps {
   children: React.ReactNode
@@ -169,7 +171,7 @@ function UserMenu() {
   )
 }
 
-function Topbar({ title, onMenuToggle }: { title?: string; onMenuToggle: () => void }) {
+function Topbar({ title, onMenuToggle, onSearchClick }: { title?: string; onMenuToggle: () => void; onSearchClick: () => void }) {
   return (
     <header className="h-[52px] shrink-0 flex items-center justify-between px-4 md:px-6 border-b border-border-subtle">
       {/* Left side: hamburger (mobile) + logo (mobile) + page title */}
@@ -191,10 +193,15 @@ function Topbar({ title, onMenuToggle }: { title?: string; onMenuToggle: () => v
       </div>
 
       <div className="flex items-center gap-3">
-        {/* Search pill (cosmetic) — hidden on mobile */}
-        <button className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle bg-app-surface text-text-muted text-xs hover:border-border-default transition-colors">
+        {/* Search pill — opens command palette. Hidden on mobile, icon-only on small screens. */}
+        <button
+          onClick={onSearchClick}
+          aria-label="Open command palette"
+          className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle bg-app-surface text-text-muted text-xs hover:border-border-default transition-colors cursor-pointer"
+        >
+          <Search size={14} className="shrink-0" />
           <span>Search</span>
-          <kbd className="text-[10px] font-mono bg-app-elevated px-1.5 py-0.5 rounded">⌘K</kbd>
+          <kbd className="text-[10px] font-mono bg-app-elevated px-1.5 py-0.5 rounded">&#8984;K</kbd>
         </button>
 
         {/* User avatar + dropdown menu */}
@@ -207,10 +214,11 @@ function Topbar({ title, onMenuToggle }: { title?: string; onMenuToggle: () => v
 /**
  * Root layout for all authenticated app pages.
  * Renders the desktop sidebar (hidden on mobile), a mobile Sheet drawer,
- * topbar with hamburger toggle, and scrollable main content area.
+ * topbar with hamburger toggle, command palette, and scrollable main content area.
  */
 export function AppShell({ children, title, noPadding }: AppShellProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
 
   return (
     <div className="flex h-screen bg-app-bg overflow-hidden">
@@ -221,11 +229,18 @@ export function AppShell({ children, title, noPadding }: AppShellProps) {
       <MobileSidebar open={mobileNavOpen} onOpenChange={setMobileNavOpen} />
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Topbar title={title} onMenuToggle={() => setMobileNavOpen(true)} />
+        <Topbar
+          title={title}
+          onMenuToggle={() => setMobileNavOpen(true)}
+          onSearchClick={() => setCommandPaletteOpen(true)}
+        />
         <main className={cn('flex-1', noPadding ? 'overflow-hidden' : 'overflow-y-auto p-4 md:p-6')}>
           {children}
         </main>
       </div>
+
+      {/* Command palette — Cmd+K / Ctrl+K global search and navigation */}
+      <CommandPalette open={commandPaletteOpen} onOpenChange={setCommandPaletteOpen} />
     </div>
   )
 }

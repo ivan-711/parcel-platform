@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AnimatePresence, motion } from 'framer-motion'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { Toaster } from '@/components/ui/sonner'
+import { ErrorBoundary, PageErrorBoundary } from '@/components/error-boundary'
 import { useAuthStore } from '@/stores/authStore'
 import { pageTransition } from '@/lib/motion'
 
@@ -65,17 +66,17 @@ function AnimatedRoutes() {
             <Route path="/share/:dealId" element={<ShareDeal />} />
 
             {/* Protected app routes — AppShell is rendered inside each page */}
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/analyze" element={<ProtectedRoute><StrategySelectPage /></ProtectedRoute>} />
-            <Route path="/analyze/results/:dealId" element={<ProtectedRoute><ResultsPage /></ProtectedRoute>} />
-            <Route path="/analyze/:strategy" element={<ProtectedRoute><AnalyzerFormPage /></ProtectedRoute>} />
-            <Route path="/deals" element={<ProtectedRoute><MyDeals /></ProtectedRoute>} />
-            <Route path="/compare" element={<ProtectedRoute><ComparePage /></ProtectedRoute>} />
-            <Route path="/pipeline" element={<ProtectedRoute><Pipeline /></ProtectedRoute>} />
-            <Route path="/portfolio" element={<ProtectedRoute><Portfolio /></ProtectedRoute>} />
-            <Route path="/documents" element={<ProtectedRoute><Documents /></ProtectedRoute>} />
-            <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute><PageErrorBoundary><Dashboard /></PageErrorBoundary></ProtectedRoute>} />
+            <Route path="/analyze" element={<ProtectedRoute><PageErrorBoundary><StrategySelectPage /></PageErrorBoundary></ProtectedRoute>} />
+            <Route path="/analyze/results/:dealId" element={<ProtectedRoute><PageErrorBoundary><ResultsPage /></PageErrorBoundary></ProtectedRoute>} />
+            <Route path="/analyze/:strategy" element={<ProtectedRoute><PageErrorBoundary><AnalyzerFormPage /></PageErrorBoundary></ProtectedRoute>} />
+            <Route path="/deals" element={<ProtectedRoute><PageErrorBoundary><MyDeals /></PageErrorBoundary></ProtectedRoute>} />
+            <Route path="/compare" element={<ProtectedRoute><PageErrorBoundary><ComparePage /></PageErrorBoundary></ProtectedRoute>} />
+            <Route path="/pipeline" element={<ProtectedRoute><PageErrorBoundary><Pipeline /></PageErrorBoundary></ProtectedRoute>} />
+            <Route path="/portfolio" element={<ProtectedRoute><PageErrorBoundary><Portfolio /></PageErrorBoundary></ProtectedRoute>} />
+            <Route path="/documents" element={<ProtectedRoute><PageErrorBoundary><Documents /></PageErrorBoundary></ProtectedRoute>} />
+            <Route path="/chat" element={<ProtectedRoute><PageErrorBoundary><Chat /></PageErrorBoundary></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><PageErrorBoundary><Settings /></PageErrorBoundary></ProtectedRoute>} />
 
             {/* Catch-all 404 */}
             <Route path="*" element={<NotFound />} />
@@ -89,11 +90,13 @@ function AnimatedRoutes() {
 /** Root application component — sets up routing, React Query, and lazy page loading. */
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AnimatedRoutes />
-        <Toaster position="bottom-right" theme="dark" />
-      </BrowserRouter>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <AnimatedRoutes />
+          <Toaster position="bottom-right" theme="dark" />
+        </BrowserRouter>
+      </QueryClientProvider>
+    </ErrorBoundary>
   )
 }

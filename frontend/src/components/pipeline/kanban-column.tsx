@@ -1,0 +1,80 @@
+/** KanbanColumn — a single stage column in the pipeline Kanban board with sortable context. */
+
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Inbox } from 'lucide-react'
+import { ColumnSkeleton } from './column-skeleton'
+import { SortableDealCard } from './deal-card'
+import type { PipelineCard, Stage } from './constants'
+
+interface KanbanColumnProps {
+  stage: { key: Stage; label: string; color: string }
+  cards: PipelineCard[]
+  isOver: boolean
+  isLoading: boolean
+  onRemove?: (pipelineId: string, stage: Stage) => void
+  onCloseDeal?: (card: PipelineCard) => void
+}
+
+export function KanbanColumn({ stage, cards, isOver, isLoading, onRemove, onCloseDeal }: KanbanColumnProps) {
+  return (
+    <div className="flex flex-col min-w-[240px] max-w-[240px]">
+      {/* Column header */}
+      <div className="flex items-center gap-2 mb-3 px-1">
+        <div
+          className="w-2 h-2 rounded-full flex-shrink-0"
+          style={{ backgroundColor: stage.color }}
+        />
+        <span className="text-[11px] font-medium uppercase tracking-widest text-[#94A3B8]">
+          {stage.label}
+        </span>
+        <span
+          className="ml-auto text-[11px] font-mono px-1.5 py-0.5 rounded"
+          style={{
+            color: stage.color,
+            backgroundColor: `${stage.color}22`,
+          }}
+        >
+          {cards.length}
+        </span>
+      </div>
+
+      {/* Drop zone */}
+      <div
+        className="flex flex-col gap-2 min-h-[120px] rounded-xl p-2 transition-all duration-150"
+        style={{
+          backgroundColor: isOver ? `${stage.color}12` : 'transparent',
+          border: isOver ? `1px dashed ${stage.color}55` : '1px dashed transparent',
+        }}
+      >
+        {isLoading ? (
+          <ColumnSkeleton />
+        ) : cards.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-24 gap-2 opacity-30">
+            <Inbox size={20} className="text-[#475569]" />
+            <p className="text-[11px] text-[#475569]">Drop here</p>
+          </div>
+        ) : (
+          <SortableContext
+            items={cards.map((c) => c.pipeline_id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <AnimatePresence>
+              {cards.map((card, i) => (
+                <motion.div
+                  key={card.pipeline_id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.18, delay: i * 0.04 }}
+                >
+                  <SortableDealCard card={card} onRemove={onRemove} onCloseDeal={onCloseDeal} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </SortableContext>
+        )}
+      </div>
+    </div>
+  )
+}

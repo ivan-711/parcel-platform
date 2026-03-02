@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+import { AreaChart, Area, ResponsiveContainer } from 'recharts'
 import { useCountUp } from '@/hooks/useCountUp'
 import { SkeletonCard } from './SkeletonCard'
 import { cn } from '@/lib/utils'
@@ -11,6 +13,8 @@ interface KPICardProps {
   delta?: number
   loading?: boolean
   className?: string
+  /** Optional array of numbers to render a sparkline mini-chart at the bottom of the card. */
+  sparklineData?: number[]
 }
 
 function formatValue(value: number, format: Format): string {
@@ -25,20 +29,34 @@ function formatValue(value: number, format: Format): string {
 }
 
 /**
- * KPI metric card with count-up animation, delta badge, and JetBrains Mono value.
+ * KPI metric card with count-up animation, delta badge, optional sparkline, and JetBrains Mono value.
  * Use for all financial metrics on dashboards and deal results.
+ * Pass `sparklineData` (array of numbers) to render a mini area chart at the bottom.
  */
-export function KPICard({ label, value, format, delta, loading, className }: KPICardProps) {
+export function KPICard({ label, value, format, delta, loading, className, sparklineData }: KPICardProps) {
   const animated = useCountUp(value)
+  const isPositive = delta === undefined || delta >= 0
+
+  const chartData = useMemo(() => {
+    if (!sparklineData || sparklineData.length === 0) return null
+    return sparklineData.map((v, i) => ({ idx: i, value: v }))
+  }, [sparklineData])
+
+  const gradientId = useMemo(() => {
+    return `sparkGrad-${label.replace(/\s+/g, '-').toLowerCase()}`
+  }, [label])
 
   if (loading) {
     return <SkeletonCard className={className} lines={2} />
   }
 
+  const strokeColor = isPositive ? '#6366F1' : '#EF4444'
+  const fillOpacity = 0.2
+
   return (
     <div
       className={cn(
-        'rounded-xl border border-border-subtle bg-app-surface p-5 space-y-1',
+        'rounded-xl border border-border-subtle bg-app-surface p-5 space-y-1 overflow-hidden',
         className
       )}
     >
@@ -56,6 +74,30 @@ export function KPICard({ label, value, format, delta, loading, className }: KPI
           {delta >= 0 ? '▲' : '▼'} {Math.abs(delta).toFixed(1)}
           {format === 'percent' ? 'pp' : ''}
         </p>
+      )}
+      {chartData && chartData.length > 1 && (
+        <div className="mt-2 -mx-5 -mb-5">
+          <ResponsiveContainer width="100%" height={60}>
+            <AreaChart data={chartData} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
+              <defs>
+                <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={strokeColor} stopOpacity={fillOpacity} />
+                  <stop offset="100%" stopColor={strokeColor} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke={strokeColor}
+                strokeWidth={1.5}
+                fill={`url(#${gradientId})`}
+                isAnimationActive={true}
+                animationDuration={1200}
+                animationEasing="ease-out"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       )}
     </div>
   )

@@ -7,11 +7,17 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   AreaChart,
   Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
+  Legend,
 } from 'recharts'
 
 import { AppShell } from '@/components/layout/AppShell'
@@ -98,10 +104,22 @@ function truncate(text: string, max: number): string {
   return text.length > max ? text.slice(0, max) + '...' : text
 }
 
+/* ── Strategy color map (from design-brief.jsonc) ── */
+
+const STRATEGY_COLORS: Record<Strategy, string> = {
+  wholesale: '#10B981',
+  creative_finance: '#8B5CF6',
+  brrrr: '#F59E0B',
+  buy_and_hold: '#3B82F6',
+  flip: '#EF4444',
+}
+
 /* ── Chart tooltip ── */
 
 interface ChartPayloadItem {
   value: number
+  name?: string
+  payload?: Record<string, unknown>
 }
 
 function ChartTooltipContent({ active, payload, label }: {
@@ -114,6 +132,68 @@ function ChartTooltipContent({ active, payload, label }: {
     <div className="bg-[#0F0F1A] border border-[#1A1A2E] rounded-lg px-3 py-2 text-xs">
       <p className="text-[#94A3B8] mb-1">{label}</p>
       <p className="font-mono text-[#F1F5F9]">{formatCurrency(payload[0].value)}</p>
+    </div>
+  )
+}
+
+/** Custom tooltip for the strategy donut chart. */
+function DonutTooltipContent({ active, payload }: {
+  active?: boolean
+  payload?: ChartPayloadItem[]
+}) {
+  if (!active || !payload?.length) return null
+  const item = payload[0]
+  const data = item.payload as Record<string, unknown> | undefined
+  return (
+    <div className="bg-[#0F0F1A] border border-[#1A1A2E] rounded-lg px-3 py-2 text-xs">
+      <p className="text-[#F1F5F9] font-medium mb-1">{item.name}</p>
+      <p className="text-[#94A3B8]">
+        <span className="font-mono text-[#F1F5F9]">{item.value}</span> deal{item.value !== 1 ? 's' : ''}
+      </p>
+      {data && typeof data.totalValue === 'number' && (
+        <p className="text-[#94A3B8]">
+          Total value: <span className="font-mono text-[#F1F5F9]">{formatCurrency(data.totalValue as number)}</span>
+        </p>
+      )}
+    </div>
+  )
+}
+
+/** Custom tooltip for the monthly cash flow bar chart. */
+function BarTooltipContent({ active, payload, label }: {
+  active?: boolean
+  payload?: ChartPayloadItem[]
+  label?: string
+}) {
+  if (!active || !payload?.length) return null
+  const val = payload[0].value
+  return (
+    <div className="bg-[#0F0F1A] border border-[#1A1A2E] rounded-lg px-3 py-2 text-xs">
+      <p className="text-[#94A3B8] mb-1">{label}</p>
+      <p className={`font-mono ${val >= 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
+        {formatCurrency(val)}
+      </p>
+    </div>
+  )
+}
+
+/** Custom legend renderer for the donut chart. */
+function DonutLegend({ payload }: { payload?: Array<{ value: string; color: string; payload?: { percent?: number } }> }) {
+  if (!payload) return null
+  return (
+    <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-3">
+      {payload.map((entry) => (
+        <div key={entry.value} className="flex items-center gap-1.5 text-xs">
+          <span
+            className="inline-block w-2.5 h-2.5 rounded-full shrink-0"
+            style={{ backgroundColor: entry.color }}
+          />
+          <span className="text-[#94A3B8]">{entry.value}</span>
+          <span className="font-mono text-[#F1F5F9]">
+            {entry.payload?.percent !== undefined ? `${(entry.payload.percent * 100).toFixed(0)}%` : ''}
+          </span>
+        </div>
+      ))}
     </div>
   )
 }
@@ -282,6 +362,51 @@ export default function PortfolioPage() {
     })
   }, [entries])
 
+  /* Strategy breakdown donut chart data */
+  const strategyBreakdownData = useMemo(() => {
+    if (entries.length === 0) return []
+    const grouped: Record<Strategy, { count: number; totalValue: number }> = {
+      wholesale: { count: 0, totalValue: 0 },
+      creative_finance: { count: 0, totalValue: 0 },
+      brrrr: { count: 0, totalValue: 0 },
+      buy_and_hold: { count: 0, totalValue: 0 },
+      flip: { count: 0, totalValue: 0 },
+    }
+    for (const entry of entries) {
+      const s = entry.strategy
+      if (grouped[s]) {
+        grouped[s].count += 1
+        grouped[s].totalValue += parseFloat(String(entry.closed_price ?? 0)) || 0
+      }
+    }
+    return Object.entries(grouped)
+      .filter(([, v]) => v.count > 0)
+      .map(([key, v]) => ({
+        name: strategyLabel(key as Strategy),
+        value: v.count,
+        totalValue: v.totalValue,
+        color: STRATEGY_COLORS[key as Strategy],
+      }))
+  }, [entries])
+
+  /* Monthly net cash flow bar chart data */
+  const monthlyCashFlowData = useMemo(() => {
+    if (entries.length === 0) return []
+    const byMonth: Record<string, number> = {}
+    for (const entry of entries) {
+      const month = formatMonthYear(entry.closed_date)
+      const cf = parseFloat(String(entry.monthly_cash_flow ?? 0))
+      byMonth[month] = (byMonth[month] ?? 0) + (isNaN(cf) ? 0 : cf)
+    }
+    // Sort chronologically
+    const sorted = Object.entries(byMonth).sort((a, b) => {
+      const dateA = new Date(a[0])
+      const dateB = new Date(b[0])
+      return dateA.getTime() - dateB.getTime()
+    })
+    return sorted.map(([month, cashFlow]) => ({ month, cashFlow }))
+  }, [entries])
+
   /* ── Loading state ── */
   if (isLoading) {
     return (
@@ -365,6 +490,115 @@ export default function PortfolioPage() {
             )}
           </div>
         </motion.div>
+
+        {/* Strategy Breakdown + Monthly Cash Flow Charts */}
+        {entries.length > 0 && (
+          <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Strategy Breakdown Donut Chart */}
+            <div className="bg-[#0F0F1A] border border-white/10 rounded-xl p-6">
+              <p className="text-[11px] font-medium uppercase tracking-wider text-[#94A3B8] mb-4">
+                Portfolio by Strategy
+              </p>
+              {strategyBreakdownData.length > 0 ? (
+                <div className="flex flex-col items-center">
+                  <ResponsiveContainer width="100%" height={220}>
+                    <PieChart>
+                      <Pie
+                        data={strategyBreakdownData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={55}
+                        outerRadius={85}
+                        paddingAngle={2}
+                        dataKey="value"
+                        nameKey="name"
+                        isAnimationActive={true}
+                        animationDuration={1200}
+                        animationEasing="ease-out"
+                      >
+                        {strategyBreakdownData.map((entry) => (
+                          <Cell key={entry.name} fill={entry.color} stroke="transparent" />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip content={<DonutTooltipContent />} />
+                      <Legend content={<DonutLegend />} />
+                      {/* Center label — total count */}
+                      <text
+                        x="50%"
+                        y="46%"
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        className="fill-[#F1F5F9]"
+                        style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '28px', fontWeight: 600 }}
+                      >
+                        {entries.length}
+                      </text>
+                      <text
+                        x="50%"
+                        y="57%"
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        className="fill-[#94A3B8]"
+                        style={{ fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em' }}
+                      >
+                        deals
+                      </text>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-[220px]">
+                  <p className="text-sm text-text-muted">No strategy data yet.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Monthly Cash Flow Bar Chart */}
+            <div className="bg-[#0F0F1A] border border-white/10 rounded-xl p-6">
+              <p className="text-[11px] font-medium uppercase tracking-wider text-[#94A3B8] mb-4">
+                Monthly Cash Flow
+              </p>
+              {monthlyCashFlowData.length > 0 ? (
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={monthlyCashFlowData} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1A1A2E" vertical={false} />
+                    <XAxis
+                      dataKey="month"
+                      tick={{ fill: '#94A3B8', fontSize: 11 }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <YAxis
+                      tick={{ fill: '#94A3B8', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}
+                      axisLine={false}
+                      tickLine={false}
+                      tickFormatter={(v: number) => formatCurrency(v)}
+                    />
+                    <RechartsTooltip content={<BarTooltipContent />} cursor={{ fill: '#1A1A2E' }} />
+                    <Bar
+                      dataKey="cashFlow"
+                      radius={[4, 4, 0, 0]}
+                      isAnimationActive={true}
+                      animationDuration={1200}
+                      animationEasing="ease-out"
+                    >
+                      {monthlyCashFlowData.map((entry, index) => (
+                        <Cell
+                          key={`bar-${index}`}
+                          fill={entry.cashFlow >= 0 ? '#10B981' : '#EF4444'}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="flex items-center justify-center h-[220px]">
+                  <p className="text-sm text-text-muted">No monthly cash flow data yet.</p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
 
         {/* Closed Deals Table */}
         <motion.div variants={itemVariants} className="space-y-3">
