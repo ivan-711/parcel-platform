@@ -1,5 +1,6 @@
 /** API client — all backend calls go through this module. Never use fetch directly in components. */
 
+import { useAuthStore } from '@/stores/authStore'
 import type {
   AuthResponse,
   User,
@@ -40,8 +41,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   })
 
   if (res.status === 401) {
-    localStorage.removeItem('parcel_user')
-    window.location.href = '/login'
+    useAuthStore.getState().clearAuth()
     throw new Error('Session expired')
   }
 
