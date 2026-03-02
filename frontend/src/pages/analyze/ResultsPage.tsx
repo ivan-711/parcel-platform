@@ -1,8 +1,8 @@
 /** Deal results page — strategy-aware KPI cards, outputs table, risk gauge, and action buttons. */
 
-import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Plus, Share2, Save, Check } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import { ArrowLeft, PlusCircle, ChevronDown, Share2, Save, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
 import { KPICard } from '@/components/ui/KPICard'
@@ -72,14 +72,41 @@ function getStrategyKPIs(strategy: string): KPIDefinition[] {
   }
 }
 
+const PIPELINE_STAGES = [
+  { key: 'lead', label: 'Lead' },
+  { key: 'analyzing', label: 'Analyzing' },
+  { key: 'offer_sent', label: 'Offer Sent' },
+  { key: 'under_contract', label: 'Under Contract' },
+  { key: 'due_diligence', label: 'Due Diligence' },
+]
+
 export default function ResultsPage() {
   const { dealId } = useParams<{ dealId: string }>()
+  const navigate = useNavigate()
   const { data: deal, isLoading } = useDeal(dealId ?? '')
   const addToPipeline = useAddToPipeline()
   const updateDeal = useUpdateDeal(dealId ?? '')
   const [saved, setSaved] = useState(false)
   const [sharing, setSharing] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [addedToPipeline, setAddedToPipeline] = useState(false)
+  const [stageMenuOpen, setStageMenuOpen] = useState(false)
+  const stageMenuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setAddedToPipeline(false)
+  }, [dealId])
+
+  useEffect(() => {
+    if (!stageMenuOpen) return
+    const handleClickOutside = (e: MouseEvent) => {
+      if (stageMenuRef.current && !stageMenuRef.current.contains(e.target as Node)) {
+        setStageMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [stageMenuOpen])
 
   if (isLoading || !deal) {
     return (
@@ -104,12 +131,30 @@ export default function ResultsPage() {
   const kpis = getStrategyKPIs(deal.strategy)
   const outputEntries = Object.entries(outputs)
 
-  const handleAddToPipeline = () => {
+  const handleAddToPipeline = (stage: string) => {
+    setStageMenuOpen(false)
+    const stageLabel = PIPELINE_STAGES.find((s) => s.key === stage)?.label ?? stage
     addToPipeline.mutate(
-      { deal_id: deal.id, stage: 'lead' },
+      { deal_id: deal.id, stage },
       {
-        onSuccess: () => toast.success('Deal added to pipeline'),
-        onError: (err) => toast.error(err.message),
+        onSuccess: () => {
+          setAddedToPipeline(true)
+          toast.success(`Added to Pipeline · ${stageLabel}`, {
+            action: {
+              label: 'View Pipeline →',
+              onClick: () => navigate('/pipeline'),
+            },
+          })
+        },
+        onError: (err) => {
+          const msg = err.message.toLowerCase()
+          if (msg.includes('already') || msg.includes('conflict') || msg.includes('duplicate')) {
+            setAddedToPipeline(true)
+            toast.info('Already in Pipeline')
+          } else {
+            toast.error('Failed to add to pipeline — try again')
+          }
+        },
       }
     )
   }
@@ -282,15 +327,43 @@ export default function ResultsPage() {
               Back to Analyzer
             </Link>
           </Button>
-          <Button
-            variant="outline"
-            onClick={handleAddToPipeline}
-            disabled={addToPipeline.isPending}
-            className="gap-2"
-          >
-            <Plus size={14} />
-            {addToPipeline.isPending ? 'Adding...' : 'Add to Pipeline'}
-          </Button>
+          <div className="relative" ref={stageMenuRef}>
+            {addedToPipeline ? (
+              <button
+                type="button"
+                disabled
+                className="inline-flex items-center gap-2 rounded-lg border border-[#10B981]/30 bg-[#16162A] px-4 py-2 text-sm font-medium text-[#10B981] cursor-default"
+              >
+                <Check size={14} />
+                In Pipeline
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setStageMenuOpen((v) => !v)}
+                disabled={addToPipeline.isPending}
+                className="inline-flex items-center gap-2 rounded-lg bg-[#6366F1] px-4 py-2 text-sm font-medium text-white hover:bg-[#5558E3] transition-colors disabled:opacity-50"
+              >
+                <PlusCircle size={14} />
+                {addToPipeline.isPending ? 'Adding...' : 'Add to Pipeline'}
+                <ChevronDown size={14} />
+              </button>
+            )}
+            {stageMenuOpen && (
+              <div className="absolute bottom-full mb-1 right-0 z-50 min-w-[180px] rounded-lg border border-[#1A1A2E] bg-[#0F0F1A] py-1 shadow-lg">
+                {PIPELINE_STAGES.map((s) => (
+                  <button
+                    key={s.key}
+                    type="button"
+                    className="flex w-full items-center px-3 py-2 text-sm text-[#F1F5F9] hover:bg-[#6366F1]/20 transition-colors"
+                    onClick={() => handleAddToPipeline(s.key)}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <Button variant="outline" onClick={handleShare} disabled={sharing || copied} className="gap-2">
             <Share2 size={14} />
             {copied ? 'Link copied!' : sharing ? 'Sharing...' : deal.status === 'shared' ? 'Copy Share Link' : 'Share Deal'}
