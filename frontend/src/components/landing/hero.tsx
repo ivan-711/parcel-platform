@@ -19,8 +19,8 @@ export function Hero() {
     setDemoLoading(true)
     setDemoError(false)
     try {
-      const { user, access_token } = await api.auth.login('demo@parcel.app', 'Demo1234!')
-      setAuth(user, access_token)
+      const { user } = await api.auth.login('demo@parcel.app', 'Demo1234!')
+      setAuth(user)
       navigate('/dashboard')
     } catch {
       setDemoError(true)

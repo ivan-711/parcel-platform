@@ -12,8 +12,8 @@ export function useLogin() {
   return useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       api.auth.login(email, password),
-    onSuccess: ({ user, access_token }) => {
-      setAuth(user, access_token)
+    onSuccess: ({ user }) => {
+      setAuth(user)
       navigate('/dashboard')
     },
   })
@@ -35,8 +35,8 @@ export function useRegister() {
       password: string
       role: string
     }) => api.auth.register(name, email, password, role),
-    onSuccess: ({ user, access_token }) => {
-      setAuth(user, access_token)
+    onSuccess: ({ user }) => {
+      setAuth(user)
       navigate('/dashboard')
     },
   })

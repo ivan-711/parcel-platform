@@ -13,16 +13,11 @@ export async function* streamChat(
   params: ChatRequest,
   signal?: AbortSignal
 ): AsyncGenerator<string> {
-  const token = localStorage.getItem('parcel_token')
-
   let res: Response
   try {
     res = await fetch(`${API_URL}/api/v1/chat/`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
+      headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify(params),
       signal,

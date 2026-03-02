@@ -96,8 +96,7 @@ class UpdateProfileRequest(BaseModel):
         return v
 
 
-class TokenResponse(BaseModel):
-    """Response body for register and login — includes user data and JWT."""
+class AuthSuccessResponse(BaseModel):
+    """Response body for register and login — user data only. JWT is delivered via httpOnly cookie."""
 
     user: UserResponse
-    access_token: str

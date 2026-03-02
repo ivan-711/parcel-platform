@@ -1,6 +1,6 @@
 """Re-export all Pydantic schemas for convenient importing."""
 
-from schemas.auth import RegisterRequest, LoginRequest, UserResponse, TokenResponse
+from schemas.auth import RegisterRequest, LoginRequest, UserResponse, AuthSuccessResponse
 from schemas.deals import (
     DealCreateRequest,
     DealUpdateRequest,
@@ -31,7 +31,7 @@ from schemas.teams import (
 )
 
 __all__ = [
-    "RegisterRequest", "LoginRequest", "UserResponse", "TokenResponse",
+    "RegisterRequest", "LoginRequest", "UserResponse", "AuthSuccessResponse",
     "DealCreateRequest", "DealUpdateRequest", "DealResponse", "DealListItem",
     "PipelineCreateRequest", "PipelineStageUpdateRequest", "PipelineCardResponse", "PipelineBoardResponse",
     "DocumentListItem", "DocumentResponse",

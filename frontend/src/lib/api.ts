@@ -28,15 +28,9 @@ import type {
 const API_URL = (import.meta.env.VITE_API_URL ?? 'https://parcel-platform-production.up.railway.app').replace('http://', 'https://')
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const token = localStorage.getItem('parcel_token')
-
   const headers: Record<string, string> = {
     ...(options?.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
     ...(options?.headers as Record<string, string>),
-  }
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`
   }
 
   const res = await fetch(`${API_URL}${path}`, {
@@ -46,7 +40,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   })
 
   if (res.status === 401) {
-    localStorage.removeItem('parcel_token')
+    localStorage.removeItem('parcel_user')
     window.location.href = '/login'
     throw new Error('Session expired')
   }

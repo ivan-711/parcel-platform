@@ -7,9 +7,9 @@ from core.security.jwt import create_access_token, get_current_user, hash_passwo
 from database import get_db
 from models.users import User
 from schemas.auth import (
+    AuthSuccessResponse,
     LoginRequest,
     RegisterRequest,
-    TokenResponse,
     UpdateProfileRequest,
     UserProfileResponse,
     UserResponse,
@@ -33,11 +33,12 @@ def _set_auth_cookie(response: Response, token: str) -> None:
     )
 
 
-@router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
-async def register(body: RegisterRequest, response: Response, db: Session = Depends(get_db)) -> TokenResponse:
+@router.post("/register", response_model=AuthSuccessResponse, status_code=status.HTTP_201_CREATED)
+async def register(body: RegisterRequest, response: Response, db: Session = Depends(get_db)) -> AuthSuccessResponse:
     """Register a new user account.
 
     Creates the user, issues a JWT access token, and sets it in an httpOnly cookie.
+    The token is NOT returned in the response body — only via the cookie.
     Returns 400 if the email is already in use.
     """
     existing = db.query(User).filter(User.email == body.email).first()
@@ -60,14 +61,15 @@ async def register(body: RegisterRequest, response: Response, db: Session = Depe
     token = create_access_token({"sub": str(user.id)})
     _set_auth_cookie(response, token)
 
-    return TokenResponse(user=UserResponse.model_validate(user), access_token=token)
+    return AuthSuccessResponse(user=UserResponse.model_validate(user))
 
 
-@router.post("/login", response_model=TokenResponse)
-async def login(body: LoginRequest, response: Response, db: Session = Depends(get_db)) -> TokenResponse:
+@router.post("/login", response_model=AuthSuccessResponse)
+async def login(body: LoginRequest, response: Response, db: Session = Depends(get_db)) -> AuthSuccessResponse:
     """Authenticate an existing user.
 
     Verifies the password and issues a new JWT access token in an httpOnly cookie.
+    The token is NOT returned in the response body — only via the cookie.
     Returns 401 on invalid credentials.
     """
     user = db.query(User).filter(User.email == body.email).first()
@@ -80,7 +82,7 @@ async def login(body: LoginRequest, response: Response, db: Session = Depends(ge
     token = create_access_token({"sub": str(user.id)})
     _set_auth_cookie(response, token)
 
-    return TokenResponse(user=UserResponse.model_validate(user), access_token=token)
+    return AuthSuccessResponse(user=UserResponse.model_validate(user))
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)

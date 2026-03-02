@@ -11,7 +11,6 @@ export interface User {
 
 export interface AuthResponse {
   user: User
-  access_token: string
 }
 
 export type Strategy = 'wholesale' | 'creative_finance' | 'brrrr' | 'buy_and_hold' | 'flip'

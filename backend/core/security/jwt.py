@@ -83,24 +83,12 @@ async def get_current_user(
 ) -> User:
     """FastAPI dependency that resolves the authenticated user from the request.
 
-    Checks the ``access_token`` httpOnly cookie first; falls back to the
-    ``Authorization: Bearer <token>`` header.
+    Reads the JWT from the ``access_token`` httpOnly cookie.
 
     Raises:
         HTTPException 401 if no valid token is present or the user is not found.
     """
-    token: Optional[str] = None
-
-    # 1. Try httpOnly cookie
-    cookie_token = request.cookies.get("access_token")
-    if cookie_token:
-        token = cookie_token
-
-    # 2. Fall back to Authorization header
-    if not token:
-        auth_header = request.headers.get("Authorization")
-        if auth_header and auth_header.startswith("Bearer "):
-            token = auth_header[len("Bearer "):]
+    token: Optional[str] = request.cookies.get("access_token")
 
     if not token:
         raise HTTPException(

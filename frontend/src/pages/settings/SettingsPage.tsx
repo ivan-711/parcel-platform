@@ -85,12 +85,10 @@ export default function SettingsPage() {
       setTimeout(() => setProfileMsg(null), 3000)
 
       // Sync authStore so sidebar reflects new name
-      const token = useAuthStore.getState().token
       const existingUser = useAuthStore.getState().user
-      if (token && existingUser) {
+      if (existingUser) {
         useAuthStore.getState().setAuth(
-          { ...existingUser, name: updated.name, email: updated.email },
-          token
+          { ...existingUser, name: updated.name, email: updated.email }
         )
       }
     },
