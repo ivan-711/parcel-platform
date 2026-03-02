@@ -231,7 +231,7 @@ export default function Dashboard() {
   }
 
   /* ── Populated state ── */
-  const closedDeals = stats.pipeline_by_stage?.closed ?? 0
+  const closedDeals = stats.closed_deals
 
   const pipelineEntries = Object.entries(stats.pipeline_by_stage ?? {}).filter(
     ([, count]) => count > 0

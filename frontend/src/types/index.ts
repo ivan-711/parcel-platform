@@ -102,6 +102,7 @@ export interface RecentDeal {
 export interface DashboardStats {
   total_deals: number
   active_pipeline_deals: number
+  closed_deals: number
   deals_by_strategy: Record<string, number>
   pipeline_by_stage: Record<string, number>
   recent_deals: RecentDeal[]
