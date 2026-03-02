@@ -317,7 +317,14 @@ export default function ChatPage() {
                     ) : (
                       <>
                         <ReactMarkdown components={MD}>{msg.content}</ReactMarkdown>
-                        {msg.isStreaming && (
+                        {msg.isStreaming && !msg.content && (
+                          <span className="inline-flex items-center gap-1 py-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-[typing_1.4s_ease-in-out_infinite]" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-[typing_1.4s_ease-in-out_0.2s_infinite]" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-[typing_1.4s_ease-in-out_0.4s_infinite]" />
+                          </span>
+                        )}
+                        {msg.isStreaming && msg.content && (
                           <span className="inline-block w-0.5 h-4 bg-indigo-500 animate-pulse ml-0.5 align-middle" />
                         )}
                       </>

@@ -345,16 +345,16 @@ function ComparisonRow({
       </div>
       <div
         className={cn(
-          'px-4 py-3 text-sm text-text-primary',
-          winnerSide === 'a' && 'border-l-2 border-[#10B981]'
+          'px-4 py-3 text-sm text-text-primary transition-colors duration-300',
+          winnerSide === 'a' && 'border-l-2 border-[#10B981] bg-[#10B981]/5'
         )}
       >
         {valueA}
       </div>
       <div
         className={cn(
-          'px-4 py-3 text-sm text-text-primary border-l border-border-subtle',
-          winnerSide === 'b' && 'border-l-2 border-[#10B981]'
+          'px-4 py-3 text-sm text-text-primary border-l border-border-subtle transition-colors duration-300',
+          winnerSide === 'b' && 'border-l-2 border-[#10B981] bg-[#10B981]/5'
         )}
       >
         {valueB ?? <span className="text-text-muted">Select a deal to compare</span>}

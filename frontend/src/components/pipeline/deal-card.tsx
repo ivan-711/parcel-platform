@@ -1,6 +1,6 @@
 /** DealCard — individual pipeline deal card with context menu for close/remove actions. */
 
-import { useState, useRef, useEffect } from 'react'
+import { memo, useState, useRef, useEffect } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, MoreHorizontal, Trash2, CheckCircle2 } from 'lucide-react'
@@ -44,7 +44,7 @@ interface DealCardProps {
   onCloseDeal?: (card: PipelineCard) => void
 }
 
-export function DealCard({ card, isDragging = false, onRemove, onCloseDeal }: DealCardProps) {
+export const DealCard = memo(function DealCard({ card, isDragging = false, onRemove, onCloseDeal }: DealCardProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -148,7 +148,7 @@ export function DealCard({ card, isDragging = false, onRemove, onCloseDeal }: De
       </div>
     </div>
   )
-}
+})
 
 /** SortableDealCard — wraps DealCard with @dnd-kit/sortable for drag-and-drop. */
 export function SortableDealCard({ card, onRemove, onCloseDeal }: { card: PipelineCard; onRemove?: (pipelineId: string, stage: Stage) => void; onCloseDeal?: (card: PipelineCard) => void }) {

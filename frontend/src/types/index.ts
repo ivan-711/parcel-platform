@@ -1,5 +1,37 @@
 /** Shared TypeScript types — single source of truth derived from API contracts. */
 
+// ---------------------------------------------------------------------------
+// Generic utility types
+// ---------------------------------------------------------------------------
+
+/** Standard API error response shape. */
+export interface ApiError {
+  error: string
+  code: string
+}
+
+/** Paginated list response from the API. */
+export interface Paginated<T> {
+  data: T[]
+  total: number
+  page: number
+  per_page: number
+  total_pages: number
+}
+
+/** Wrapper for API responses that may fail. */
+export type Result<T, E = ApiError> =
+  | { ok: true; data: T }
+  | { ok: false; error: E }
+
+/** Extract the resolved value type from a Promise-returning function. */
+export type AsyncReturnType<T extends (...args: unknown[]) => Promise<unknown>> =
+  T extends (...args: unknown[]) => Promise<infer R> ? R : never
+
+// ---------------------------------------------------------------------------
+// Domain types
+// ---------------------------------------------------------------------------
+
 export interface User {
   id: string
   name: string
