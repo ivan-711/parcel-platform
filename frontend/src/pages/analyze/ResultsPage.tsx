@@ -30,6 +30,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { OfferLetterModal } from '@/components/offer-letter-modal'
+import { CashFlowProjection } from '@/components/charts/CashFlowProjection'
 
 import { useDeal, useAddToPipeline, useUpdateDeal } from '@/hooks/useDeals'
 import { api } from '@/lib/api'
@@ -416,7 +417,16 @@ export default function ResultsPage() {
           </div>
         </motion.div>
 
-        {/* Section 3: Actions */}
+        {/* Section 3: Cash Flow Projection */}
+        <motion.div variants={staggerItem}>
+          <CashFlowProjection
+            outputs={outputs as Record<string, number | string>}
+            strategy={deal.strategy as Strategy}
+            dealId={deal.id}
+          />
+        </motion.div>
+
+        {/* Section 4: Actions */}
         <motion.div variants={slideUp} className="flex gap-3 justify-end flex-wrap">
           <Button variant="ghost" asChild>
             <Link to="/analyze" className="gap-2">
