@@ -20,6 +20,7 @@ const Documents = lazy(() => import('@/pages/documents/DocumentsPage'))
 const Chat = lazy(() => import('@/pages/chat/ChatPage'))
 const Settings = lazy(() => import('@/pages/settings/SettingsPage'))
 const ShareDeal = lazy(() => import('@/pages/share/ShareDealPage'))
+const ComparePage = lazy(() => import('@/pages/compare/ComparePage'))
 
 const queryClient = new QueryClient()
 
@@ -58,6 +59,7 @@ export default function App() {
             <Route path="/analyze/results/:dealId" element={<ProtectedRoute><ResultsPage /></ProtectedRoute>} />
             <Route path="/analyze/:strategy" element={<ProtectedRoute><AnalyzerFormPage /></ProtectedRoute>} />
             <Route path="/deals" element={<ProtectedRoute><MyDeals /></ProtectedRoute>} />
+            <Route path="/compare" element={<ProtectedRoute><ComparePage /></ProtectedRoute>} />
             <Route path="/pipeline" element={<ProtectedRoute><Pipeline /></ProtectedRoute>} />
             <Route path="/portfolio" element={<ProtectedRoute><Portfolio /></ProtectedRoute>} />
             <Route path="/documents" element={<ProtectedRoute><Documents /></ProtectedRoute>} />

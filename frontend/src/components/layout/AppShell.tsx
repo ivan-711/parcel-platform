@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   GitBranch,
   FolderOpen,
+  Columns,
   Calculator,
   FileText,
   MessageSquare,
@@ -27,6 +28,7 @@ const NAV_MAIN: NavItem[] = [
   { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
   { label: 'Pipeline', path: '/pipeline', icon: GitBranch },
   { label: 'My Deals', path: '/deals', icon: FolderOpen },
+  { label: 'Compare', path: '/compare', icon: Columns },
 ]
 
 const NAV_TOOLS: NavItem[] = [

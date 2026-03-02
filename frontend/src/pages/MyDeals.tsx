@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Plus, Search, AlertCircle } from 'lucide-react'
+import { Plus, Search, AlertCircle, Columns } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
@@ -80,10 +80,24 @@ const itemVariants = {
 
 /** My Deals — filterable grid of all user deals with pagination. */
 export default function MyDeals() {
+  const navigate = useNavigate()
   const [strategy, setStrategy] = useState('all')
   const [status, setStatus] = useState('all')
   const [sort, setSort] = useState('created_at_desc')
   const [page, setPage] = useState(1)
+  const [compareIds, setCompareIds] = useState<Set<string>>(new Set())
+
+  const toggleCompare = (id: string) => {
+    setCompareIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else if (next.size < 2) {
+        next.add(id)
+      }
+      return next
+    })
+  }
 
   const filters: DealsFilters = {
     ...(strategy !== 'all' && { strategy }),
@@ -247,10 +261,28 @@ export default function MyDeals() {
                 <motion.div key={deal.id} variants={itemVariants}>
                   <Link
                     to={`/analyze/results/${deal.id}`}
-                    className="block p-5 rounded-xl border border-border-subtle bg-app-surface hover:border-accent-primary/40 transition-colors space-y-3 group"
+                    className="relative block p-5 rounded-xl border border-border-subtle bg-app-surface hover:border-accent-primary/40 transition-colors space-y-3 group"
                   >
+                    {/* Compare checkbox */}
+                    <button
+                      type="button"
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleCompare(deal.id) }}
+                      className={`absolute top-3 right-3 w-5 h-5 rounded border flex items-center justify-center transition-colors ${
+                        compareIds.has(deal.id)
+                          ? 'bg-accent-primary border-accent-primary'
+                          : 'border-border-subtle hover:border-text-muted bg-transparent'
+                      }`}
+                      aria-label={compareIds.has(deal.id) ? 'Remove from comparison' : 'Add to comparison'}
+                    >
+                      {compareIds.has(deal.id) && (
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-white">
+                          <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      )}
+                    </button>
+
                     {/* Top row: strategy + status */}
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between pr-6">
                       <StrategyBadge strategy={deal.strategy as Strategy} />
                       <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-app-elevated text-text-secondary">
                         {statusLabel(deal.status)}
@@ -309,6 +341,27 @@ export default function MyDeals() {
               </div>
             </div>
           </>
+        )}
+        {/* Floating compare bar */}
+        {compareIds.size === 2 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
+          >
+            <button
+              type="button"
+              onClick={() => {
+                const ids = Array.from(compareIds)
+                navigate(`/compare?a=${ids[0]}&b=${ids[1]}`)
+              }}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-primary hover:bg-accent-primary/90 text-white text-sm font-medium shadow-lg shadow-accent-primary/20 transition-colors"
+            >
+              <Columns size={16} />
+              Compare Selected
+            </button>
+          </motion.div>
         )}
       </div>
     </AppShell>
