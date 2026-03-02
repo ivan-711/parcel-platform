@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, HelpCircle } from 'lucide-react'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import {
@@ -15,6 +15,11 @@ import {
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { Button } from '@/components/ui/button'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import type { Strategy } from '@/types'
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -254,9 +259,35 @@ export default function ShareDealPage() {
           {/* Card 4: Risk Score */}
           {deal.risk_score !== null && (
             <div className="rounded-xl bg-[#0F0F1A] border border-[#1A1A2E] p-5 space-y-1">
-              <p className="text-[11px] uppercase tracking-wider text-[#94A3B8]">
-                Risk Score
-              </p>
+              <div className="flex items-center gap-1">
+                <p className="text-[11px] uppercase tracking-wider text-[#94A3B8]">
+                  Risk Score
+                </p>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button type="button" className="text-[#94A3B8] hover:text-[#F1F5F9] transition-colors">
+                      <HelpCircle size={14} />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-72 bg-[#0F0F1A] border-[#1A1A2E] p-4" side="bottom">
+                    <p className="text-sm font-semibold text-[#F1F5F9] mb-2">Risk Score Breakdown</p>
+                    {deal.risk_factors && Object.keys(deal.risk_factors).length > 0 ? (
+                      <div className="space-y-1.5">
+                        {Object.entries(deal.risk_factors).map(([key, value]) => (
+                          <div key={key} className="flex items-center justify-between text-sm">
+                            <span className="text-[#94A3B8]">{formatLabel(key)}</span>
+                            <span className="font-mono text-[#F1F5F9]">
+                              {formatOutputValue(key, value as number | string)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-[#475569]">Breakdown not available for this deal.</p>
+                    )}
+                  </PopoverContent>
+                </Popover>
+              </div>
               <p
                 className="text-[28px] font-mono font-semibold leading-tight"
                 style={{ color: riskColor }}

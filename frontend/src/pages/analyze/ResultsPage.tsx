@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, PlusCircle, ChevronDown, Share2, Save, Check } from 'lucide-react'
+import { ArrowLeft, PlusCircle, ChevronDown, Share2, Save, Check, HelpCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
 import { KPICard } from '@/components/ui/KPICard'
@@ -10,6 +10,11 @@ import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { RiskGauge } from '@/components/ui/RiskGauge'
 import { Button } from '@/components/ui/button'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { useDeal, useAddToPipeline, useUpdateDeal } from '@/hooks/useDeals'
 import { api } from '@/lib/api'
 import {
@@ -314,7 +319,33 @@ export default function ResultsPage() {
 
           {/* Right — Risk Gauge */}
           <div className="md:col-span-2 rounded-xl border border-border-subtle bg-app-surface p-6 flex flex-col items-center justify-center">
-            <h3 className="text-sm font-semibold text-text-primary mb-4">Risk Score</h3>
+            <div className="flex items-center gap-1.5 mb-4">
+              <h3 className="text-sm font-semibold text-text-primary">Risk Score</h3>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button type="button" className="text-[#94A3B8] hover:text-[#F1F5F9] transition-colors">
+                    <HelpCircle size={16} />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-72 bg-app-surface border-border-subtle p-4" side="left">
+                  <p className="text-sm font-semibold text-text-primary mb-2">Risk Score Breakdown</p>
+                  {deal.risk_factors && Object.keys(deal.risk_factors).length > 0 ? (
+                    <div className="space-y-1.5">
+                      {Object.entries(deal.risk_factors).map(([key, value]) => (
+                        <div key={key} className="flex items-center justify-between text-sm">
+                          <span className="text-text-secondary">{formatLabel(key)}</span>
+                          <span className="font-mono text-text-primary">
+                            {formatOutputValue(key, value as number | string)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-text-muted">Breakdown not available for this deal.</p>
+                  )}
+                </PopoverContent>
+              </Popover>
+            </div>
             <RiskGauge score={riskScore} />
           </div>
         </div>

@@ -35,6 +35,7 @@ export interface DealResponse {
   inputs: Record<string, number>
   outputs: Record<string, number | string>
   risk_score: number | null
+  risk_factors: Record<string, number | string> | null
   status: string
   deleted_at: string | null
   created_at: string
@@ -123,6 +124,7 @@ export interface SharedDealResponse {
   risk_score: number | null
   primary_metric_label: string | null
   primary_metric_value: number | null
+  risk_factors: Record<string, number | string> | null
   shared_by: { name: string }
   created_at: string
 }
@@ -206,6 +208,22 @@ export interface DocumentResponse {
   presigned_url: string | null
   created_at: string
   updated_at: string
+}
+
+export interface ActivityItem {
+  id: string
+  activity_type: 'deal_analyzed' | 'pipeline_moved' | 'document_analyzed' | 'deal_closed'
+  text: string
+  timestamp: string
+  metadata: {
+    strategy?: string
+    address?: string
+    stage?: string
+  }
+}
+
+export interface ActivityResponse {
+  activities: ActivityItem[]
 }
 
 export interface DocumentListItem {
