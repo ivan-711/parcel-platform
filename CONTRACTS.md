@@ -285,7 +285,36 @@ Each deal item:
 **Status:** 🚀 Deployed to production
 **Auth:** Required
 
-Response `200`: Full deal object (same as POST /deals response)
+Response `200`: Full deal object (same as POST /deals response, plus `risk_factors`)
+```json
+{
+  "id": "uuid",
+  "address": "string",
+  "zip_code": "string",
+  "property_type": "string",
+  "strategy": "string",
+  "inputs": {},
+  "outputs": {},
+  "risk_score": 42,
+  "risk_factors": {
+    "risk_score": 42,
+    "monthly_cash_flow": 380,
+    "cash_on_cash_return": 8.4,
+    "cap_rate": 6.2,
+    "debt_service_coverage": 1.31,
+    "vacancy_impact_monthly": 120
+  },
+  "status": "saved",
+  "created_at": "ISO8601",
+  "updated_at": "ISO8601"
+}
+```
+
+Notes:
+- `risk_factors` is detail-only — NOT included in the GET /api/v1/deals list response
+- `risk_factors` keys vary by strategy (wholesale, buy_and_hold, brrrr, flip, creative_finance)
+- `risk_factors` is null for deals with no inputs/outputs
+- Existing deals are backfilled on first GET (lazy migration)
 
 Errors:
 - `404 DEAL_NOT_FOUND`
@@ -514,6 +543,43 @@ Notes:
 - `active_pipeline_deals` = sum of all pipeline stages except "closed" and "dead"
 - `recent_deals` returns the 5 most recent deals (newest first)
 - Only non-deleted deals are counted
+
+---
+
+### GET /api/v1/dashboard/activity/
+**Status:** ✅ Built and tested locally
+**Auth:** Required
+
+Response `200`:
+```json
+{
+  "activities": [
+    {
+      "id": "uuid",
+      "activity_type": "deal_analyzed | pipeline_moved | document_analyzed | deal_closed",
+      "text": "Analyzed Buy And Hold deal at 123 Main St",
+      "timestamp": "ISO8601",
+      "metadata": {
+        "strategy": "string | null",
+        "address": "string | null",
+        "stage": "string | null"
+      }
+    }
+  ]
+}
+```
+
+Notes:
+- Returns the 15 most recent activity events across 4 sources: deals, pipeline, documents, portfolio
+- Events are merged and sorted by timestamp descending
+- Only events from the last 30 days are included
+- If no activities exist, returns `{"activities": []}` — never 404
+- Activity types:
+  - `deal_analyzed` — a new deal was created
+  - `pipeline_moved` — a deal moved to a new pipeline stage
+  - `document_analyzed` — a document finished AI analysis
+  - `deal_closed` — a deal was added to the portfolio
+- Stage names in `pipeline_moved` text are human-readable (e.g. "Offer Sent", "Under Contract")
 
 ---
 

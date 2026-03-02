@@ -1,10 +1,26 @@
-"""Pydantic schemas for the dashboard stats endpoint."""
+"""Pydantic schemas for dashboard stats and activity feed endpoints."""
 
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 from uuid import UUID
 
 from pydantic import BaseModel
+
+
+class ActivityItem(BaseModel):
+    """A single event in the dashboard activity feed."""
+
+    id: UUID
+    activity_type: str
+    text: str
+    timestamp: datetime
+    metadata: dict[str, Any]
+
+
+class ActivityFeedResponse(BaseModel):
+    """Response for GET /api/v1/dashboard/activity/."""
+
+    activities: list[ActivityItem]
 
 
 class RecentDealItem(BaseModel):

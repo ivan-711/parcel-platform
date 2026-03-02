@@ -1,4 +1,6 @@
-"""Dashboard router — aggregated stats for the authenticated user."""
+"""Dashboard router — aggregated stats and activity feed for the authenticated user."""
+
+from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import func, select
@@ -7,9 +9,16 @@ from sqlalchemy.orm import Session
 from core.security.jwt import get_current_user
 from database import get_db
 from models.deals import Deal
+from models.documents import Document
 from models.pipeline_entries import PipelineEntry
+from models.portfolio_entries import PortfolioEntry
 from models.users import User
-from schemas.dashboard import DashboardStatsResponse, RecentDealItem
+from schemas.dashboard import (
+    ActivityFeedResponse,
+    ActivityItem,
+    DashboardStatsResponse,
+    RecentDealItem,
+)
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
@@ -19,6 +28,16 @@ ALL_STAGES = [
     "due_diligence", "closed", "dead",
 ]
 INACTIVE_STAGES = {"closed", "dead"}
+
+_STAGE_LABELS: dict[str, str] = {
+    "lead": "Lead",
+    "analyzing": "Analyzing",
+    "offer_sent": "Offer Sent",
+    "under_contract": "Under Contract",
+    "due_diligence": "Due Diligence",
+    "closed": "Closed",
+    "dead": "Dead",
+}
 
 
 @router.get("/stats/", response_model=DashboardStatsResponse)
@@ -78,3 +97,136 @@ def get_dashboard_stats(
         pipeline_by_stage=pipeline_by_stage,
         recent_deals=recent_deals,
     )
+
+
+@router.get("/activity/", response_model=ActivityFeedResponse)
+def get_activity_feed(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> ActivityFeedResponse:
+    """Return the 15 most recent activity events across deals, pipeline,
+    documents, and portfolio for the current user."""
+
+    cutoff = datetime.utcnow() - timedelta(days=30)
+    items: list[ActivityItem] = []
+
+    # 1. Recent deals created
+    deal_rows = db.execute(
+        select(Deal.id, Deal.address, Deal.strategy, Deal.created_at)
+        .where(
+            Deal.user_id == current_user.id,
+            Deal.deleted_at.is_(None),
+            Deal.created_at > cutoff,
+        )
+        .order_by(Deal.created_at.desc())
+        .limit(10)
+    ).all()
+    for row in deal_rows:
+        strategy_label = row.strategy.replace("_", " ").title()
+        items.append(ActivityItem(
+            id=row.id,
+            activity_type="deal_analyzed",
+            text=f"Analyzed {strategy_label} deal at {row.address}",
+            timestamp=row.created_at,
+            metadata={
+                "strategy": row.strategy,
+                "address": row.address,
+                "stage": None,
+            },
+        ))
+
+    # 2. Recent pipeline stage changes
+    pipe_rows = db.execute(
+        select(
+            PipelineEntry.id,
+            PipelineEntry.stage,
+            PipelineEntry.entered_stage_at,
+            Deal.address,
+            Deal.strategy,
+        )
+        .join(Deal, PipelineEntry.deal_id == Deal.id)
+        .where(
+            PipelineEntry.user_id == current_user.id,
+            PipelineEntry.entered_stage_at > cutoff,
+        )
+        .order_by(PipelineEntry.entered_stage_at.desc())
+        .limit(10)
+    ).all()
+    for row in pipe_rows:
+        stage_label = _STAGE_LABELS.get(row.stage, row.stage)
+        items.append(ActivityItem(
+            id=row.id,
+            activity_type="pipeline_moved",
+            text=f"{row.address} moved to {stage_label}",
+            timestamp=row.entered_stage_at,
+            metadata={
+                "strategy": row.strategy,
+                "address": row.address,
+                "stage": row.stage,
+            },
+        ))
+
+    # 3. Recent documents completed
+    doc_rows = db.execute(
+        select(
+            Document.id,
+            Document.original_filename,
+            Document.updated_at,
+        )
+        .where(
+            Document.user_id == current_user.id,
+            Document.status == "complete",
+            Document.updated_at > cutoff,
+        )
+        .order_by(Document.updated_at.desc())
+        .limit(5)
+    ).all()
+    for row in doc_rows:
+        items.append(ActivityItem(
+            id=row.id,
+            activity_type="document_analyzed",
+            text=(
+                f"Document analysis complete: {row.original_filename}"
+            ),
+            timestamp=row.updated_at,
+            metadata={
+                "strategy": None,
+                "address": None,
+                "stage": None,
+            },
+        ))
+
+    # 4. Recent portfolio entries
+    port_rows = db.execute(
+        select(
+            PortfolioEntry.id,
+            PortfolioEntry.created_at,
+            PortfolioEntry.profit,
+            Deal.address,
+            Deal.strategy,
+        )
+        .join(Deal, PortfolioEntry.deal_id == Deal.id)
+        .where(
+            PortfolioEntry.user_id == current_user.id,
+            PortfolioEntry.created_at > cutoff,
+        )
+        .order_by(PortfolioEntry.created_at.desc())
+        .limit(5)
+    ).all()
+    for row in port_rows:
+        profit_str = f"${row.profit:,.0f}" if row.profit else "$0"
+        items.append(ActivityItem(
+            id=row.id,
+            activity_type="deal_closed",
+            text=f"Closed {row.address} — {profit_str} profit",
+            timestamp=row.created_at,
+            metadata={
+                "strategy": row.strategy,
+                "address": row.address,
+                "stage": None,
+            },
+        ))
+
+    # Merge, sort by timestamp descending, return top 15
+    items.sort(key=lambda x: x.timestamp, reverse=True)
+    return ActivityFeedResponse(activities=items[:15])
