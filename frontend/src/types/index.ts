@@ -122,6 +122,7 @@ export interface DealListItem {
 export interface DealsFilters {
   strategy?: string
   status?: string
+  q?: string
   page?: number
   per_page?: number
   sort?: string
@@ -285,4 +286,13 @@ export interface DocumentListItem {
   ai_summary: string | null
   presigned_url: string | null
   created_at: string
+}
+
+/** Paginated document list response from GET /documents. */
+export interface PaginatedDocuments {
+  items: DocumentListItem[]
+  total: number
+  page: number
+  per_page: number
+  pages: number
 }

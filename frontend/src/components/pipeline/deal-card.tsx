@@ -1,6 +1,6 @@
 /** DealCard — individual pipeline deal card with context menu for close/remove actions. */
 
-import { memo, useState, useRef, useEffect } from 'react'
+import { memo, useState, useRef, useEffect, useCallback } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, MoreHorizontal, Trash2, CheckCircle2 } from 'lucide-react'
@@ -40,11 +40,12 @@ function RiskBadge({ score }: { score?: number }) {
 interface DealCardProps {
   card: PipelineCard
   isDragging?: boolean
+  isFocused?: boolean
   onRemove?: (pipelineId: string, stage: Stage) => void
   onCloseDeal?: (card: PipelineCard) => void
 }
 
-export const DealCard = memo(function DealCard({ card, isDragging = false, onRemove, onCloseDeal }: DealCardProps) {
+export const DealCard = memo(function DealCard({ card, isDragging = false, isFocused = false, onRemove, onCloseDeal }: DealCardProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -61,7 +62,12 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, onRem
 
   return (
     <div
-      className="group relative rounded-xl border border-[#1A1A2E] bg-[#0F0F1A] p-4 space-y-3 transition-all duration-150"
+      className={[
+        'group relative rounded-xl border bg-[#0F0F1A] p-4 space-y-3 transition-all duration-150 outline-none',
+        isFocused
+          ? 'ring-2 ring-[#6366F1]/60 ring-offset-2 ring-offset-[#08080F] border-[#6366F1]/40'
+          : 'border-[#1A1A2E]',
+      ].join(' ')}
       style={{
         opacity: isDragging ? 0.4 : 1,
         boxShadow: isDragging ? 'none' : undefined,
@@ -76,7 +82,7 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, onRem
           {(onRemove || onCloseDeal) && (
             <button
               type="button"
-              className="opacity-0 group-hover:opacity-100 text-[#334155] hover:text-[#94A3B8] transition-all"
+              className="opacity-100 md:opacity-0 md:group-hover:opacity-100 text-[#475569] md:text-[#334155] hover:text-[#94A3B8] transition-all min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 flex items-center justify-center"
               onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation()
@@ -88,7 +94,7 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, onRem
           )}
           <GripVertical
             size={14}
-            className="text-[#334155] group-hover:text-[#475569] cursor-grab active:cursor-grabbing transition-colors"
+            className="hidden md:block text-[#334155] group-hover:text-[#475569] cursor-grab active:cursor-grabbing transition-colors"
           />
         </div>
       </div>
@@ -150,8 +156,17 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, onRem
   )
 })
 
+interface SortableDealCardProps {
+  card: PipelineCard
+  isFocused?: boolean
+  onRemove?: (pipelineId: string, stage: Stage) => void
+  onCloseDeal?: (card: PipelineCard) => void
+  /** Callback to register this card's DOM element for keyboard focus management. */
+  registerRef?: (el: HTMLDivElement | null) => void
+}
+
 /** SortableDealCard — wraps DealCard with @dnd-kit/sortable for drag-and-drop. */
-export function SortableDealCard({ card, onRemove, onCloseDeal }: { card: PipelineCard; onRemove?: (pipelineId: string, stage: Stage) => void; onCloseDeal?: (card: PipelineCard) => void }) {
+export function SortableDealCard({ card, isFocused = false, onRemove, onCloseDeal, registerRef }: SortableDealCardProps) {
   const {
     attributes,
     listeners,
@@ -167,9 +182,28 @@ export function SortableDealCard({ card, onRemove, onCloseDeal }: { card: Pipeli
     zIndex: isDragging ? 50 : undefined,
   }
 
+  /** Combine dnd-kit ref with keyboard ref registration. */
+  const combinedRef = useCallback(
+    (el: HTMLDivElement | null) => {
+      setNodeRef(el)
+      if (registerRef) registerRef(el)
+    },
+    [setNodeRef, registerRef]
+  )
+
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <DealCard card={card} isDragging={isDragging} onRemove={onRemove} onCloseDeal={onCloseDeal} />
+    <div
+      ref={combinedRef}
+      style={style}
+      tabIndex={0}
+      role="option"
+      aria-label={`${card.address}, ${STRATEGY_LABELS[card.strategy] ?? card.strategy}, $${card.asking_price.toLocaleString()}`}
+      aria-selected={isFocused}
+      className="outline-none"
+      {...attributes}
+      {...listeners}
+    >
+      <DealCard card={card} isDragging={isDragging} isFocused={isFocused} onRemove={onRemove} onCloseDeal={onCloseDeal} />
     </div>
   )
 }

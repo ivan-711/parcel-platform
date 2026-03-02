@@ -212,13 +212,14 @@ async def list_deals(
     strategy: Optional[str] = Query(None),
     deal_status: Optional[str] = Query(None, alias="status"),
     zip_code: Optional[str] = Query(None),
+    search: Optional[str] = Query(None, alias="q"),
     page: int = Query(1, ge=1),
     per_page: int = Query(20, ge=1, le=100),
     sort: str = Query("created_at_desc"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> list[DealListItem]:
-    """List deals owned by the current user, with optional filtering and pagination."""
+    """List deals owned by the current user, with optional filtering, search, and pagination."""
     q = db.query(Deal).filter(
         Deal.user_id == current_user.id,
         Deal.deleted_at.is_(None),
@@ -230,6 +231,8 @@ async def list_deals(
         q = q.filter(Deal.status == deal_status)
     if zip_code:
         q = q.filter(Deal.zip_code == zip_code)
+    if search:
+        q = q.filter(Deal.address.ilike(f"%{search}%"))
 
     # Sorting
     if sort == "created_at_asc":

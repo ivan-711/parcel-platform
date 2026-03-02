@@ -1,8 +1,8 @@
 /** My Deals — filterable grid of all user deals with pagination, comparison, and bulk delete. */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Search, AlertCircle, CheckSquare } from 'lucide-react'
+import { Plus, Search, AlertCircle, CheckSquare, X } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { useDeals } from '@/hooks/useDeals'
+import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { api } from '@/lib/api'
 import { PER_PAGE } from '@/components/deals/constants'
 import { FilterBar } from '@/components/deals/filter-bar'
@@ -31,6 +32,9 @@ export default function MyDeals() {
   const [status, setStatus] = useState('all')
   const [sort, setSort] = useState('created_at_desc')
   const [page, setPage] = useState(1)
+  const [searchQuery, setSearchQuery] = useState('')
+  const debouncedSearch = useDebouncedValue(searchQuery, 300)
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const [compareIds, setCompareIds] = useState<Set<string>>(new Set())
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [selectionMode, setSelectionMode] = useState(false)
@@ -119,18 +123,21 @@ export default function MyDeals() {
   const filters: DealsFilters = {
     ...(strategy !== 'all' && { strategy }),
     ...(status !== 'all' && { status }),
+    ...(debouncedSearch && { q: debouncedSearch }),
     sort,
     page,
     per_page: PER_PAGE,
   }
 
   const hasActiveFilters = strategy !== 'all' || status !== 'all'
+  const hasSearchQuery = debouncedSearch.length > 0
 
   const { data: deals, isLoading, isError, error } = useDeals(filters)
 
   const clearFilters = () => {
     setStrategy('all')
     setStatus('all')
+    setSearchQuery('')
     setPage(1)
   }
 
@@ -218,6 +225,33 @@ export default function MyDeals() {
           </div>
         </div>
 
+        {/* Search input */}
+        <div className="relative">
+          <Search
+            size={16}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none"
+            aria-hidden="true"
+          />
+          <input
+            ref={searchInputRef}
+            type="text"
+            value={searchQuery}
+            onChange={(e) => { setSearchQuery(e.target.value); setPage(1) }}
+            placeholder="Search deals by address..."
+            aria-label="Search deals by address"
+            className="w-full pl-9 pr-9 py-2 rounded-lg bg-app-elevated border border-border-default text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-primary transition-colors"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => { setSearchQuery(''); setPage(1); searchInputRef.current?.focus() }}
+              aria-label="Clear search"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors cursor-pointer"
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
+
         {/* Filter bar */}
         <FilterBar
           strategy={strategy}
@@ -267,7 +301,7 @@ export default function MyDeals() {
         )}
 
         {/* Empty state — no deals at all */}
-        {!isLoading && !isError && deals && deals.length === 0 && !hasActiveFilters && (
+        {!isLoading && !isError && deals && deals.length === 0 && !hasActiveFilters && !hasSearchQuery && (
           <div className="flex flex-col items-center justify-center py-16 space-y-4">
             <div className="w-12 h-12 rounded-xl bg-app-surface border border-border-subtle flex items-center justify-center">
               <Search size={20} className="text-text-muted" />
@@ -286,8 +320,27 @@ export default function MyDeals() {
           </div>
         )}
 
-        {/* Empty state — filters active, no results */}
-        {!isLoading && !isError && deals && deals.length === 0 && hasActiveFilters && (
+        {/* Empty state — search active, no results */}
+        {!isLoading && !isError && deals && deals.length === 0 && hasSearchQuery && !hasActiveFilters && (
+          <div className="flex flex-col items-center justify-center py-16 space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-app-surface border border-border-subtle flex items-center justify-center">
+              <Search size={20} className="text-text-muted" />
+            </div>
+            <div className="text-center space-y-1">
+              <p className="text-sm font-medium text-text-primary">No deals match your search</p>
+              <p className="text-xs text-text-muted">Try a different address or clear your search.</p>
+            </div>
+            <button
+              onClick={() => { setSearchQuery(''); searchInputRef.current?.focus() }}
+              className="text-sm font-medium text-accent-primary hover:text-accent-primary/80 transition-colors cursor-pointer"
+            >
+              Clear search
+            </button>
+          </div>
+        )}
+
+        {/* Empty state — filters active (with or without search), no results */}
+        {!isLoading && !isError && deals && deals.length === 0 && (hasActiveFilters || (hasSearchQuery && hasActiveFilters)) && (
           <div className="flex flex-col items-center justify-center py-16 space-y-4">
             <div className="w-12 h-12 rounded-xl bg-app-surface border border-border-subtle flex items-center justify-center">
               <Search size={20} className="text-text-muted" />
@@ -298,7 +351,7 @@ export default function MyDeals() {
             </div>
             <button
               onClick={clearFilters}
-              className="text-sm font-medium text-accent-primary hover:text-accent-primary/80 transition-colors"
+              className="text-sm font-medium text-accent-primary hover:text-accent-primary/80 transition-colors cursor-pointer"
             >
               Clear filters
             </button>
