@@ -70,7 +70,7 @@ export default function ComparePage() {
   const dealAId = searchParams.get('a') ?? ''
   const dealBId = searchParams.get('b') ?? ''
 
-  const { data: allDeals, isLoading: loadingList } = useDeals({ per_page: 200 })
+  const { data: allDeals, isLoading: loadingList, isError } = useDeals({ per_page: 100 })
   const { data: dealA, isLoading: loadingA } = useDeal(dealAId)
   const { data: dealB, isLoading: loadingB } = useDeal(dealBId)
 
@@ -146,6 +146,8 @@ export default function ComparePage() {
               <SelectContent className="bg-app-surface border-border-subtle max-h-[300px]">
                 {loadingList ? (
                   <div className="px-3 py-2 text-sm text-text-muted">Loading deals...</div>
+                ) : isError ? (
+                  <div className="px-3 py-2 text-sm text-accent-danger">Failed to load deals</div>
                 ) : dealOptions.length === 0 ? (
                   <div className="px-3 py-2 text-sm text-text-muted">No deals found</div>
                 ) : (
