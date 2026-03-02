@@ -22,6 +22,7 @@ import type {
   DocumentResponse,
   ActivityResponse,
   OfferLetterResponse,
+  NotificationPreferences,
 } from '@/types'
 
 const API_URL = (import.meta.env.VITE_API_URL ?? 'https://parcel-platform-production.up.railway.app').replace('http://', 'https://')
@@ -167,5 +168,14 @@ export const api = {
   offerLetter: {
     generate: (dealId: string) =>
       request<OfferLetterResponse>(`/api/v1/deals/${dealId}/offer-letter/`, { method: 'POST' }),
+  },
+  notifications: {
+    get: () =>
+      request<NotificationPreferences>('/api/v1/settings/notifications/'),
+    update: (prefs: NotificationPreferences) =>
+      request<NotificationPreferences>('/api/v1/settings/notifications/', {
+        method: 'PATCH',
+        body: JSON.stringify(prefs),
+      }),
   },
 }

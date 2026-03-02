@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { Check } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { useAuthStore } from '@/stores/authStore'
 import { api } from '@/lib/api'
@@ -43,6 +45,30 @@ export default function SettingsPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordMsg, setPasswordMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [confirmError, setConfirmError] = useState('')
+
+  // Notification preferences
+  const queryClient = useQueryClient()
+
+  const { data: notifPrefs } = useQuery({
+    queryKey: ['notification-preferences'],
+    queryFn: api.notifications.get,
+  })
+
+  const [notifSaved, setNotifSaved] = useState(false)
+  const [notifError, setNotifError] = useState(false)
+
+  const notifMutation = useMutation({
+    mutationFn: api.notifications.update,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notification-preferences'] })
+      setNotifSaved(true)
+      setTimeout(() => setNotifSaved(false), 2000)
+    },
+    onError: () => {
+      setNotifError(true)
+      setTimeout(() => setNotifError(false), 2000)
+    },
+  })
 
   // Populate form when user data loads
   useEffect(() => {
@@ -239,6 +265,34 @@ export default function SettingsPage() {
                 {passwordMutation.isPending ? 'Updating...' : 'Update password'}
               </button>
             </form>
+          </div>
+        </motion.div>
+
+        {/* Notifications Section */}
+        <motion.div variants={itemVariants}>
+          <div className="bg-[#0F0F1A] border border-[#1A1A2E] rounded-xl p-6">
+            <h2 className="text-sm font-semibold text-[#F1F5F9] mb-4">Notifications</h2>
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm font-medium text-text-primary">Email Notifications</p>
+                <p className="text-xs text-text-muted mt-0.5">Get notified when your document analysis is complete</p>
+                <p className="text-xs text-text-muted mt-1">We&apos;ll send you an email when AI finishes analyzing your uploaded documents.</p>
+              </div>
+              <Switch
+                checked={notifPrefs?.email_notifications ?? false}
+                onCheckedChange={(checked) => notifMutation.mutate({ email_notifications: checked })}
+                disabled={notifMutation.isPending}
+              />
+            </div>
+            {notifSaved && (
+              <p className="flex items-center gap-1 text-accent-success text-sm mt-3">
+                <Check size={14} />
+                Saved
+              </p>
+            )}
+            {notifError && (
+              <p className="text-accent-danger text-sm mt-3">Failed to save</p>
+            )}
           </div>
         </motion.div>
       </motion.div>
