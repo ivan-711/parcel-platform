@@ -27,9 +27,8 @@ const STRATEGIES: { value: string; label: string }[] = [
 
 const STATUSES: { value: string; label: string }[] = [
   { value: 'all', label: 'All Statuses' },
-  { value: 'analyzed', label: 'Analyzed' },
-  { value: 'in_pipeline', label: 'In Pipeline' },
-  { value: 'closed', label: 'Closed' },
+  { value: 'saved', label: 'Saved' },
+  { value: 'shared', label: 'Shared' },
 ]
 
 const SORTS: { value: string; label: string }[] = [
