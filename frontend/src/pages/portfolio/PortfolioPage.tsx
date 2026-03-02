@@ -245,6 +245,10 @@ export default function PortfolioPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['portfolio'] })
       setSheetOpen(false)
+      toast.success('Deal added to portfolio')
+    },
+    onError: () => {
+      toast.error('Failed to add entry — try again')
     },
   })
 

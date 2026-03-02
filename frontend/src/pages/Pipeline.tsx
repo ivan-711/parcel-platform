@@ -5,6 +5,7 @@
  * Route: /pipeline
  */
 import { useState, useCallback, useRef, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   DndContext,
@@ -24,12 +25,22 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { motion, AnimatePresence } from 'framer-motion'
-import { GripVertical, Plus, Inbox, MoreHorizontal, Trash2, CheckCircle2 } from 'lucide-react'
+import { GripVertical, Plus, Inbox, MoreHorizontal, Trash2, CheckCircle2, AlertTriangle, GitBranch } from 'lucide-react'
 import { api } from '@/lib/api'
 import { AppShell } from '@/components/layout/AppShell'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { PageContent } from '@/components/layout/PageContent'
 import { CloseDealModal } from '@/components/close-deal-modal'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -364,6 +375,7 @@ export default function PipelinePage() {
   const [activeCard, setActiveCard] = useState<PipelineCard | null>(null)
   const [overColumnKey, setOverColumnKey] = useState<Stage | null>(null)
   const [closeDealCard, setCloseDealCard] = useState<PipelineCard | null>(null)
+  const [removeTarget, setRemoveTarget] = useState<{ pipelineId: string; stage: Stage } | null>(null)
 
   const handleCloseDeal = useCallback((card: PipelineCard) => {
     setCloseDealCard(card)
@@ -376,7 +388,7 @@ export default function PipelinePage() {
   )
 
   // ── Data fetching ──────────────────────────────────────────────────────
-  const { data: pipelineData, isLoading } = useQuery({
+  const { data: pipelineData, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['pipeline'],
     queryFn: () => api.pipeline.list(),
   })
@@ -418,13 +430,20 @@ export default function PipelinePage() {
 
   const handleRemoveCard = useCallback(
     (pipelineId: string, stage: Stage) => {
-      const newBoard = { ...board }
-      newBoard[stage] = newBoard[stage].filter((c) => c.pipeline_id !== pipelineId)
-      setLocalBoard(newBoard)
-      removeMutation.mutate(pipelineId)
+      setRemoveTarget({ pipelineId, stage })
     },
-    [board, removeMutation]
+    []
   )
+
+  const confirmRemoveCard = useCallback(() => {
+    if (!removeTarget) return
+    const { pipelineId, stage } = removeTarget
+    const newBoard = { ...board }
+    newBoard[stage] = newBoard[stage].filter((c) => c.pipeline_id !== pipelineId)
+    setLocalBoard(newBoard)
+    removeMutation.mutate(pipelineId)
+    setRemoveTarget(null)
+  }, [board, removeMutation, removeTarget])
 
   // ── Drag handlers ──────────────────────────────────────────────────────
   const handleDragStart = useCallback(
@@ -512,6 +531,67 @@ export default function PipelinePage() {
   // ── Total count ────────────────────────────────────────────────────────
   const totalDeals = STAGES.reduce((acc, s) => acc + (board[s.key]?.length ?? 0), 0)
 
+  // ── Error state ──────────────────────────────────────────────────────
+  if (isError) {
+    return (
+      <AppShell>
+        <PageHeader title="Pipeline" />
+        <PageContent>
+          <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+            <div className="flex flex-col items-center gap-4 max-w-md text-center">
+              <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                <AlertTriangle size={24} className="text-red-400" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-[#F1F5F9]">Failed to load pipeline</p>
+                <p className="text-xs text-[#94A3B8]">
+                  {error instanceof Error ? error.message : 'Something went wrong. Please try again.'}
+                </p>
+              </div>
+              <button
+                onClick={() => refetch()}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#6366F1] hover:bg-[#4F46E5] text-white text-[13px] font-medium transition-colors"
+              >
+                Try again
+              </button>
+            </div>
+          </div>
+        </PageContent>
+      </AppShell>
+    )
+  }
+
+  // ── Empty state ─────────────────────────────────────────────────────
+  if (!isLoading && totalDeals === 0) {
+    return (
+      <AppShell>
+        <PageHeader title="Pipeline" />
+        <PageContent>
+          <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+            <div className="flex flex-col items-center gap-4 max-w-md text-center">
+              <div className="w-12 h-12 rounded-xl bg-[#0F0F1A] border border-[#1A1A2E] flex items-center justify-center">
+                <GitBranch size={24} className="text-[#94A3B8]" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-[#F1F5F9]">Your pipeline is empty</p>
+                <p className="text-xs text-[#94A3B8] leading-relaxed">
+                  Start by analyzing a deal and adding it to your pipeline to track its progress.
+                </p>
+              </div>
+              <Link
+                to="/analyze"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#6366F1] hover:bg-[#4F46E5] text-white text-[13px] font-medium transition-colors"
+              >
+                <Plus size={14} />
+                Analyze a Deal
+              </Link>
+            </div>
+          </div>
+        </PageContent>
+      </AppShell>
+    )
+  }
+
   return (
     <AppShell>
       <PageHeader
@@ -586,6 +666,27 @@ export default function PipelinePage() {
           pipelineId={closeDealCard.pipeline_id}
         />
       )}
+
+      {/* Remove from pipeline confirmation dialog */}
+      <AlertDialog open={removeTarget !== null} onOpenChange={(open) => { if (!open) setRemoveTarget(null) }}>
+        <AlertDialogContent className="bg-[#0F0F1A] border-[#1A1A2E]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-[#F1F5F9]">Remove from pipeline?</AlertDialogTitle>
+            <AlertDialogDescription className="text-[#94A3B8]">
+              This deal will be removed from your pipeline. You can always re-add it later from your deals list.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-[#1A1A2E] border-[#2A2A3E] text-[#F1F5F9] hover:bg-[#252540]">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmRemoveCard}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {removeMutation.isPending ? 'Removing...' : 'Remove'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Shimmer keyframe — injected once */}
       <style>{`

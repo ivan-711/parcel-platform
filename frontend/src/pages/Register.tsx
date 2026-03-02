@@ -115,11 +115,13 @@ export default function Register() {
               type="password"
               autoComplete="new-password"
               required
+              minLength={8}
               placeholder="••••••••"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               className="bg-app-elevated border-border-default text-text-primary placeholder:text-text-disabled focus:border-accent-primary"
             />
+            <p className="text-[11px] text-text-muted">Must be at least 8 characters</p>
           </div>
 
           {/* Role selection */}

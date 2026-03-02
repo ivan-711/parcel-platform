@@ -1,9 +1,11 @@
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { AnimatePresence, motion } from 'framer-motion'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { Toaster } from '@/components/ui/sonner'
 import { useAuthStore } from '@/stores/authStore'
+import { pageTransition } from '@/lib/motion'
 
 // Lazy-loaded pages
 const Landing = lazy(() => import('@/pages/Landing'))
@@ -21,6 +23,7 @@ const Chat = lazy(() => import('@/pages/chat/ChatPage'))
 const Settings = lazy(() => import('@/pages/settings/SettingsPage'))
 const ShareDeal = lazy(() => import('@/pages/share/ShareDealPage'))
 const ComparePage = lazy(() => import('@/pages/compare/ComparePage'))
+const NotFound = lazy(() => import('@/pages/NotFound'))
 
 const queryClient = new QueryClient()
 
@@ -40,13 +43,21 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
-/** Root application component — sets up routing, React Query, and lazy page loading. */
-export default function App() {
+/** Renders all routes wrapped in AnimatePresence for opacity crossfade transitions. */
+function AnimatedRoutes() {
+  const location = useLocation()
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        variants={pageTransition}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+      >
         <Suspense fallback={<PageFallback />}>
-          <Routes>
+          <Routes location={location}>
             {/* Public routes — no auth guard */}
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
@@ -65,9 +76,23 @@ export default function App() {
             <Route path="/documents" element={<ProtectedRoute><Documents /></ProtectedRoute>} />
             <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+
+            {/* Catch-all 404 */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
-          <Toaster position="bottom-right" theme="dark" />
         </Suspense>
+      </motion.div>
+    </AnimatePresence>
+  )
+}
+
+/** Root application component — sets up routing, React Query, and lazy page loading. */
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AnimatedRoutes />
+        <Toaster position="bottom-right" theme="dark" />
       </BrowserRouter>
     </QueryClientProvider>
   )

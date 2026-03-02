@@ -314,7 +314,7 @@ export default function Dashboard() {
         <motion.div variants={itemVariants} className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-text-primary">Recent Activity</h2>
-            <span className="text-xs font-medium text-accent-primary">View all</span>
+            <Link to="/deals" className="text-xs font-medium text-accent-primary hover:text-accent-primary/80 transition-colors">View all</Link>
           </div>
 
           {activityLoading && (

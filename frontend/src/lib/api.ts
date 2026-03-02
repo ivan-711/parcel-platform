@@ -56,6 +56,10 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     throw new Error((error as { error?: string }).error ?? `HTTP ${res.status}`)
   }
 
+  if (res.status === 204) {
+    return {} as T
+  }
+
   return res.json() as Promise<T>
 }
 

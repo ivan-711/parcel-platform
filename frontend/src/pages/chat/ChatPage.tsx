@@ -339,6 +339,7 @@ export default function ChatPage() {
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
               placeholder="Ask about deals, strategies, or financing..."
+              aria-label="Type your message"
               disabled={isStreaming}
               rows={1}
               className={cn(

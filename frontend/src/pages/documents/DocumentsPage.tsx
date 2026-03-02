@@ -39,7 +39,7 @@ const ACCEPTED_TYPES: Record<string, string[]> = {
   'image/jpeg': ['.jpg', '.jpeg'],
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
 }
-const MAX_FILE_SIZE = 25 * 1024 * 1024
+const MAX_FILE_SIZE = 10 * 1024 * 1024
 
 const fadeUp = {
   initial: { opacity: 0, y: 8 },
@@ -66,7 +66,7 @@ function UploadZone({ onUpload, isUploading }: { onUpload: (file: File) => void;
     disabled: isUploading,
     onDropRejected: (rejections) => {
       const err = rejections[0]?.errors[0]
-      if (err?.code === 'file-too-large') toast.error('File too large — max 25 MB')
+      if (err?.code === 'file-too-large') toast.error('File too large — max 10 MB')
       else if (err?.code === 'file-invalid-type') toast.error('Unsupported file type')
       else toast.error('Upload failed — please try again')
     },
@@ -95,7 +95,7 @@ function UploadZone({ onUpload, isUploading }: { onUpload: (file: File) => void;
           <p className="text-xs text-text-secondary">
             {isDragActive ? 'Drop file here' : 'Drag & drop or click to upload'}
           </p>
-          <p className="text-[10px] text-text-muted">PDF, DOCX, PNG, JPG — max 25 MB</p>
+          <p className="text-[10px] text-text-muted">PDF, DOCX, PNG, JPG — max 10 MB</p>
         </div>
       )}
     </div>

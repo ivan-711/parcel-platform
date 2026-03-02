@@ -8,7 +8,6 @@ import { useLogin } from '@/hooks/useAuth'
 interface LoginForm {
   email: string
   password: string
-  rememberMe: boolean
 }
 
 /** Full-screen login page — no AppShell. Submits credentials and redirects to dashboard on success. */
@@ -17,7 +16,6 @@ export default function Login() {
   const [form, setForm] = useState<LoginForm>({
     email: '',
     password: '',
-    rememberMe: false,
   })
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -67,17 +65,6 @@ export default function Login() {
               className="bg-app-elevated border-border-default text-text-primary placeholder:text-text-disabled focus:border-accent-primary"
             />
           </div>
-
-          {/* Remember me */}
-          <label className="flex items-center gap-2 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              className="w-4 h-4 rounded border-border-default bg-app-elevated accent-accent-primary"
-              checked={form.rememberMe}
-              onChange={(e) => setForm({ ...form, rememberMe: e.target.checked })}
-            />
-            <span className="text-xs text-text-secondary">Remember me</span>
-          </label>
 
           {/* Inline error */}
           {login.error && (
