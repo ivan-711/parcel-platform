@@ -105,7 +105,7 @@ function UploadZone({ onUpload, isUploading }: { onUpload: (file: File) => void;
 /* ---------- Status Badge ---------- */
 
 function StatusBadge({ status }: { status: DocumentListItem['status'] }) {
-  if (status === 'completed') {
+  if (status === 'complete') {
     return (
       <span className="flex items-center gap-1 text-[10px] text-emerald-400">
         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />

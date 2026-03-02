@@ -195,7 +195,7 @@ export interface DocumentResponse {
   original_filename: string
   file_type: string
   file_size_bytes: number
-  status: 'pending' | 'processing' | 'completed' | 'failed'
+  status: 'pending' | 'processing' | 'complete' | 'failed'
   document_type: string | null
   ai_summary: string | null
   parties: DocumentParty[]
@@ -213,7 +213,7 @@ export interface DocumentListItem {
   original_filename: string
   file_type: string
   file_size_bytes: number
-  status: 'pending' | 'processing' | 'completed' | 'failed'
+  status: 'pending' | 'processing' | 'complete' | 'failed'
   document_type: string | null
   ai_summary: string | null
   presigned_url: string | null
