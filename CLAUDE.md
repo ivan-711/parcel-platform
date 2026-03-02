@@ -1,3 +1,8 @@
+## Required Skills (read in this order before any UI work)
+1. /Users/ivanflores/parcel-platform/.claude/skills/ui-ux-pro-max/SKILL.md
+2. Built-in frontend-design skill
+If instructions conflict, ui-ux-pro-max wins.
+
 # CLAUDE.md — Parcel Platform
 > This file tells Claude Code exactly how to work on this project.
 > Read this file completely before doing anything else.
