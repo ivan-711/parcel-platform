@@ -13,8 +13,26 @@ export function formatDocumentType(type: string | null): string {
   return formatLabel(type)
 }
 
+/** Domain-specific label overrides for output keys. */
+const LABEL_OVERRIDES: Record<string, string> = {
+  mao: 'MAO',
+  arv: 'ARV',
+  coc_return: 'Cash-on-Cash Return',
+  annual_noi: 'Annual NOI',
+  noi_annual: 'NOI Annual',
+  monthly_noi: 'Monthly NOI',
+  roi: 'ROI',
+  annualized_roi: 'Annualized ROI',
+  dscr: 'DSCR',
+  arv_post_rehab: 'ARV Post-Rehab',
+  monthly_piti: 'Monthly PITI',
+  monthly_pi: 'Monthly P&I',
+  grm: 'GRM',
+}
+
 /** Format an output key into a human-readable label. */
 export function formatLabel(key: string): string {
+  if (LABEL_OVERRIDES[key]) return LABEL_OVERRIDES[key]
   return key
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (c) => c.toUpperCase())

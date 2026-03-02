@@ -22,11 +22,11 @@ import type { Strategy, DealResponse } from '@/types'
 /** Output keys where a higher numeric value is better. */
 const HIGHER_IS_BETTER = new Set([
   'mao', 'profit_at_ask', 'estimated_profit', 'arv', 'spread',
-  'monthly_cash_flow', 'coc_return', 'cap_rate', 'monthly_rent',
+  'monthly_cash_flow', 'coc_return', 'cap_rate',
   'annual_cash_flow', 'equity_day_one',
   'gross_profit', 'net_profit', 'roi', 'annualized_roi',
   'refinance_proceeds', 'arv_post_rehab',
-  'noi_annual', 'effective_yield', 'dscr', 'equity_captured',
+  'annual_noi', 'effective_yield', 'dscr', 'equity_captured',
 ])
 
 /** Output keys where a lower numeric value is better. */
@@ -38,7 +38,7 @@ const LOWER_IS_BETTER = new Set([
 /** Strategy-specific output keys to display in the comparison table. */
 const STRATEGY_ROWS: Record<string, string[]> = {
   wholesale: ['mao', 'profit_at_ask', 'estimated_profit', 'arv', 'repair_costs', 'spread', 'break_even_price'],
-  buy_and_hold: ['monthly_cash_flow', 'coc_return', 'cap_rate', 'monthly_rent', 'purchase_price', 'noi_annual'],
+  buy_and_hold: ['monthly_cash_flow', 'coc_return', 'cap_rate', 'purchase_price', 'annual_noi', 'dscr'],
   brrrr: ['monthly_cash_flow', 'money_left_in', 'refinance_proceeds', 'total_invested', 'arv_post_rehab', 'equity_captured', 'coc_return'],
   flip: ['gross_profit', 'net_profit', 'roi', 'annualized_roi', 'total_cost', 'arv', 'holding_months'],
   creative_finance: ['monthly_cash_flow', 'annual_cash_flow', 'equity_day_one', 'finance_type', 'dscr', 'effective_yield'],
