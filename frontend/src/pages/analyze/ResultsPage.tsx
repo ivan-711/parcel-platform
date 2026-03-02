@@ -389,7 +389,7 @@ export default function ResultsPage() {
               <h3 className="text-sm font-semibold text-text-primary">Risk Score</h3>
               <Popover>
                 <PopoverTrigger asChild>
-                  <button type="button" className="text-[#94A3B8] hover:text-[#F1F5F9] transition-colors">
+                  <button type="button" aria-label="Risk score details" className="text-[#94A3B8] hover:text-[#F1F5F9] transition-colors">
                     <HelpCircle size={16} />
                   </button>
                 </PopoverTrigger>

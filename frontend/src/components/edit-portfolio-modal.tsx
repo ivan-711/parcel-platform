@@ -82,8 +82,9 @@ export function EditPortfolioModal({
           )}
 
           <div className="space-y-2">
-            <Label className="text-text-secondary text-xs">Closed Date</Label>
+            <Label htmlFor="edit-closed-date" className="text-text-secondary text-xs">Closed Date</Label>
             <Input
+              id="edit-closed-date"
               type="date"
               value={closedDate}
               onChange={(e) => setClosedDate(e.target.value)}
@@ -92,8 +93,9 @@ export function EditPortfolioModal({
           </div>
 
           <div className="space-y-2">
-            <Label className="text-text-secondary text-xs">Closed Price ($)</Label>
+            <Label htmlFor="edit-closed-price" className="text-text-secondary text-xs">Closed Price ($)</Label>
             <Input
+              id="edit-closed-price"
               type="number"
               value={closedPrice}
               onChange={(e) => setClosedPrice(e.target.value)}
@@ -103,8 +105,9 @@ export function EditPortfolioModal({
           </div>
 
           <div className="space-y-2">
-            <Label className="text-text-secondary text-xs">Profit ($)</Label>
+            <Label htmlFor="edit-profit" className="text-text-secondary text-xs">Profit ($)</Label>
             <Input
+              id="edit-profit"
               type="number"
               value={profit}
               onChange={(e) => setProfit(e.target.value)}
@@ -114,8 +117,9 @@ export function EditPortfolioModal({
           </div>
 
           <div className="space-y-2">
-            <Label className="text-text-secondary text-xs">Monthly Cash Flow ($)</Label>
+            <Label htmlFor="edit-cash-flow" className="text-text-secondary text-xs">Monthly Cash Flow ($)</Label>
             <Input
+              id="edit-cash-flow"
               type="number"
               value={monthlyCashFlow}
               onChange={(e) => setMonthlyCashFlow(e.target.value)}
@@ -125,8 +129,9 @@ export function EditPortfolioModal({
           </div>
 
           <div className="space-y-2">
-            <Label className="text-text-secondary text-xs">Notes (optional)</Label>
+            <Label htmlFor="edit-notes" className="text-text-secondary text-xs">Notes (optional)</Label>
             <textarea
+              id="edit-notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}

@@ -232,9 +232,9 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5 mt-6">
       <div className="space-y-2">
-        <Label className="text-text-secondary text-xs">Deal</Label>
+        <Label htmlFor="portfolio-deal" className="text-text-secondary text-xs">Deal</Label>
         <Select value={dealId} onValueChange={setDealId}>
-          <SelectTrigger className="bg-[#08080F] border-[#1A1A2E] text-text-primary">
+          <SelectTrigger id="portfolio-deal" className="bg-[#08080F] border-[#1A1A2E] text-text-primary">
             <SelectValue placeholder="Select a deal" />
           </SelectTrigger>
           <SelectContent className="bg-[#0F0F1A] border-[#1A1A2E]">
@@ -248,8 +248,9 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label className="text-text-secondary text-xs">Closed Date</Label>
+        <Label htmlFor="portfolio-closed-date" className="text-text-secondary text-xs">Closed Date</Label>
         <Input
+          id="portfolio-closed-date"
           type="date"
           value={closedDate}
           onChange={(e) => setClosedDate(e.target.value)}
@@ -258,8 +259,9 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label className="text-text-secondary text-xs">Closed Price ($)</Label>
+        <Label htmlFor="portfolio-closed-price" className="text-text-secondary text-xs">Closed Price ($)</Label>
         <Input
+          id="portfolio-closed-price"
           type="number"
           value={closedPrice}
           onChange={(e) => setClosedPrice(e.target.value)}
@@ -269,8 +271,9 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label className="text-text-secondary text-xs">Profit ($)</Label>
+        <Label htmlFor="portfolio-profit" className="text-text-secondary text-xs">Profit ($)</Label>
         <Input
+          id="portfolio-profit"
           type="number"
           value={profit}
           onChange={(e) => setProfit(e.target.value)}
@@ -280,8 +283,9 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label className="text-text-secondary text-xs">Monthly Cash Flow ($)</Label>
+        <Label htmlFor="portfolio-cash-flow" className="text-text-secondary text-xs">Monthly Cash Flow ($)</Label>
         <Input
+          id="portfolio-cash-flow"
           type="number"
           value={monthlyCashFlow}
           onChange={(e) => setMonthlyCashFlow(e.target.value)}
@@ -291,8 +295,9 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label className="text-text-secondary text-xs">Notes (optional)</Label>
+        <Label htmlFor="portfolio-notes" className="text-text-secondary text-xs">Notes (optional)</Label>
         <textarea
+          id="portfolio-notes"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={3}

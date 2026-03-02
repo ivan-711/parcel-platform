@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
@@ -215,13 +215,38 @@ function Topbar({ title, onMenuToggle, onSearchClick }: { title?: string; onMenu
  * Root layout for all authenticated app pages.
  * Renders the desktop sidebar (hidden on mobile), a mobile Sheet drawer,
  * topbar with hamburger toggle, command palette, and scrollable main content area.
+ * Includes skip-navigation link and focus management on route changes for accessibility.
  */
 export function AppShell({ children, title, noPadding }: AppShellProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
+  const mainRef = useRef<HTMLElement>(null)
+  const { pathname } = useLocation()
+
+  /* Move focus to main content area when the route changes — helps screen readers announce page transitions. */
+  useEffect(() => {
+    const main = mainRef.current
+    if (!main) return
+    /* Find the first h1 inside main and focus it; fall back to main itself. */
+    const heading = main.querySelector<HTMLElement>('h1')
+    if (heading) {
+      heading.setAttribute('tabindex', '-1')
+      heading.focus({ preventScroll: true })
+    } else {
+      main.focus({ preventScroll: true })
+    }
+  }, [pathname])
 
   return (
     <div className="flex h-screen bg-app-bg overflow-hidden">
+      {/* Skip navigation link — visually hidden until focused, then appears at top of page */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-accent-primary focus:text-white focus:text-sm focus:font-medium focus:shadow-lg focus:outline-none"
+      >
+        Skip to main content
+      </a>
+
       {/* Desktop sidebar — hidden below md */}
       <Sidebar />
 
@@ -234,7 +259,12 @@ export function AppShell({ children, title, noPadding }: AppShellProps) {
           onMenuToggle={() => setMobileNavOpen(true)}
           onSearchClick={() => setCommandPaletteOpen(true)}
         />
-        <main className={cn('flex-1', noPadding ? 'overflow-hidden' : 'overflow-y-auto p-4 md:p-6')}>
+        <main
+          ref={mainRef}
+          id="main-content"
+          tabIndex={-1}
+          className={cn('flex-1 outline-none', noPadding ? 'overflow-hidden' : 'overflow-y-auto p-4 md:p-6')}
+        >
           {children}
         </main>
       </div>

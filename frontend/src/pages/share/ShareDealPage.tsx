@@ -265,7 +265,7 @@ export default function ShareDealPage() {
                 </p>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <button type="button" className="text-[#94A3B8] hover:text-[#F1F5F9] transition-colors">
+                    <button type="button" aria-label="Risk score details" className="text-[#94A3B8] hover:text-[#F1F5F9] transition-colors">
                       <HelpCircle size={14} />
                     </button>
                   </PopoverTrigger>

@@ -126,12 +126,14 @@ export function FilterBar({
           <button
             onClick={onSavePreset}
             disabled={!presetName.trim()}
+            aria-label="Save preset"
             className="p-1 rounded hover:bg-app-elevated text-accent-success transition-colors disabled:opacity-40"
           >
             <Check size={14} />
           </button>
           <button
             onClick={onCancelPresetInput}
+            aria-label="Cancel preset"
             className="p-1 rounded hover:bg-app-elevated text-text-muted transition-colors"
           >
             <X size={14} />
