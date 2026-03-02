@@ -234,6 +234,16 @@ export interface OfferLetterResponse {
   generated_at: string
 }
 
+export interface FilterPreset {
+  id: string
+  name: string
+  filters: DealsFilters
+}
+
+export interface NotificationPreferences {
+  email_notifications: boolean
+}
+
 export interface DocumentListItem {
   id: string
   original_filename: string

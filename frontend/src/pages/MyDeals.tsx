@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Plus, Search, AlertCircle, Columns } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Plus, Search, AlertCircle, Columns, Bookmark, Check, X } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -13,7 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useDeals } from '@/hooks/useDeals'
-import type { Strategy, DealsFilters } from '@/types'
+import type { Strategy, DealsFilters, FilterPreset } from '@/types'
 
 const STRATEGIES: { value: string; label: string }[] = [
   { value: 'all', label: 'All Strategies' },
@@ -87,6 +88,24 @@ export default function MyDeals() {
   const [page, setPage] = useState(1)
   const [compareIds, setCompareIds] = useState<Set<string>>(new Set())
 
+  const [presets, setPresets] = useState<FilterPreset[]>(() => {
+    try {
+      const stored = localStorage.getItem('parcel_filter_presets')
+      return stored ? JSON.parse(stored) : []
+    } catch { return [] }
+  })
+  const [showPresetInput, setShowPresetInput] = useState(false)
+  const [presetName, setPresetName] = useState('')
+  const presetInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    localStorage.setItem('parcel_filter_presets', JSON.stringify(presets))
+  }, [presets])
+
+  useEffect(() => {
+    if (showPresetInput) presetInputRef.current?.focus()
+  }, [showPresetInput])
+
   const toggleCompare = (id: string) => {
     setCompareIds((prev) => {
       const next = new Set(prev)
@@ -115,6 +134,38 @@ export default function MyDeals() {
     setStrategy('all')
     setStatus('all')
     setPage(1)
+  }
+
+  const savePreset = () => {
+    const trimmed = presetName.trim()
+    if (!trimmed) return
+    const filters: DealsFilters = {}
+    if (strategy !== 'all') filters.strategy = strategy
+    if (status !== 'all') filters.status = status
+    if (sort !== 'created_at_desc') filters.sort = sort
+    const preset: FilterPreset = { id: crypto.randomUUID(), name: trimmed, filters }
+    setPresets((prev) => [...prev, preset])
+    setPresetName('')
+    setShowPresetInput(false)
+  }
+
+  const deletePreset = (id: string) => {
+    setPresets((prev) => prev.filter((p) => p.id !== id))
+  }
+
+  const applyPreset = (preset: FilterPreset) => {
+    setStrategy(preset.filters.strategy ?? 'all')
+    setStatus(preset.filters.status ?? 'all')
+    setSort(preset.filters.sort ?? 'created_at_desc')
+    setPage(1)
+  }
+
+  const isPresetActive = (preset: FilterPreset) => {
+    return (
+      (preset.filters.strategy ?? 'all') === strategy &&
+      (preset.filters.status ?? 'all') === status &&
+      (preset.filters.sort ?? 'created_at_desc') === sort
+    )
   }
 
   const hasMore = deals !== undefined && deals.length === PER_PAGE
@@ -185,7 +236,77 @@ export default function MyDeals() {
               Clear filters
             </button>
           )}
+
+          <button
+            onClick={() => setShowPresetInput(true)}
+            disabled={!hasActiveFilters || showPresetInput}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-text-secondary hover:text-text-primary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <Bookmark size={14} />
+            Save Preset
+          </button>
+
+          {showPresetInput && (
+            <div className="inline-flex items-center gap-1.5">
+              <Input
+                ref={presetInputRef}
+                value={presetName}
+                onChange={(e) => setPresetName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') savePreset()
+                  if (e.key === 'Escape') { setShowPresetInput(false); setPresetName('') }
+                }}
+                placeholder="Preset name…"
+                className="h-8 w-[140px] text-xs bg-app-surface border-border-subtle"
+              />
+              <button
+                onClick={savePreset}
+                disabled={!presetName.trim()}
+                className="p-1 rounded hover:bg-app-elevated text-accent-success transition-colors disabled:opacity-40"
+              >
+                <Check size={14} />
+              </button>
+              <button
+                onClick={() => { setShowPresetInput(false); setPresetName('') }}
+                className="p-1 rounded hover:bg-app-elevated text-text-muted transition-colors"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          )}
         </div>
+
+        {/* Preset chips */}
+        {presets.length > 0 && (
+          <div className="flex overflow-x-auto gap-2 pb-1 -mt-3">
+            <AnimatePresence>
+              {presets.map((preset) => (
+                <motion.button
+                  key={preset.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.15 }}
+                  onClick={() => applyPreset(preset)}
+                  className={`inline-flex items-center gap-1.5 shrink-0 rounded-full px-3 py-1 text-sm border transition-colors ${
+                    isPresetActive(preset)
+                      ? 'border-[#6366F1] text-[#6366F1] bg-[#6366F1]/10'
+                      : 'bg-[#1A1A2E] border-[#2A2A3E] text-text-secondary hover:border-text-muted'
+                  }`}
+                >
+                  {preset.name}
+                  <span
+                    role="button"
+                    onClick={(e) => { e.stopPropagation(); deletePreset(preset.id) }}
+                    className="ml-0.5 p-0.5 rounded-full hover:bg-white/10 transition-colors"
+                  >
+                    <X size={12} />
+                  </span>
+                </motion.button>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
 
         {/* Error state */}
         {isError && (
