@@ -5,7 +5,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, ChevronRight } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { ConceptTooltip } from '@/components/ui/ConceptTooltip'
@@ -141,6 +141,14 @@ const STRATEGY_LABELS: Record<string, string> = {
   flip: 'Flip Analyzer',
   brrrr: 'BRRRR Analyzer',
   creative_finance: 'Creative Finance Analyzer',
+}
+
+const STRATEGY_DISPLAY_NAMES: Record<string, string> = {
+  wholesale: 'Wholesale',
+  buy_and_hold: 'Buy & Hold',
+  flip: 'Flip',
+  brrrr: 'BRRRR',
+  creative_finance: 'Creative Finance',
 }
 
 /** Wholesale strategy form. */
@@ -1114,13 +1122,28 @@ export default function AnalyzerFormPage() {
   return (
     <AppShell title="Analyzer">
       <div className="max-w-3xl mx-auto">
+        {/* Breadcrumbs */}
+        <nav aria-label="Breadcrumb" className="mb-4">
+          <ol className="flex items-center gap-1.5 text-xs">
+            <li>
+              <Link to="/dashboard" className="text-text-muted hover:text-accent-primary transition-colors">
+                Dashboard
+              </Link>
+            </li>
+            <li aria-hidden="true"><ChevronRight size={12} className="text-text-muted" /></li>
+            <li>
+              <Link to="/analyze" className="text-text-muted hover:text-accent-primary transition-colors">
+                Analyzer
+              </Link>
+            </li>
+            <li aria-hidden="true"><ChevronRight size={12} className="text-text-muted" /></li>
+            <li aria-current="page" className="text-text-primary font-medium">
+              {STRATEGY_DISPLAY_NAMES[strategy as string] ?? 'Unknown'}
+            </li>
+          </ol>
+        </nav>
+
         <div className="mb-6 flex items-center gap-3">
-          <Link
-            to="/analyze"
-            className="text-text-muted hover:text-text-primary transition-colors"
-          >
-            <ArrowLeft size={18} />
-          </Link>
           <StrategyBadge strategy={strategy as Strategy} />
           <h2 className="text-lg font-semibold text-text-primary">
             {STRATEGY_LABELS[strategy as string] ?? 'Analyzer'}

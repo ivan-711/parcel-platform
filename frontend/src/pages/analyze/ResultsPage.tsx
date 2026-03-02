@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, PlusCircle, ChevronDown, Share2, Save, Check, HelpCircle, FileDown, FileText, Trash2, MessageSquare } from 'lucide-react'
+import { ArrowLeft, PlusCircle, ChevronDown, ChevronRight, Share2, Save, Check, HelpCircle, FileDown, FileText, Trash2, MessageSquare } from 'lucide-react'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
 import { KPICard } from '@/components/ui/KPICard'
@@ -53,6 +53,14 @@ const PIPELINE_STAGES = [
   { key: 'under_contract', label: 'Under Contract' },
   { key: 'due_diligence', label: 'Due Diligence' },
 ]
+
+const STRATEGY_DISPLAY_NAMES: Record<string, string> = {
+  wholesale: 'Wholesale',
+  buy_and_hold: 'Buy & Hold',
+  flip: 'Flip',
+  brrrr: 'BRRRR',
+  creative_finance: 'Creative Finance',
+}
 
 export default function ResultsPage() {
   const { dealId } = useParams<{ dealId: string }>()
@@ -281,6 +289,36 @@ export default function ResultsPage() {
         initial="hidden"
         animate="visible"
       >
+        {/* Breadcrumbs */}
+        <motion.nav variants={staggerItem} aria-label="Breadcrumb">
+          <ol className="flex items-center gap-1.5 text-xs">
+            <li>
+              <Link to="/dashboard" className="text-text-muted hover:text-accent-primary transition-colors">
+                Dashboard
+              </Link>
+            </li>
+            <li aria-hidden="true"><ChevronRight size={12} className="text-text-muted" /></li>
+            <li>
+              <Link to="/analyze" className="text-text-muted hover:text-accent-primary transition-colors">
+                Analyzer
+              </Link>
+            </li>
+            <li aria-hidden="true"><ChevronRight size={12} className="text-text-muted" /></li>
+            <li>
+              <Link
+                to={`/analyze/${deal.strategy}`}
+                className="text-text-muted hover:text-accent-primary transition-colors"
+              >
+                {STRATEGY_DISPLAY_NAMES[deal.strategy] ?? deal.strategy}
+              </Link>
+            </li>
+            <li aria-hidden="true"><ChevronRight size={12} className="text-text-muted" /></li>
+            <li aria-current="page" className="text-text-primary font-medium">
+              Results
+            </li>
+          </ol>
+        </motion.nav>
+
         {/* Header */}
         <motion.div variants={staggerItem} className="flex items-center gap-3">
           <StrategyBadge strategy={deal.strategy as Strategy} />
