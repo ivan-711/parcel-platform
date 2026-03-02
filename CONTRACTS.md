@@ -699,6 +699,12 @@ Request:
 
 Response: SSE stream (same format as document chat)
 
+Notes:
+- Document context: when `context_type=document`, loads `ai_summary`, `risk_flags`,
+  `key_terms`, `extracted_numbers` from the documents table and appends to the system prompt.
+  If the document is not found or `status != "complete"`, returns a graceful SSE error
+  stream instead of a 4xx HTTP error.
+
 ---
 
 ### GET /api/v1/chat/history
