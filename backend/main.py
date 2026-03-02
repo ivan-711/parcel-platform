@@ -20,7 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from routers import auth, dashboard, deals, pipeline, portfolio, chat, documents  # noqa: E402
+from routers import auth, dashboard, deals, pipeline, portfolio, chat, documents, settings  # noqa: E402
 
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(dashboard.router, prefix="/api/v1")
@@ -29,6 +29,7 @@ app.include_router(pipeline.router, prefix="/api/v1")
 app.include_router(portfolio.router, prefix="/api/v1")
 app.include_router(chat.router, prefix="/api/v1")
 app.include_router(documents.router, prefix="/api/v1")
+app.include_router(settings.router, prefix="/api/v1")
 
 
 @app.get("/health")

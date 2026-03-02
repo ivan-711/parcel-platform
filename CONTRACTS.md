@@ -960,6 +960,45 @@ Response `200`:
 
 ---
 
+## SETTINGS ENDPOINTS
+
+### `GET /api/v1/settings/notifications/` ✅
+
+Get the current user's notification preferences.
+
+Auth: Required (Bearer token or httpOnly cookie)
+
+Response `200`:
+```json
+{
+  "email_notifications": true
+}
+```
+
+---
+
+### `PATCH /api/v1/settings/notifications/` ✅
+
+Update the current user's notification preferences.
+
+Auth: Required (Bearer token or httpOnly cookie)
+
+Request body:
+```json
+{
+  "email_notifications": false
+}
+```
+
+Response `200`:
+```json
+{
+  "email_notifications": false
+}
+```
+
+---
+
 ## CALCULATOR INPUT SPECS
 > Frontend uses these to build the analyzer forms.
 > Backend uses these to validate incoming deal inputs.
