@@ -67,8 +67,11 @@ const itemVariants = {
 
 /* ── Helpers ── */
 
-function formatCurrency(n: number): string {
-  return `$${n.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+function formatCurrency(value: number | string | null | undefined): string {
+  if (value === null || value === undefined) return '—'
+  const num = typeof value === 'string' ? parseFloat(value) : value
+  if (isNaN(num)) return '—'
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num)
 }
 
 function formatMonthYear(dateStr: string): string {
@@ -251,7 +254,8 @@ export default function PortfolioPage() {
     )
     let cumulative = 0
     return sorted.map((e) => {
-      cumulative += e.monthly_cash_flow
+      const cashFlow = parseFloat(String(e.monthly_cash_flow ?? 0))
+      cumulative += isNaN(cashFlow) ? 0 : cashFlow
       return { date: formatMonthYear(e.closed_date), cashFlow: cumulative }
     })
   }, [entries])
@@ -388,7 +392,7 @@ export default function PortfolioPage() {
                         <td className="px-4 py-3 font-mono text-[13px] text-text-primary">
                           {formatCurrency(entry.closed_price)}
                         </td>
-                        <td className={`px-4 py-3 font-mono text-[13px] ${entry.profit >= 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
+                        <td className={`px-4 py-3 font-mono text-[13px] ${parseFloat(String(entry.profit ?? 0)) >= 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
                           {formatCurrency(entry.profit)}
                         </td>
                         <td className="px-4 py-3 font-mono text-[13px] text-text-primary">

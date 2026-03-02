@@ -38,14 +38,20 @@ export function formatLabel(key: string): string {
     .replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
-/** Format a numeric value as currency. */
-export function formatCurrency(value: number): string {
-  return `$${value.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+/** Format a numeric value as currency. Handles null, undefined, and string inputs. */
+export function formatCurrency(value: number | string | null | undefined): string {
+  if (value === null || value === undefined) return '—'
+  const num = typeof value === 'string' ? parseFloat(value) : value
+  if (isNaN(num)) return '—'
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num)
 }
 
-/** Format a numeric value as a percentage. */
-export function formatPercent(value: number): string {
-  return `${value.toFixed(2)}%`
+/** Format a numeric value as a percentage. Handles null, undefined, and string inputs. */
+export function formatPercent(value: number | string | null | undefined): string {
+  if (value === null || value === undefined) return '—'
+  const num = typeof value === 'string' ? parseFloat(value) : value
+  if (isNaN(num)) return '—'
+  return `${num.toFixed(2)}%`
 }
 
 /** Color class for recommendation badge. */
