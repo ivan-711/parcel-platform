@@ -98,6 +98,17 @@ export const api = {
       }),
     logout: () =>
       request<{ message: string }>('/api/v1/auth/logout', { method: 'POST' }),
+    // TODO: Backend endpoints POST /api/v1/auth/forgot-password and POST /api/v1/auth/reset-password need to be created
+    forgotPassword: (email: string) =>
+      requestPublic<{ message: string }>('/api/v1/auth/forgot-password', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+      }),
+    resetPassword: (token: string, password: string) =>
+      requestPublic<{ message: string }>('/api/v1/auth/reset-password', {
+        method: 'POST',
+        body: JSON.stringify({ token, password }),
+      }),
     me: () => request<User>('/api/v1/auth/me'),
     updateMe: (data: UpdateProfileRequest) =>
       request<UserProfileResponse>('/api/v1/auth/me/', {

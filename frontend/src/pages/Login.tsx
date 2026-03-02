@@ -72,6 +72,15 @@ export default function Login() {
             />
           </div>
 
+          <div className="flex justify-end">
+            <Link
+              to="/forgot-password"
+              className="text-xs text-accent-primary hover:text-accent-hover transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
+
           {/* Inline error */}
           {login.error && (
             <p className="text-accent-danger text-xs">{login.error.message}</p>

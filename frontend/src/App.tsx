@@ -12,6 +12,8 @@ import { pageTransition } from '@/lib/motion'
 const Landing = lazy(() => import('@/pages/Landing'))
 const Login = lazy(() => import('@/pages/Login'))
 const Register = lazy(() => import('@/pages/Register'))
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'))
+const ResetPassword = lazy(() => import('@/pages/ResetPassword'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
 const StrategySelectPage = lazy(() => import('@/pages/analyze/StrategySelectPage'))
 const AnalyzerFormPage = lazy(() => import('@/pages/analyze/AnalyzerFormPage'))
@@ -63,6 +65,8 @@ function AnimatedRoutes() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/share/:dealId" element={<ShareDeal />} />
 
             {/* Protected app routes — AppShell is rendered inside each page */}
