@@ -20,6 +20,7 @@ import type {
   UserProfileResponse,
   DocumentListItem,
   DocumentResponse,
+  ActivityResponse,
 } from '@/types'
 
 const API_URL = (import.meta.env.VITE_API_URL ?? 'https://parcel-platform-production.up.railway.app').replace('http://', 'https://')
@@ -100,6 +101,9 @@ export const api = {
   },
   dashboard: {
     stats: () => request<DashboardStats>('/api/v1/dashboard/stats/'),
+  },
+  activity: {
+    list: () => request<ActivityResponse>('/api/v1/dashboard/activity/'),
   },
   deals: {
     create: (data: DealCreateRequest) =>

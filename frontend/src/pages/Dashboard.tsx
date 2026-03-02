@@ -1,13 +1,20 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, GitBranch, FileText, MessageSquare, AlertCircle, X } from 'lucide-react'
+import {
+  ArrowRight, GitBranch, FileText, MessageSquare, AlertCircle, X,
+  Calculator, CheckCircle2,
+} from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { KPICard } from '@/components/ui/KPICard'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
+import { useQuery } from '@tanstack/react-query'
 import { useDashboard } from '@/hooks/useDashboard'
 import { useAuthStore } from '@/stores/authStore'
+import { api } from '@/lib/api'
+import { timeAgo } from '@/lib/utils'
+import type { ActivityItem } from '@/types'
 
 interface HintCard {
   icon: React.ElementType
@@ -63,6 +70,13 @@ function statusLabel(status: string): string {
   return status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
+const ACTIVITY_ICONS: Record<ActivityItem['activity_type'], { icon: React.ElementType; color: string }> = {
+  deal_analyzed: { icon: Calculator, color: '#6366F1' },
+  pipeline_moved: { icon: ArrowRight, color: '#F59E0B' },
+  document_analyzed: { icon: FileText, color: '#93C5FD' },
+  deal_closed: { icon: CheckCircle2, color: '#10B981' },
+}
+
 const STAGE_LABELS: Record<string, string> = {
   lead: 'Lead',
   analyzing: 'Analyzing',
@@ -79,6 +93,12 @@ export default function Dashboard() {
   const user = useAuthStore((s) => s.user)
   const isDemoUser = user?.email === 'demo@parcel.app'
   const [bannerDismissed, setBannerDismissed] = useState(false)
+
+  const { data: activityData, isLoading: activityLoading } = useQuery({
+    queryKey: ['activity'],
+    queryFn: () => api.activity.list(),
+    staleTime: 60_000,
+  })
 
   /* ── Loading state ── */
   const demoBanner = isDemoUser && !bannerDismissed ? (
@@ -289,6 +309,55 @@ export default function Dashboard() {
             </div>
           </motion.div>
         )}
+
+        {/* Recent Activity */}
+        <motion.div variants={itemVariants} className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-text-primary">Recent Activity</h2>
+            <span className="text-xs font-medium text-accent-primary">View all</span>
+          </div>
+
+          {activityLoading && (
+            <div className="space-y-2">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <SkeletonCard key={i} lines={1} />
+              ))}
+            </div>
+          )}
+
+          {!activityLoading && (!activityData?.activities || activityData.activities.length === 0) && (
+            <div className="rounded-xl border border-border-subtle bg-app-surface px-4 py-8 text-center">
+              <p className="text-sm text-text-muted">No recent activity. Analyze your first deal to get started.</p>
+            </div>
+          )}
+
+          {!activityLoading && activityData?.activities && activityData.activities.length > 0 && (
+            <div className="space-y-2">
+              {activityData.activities.map((item, index) => {
+                const config = ACTIVITY_ICONS[item.activity_type] ?? ACTIVITY_ICONS.deal_analyzed
+                const Icon = config.icon
+                return (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.18, ease: 'easeOut', delay: 0.05 * index }}
+                    className="flex items-center gap-3 bg-[#0F0F1A] rounded-lg px-4 py-3 hover:bg-[#16162A] transition-colors"
+                  >
+                    <div
+                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: `${config.color}20` }}
+                    >
+                      <Icon size={16} style={{ color: config.color }} />
+                    </div>
+                    <p className="text-sm text-text-primary flex-1 truncate">{item.text}</p>
+                    <span className="text-xs text-text-muted font-mono shrink-0">{timeAgo(item.timestamp)}</span>
+                  </motion.div>
+                )
+              })}
+            </div>
+          )}
+        </motion.div>
       </motion.div>
     </AppShell>
   )
