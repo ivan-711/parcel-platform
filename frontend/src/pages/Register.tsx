@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
+import { useShake } from '@/lib/motion'
 import { useRegister } from '@/hooks/useAuth'
 
 type Role = 'wholesaler' | 'investor' | 'agent'
@@ -47,6 +48,7 @@ const ROLE_OPTIONS: RoleOption[] = [
 /** Full-screen registration page with role selection cards. */
 export default function Register() {
   const register = useRegister()
+  const { triggerShake, shakeProps } = useShake()
   const [form, setForm] = useState<RegisterForm>({
     name: '',
     email: '',
@@ -55,10 +57,15 @@ export default function Register() {
   })
   const [roleError, setRoleError] = useState<string | null>(null)
 
+  useEffect(() => {
+    if (register.error) triggerShake()
+  }, [register.error, triggerShake])
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!form.role) {
       setRoleError('Please select a role to continue.')
+      triggerShake()
       return
     }
     setRoleError(null)
@@ -79,6 +86,7 @@ export default function Register() {
           <p className="text-sm text-text-secondary">Create your account</p>
         </div>
 
+        <motion.div {...shakeProps}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="name" className="text-text-secondary text-xs">
@@ -173,6 +181,7 @@ export default function Register() {
             {register.isPending ? 'Creating account…' : 'Create account'}
           </Button>
         </form>
+        </motion.div>
 
         <p className="text-center text-xs text-text-muted">
           Already have an account?{' '}

@@ -174,7 +174,12 @@ export default function ResultsPage() {
       {
         onSuccess: () => {
           setSaved(true)
-          toast.success('Deal saved')
+          toast.success('Deal saved', {
+            action: {
+              label: 'View My Deals →',
+              onClick: () => navigate('/deals'),
+            },
+          })
         },
         onError: (err) => toast.error(err.message),
       }

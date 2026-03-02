@@ -1,9 +1,11 @@
 /** Modal for closing a pipeline deal and adding it to the portfolio. */
 
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
+import { useShake } from '@/lib/motion'
 import {
   Dialog,
   DialogContent,
@@ -35,6 +37,8 @@ export function CloseDealModal({
   pipelineId,
 }: CloseDealModalProps) {
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
+  const { triggerShake, shakeProps } = useShake()
 
   const [closedDate, setClosedDate] = useState('')
   const [closedPrice, setClosedPrice] = useState('')
@@ -68,7 +72,12 @@ export function CloseDealModal({
       await api.pipeline.updateStage(pipelineId, { stage: 'closed' })
     },
     onSuccess: () => {
-      toast.success('Deal closed! Added to Portfolio.')
+      toast.success('Deal closed! Added to Portfolio.', {
+        action: {
+          label: 'View Portfolio →',
+          onClick: () => navigate('/portfolio'),
+        },
+      })
       queryClient.invalidateQueries({ queryKey: ['portfolio'] })
       queryClient.invalidateQueries({ queryKey: ['pipeline'] })
       onClose()
@@ -85,6 +94,7 @@ export function CloseDealModal({
     if (!profit && profit !== '0') newErrors.profit = 'Required'
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
+      triggerShake()
       return
     }
     setErrors({})
@@ -96,8 +106,9 @@ export function CloseDealModal({
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose() }}>
       <DialogContent className="border-[#1A1A2E] bg-[#0F0F1A] sm:max-w-md">
         <motion.div
+          {...shakeProps}
           initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
+          animate={shakeProps.animate === 'shake' ? 'shake' : { opacity: 1, scale: 1 }}
           transition={{ duration: 0.15 }}
         >
           <DialogHeader>

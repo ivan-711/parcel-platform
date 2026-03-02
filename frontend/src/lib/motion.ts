@@ -6,6 +6,7 @@
  * animation constants in individual components.
  */
 
+import { useState, useCallback } from 'react'
 import type { Variants, Transition } from 'framer-motion'
 
 // ── Standard Durations (seconds) ──────────────────────────────────────────────
@@ -138,4 +139,16 @@ export const shake: Variants = {
     x: [0, -6, 6, -6, 6, 0],
     transition: { duration: 0.4 },
   },
+}
+
+/** Hook that returns motion props to shake a form wrapper on validation errors. */
+export function useShake() {
+  const [shouldShake, setShouldShake] = useState(false)
+  const triggerShake = useCallback(() => setShouldShake(true), [])
+  const shakeProps = {
+    variants: shake,
+    animate: shouldShake ? 'shake' : 'idle',
+    onAnimationComplete: () => setShouldShake(false),
+  } as const
+  return { triggerShake, shakeProps }
 }

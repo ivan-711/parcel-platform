@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useShake } from '@/lib/motion'
 import { useLogin } from '@/hooks/useAuth'
 
 interface LoginForm {
@@ -14,10 +15,15 @@ interface LoginForm {
 /** Full-screen login page — no AppShell. Submits credentials and redirects to dashboard on success. */
 export default function Login() {
   const login = useLogin()
+  const { triggerShake, shakeProps } = useShake()
   const [form, setForm] = useState<LoginForm>({
     email: '',
     password: '',
   })
+
+  useEffect(() => {
+    if (login.error) triggerShake()
+  }, [login.error, triggerShake])
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -39,6 +45,7 @@ export default function Login() {
         </div>
 
         {/* Form */}
+        <motion.div {...shakeProps}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="email" className="text-text-secondary text-xs">
@@ -94,6 +101,7 @@ export default function Login() {
             {login.isPending ? 'Signing in…' : 'Sign in'}
           </Button>
         </form>
+        </motion.div>
 
         {/* Footer link */}
         <p className="text-center text-xs text-text-muted">

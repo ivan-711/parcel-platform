@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { motion } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
@@ -23,6 +24,7 @@ import {
   type BRRRRFormValues,
   type CreativeFinanceFormValues,
 } from '@/lib/schemas'
+import { useShake } from '@/lib/motion'
 import { useCreateDeal } from '@/hooks/useDeals'
 import type { Strategy } from '@/types'
 
@@ -144,6 +146,7 @@ const STRATEGY_LABELS: Record<string, string> = {
 /** Wholesale strategy form. */
 function WholesaleForm() {
   const createDeal = useCreateDeal()
+  const { triggerShake, shakeProps } = useShake()
   const {
     register,
     handleSubmit,
@@ -166,14 +169,14 @@ function WholesaleForm() {
   }
 
   return (
-    <div className="relative rounded-xl border border-border-default bg-app-surface p-6">
+    <motion.div {...shakeProps} className="relative rounded-xl border border-border-default bg-app-surface p-6">
       {createDeal.isPending && (
         <div className="absolute inset-0 rounded-xl bg-app-surface/80 z-10 flex items-center justify-center">
           <div className="h-full w-full animate-pulse rounded-xl bg-app-elevated/30" />
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit, triggerShake)} className="space-y-6">
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           {WHOLESALE_FIELDS.map((field) => (
             <div key={field.name} className="space-y-1.5">
@@ -226,13 +229,14 @@ function WholesaleForm() {
           )}
         </div>
       </form>
-    </div>
+    </motion.div>
   )
 }
 
 /** Buy & Hold strategy form. */
 function BuyAndHoldForm() {
   const createDeal = useCreateDeal()
+  const { triggerShake, shakeProps } = useShake()
   const {
     register,
     handleSubmit,
@@ -262,14 +266,14 @@ function BuyAndHoldForm() {
   }
 
   return (
-    <div className="relative rounded-xl border border-border-default bg-app-surface p-6">
+    <motion.div {...shakeProps} className="relative rounded-xl border border-border-default bg-app-surface p-6">
       {createDeal.isPending && (
         <div className="absolute inset-0 rounded-xl bg-app-surface/80 z-10 flex items-center justify-center">
           <div className="h-full w-full animate-pulse rounded-xl bg-app-elevated/30" />
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit, triggerShake)} className="space-y-6">
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           {BUY_AND_HOLD_FIELDS.map((field) => (
             <div key={field.name} className="space-y-1.5">
@@ -369,7 +373,7 @@ function BuyAndHoldForm() {
           )}
         </div>
       </form>
-    </div>
+    </motion.div>
   )
 }
 
@@ -415,6 +419,7 @@ const FLIP_FIELDS: FieldConfig<keyof FlipFormValues>[] = [
 /** Flip strategy form. */
 function FlipForm() {
   const createDeal = useCreateDeal()
+  const { triggerShake, shakeProps } = useShake()
   const {
     register,
     handleSubmit,
@@ -442,14 +447,14 @@ function FlipForm() {
   }
 
   return (
-    <div className="relative rounded-xl border border-border-default bg-app-surface p-6">
+    <motion.div {...shakeProps} className="relative rounded-xl border border-border-default bg-app-surface p-6">
       {createDeal.isPending && (
         <div className="absolute inset-0 rounded-xl bg-app-surface/80 z-10 flex items-center justify-center">
           <div className="h-full w-full animate-pulse rounded-xl bg-app-elevated/30" />
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit, triggerShake)} className="space-y-6">
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           {FLIP_FIELDS.map((field) => (
             <div key={field.name} className="space-y-1.5">
@@ -502,7 +507,7 @@ function FlipForm() {
           )}
         </div>
       </form>
-    </div>
+    </motion.div>
   )
 }
 
@@ -555,6 +560,7 @@ const BRRRR_FIELDS: FieldConfig<Exclude<keyof BRRRRFormValues, 'new_loan_term_ye
 /** BRRRR strategy form. */
 function BRRRRForm() {
   const createDeal = useCreateDeal()
+  const { triggerShake, shakeProps } = useShake()
   const {
     register,
     handleSubmit,
@@ -589,14 +595,14 @@ function BRRRRForm() {
   }
 
   return (
-    <div className="relative rounded-xl border border-border-default bg-app-surface p-6">
+    <motion.div {...shakeProps} className="relative rounded-xl border border-border-default bg-app-surface p-6">
       {createDeal.isPending && (
         <div className="absolute inset-0 rounded-xl bg-app-surface/80 z-10 flex items-center justify-center">
           <div className="h-full w-full animate-pulse rounded-xl bg-app-elevated/30" />
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit, triggerShake)} className="space-y-6">
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           {BRRRR_FIELDS.map((field) => (
             <div key={field.name} className="space-y-1.5">
@@ -696,13 +702,14 @@ function BRRRRForm() {
           )}
         </div>
       </form>
-    </div>
+    </motion.div>
   )
 }
 
 /** Creative Finance strategy form — dynamic Section B changes based on finance type. */
 function CreativeFinanceForm() {
   const createDeal = useCreateDeal()
+  const { triggerShake, shakeProps } = useShake()
   const [financeType, setFinanceType] = useState<'subject_to' | 'seller_finance'>('subject_to')
 
   const {
@@ -751,14 +758,14 @@ function CreativeFinanceForm() {
   }
 
   return (
-    <div className="relative rounded-xl border border-border-default bg-app-surface p-6">
+    <motion.div {...shakeProps} className="relative rounded-xl border border-border-default bg-app-surface p-6">
       {createDeal.isPending && (
         <div className="absolute inset-0 rounded-xl bg-app-surface/80 z-10 flex items-center justify-center">
           <div className="h-full w-full animate-pulse rounded-xl bg-app-elevated/30" />
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit, triggerShake)} className="space-y-6">
         {/* Finance Type Toggle — full width, rendered first */}
         <div className="space-y-1.5">
           <Label className="text-text-secondary">
@@ -1057,7 +1064,7 @@ function CreativeFinanceForm() {
           )}
         </div>
       </form>
-    </div>
+    </motion.div>
   )
 }
 

@@ -5,6 +5,7 @@ import { CheckCircle2, AlertCircle, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useShake } from '@/lib/motion'
 import { api } from '@/lib/api'
 
 type PageState = 'form' | 'success' | 'error'
@@ -19,6 +20,7 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [pageState, setPageState] = useState<PageState>(token ? 'form' : 'error')
+  const { triggerShake, shakeProps } = useShake()
   const [validationError, setValidationError] = useState<string | null>(null)
 
   const redirectToLogin = useCallback(() => {
@@ -49,6 +51,7 @@ export default function ResetPassword() {
     const err = validate()
     if (err) {
       setValidationError(err)
+      triggerShake()
       return
     }
 
@@ -202,6 +205,7 @@ export default function ResetPassword() {
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             >
+              <motion.div {...shakeProps}>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="new-password" className="text-text-secondary text-xs">
@@ -251,6 +255,7 @@ export default function ResetPassword() {
                   {isSubmitting ? 'Resetting…' : 'Reset Password'}
                 </Button>
               </form>
+              </motion.div>
 
               {/* Footer link */}
               <p className="text-center text-xs text-text-muted mt-6">
