@@ -1,9 +1,10 @@
 /** Deal results page — strategy-aware KPI cards, outputs table, risk gauge, and action buttons. */
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, PlusCircle, ChevronDown, Share2, Save, Check, HelpCircle } from 'lucide-react'
+import { ArrowLeft, PlusCircle, ChevronDown, Share2, Save, Check, HelpCircle, Download, FileText } from 'lucide-react'
 import { toast } from 'sonner'
+import { PDFDownloadLink } from '@react-pdf/renderer'
 import { AppShell } from '@/components/layout/AppShell'
 import { KPICard } from '@/components/ui/KPICard'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
@@ -15,6 +16,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { DealPDF } from '@/components/deal-pdf'
+import { OfferLetterModal } from '@/components/offer-letter-modal'
 import { useDeal, useAddToPipeline, useUpdateDeal } from '@/hooks/useDeals'
 import { api } from '@/lib/api'
 import {
@@ -24,58 +27,9 @@ import {
   formatOutputValue,
   getRecommendationColor,
 } from '@/lib/format'
+import { getStrategyKPIs } from '@/lib/strategy-kpis'
+import type { KPIDefinition } from '@/lib/strategy-kpis'
 import type { Strategy } from '@/types'
-
-type RenderMode = 'standard' | 'color_coded' | 'badge'
-
-interface KPIDefinition {
-  key: string
-  label: string
-  format: 'currency' | 'percent' | 'decimal' | 'percent_or_infinite'
-  renderMode: RenderMode
-}
-
-/** Get KPI definitions per strategy. */
-function getStrategyKPIs(strategy: string): KPIDefinition[] {
-  switch (strategy) {
-    case 'buy_and_hold':
-      return [
-        { key: 'cap_rate', label: 'Cap Rate', format: 'percent', renderMode: 'standard' },
-        { key: 'coc_return', label: 'Cash-on-Cash Return', format: 'percent', renderMode: 'standard' },
-        { key: 'monthly_cash_flow', label: 'Monthly Cash Flow', format: 'currency', renderMode: 'color_coded' },
-        { key: 'annual_noi', label: 'Annual NOI', format: 'currency', renderMode: 'standard' },
-      ]
-    case 'flip':
-      return [
-        { key: 'gross_profit', label: 'Gross Profit', format: 'currency', renderMode: 'standard' },
-        { key: 'roi', label: 'ROI', format: 'percent', renderMode: 'standard' },
-        { key: 'annualized_roi', label: 'Annualized ROI', format: 'percent', renderMode: 'standard' },
-        { key: 'total_cost', label: 'Total Cost', format: 'currency', renderMode: 'standard' },
-      ]
-    case 'brrrr':
-      return [
-        { key: 'money_left_in', label: 'Money Left In', format: 'currency', renderMode: 'standard' },
-        { key: 'coc_return', label: 'Cash-on-Cash', format: 'percent_or_infinite', renderMode: 'standard' },
-        { key: 'monthly_cash_flow', label: 'Monthly Cash Flow', format: 'currency', renderMode: 'color_coded' },
-        { key: 'equity_captured', label: 'Equity Captured', format: 'currency', renderMode: 'standard' },
-      ]
-    case 'creative_finance':
-      return [
-        { key: 'monthly_cash_flow', label: 'Monthly Cash Flow', format: 'currency', renderMode: 'color_coded' },
-        { key: 'dscr', label: 'DSCR', format: 'decimal', renderMode: 'standard' },
-        { key: 'equity_day_one', label: 'Equity Day One', format: 'currency', renderMode: 'standard' },
-        { key: 'effective_yield', label: 'Effective Yield', format: 'percent', renderMode: 'standard' },
-      ]
-    case 'wholesale':
-    default:
-      return [
-        { key: 'mao', label: 'MAO', format: 'currency', renderMode: 'standard' },
-        { key: 'profit_at_ask', label: 'Profit at Ask', format: 'currency', renderMode: 'color_coded' },
-        { key: 'break_even_price', label: 'Break-Even Price', format: 'currency', renderMode: 'standard' },
-        { key: 'recommendation', label: 'Recommendation', format: 'currency', renderMode: 'badge' },
-      ]
-  }
-}
 
 const PIPELINE_STAGES = [
   { key: 'lead', label: 'Lead' },
@@ -96,6 +50,7 @@ export default function ResultsPage() {
   const [copied, setCopied] = useState(false)
   const [addedToPipeline, setAddedToPipeline] = useState(false)
   const [stageMenuOpen, setStageMenuOpen] = useState(false)
+  const [offerLetterOpen, setOfferLetterOpen] = useState(false)
   const stageMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -135,6 +90,9 @@ export default function ResultsPage() {
   const riskScore = deal.risk_score ?? 0
   const kpis = getStrategyKPIs(deal.strategy)
   const outputEntries = Object.entries(outputs)
+  const sanitizeFilename = (name: string) =>
+    name.replace(/[\s,.\\/]+/g, '-').replace(/-+/g, '-').toLowerCase()
+  const pdfDocument = useMemo(() => <DealPDF deal={deal} />, [deal])
 
   const handleAddToPipeline = (stage: string) => {
     setStageMenuOpen(false)
@@ -399,6 +357,25 @@ export default function ResultsPage() {
             <Share2 size={14} />
             {copied ? 'Link copied!' : sharing ? 'Sharing...' : deal.status === 'shared' ? 'Copy Share Link' : 'Share Deal'}
           </Button>
+          <PDFDownloadLink
+            document={pdfDocument}
+            fileName={`parcel-analysis-${sanitizeFilename(deal.address)}.pdf`}
+          >
+            {({ loading }) => (
+              <Button variant="outline" disabled={loading} className="gap-2">
+                <Download size={14} />
+                {loading ? 'Preparing...' : 'Export PDF'}
+              </Button>
+            )}
+          </PDFDownloadLink>
+          <Button
+            variant="outline"
+            onClick={() => setOfferLetterOpen(true)}
+            className="gap-2"
+          >
+            <FileText size={14} />
+            Offer Letter
+          </Button>
           <Button
             onClick={handleSave}
             disabled={saved || updateDeal.isPending}
@@ -418,6 +395,14 @@ export default function ResultsPage() {
           </Button>
         </div>
       </div>
+
+      <OfferLetterModal
+        isOpen={offerLetterOpen}
+        onClose={() => setOfferLetterOpen(false)}
+        dealId={deal.id}
+        address={deal.address}
+        strategy={deal.strategy}
+      />
     </AppShell>
   )
 }

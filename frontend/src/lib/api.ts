@@ -21,6 +21,7 @@ import type {
   DocumentListItem,
   DocumentResponse,
   ActivityResponse,
+  OfferLetterResponse,
 } from '@/types'
 
 const API_URL = (import.meta.env.VITE_API_URL ?? 'https://parcel-platform-production.up.railway.app').replace('http://', 'https://')
@@ -162,5 +163,9 @@ export const api = {
       }),
     delete: (id: string) =>
       request<{ message: string }>(`/api/v1/documents/${id}`, { method: 'DELETE' }),
+  },
+  offerLetter: {
+    generate: (dealId: string) =>
+      request<OfferLetterResponse>(`/api/v1/deals/${dealId}/offer-letter/`, { method: 'POST' }),
   },
 }

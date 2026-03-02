@@ -226,6 +226,14 @@ export interface ActivityResponse {
   activities: ActivityItem[]
 }
 
+export interface OfferLetterResponse {
+  deal_id: string
+  address: string
+  strategy: string
+  offer_letter: string
+  generated_at: string
+}
+
 export interface DocumentListItem {
   id: string
   original_filename: string
