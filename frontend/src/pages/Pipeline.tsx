@@ -38,6 +38,7 @@ import {
 import { STAGES, STRATEGY_COLORS, STRATEGY_LABELS } from '@/components/pipeline/constants'
 import type { PipelineCard, Stage } from '@/components/pipeline/constants'
 import { KanbanColumn } from '@/components/pipeline/kanban-column'
+import { MobilePipeline } from '@/components/pipeline/mobile-pipeline'
 import { PipelineEmpty } from '@/components/pipeline/pipeline-empty'
 import { PipelineError } from '@/components/pipeline/pipeline-error'
 import { useKanbanKeyboard } from '@/hooks/useKanbanKeyboard'
@@ -276,61 +277,73 @@ export default function PipelinePage() {
       />
 
       <PageContent>
-        {/* Kanban board — horizontal scroll with keyboard navigation */}
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCorners}
-          onDragStart={handleDragStart}
-          onDragOver={handleDragOver}
-          onDragEnd={handleDragEnd}
-        >
-          {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-          <div
-            className="flex gap-4 overflow-x-auto pb-6 min-h-[calc(100vh-160px)]"
-            role="grid"
-            aria-label="Pipeline Kanban board. Use arrow keys to navigate between columns and cards, Enter to open a deal, Escape to go back."
-            onKeyDown={kanbanKeyDown}
-            onMouseDown={kanbanMouseDown}
-          >
-            {STAGES.map((stage, colIndex) => (
-              <KanbanColumn
-                key={stage.key}
-                stage={stage}
-                cards={board[stage.key] ?? []}
-                isOver={overColumnKey === stage.key}
-                isLoading={isLoading}
-                columnIndex={colIndex}
-                focusedCardIndex={focusState.columnIndex === colIndex ? focusState.cardIndex : -1}
-                isKeyboardActive={isKeyboardActive}
-                registerCardRef={registerCardRef}
-                onRemove={handleRemoveCard}
-                onCloseDeal={handleCloseDeal}
-              />
-            ))}
-          </div>
+        {/* Mobile — tabbed stage view (below md breakpoint) */}
+        <div className="block md:hidden">
+          <MobilePipeline
+            board={board}
+            isLoading={isLoading}
+            onRemove={handleRemoveCard}
+            onCloseDeal={handleCloseDeal}
+          />
+        </div>
 
-          {/* Drag overlay — floats under cursor */}
-          <DragOverlay dropAnimation={{ duration: 160, easing: 'ease-out' }}>
-            {activeCard ? (
-              <div
-                className="rounded-xl border border-[#252540] bg-[#16162A] p-4 space-y-3 shadow-2xl rotate-1"
-                style={{ width: 240, cursor: 'grabbing' }}
-              >
-                <p className="text-[13px] font-medium text-[#F1F5F9] leading-tight line-clamp-2">
-                  {activeCard.address}
-                </p>
-                <div className="flex items-center gap-2">
-                  <OverlayStrategyBadge strategy={activeCard.strategy} />
+        {/* Desktop — Kanban board with horizontal scroll and keyboard navigation (md and above) */}
+        <div className="hidden md:block">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCorners}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragEnd={handleDragEnd}
+          >
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+            <div
+              className="flex gap-4 overflow-x-auto pb-6 min-h-[calc(100vh-160px)]"
+              role="grid"
+              aria-label="Pipeline Kanban board. Use arrow keys to navigate between columns and cards, Enter to open a deal, Escape to go back."
+              onKeyDown={kanbanKeyDown}
+              onMouseDown={kanbanMouseDown}
+            >
+              {STAGES.map((stage, colIndex) => (
+                <KanbanColumn
+                  key={stage.key}
+                  stage={stage}
+                  cards={board[stage.key] ?? []}
+                  isOver={overColumnKey === stage.key}
+                  isLoading={isLoading}
+                  columnIndex={colIndex}
+                  focusedCardIndex={focusState.columnIndex === colIndex ? focusState.cardIndex : -1}
+                  isKeyboardActive={isKeyboardActive}
+                  registerCardRef={registerCardRef}
+                  onRemove={handleRemoveCard}
+                  onCloseDeal={handleCloseDeal}
+                />
+              ))}
+            </div>
+
+            {/* Drag overlay — floats under cursor */}
+            <DragOverlay dropAnimation={{ duration: 160, easing: 'ease-out' }}>
+              {activeCard ? (
+                <div
+                  className="rounded-xl border border-[#252540] bg-[#16162A] p-4 space-y-3 shadow-2xl rotate-1"
+                  style={{ width: 240, cursor: 'grabbing' }}
+                >
+                  <p className="text-[13px] font-medium text-[#F1F5F9] leading-tight line-clamp-2">
+                    {activeCard.address}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <OverlayStrategyBadge strategy={activeCard.strategy} />
+                  </div>
+                  {activeCard.asking_price > 0 && (
+                    <span className="text-[12px] font-mono text-[#94A3B8]">
+                      ${activeCard.asking_price.toLocaleString()}
+                    </span>
+                  )}
                 </div>
-                {activeCard.asking_price > 0 && (
-                  <span className="text-[12px] font-mono text-[#94A3B8]">
-                    ${activeCard.asking_price.toLocaleString()}
-                  </span>
-                )}
-              </div>
-            ) : null}
-          </DragOverlay>
-        </DndContext>
+              ) : null}
+            </DragOverlay>
+          </DndContext>
+        </div>
       </PageContent>
 
       {closeDealCard && (
