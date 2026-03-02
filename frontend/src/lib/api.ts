@@ -60,6 +60,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 /** Public request — no auth header, no 401 redirect. Used for unauthenticated endpoints. */
 async function requestPublic<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
+    credentials: 'include',
     ...options,
     headers: {
       'Content-Type': 'application/json',

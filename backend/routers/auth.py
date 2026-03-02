@@ -33,17 +33,24 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 _COOKIE_NAME = "access_token"
 _COOKIE_MAX_AGE = 60 * 15  # 15 minutes in seconds
+_IS_PRODUCTION = os.getenv("ENVIRONMENT", "development") == "production"
 
 
 def _set_auth_cookie(response: Response, token: str) -> None:
-    """Set the JWT as an httpOnly cookie on the response."""
+    """Set the JWT as an httpOnly cookie on the response.
+
+    Production (cross-origin): SameSite=None + Secure required for cookies
+    to be sent between Railway backend and Vercel frontend.
+    Development: SameSite=Lax + no Secure for localhost.
+    """
     response.set_cookie(
         key=_COOKIE_NAME,
         value=token,
         httponly=True,
-        secure=False,   # set to True in production (HTTPS)
-        samesite="lax",
+        secure=_IS_PRODUCTION,
+        samesite="none" if _IS_PRODUCTION else "lax",
         max_age=_COOKIE_MAX_AGE,
+        path="/",
     )
 
 
@@ -102,7 +109,13 @@ async def login(body: LoginRequest, response: Response, db: Session = Depends(ge
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(response: Response) -> None:
     """Clear the access token cookie, effectively logging the user out."""
-    response.delete_cookie(key=_COOKIE_NAME)
+    response.delete_cookie(
+        key=_COOKIE_NAME,
+        httponly=True,
+        secure=_IS_PRODUCTION,
+        samesite="none" if _IS_PRODUCTION else "lax",
+        path="/",
+    )
 
 
 @router.get("/me", response_model=UserResponse)
