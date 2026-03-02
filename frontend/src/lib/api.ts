@@ -150,13 +150,13 @@ export const api = {
   },
   documents: {
     list: () => request<DocumentListItem[]>('/api/v1/documents/'),
-    get: (id: string) => request<DocumentResponse>(`/api/v1/documents/${id}/`),
+    get: (id: string) => request<DocumentResponse>(`/api/v1/documents/${id}`),
     upload: (formData: FormData) =>
       request<DocumentResponse>('/api/v1/documents/', {
         method: 'POST',
         body: formData,
       }),
     delete: (id: string) =>
-      request<{ message: string }>(`/api/v1/documents/${id}/`, { method: 'DELETE' }),
+      request<{ message: string }>(`/api/v1/documents/${id}`, { method: 'DELETE' }),
   },
 }
