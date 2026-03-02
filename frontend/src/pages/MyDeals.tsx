@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Search, AlertCircle, Columns, Bookmark, Check, X } from 'lucide-react'
+import { Plus, Search, AlertCircle, Columns, Bookmark, Check, X, Trash2 } from 'lucide-react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
@@ -13,7 +15,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { useDeals } from '@/hooks/useDeals'
+import { api } from '@/lib/api'
 import type { Strategy, DealsFilters, FilterPreset } from '@/types'
 
 const STRATEGIES: { value: string; label: string }[] = [
@@ -86,6 +99,21 @@ export default function MyDeals() {
   const [sort, setSort] = useState('created_at_desc')
   const [page, setPage] = useState(1)
   const [compareIds, setCompareIds] = useState<Set<string>>(new Set())
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const queryClient = useQueryClient()
+
+  const deleteDeal = useMutation({
+    mutationFn: (id: string) => api.deals.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['deals'] })
+      toast.success('Deal deleted')
+      setDeletingId(null)
+    },
+    onError: () => {
+      toast.error('Failed to delete deal')
+      setDeletingId(null)
+    },
+  })
 
   const [presets, setPresets] = useState<FilterPreset[]>(() => {
     try {
@@ -383,6 +411,16 @@ export default function MyDeals() {
                     to={`/analyze/results/${deal.id}`}
                     className="relative block p-5 rounded-xl border border-border-subtle bg-app-surface hover:border-accent-primary/40 transition-colors space-y-3 group"
                   >
+                    {/* Delete button */}
+                    <button
+                      type="button"
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setDeletingId(deal.id) }}
+                      className="absolute top-3 right-10 p-1 rounded text-red-400/70 hover:text-red-400 hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100"
+                      aria-label="Delete deal"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+
                     {/* Compare checkbox */}
                     <button
                       type="button"
@@ -483,6 +521,26 @@ export default function MyDeals() {
             </button>
           </motion.div>
         )}
+        {/* Delete confirmation dialog */}
+        <AlertDialog open={deletingId !== null} onOpenChange={(open) => { if (!open) setDeletingId(null) }}>
+          <AlertDialogContent className="bg-app-surface border-border-subtle">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-text-primary">Delete this deal?</AlertDialogTitle>
+              <AlertDialogDescription className="text-text-secondary">
+                This will permanently delete this deal. This cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="bg-app-elevated border-border-subtle text-text-primary">Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => { if (deletingId) deleteDeal.mutate(deletingId) }}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                {deleteDeal.isPending ? 'Deleting...' : 'Delete'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </AppShell>
   )

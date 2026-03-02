@@ -128,6 +128,8 @@ export const api = {
       requestPublic<SharedDealResponse>(`/api/v1/deals/${id}/share/`),
     share: (id: string) =>
       request<ShareDealActionResponse>(`/api/v1/deals/${id}/share/`, { method: 'PUT' }),
+    delete: (id: string) =>
+      request<{ message: string }>(`/api/v1/deals/${id}`, { method: 'DELETE' }),
   },
   pipeline: {
     list: () =>
@@ -151,6 +153,11 @@ export const api = {
     addEntry: (data: AddPortfolioEntryRequest) =>
       request<PortfolioEntry>('/api/v1/portfolio/', {
         method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    update: (id: string, data: { closed_date: string; closed_price: number; profit: number; monthly_cash_flow: number; notes?: string }) =>
+      request<PortfolioEntry>(`/api/v1/portfolio/${id}/`, {
+        method: 'PUT',
         body: JSON.stringify(data),
       }),
   },
