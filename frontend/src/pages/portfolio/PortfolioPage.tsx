@@ -41,6 +41,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { usePortfolio } from '@/hooks/usePortfolio'
+import { useDeals } from '@/hooks/useDeals'
+import { api } from '@/lib/api'
+import type { Strategy, AddPortfolioEntryRequest, PortfolioEntry } from '@/types'
 
 const EditPortfolioModal = lazy(() =>
   import('@/components/edit-portfolio-modal').then((m) => ({ default: m.EditPortfolioModal }))
@@ -56,10 +60,6 @@ class ModalErrorBoundary extends Component<{ children: ReactNode; onError: () =>
     return this.props.children
   }
 }
-import { usePortfolio } from '@/hooks/usePortfolio'
-import { useDeals } from '@/hooks/useDeals'
-import { api } from '@/lib/api'
-import type { Strategy, AddPortfolioEntryRequest, PortfolioEntry } from '@/types'
 
 /* ── Animation variants (same as Dashboard) ── */
 
@@ -243,8 +243,12 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
 /* ── Main Page ── */
 
 export default function PortfolioPage() {
-  const { data, isLoading } = usePortfolio()
+  const portfolioQuery = usePortfolio()
   const queryClient = useQueryClient()
+
+  // Defensive check: handle edge case where hook returns null during fast refresh
+  const data = portfolioQuery?.data
+  const isLoading = portfolioQuery?.isLoading ?? true
   const [sheetOpen, setSheetOpen] = useState(false)
   const [editingEntry, setEditingEntry] = useState<PortfolioEntry | null>(null)
 
