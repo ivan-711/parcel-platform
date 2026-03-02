@@ -168,7 +168,7 @@ interface SortableDealCardProps {
 /** SortableDealCard — wraps DealCard with @dnd-kit/sortable for drag-and-drop. */
 export function SortableDealCard({ card, isFocused = false, onRemove, onCloseDeal, registerRef }: SortableDealCardProps) {
   const {
-    attributes,
+    attributes: { tabIndex: _tabIndex, role: _role, ...restAttributes },
     listeners,
     setNodeRef,
     transform,
@@ -195,13 +195,13 @@ export function SortableDealCard({ card, isFocused = false, onRemove, onCloseDea
     <div
       ref={combinedRef}
       style={style}
+      {...restAttributes}
+      {...listeners}
       tabIndex={0}
       role="option"
       aria-label={`${card.address}, ${STRATEGY_LABELS[card.strategy] ?? card.strategy}, $${card.asking_price.toLocaleString()}`}
       aria-selected={isFocused}
       className="outline-none"
-      {...attributes}
-      {...listeners}
     >
       <DealCard card={card} isDragging={isDragging} isFocused={isFocused} onRemove={onRemove} onCloseDeal={onCloseDeal} />
     </div>
