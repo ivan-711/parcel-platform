@@ -228,7 +228,7 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
 /* ── Main Page ── */
 
 export default function PortfolioPage() {
-  const { data, isLoading = true } = usePortfolio() || {}
+  const { data, isLoading } = usePortfolio()
   const queryClient = useQueryClient()
   const [sheetOpen, setSheetOpen] = useState(false)
 
