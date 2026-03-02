@@ -8,6 +8,7 @@ from models.pipeline_entries import PipelineEntry
 from models.documents import Document
 from models.chat_messages import ChatMessage
 from models.portfolio_entries import PortfolioEntry
+from models.password_reset_tokens import PasswordResetToken
 
 __all__ = [
     "User",
@@ -18,4 +19,5 @@ __all__ = [
     "Document",
     "ChatMessage",
     "PortfolioEntry",
+    "PasswordResetToken",
 ]

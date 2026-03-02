@@ -206,6 +206,60 @@ Notes:
 
 ---
 
+### POST /api/v1/auth/forgot-password
+**Status:** ✅ Built and tested locally
+**Auth:** NOT required (public endpoint)
+
+Request:
+```json
+{
+  "email": "string"
+}
+```
+
+Response `200`:
+```json
+{ "message": "If an account exists with that email, a password reset link has been sent." }
+```
+
+Notes:
+- Always returns 200 — never reveals whether the email exists (prevents user enumeration)
+- Generates a `secrets.token_urlsafe(32)` token, stores SHA-256 hash in `password_reset_tokens` table
+- Token expires after 1 hour
+- Invalidates any previous unused tokens for the same user
+- Email sent via Resend API with branded HTML template
+- Reset link format: `{FRONTEND_URL}/reset-password?token={raw_token}`
+
+---
+
+### POST /api/v1/auth/reset-password
+**Status:** ✅ Built and tested locally
+**Auth:** NOT required (public endpoint)
+
+Request:
+```json
+{
+  "token": "string",
+  "password": "string (min 8 chars)"
+}
+```
+
+Response `200`:
+```json
+{ "message": "Your password has been reset successfully. You can now log in with your new password." }
+```
+
+Errors:
+- `400 INVALID_TOKEN` — token is invalid, expired, or already used
+
+Notes:
+- Token is verified by hashing the provided token and comparing to `token_hash` in DB
+- Password must be at least 8 characters
+- Token is single-use — marked with `used_at` timestamp after successful reset
+- Token expires after 1 hour from creation
+
+---
+
 ## DEAL ENDPOINTS
 
 ### POST /api/v1/deals
