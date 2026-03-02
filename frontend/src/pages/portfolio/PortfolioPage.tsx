@@ -134,8 +134,7 @@ interface AddEntryFormProps {
 }
 
 function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
-  const dealsQuery = useDeals({})
-  const deals = dealsQuery?.data
+  const { data: deals } = useDeals({})
   const [dealId, setDealId] = useState('')
   const [closedDate, setClosedDate] = useState('')
   const [closedPrice, setClosedPrice] = useState('')
@@ -244,12 +243,8 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
 /* ── Main Page ── */
 
 export default function PortfolioPage() {
-  const portfolioQuery = usePortfolio()
+  const { data, isLoading } = usePortfolio()
   const queryClient = useQueryClient()
-
-  // Defensive check: handle edge case where hook returns null during fast refresh
-  const data = portfolioQuery?.data
-  const isLoading = portfolioQuery?.isLoading ?? true
   const [sheetOpen, setSheetOpen] = useState(false)
   const [editingEntry, setEditingEntry] = useState<PortfolioEntry | null>(null)
 
@@ -260,9 +255,6 @@ export default function PortfolioPage() {
       setSheetOpen(false)
     },
   })
-
-  // Defensive - use optional chaining when accessing mutation properties
-  const isPending = addMutation?.isPending ?? false
 
   const summary = data?.summary
   const entries = data?.entries ?? []
@@ -469,7 +461,7 @@ export default function PortfolioPage() {
           {sheetOpen && (
             <AddEntryForm
               onSubmit={(data) => addMutation.mutate(data)}
-              isSubmitting={isPending}
+              isSubmitting={addMutation.isPending}
             />
           )}
         </SheetContent>
