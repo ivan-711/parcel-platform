@@ -16,6 +16,7 @@ from schemas.portfolio import (
     PortfolioEntryResponse,
     PortfolioResponse,
     PortfolioSummary,
+    UpdatePortfolioEntryRequest,
 )
 
 router = APIRouter(prefix="/portfolio", tags=["portfolio"])
@@ -108,6 +109,47 @@ async def add_portfolio_entry(
     db.commit()
     db.refresh(entry)
 
+    return PortfolioEntryResponse(
+        id=entry.id,
+        deal_id=entry.deal_id,
+        address=deal.address,
+        strategy=deal.strategy,
+        closed_date=entry.closed_date,
+        closed_price=entry.closed_price,
+        profit=entry.profit,
+        monthly_cash_flow=entry.monthly_cash_flow,
+        notes=entry.notes,
+    )
+
+
+@router.put("/{entry_id}/", response_model=PortfolioEntryResponse)
+async def update_portfolio_entry(
+    entry_id: UUID,
+    body: UpdatePortfolioEntryRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> PortfolioEntryResponse:
+    """Update an existing portfolio entry's closed deal details."""
+    entry = db.query(PortfolioEntry).filter(
+        PortfolioEntry.id == entry_id,
+        PortfolioEntry.user_id == current_user.id,
+    ).first()
+    if not entry:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "Portfolio entry not found", "code": "ENTRY_NOT_FOUND"},
+        )
+
+    entry.closed_date = body.closed_date
+    entry.closed_price = body.closed_price
+    entry.profit = body.profit
+    entry.monthly_cash_flow = body.monthly_cash_flow
+    entry.notes = body.notes
+
+    db.commit()
+    db.refresh(entry)
+
+    deal = db.query(Deal).filter(Deal.id == entry.deal_id).first()
     return PortfolioEntryResponse(
         id=entry.id,
         deal_id=entry.deal_id,

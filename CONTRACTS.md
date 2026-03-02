@@ -871,6 +871,28 @@ Response `201`: Portfolio entry object
 
 ---
 
+### PUT /api/v1/portfolio/:id/
+**Status:** ✅ Built and tested locally
+**Auth:** Required
+
+Request:
+```json
+{
+  "closed_date": "2025-10-02",
+  "closed_price": 200000,
+  "profit": 40000,
+  "monthly_cash_flow": 0,
+  "notes": "Updated test"
+}
+```
+
+Response `200`: Portfolio entry object (same shape as POST response)
+
+Errors:
+- `404 ENTRY_NOT_FOUND` — entry does not exist or belongs to another user
+
+---
+
 ## TEAM ENDPOINTS
 
 ### POST /api/v1/teams

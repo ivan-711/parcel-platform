@@ -19,6 +19,16 @@ class PortfolioCreateRequest(BaseModel):
     notes: Optional[str] = None
 
 
+class UpdatePortfolioEntryRequest(BaseModel):
+    """Request body for updating an existing portfolio entry."""
+
+    closed_date: date
+    closed_price: Decimal
+    profit: Decimal
+    monthly_cash_flow: Optional[Decimal] = None
+    notes: Optional[str] = None
+
+
 class PortfolioEntryResponse(BaseModel):
     """A single portfolio entry with deal context."""
 
