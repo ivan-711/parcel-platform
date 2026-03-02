@@ -43,7 +43,7 @@ function getStrategyKPIs(strategy: string): KPIDefinition[] {
         { key: 'cap_rate', label: 'Cap Rate', format: 'percent', renderMode: 'standard' },
         { key: 'coc_return', label: 'Cash-on-Cash Return', format: 'percent', renderMode: 'standard' },
         { key: 'monthly_cash_flow', label: 'Monthly Cash Flow', format: 'currency', renderMode: 'color_coded' },
-        { key: 'noi_annual', label: 'NOI Annual', format: 'currency', renderMode: 'standard' },
+        { key: 'annual_noi', label: 'Annual NOI', format: 'currency', renderMode: 'standard' },
       ]
     case 'flip':
       return [
