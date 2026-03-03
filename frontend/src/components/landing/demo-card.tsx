@@ -1,6 +1,6 @@
 /** DemoCard — interactive 5-strategy tab switcher that displays KPIs and an AI summary. */
 
-import { useState } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { STRATEGIES, STRATEGY_COLORS, DEMO_METRICS } from './constants'
@@ -10,6 +10,37 @@ export function DemoCard() {
   const [active, setActive] = useState<StrategyKey>('Buy & Hold')
   const metrics = DEMO_METRICS[active]
   const colors = STRATEGY_COLORS[active]
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
+
+  const handleTabKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const currentIndex = STRATEGIES.indexOf(active)
+      let nextIndex: number | null = null
+
+      switch (e.key) {
+        case 'ArrowRight':
+          nextIndex = (currentIndex + 1) % STRATEGIES.length
+          break
+        case 'ArrowLeft':
+          nextIndex = (currentIndex - 1 + STRATEGIES.length) % STRATEGIES.length
+          break
+        case 'Home':
+          nextIndex = 0
+          break
+        case 'End':
+          nextIndex = STRATEGIES.length - 1
+          break
+        default:
+          return
+      }
+
+      e.preventDefault()
+      const nextStrategy = STRATEGIES[nextIndex]
+      setActive(nextStrategy)
+      tabRefs.current[nextIndex]?.focus()
+    },
+    [active],
+  )
 
   const metricCells: Array<{ label: string; value: string; color?: string }> = [
     { label: 'Cash-on-Cash', value: metrics.coc },
@@ -46,10 +77,19 @@ export function DemoCard() {
       </div>
 
       {/* Strategy tabs */}
-      <div className="flex border-b border-border-subtle overflow-x-auto scrollbar-none">
-        {STRATEGIES.map((s) => (
+      <div
+        role="tablist"
+        aria-label="Investment strategies"
+        onKeyDown={handleTabKeyDown}
+        className="flex border-b border-border-subtle overflow-x-auto scrollbar-none"
+      >
+        {STRATEGIES.map((s, i) => (
           <button
             key={s}
+            ref={(el) => { tabRefs.current[i] = el }}
+            role="tab"
+            aria-selected={active === s}
+            tabIndex={active === s ? 0 : -1}
             onClick={() => setActive(s)}
             className={cn(
               'flex-1 py-2.5 text-[11px] font-medium transition-all duration-150 cursor-pointer whitespace-nowrap min-w-0 px-2 rounded focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none',
@@ -67,6 +107,8 @@ export function DemoCard() {
       <AnimatePresence mode="wait">
         <motion.div
           key={active}
+          role="tabpanel"
+          aria-label={active}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

@@ -7,6 +7,7 @@
 
 import { LenisProvider } from '@/components/landing/lenis-provider'
 import { ParallaxBackground } from '@/components/landing/ParallaxBackground'
+import { ScrollProgressBar } from '@/components/landing/scroll-progress'
 import { SkipToContent } from '@/components/landing/skip-to-content'
 import { Navbar } from '@/components/landing/navbar'
 import { Hero } from '@/components/landing/hero'
@@ -23,6 +24,7 @@ export default function Landing() {
     <LenisProvider>
       <div className="min-h-screen text-text-primary">
         <SkipToContent />
+        <ScrollProgressBar />
         <ParallaxBackground />
         <div className="relative z-10">
           <Navbar />

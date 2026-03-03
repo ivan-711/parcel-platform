@@ -73,11 +73,24 @@ export const TICKER_DEALS: Array<{ city: string; strategy: StrategyKey; metric: 
   { city: 'Kansas City, MO',   strategy: 'Creative Finance', metric: '21.4% annualized' },
 ]
 
-export const STATS = [
-  { value: '2,400+', label: 'Deals analyzed' },
-  { value: '$840M',  label: 'Deal value tracked' },
-  { value: '48',     label: 'Markets covered' },
-  { value: '4.9★',   label: 'Avg. rating' },
+export interface StatItem {
+  label: string
+  numericValue: number
+  prefix: string
+  suffix: string
+  /** Lucide icon name — mapped to component in stats-strip.tsx */
+  icon: 'DollarSign' | 'BarChart3' | 'MapPin' | 'Star'
+  /** Number of decimal places to show (default 0) */
+  decimals?: number
+  /** Whether to format with commas (default false) */
+  useCommas?: boolean
+}
+
+export const STATS: StatItem[] = [
+  { label: 'Deal value tracked',  numericValue: 840,  prefix: '$', suffix: 'M',  icon: 'DollarSign' },
+  { label: 'Deals analyzed',      numericValue: 2400, prefix: '',  suffix: '+',  icon: 'BarChart3', useCommas: true },
+  { label: 'Markets covered',     numericValue: 48,   prefix: '',  suffix: '',   icon: 'MapPin' },
+  { label: 'Avg. rating',         numericValue: 4.9,  prefix: '',  suffix: '\u2605', icon: 'Star', decimals: 1 },
 ]
 
 export const PRICING: PricingTier[] = [
