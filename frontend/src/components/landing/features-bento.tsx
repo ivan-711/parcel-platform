@@ -1,11 +1,69 @@
 /** FeaturesBento — bento grid features section: 2-col large + right card + full-width kanban. */
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Calculator, FileText, GitBranch } from 'lucide-react'
 import { STRATEGY_COLORS } from './constants'
 import type { StrategyKey } from './constants'
+import { useCountUp } from '@/hooks/useCountUp'
+
+/** Animated KPI value that counts up from 0 when rendered. */
+function AnimatedKPI({
+  target,
+  suffix,
+  label,
+  color,
+  decimals = 1,
+}: {
+  target: number
+  suffix: string
+  label: string
+  color: string
+  decimals?: number
+}) {
+  const value = useCountUp(target, 1200)
+
+  return (
+    <div className="p-3 rounded-xl bg-app-elevated border border-border-subtle space-y-1">
+      <p className="text-[9px] uppercase tracking-widest text-text-muted">{label}</p>
+      <p className="text-base font-mono font-semibold leading-none" style={{ color }}>
+        {value.toFixed(decimals)}{suffix}
+      </p>
+    </div>
+  )
+}
+
+/** Static KPI placeholder showing "0" before the section enters the viewport. */
+function StaticKPI({
+  suffix,
+  label,
+  color,
+  decimals = 1,
+}: {
+  suffix: string
+  label: string
+  color: string
+  decimals?: number
+}) {
+  return (
+    <div className="p-3 rounded-xl bg-app-elevated border border-border-subtle space-y-1">
+      <p className="text-[9px] uppercase tracking-widest text-text-muted">{label}</p>
+      <p className="text-base font-mono font-semibold leading-none" style={{ color }}>
+        {(0).toFixed(decimals)}{suffix}
+      </p>
+    </div>
+  )
+}
+
+const KPI_DATA = [
+  { label: 'Cash-on-Cash', target: 8.4,  suffix: '%',      color: '#10B981', decimals: 1 },
+  { label: 'Cap Rate',     target: 6.2,  suffix: '%',      color: '#F1F5F9', decimals: 1 },
+  { label: 'Risk Score',   target: 23,   suffix: ' / Low', color: '#10B981', decimals: 0 },
+] as const
 
 export function FeaturesBento() {
+  const [kpiInView, setKpiInView] = useState(false)
+
   return (
     <section id="features" className="py-24 px-6">
       <div className="max-w-5xl mx-auto space-y-14">
@@ -36,6 +94,8 @@ export function FeaturesBento() {
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.4 }}
             className="md:col-span-2 rounded-2xl border border-border-subtle bg-app-surface p-6 space-y-5 overflow-hidden relative cursor-default"
@@ -66,30 +126,42 @@ export function FeaturesBento() {
               ))}
             </div>
 
-            {/* Mini KPI mockup */}
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { label: 'Cash-on-Cash', value: '8.4%',   color: '#10B981' },
-                { label: 'Cap Rate',     value: '6.2%',   color: '#F1F5F9' },
-                { label: 'Risk Score',   value: '23 / Low', color: '#10B981' },
-              ].map(({ label, value, color }) => (
-                <div
-                  key={label}
-                  className="p-3 rounded-xl bg-app-elevated border border-border-subtle space-y-1"
-                >
-                  <p className="text-[9px] uppercase tracking-widest text-text-muted">{label}</p>
-                  <p className="text-base font-mono font-semibold leading-none" style={{ color }}>
-                    {value}
-                  </p>
-                </div>
-              ))}
-            </div>
+            {/* Animated KPI mockup */}
+            <motion.div
+              className="grid grid-cols-3 gap-2"
+              viewport={{ once: true }}
+              onViewportEnter={() => setKpiInView(true)}
+            >
+              {kpiInView
+                ? KPI_DATA.map(({ label, target, suffix, color, decimals }) => (
+                    <AnimatedKPI
+                      key={label}
+                      target={target}
+                      suffix={suffix}
+                      label={label}
+                      color={color}
+                      decimals={decimals}
+                    />
+                  ))
+                : KPI_DATA.map(({ label, suffix, color, decimals }) => (
+                    <StaticKPI
+                      key={label}
+                      suffix={suffix}
+                      label={label}
+                      color={color}
+                      decimals={decimals}
+                    />
+                  ))
+              }
+            </motion.div>
           </motion.div>
 
           {/* Right: AI Document Processing */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.4, delay: 0.08 }}
             className="rounded-2xl border border-border-subtle bg-app-surface p-6 space-y-5 cursor-default"
@@ -129,6 +201,8 @@ export function FeaturesBento() {
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.4, delay: 0.12 }}
             className="md:col-span-3 rounded-2xl border border-border-subtle bg-app-surface p-6 space-y-5 cursor-default"
@@ -162,8 +236,15 @@ export function FeaturesBento() {
                       {count}
                     </span>
                   </div>
-                  {deals.map((deal) => (
-                    <div key={deal} className="p-2 rounded-lg bg-app-surface border border-border-subtle">
+                  {deals.map((deal, dealIndex) => (
+                    <div
+                      key={deal}
+                      className={`p-2 rounded-lg bg-app-surface border border-border-subtle${
+                        stage === 'Lead' && dealIndex === 0
+                          ? ' motion-safe:animate-pipeline-slide'
+                          : ''
+                      }`}
+                    >
                       <p className="text-[10px] text-text-secondary font-mono truncate">{deal}</p>
                     </div>
                   ))}
