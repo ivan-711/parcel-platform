@@ -118,7 +118,7 @@ export function HowItWorks() {
           <p className="text-[10px] uppercase tracking-[0.15em] text-accent-primary font-semibold">
             Process
           </p>
-          <h2 className="text-3xl font-semibold text-text-primary">
+          <h2 className="text-4xl font-semibold tracking-tight text-text-primary">
             From lead to close in three steps
           </h2>
         </motion.div>

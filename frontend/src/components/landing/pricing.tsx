@@ -31,7 +31,7 @@ export function Pricing() {
           <p className="text-[10px] uppercase tracking-[0.15em] text-accent-primary font-semibold">
             Pricing
           </p>
-          <h2 className="text-3xl font-semibold text-text-primary">Simple, transparent pricing</h2>
+          <h2 className="text-4xl font-semibold tracking-tight text-text-primary">Simple, transparent pricing</h2>
           <p className="text-sm text-text-secondary">
             No annual contracts. No per-deal fees. Cancel any time.
           </p>
@@ -108,7 +108,7 @@ export function Pricing() {
                 {/* Header */}
                 <div className="space-y-1">
                   {tier.highlighted && (
-                    <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-accent-primary mb-2">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-accent-primary mb-2">
                       Most popular
                     </p>
                   )}

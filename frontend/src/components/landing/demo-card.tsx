@@ -64,7 +64,7 @@ export function DemoCard() {
               <div key={i} className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c }} />
             ))}
           </div>
-          <span className="text-[11px] font-mono text-text-muted ml-1">
+          <span className="text-[10px] font-mono text-text-muted ml-1">
             2847 Oak Street, Memphis TN 38103
           </span>
         </div>
@@ -92,7 +92,7 @@ export function DemoCard() {
             tabIndex={active === s ? 0 : -1}
             onClick={() => setActive(s)}
             className={cn(
-              'flex-1 py-2.5 text-[11px] font-medium transition-all duration-150 cursor-pointer whitespace-nowrap min-w-0 px-2 rounded focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none',
+              'flex-1 py-2.5 text-[10px] font-medium transition-all duration-150 cursor-pointer whitespace-nowrap min-w-0 px-2 rounded focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none',
               active === s
                 ? 'text-accent-primary bg-accent-primary/5 border-b-2 border-accent-primary'
                 : 'text-text-muted hover:text-text-secondary hover:bg-app-elevated/30',
@@ -118,7 +118,7 @@ export function DemoCard() {
           <div className="grid grid-cols-4 divide-x divide-border-subtle border-b border-border-subtle">
             {metricCells.map(({ label, value, color }) => (
               <div key={label} className="px-4 py-4 space-y-1">
-                <p className="text-[9px] uppercase tracking-[0.1em] text-text-muted font-medium">
+                <p className="text-[10px] uppercase tracking-[0.1em] text-text-muted font-medium">
                   {label}
                 </p>
                 <p
@@ -128,7 +128,7 @@ export function DemoCard() {
                   {value}
                 </p>
                 {label === 'Risk Score' && (
-                  <p className="text-[9px] font-medium" style={{ color: metrics.riskColor }}>
+                  <p className="text-[10px] font-medium" style={{ color: metrics.riskColor }}>
                     {metrics.riskLabel}
                   </p>
                 )}
@@ -140,10 +140,10 @@ export function DemoCard() {
           <div className="px-5 py-4">
             <div className="flex gap-3 p-3.5 rounded-xl bg-app-elevated border border-border-subtle">
               <div className="w-5 h-5 rounded-md bg-accent-primary/20 border border-accent-primary/30 flex items-center justify-center shrink-0 mt-px">
-                <span className="text-[8px] font-bold text-accent-primary">AI</span>
+                <span className="text-[10px] font-bold text-accent-primary">AI</span>
               </div>
               <div className="space-y-0.5">
-                <p className="text-[9px] uppercase tracking-[0.1em] text-accent-primary font-semibold">
+                <p className="text-[10px] uppercase tracking-[0.1em] text-accent-primary font-semibold">
                   Analysis
                 </p>
                 <p className="text-xs text-text-secondary leading-relaxed">

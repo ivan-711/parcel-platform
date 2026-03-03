@@ -136,7 +136,7 @@ export default function Dashboard() {
   }), [stats?.total_deals, stats?.active_pipeline_deals, closedDeals])
 
   const demoBanner = isDemoUser && !bannerDismissed ? (
-    <div className="bg-[#6366F1]/10 border border-[#6366F1]/30 rounded-xl px-4 py-3 text-[13px] text-[#C4B5FD] flex items-center justify-between mb-6">
+    <div className="bg-[#6366F1]/10 border border-[#6366F1]/30 rounded-xl px-4 py-3 text-xs text-[#C4B5FD] flex items-center justify-between mb-6">
       <p>
         You're viewing a demo account. Create your free account to analyze your own deals.{' '}
         <Link to="/register" className="font-semibold text-accent-primary hover:underline">
@@ -204,7 +204,7 @@ export default function Dashboard() {
         >
           <motion.h1
             variants={itemVariants}
-            className="text-3xl font-semibold text-text-primary"
+            className="text-3xl font-semibold tracking-tight text-text-primary"
           >
             Let&apos;s analyze your first deal.
           </motion.h1>
@@ -294,7 +294,7 @@ export default function Dashboard() {
         {(stats.recent_deals ?? []).length > 0 && (
           <motion.div variants={itemVariants} className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-text-primary">Recent Deals</h2>
+              <h2 className="text-2xl font-semibold tracking-tight text-text-primary">Recent Deals</h2>
               <Link
                 to="/deals"
                 className="text-xs font-medium text-accent-primary hover:text-accent-primary/80 transition-colors"
@@ -349,7 +349,7 @@ export default function Dashboard() {
         {/* Pipeline Summary */}
         {pipelineEntries.length > 0 && (
           <motion.div variants={itemVariants} className="space-y-3">
-            <h2 className="text-lg font-semibold text-text-primary">Pipeline Summary</h2>
+            <h2 className="text-2xl font-semibold tracking-tight text-text-primary">Pipeline Summary</h2>
             <div className="rounded-xl border border-border-subtle bg-app-surface p-4">
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {pipelineEntries.map(([stage, count]) => (
@@ -368,7 +368,7 @@ export default function Dashboard() {
         {/* Recent Activity */}
         <motion.div variants={itemVariants} className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-text-primary">Recent Activity</h2>
+            <h2 className="text-2xl font-semibold tracking-tight text-text-primary">Recent Activity</h2>
             <Link to="/deals" className="text-xs font-medium text-accent-primary hover:text-accent-primary/80 transition-colors">View all</Link>
           </div>
 

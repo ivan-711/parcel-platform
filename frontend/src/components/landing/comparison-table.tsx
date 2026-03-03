@@ -63,7 +63,7 @@ export function ComparisonTable() {
           <p className="text-[10px] uppercase tracking-[0.15em] text-accent-primary font-semibold">
             Comparison
           </p>
-          <h2 className="text-3xl font-semibold text-text-primary">
+          <h2 className="text-4xl font-semibold tracking-tight text-text-primary">
             Why investors choose Parcel
           </h2>
           <p className="text-sm text-text-secondary max-w-lg">

@@ -16,14 +16,14 @@ export function Ticker() {
       <div className={prefersReduced ? 'flex gap-10 w-max overflow-x-auto' : 'ticker-animate flex gap-10 w-max'}>
         {items.map((deal, i) => (
           <div key={i} className={`flex items-center gap-2.5 shrink-0${prefersReduced ? '' : ' hover:-translate-y-0.5 transition-transform duration-150'}`}>
-            <span className="text-[11px] font-mono text-text-muted">{deal.city}</span>
+            <span className="text-[10px] font-mono text-text-muted">{deal.city}</span>
             <span
-              className="text-[9px] font-semibold px-1.5 py-0.5 rounded"
+              className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
               style={{ backgroundColor: STRATEGY_COLORS[deal.strategy].bg, color: STRATEGY_COLORS[deal.strategy].text }}
             >
               {deal.strategy}
             </span>
-            <span className="text-[11px] font-mono font-semibold text-text-secondary">
+            <span className="text-[10px] font-mono font-semibold text-text-secondary">
               {deal.metric}
             </span>
             <span className="text-border-strong text-[10px] mx-1">·</span>

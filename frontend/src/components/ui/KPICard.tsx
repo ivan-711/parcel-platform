@@ -61,7 +61,7 @@ export function KPICard({ label, value, format, delta, loading, className, spark
       )}
     >
       <p className="text-xs font-medium text-text-secondary uppercase tracking-wide">{label}</p>
-      <p className="text-3xl font-semibold font-mono text-text-primary">
+      <p className="text-4xl font-semibold font-mono text-text-primary">
         {formatValue(animated, format)}
       </p>
       {delta !== undefined && (

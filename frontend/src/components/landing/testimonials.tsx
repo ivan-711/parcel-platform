@@ -193,7 +193,7 @@ export function Testimonials() {
           <p className="text-[10px] uppercase tracking-[0.15em] text-accent-primary font-semibold">
             Testimonials
           </p>
-          <h2 className="text-3xl font-semibold text-text-primary">
+          <h2 className="text-4xl font-semibold tracking-tight text-text-primary">
             Trusted by investors nationwide
           </h2>
         </motion.div>

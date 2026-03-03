@@ -180,7 +180,7 @@ export default function MyDeals() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h1 className="text-2xl font-semibold text-text-primary">My Deals</h1>
+          <h1 className="text-3xl font-semibold tracking-tight text-text-primary">My Deals</h1>
           <div className="flex items-center gap-2 flex-wrap">
             {selectionMode ? (
               <>

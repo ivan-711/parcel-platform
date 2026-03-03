@@ -25,7 +25,7 @@ function AnimatedKPI({
 
   return (
     <div className="p-3 rounded-xl bg-app-elevated border border-border-subtle space-y-1">
-      <p className="text-[9px] uppercase tracking-widest text-text-muted">{label}</p>
+      <p className="text-[10px] uppercase tracking-widest text-text-muted">{label}</p>
       <p className="text-base font-mono font-semibold leading-none" style={{ color }}>
         {value.toFixed(decimals)}{suffix}
       </p>
@@ -47,7 +47,7 @@ function StaticKPI({
 }) {
   return (
     <div className="p-3 rounded-xl bg-app-elevated border border-border-subtle space-y-1">
-      <p className="text-[9px] uppercase tracking-widest text-text-muted">{label}</p>
+      <p className="text-[10px] uppercase tracking-widest text-text-muted">{label}</p>
       <p className="text-base font-mono font-semibold leading-none" style={{ color }}>
         {(0).toFixed(decimals)}{suffix}
       </p>
@@ -79,7 +79,7 @@ export function FeaturesBento() {
           <p className="text-[10px] uppercase tracking-[0.15em] text-accent-primary font-semibold">
             Features
           </p>
-          <h2 className="text-3xl font-semibold text-text-primary">
+          <h2 className="text-4xl font-semibold tracking-tight text-text-primary">
             The full stack for deal professionals
           </h2>
           <p className="text-sm text-text-secondary max-w-md leading-relaxed">
@@ -190,7 +190,7 @@ export function FeaturesBento() {
                   <p className="text-[10px] text-text-secondary font-mono truncate flex-1">{name}</p>
                   <div className="flex items-center gap-1.5 shrink-0">
                     <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: dot }} />
-                    <span className="text-[9px] font-semibold" style={{ color }}>{status}</span>
+                    <span className="text-[10px] font-semibold" style={{ color }}>{status}</span>
                   </div>
                 </div>
               ))}
@@ -229,10 +229,10 @@ export function FeaturesBento() {
               ].map(({ stage, count, deals }) => (
                 <div key={stage} className="bg-app-elevated rounded-xl p-3 space-y-2">
                   <div className="flex items-center justify-between">
-                    <p className="text-[9px] uppercase tracking-[0.12em] text-text-muted font-semibold">
+                    <p className="text-[10px] uppercase tracking-[0.12em] text-text-muted font-semibold">
                       {stage}
                     </p>
-                    <span className="text-[9px] font-mono text-text-disabled bg-app-overlay px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] font-mono text-text-disabled bg-app-overlay px-1.5 py-0.5 rounded">
                       {count}
                     </span>
                   </div>

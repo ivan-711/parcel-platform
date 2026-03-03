@@ -15,7 +15,7 @@ export function AvatarStack({ count = 2400 }: { count?: number }) {
         {AVATARS.map(({ initials, bg }) => (
           <div
             key={initials}
-            className="w-7 h-7 rounded-full border-2 border-app-bg flex items-center justify-center text-[9px] font-bold text-white"
+            className="w-7 h-7 rounded-full border-2 border-app-bg flex items-center justify-center text-[10px] font-bold text-white"
             style={{ backgroundColor: bg }}
           >
             {initials}

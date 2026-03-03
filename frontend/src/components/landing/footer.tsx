@@ -44,7 +44,7 @@ export function Footer() {
           <div className="flex flex-col gap-4 md:min-w-[180px]">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded bg-accent-primary/20 border border-accent-primary/30 flex items-center justify-center">
-                <span className="text-[9px] font-bold text-accent-primary font-mono">
+                <span className="text-[10px] font-bold text-accent-primary font-mono">
                   P
                 </span>
               </div>
