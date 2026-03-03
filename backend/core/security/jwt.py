@@ -15,6 +15,7 @@ from models.users import User
 SECRET_KEY: str = os.getenv("SECRET_KEY", "changeme-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 15
+REFRESH_TOKEN_EXPIRE_DAYS = 7
 
 
 # ---------------------------------------------------------------------------
@@ -48,6 +49,23 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode["exp"] = expire
+    to_encode["type"] = "access"
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+def create_refresh_token(data: dict) -> str:
+    """Create a signed refresh JWT with a 7-day expiry.
+
+    Args:
+        data: Payload dict. Must include a ``sub`` claim (user id).
+
+    Returns:
+        Encoded JWT string with type=refresh.
+    """
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    to_encode["exp"] = expire
+    to_encode["type"] = "refresh"
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
@@ -70,6 +88,33 @@ def verify_token(token: str) -> str:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={"error": "Invalid or expired token", "code": "INVALID_TOKEN"},
+        )
+
+
+def verify_refresh_token(token: str) -> str:
+    """Decode a refresh JWT and return the ``sub`` claim (user id).
+
+    Raises:
+        HTTPException 401 if the token is invalid, expired, or not a refresh token.
+    """
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        if payload.get("type") != "refresh":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={"error": "Invalid token type", "code": "INVALID_TOKEN"},
+            )
+        user_id: Optional[str] = payload.get("sub")
+        if user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={"error": "Invalid token", "code": "INVALID_TOKEN"},
+            )
+        return user_id
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"error": "Invalid or expired refresh token", "code": "INVALID_TOKEN"},
         )
 
 

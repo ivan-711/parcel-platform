@@ -28,6 +28,26 @@ import type {
 
 const API_URL = (import.meta.env.VITE_API_URL ?? 'https://api.parceldesk.io').replace('http://', 'https://')
 
+/** Track whether a refresh is in progress to avoid concurrent refresh attempts. */
+let refreshPromise: Promise<boolean> | null = null
+
+/** Attempt to refresh the access token using the refresh cookie. Returns true on success. */
+async function attemptRefresh(): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_URL}/api/v1/auth/refresh`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+    })
+    if (!res.ok) return false
+    const data = await res.json() as { user: User }
+    useAuthStore.getState().setAuth(data.user)
+    return true
+  } catch {
+    return false
+  }
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const headers: Record<string, string> = {
     ...(options?.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
@@ -41,6 +61,37 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   })
 
   if (res.status === 401) {
+    // Don't attempt refresh for the refresh endpoint itself
+    if (path === '/api/v1/auth/refresh') {
+      useAuthStore.getState().clearAuth()
+      throw new Error('Session expired')
+    }
+
+    // Deduplicate concurrent refresh attempts
+    if (!refreshPromise) {
+      refreshPromise = attemptRefresh().finally(() => { refreshPromise = null })
+    }
+    const refreshed = await refreshPromise
+
+    if (refreshed) {
+      // Retry the original request with the new access token
+      const retryRes = await fetch(`${API_URL}${path}`, {
+        credentials: 'include',
+        ...options,
+        headers,
+      })
+      if (retryRes.ok) {
+        if (retryRes.status === 204) return {} as T
+        return retryRes.json() as Promise<T>
+      }
+      if (retryRes.status === 401) {
+        useAuthStore.getState().clearAuth()
+        throw new Error('Session expired')
+      }
+      const retryError = await retryRes.json().catch(() => ({ error: 'Unknown error' }))
+      throw new Error((retryError as { error?: string }).error ?? `HTTP ${retryRes.status}`)
+    }
+
     useAuthStore.getState().clearAuth()
     throw new Error('Session expired')
   }
@@ -93,6 +144,8 @@ export const api = {
       }),
     logout: () =>
       request<{ message: string }>('/api/v1/auth/logout', { method: 'POST' }),
+    refresh: () =>
+      request<AuthResponse>('/api/v1/auth/refresh', { method: 'POST' }),
     forgotPassword: (email: string) =>
       requestPublic<{ message: string }>('/api/v1/auth/forgot-password', {
         method: 'POST',

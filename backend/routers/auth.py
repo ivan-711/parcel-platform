@@ -6,11 +6,11 @@ import os
 import secrets
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
 
 from core.email import send_password_reset_email
-from core.security.jwt import create_access_token, get_current_user, hash_password, verify_password
+from core.security.jwt import create_access_token, create_refresh_token, get_current_user, hash_password, verify_password, verify_refresh_token
 from database import get_db
 from models.password_reset_tokens import PasswordResetToken
 from models.users import User
@@ -32,7 +32,9 @@ RESET_TOKEN_EXPIRY_HOURS = 1
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 _COOKIE_NAME = "access_token"
+_REFRESH_COOKIE_NAME = "refresh_token"
 _COOKIE_MAX_AGE = 60 * 15  # 15 minutes in seconds
+_REFRESH_COOKIE_MAX_AGE = 60 * 60 * 24 * 7  # 7 days in seconds
 _IS_PRODUCTION = os.getenv("ENVIRONMENT", "development") == "production"
 
 
@@ -52,6 +54,27 @@ def _set_auth_cookie(response: Response, token: str) -> None:
         max_age=_COOKIE_MAX_AGE,
         path="/",
     )
+
+
+def _set_refresh_cookie(response: Response, token: str) -> None:
+    """Set the refresh JWT as an httpOnly cookie with 7-day expiry."""
+    response.set_cookie(
+        key=_REFRESH_COOKIE_NAME,
+        value=token,
+        httponly=True,
+        secure=_IS_PRODUCTION,
+        samesite="none" if _IS_PRODUCTION else "lax",
+        max_age=_REFRESH_COOKIE_MAX_AGE,
+        path="/",
+    )
+
+
+def _set_auth_cookies(response: Response, user_id: str) -> None:
+    """Set both access and refresh token cookies."""
+    access = create_access_token({"sub": user_id})
+    refresh = create_refresh_token({"sub": user_id})
+    _set_auth_cookie(response, access)
+    _set_refresh_cookie(response, refresh)
 
 
 @router.post("/register", response_model=AuthSuccessResponse, status_code=status.HTTP_201_CREATED)
@@ -79,8 +102,7 @@ async def register(body: RegisterRequest, response: Response, db: Session = Depe
     db.commit()
     db.refresh(user)
 
-    token = create_access_token({"sub": str(user.id)})
-    _set_auth_cookie(response, token)
+    _set_auth_cookies(response, str(user.id))
 
     return AuthSuccessResponse(user=UserResponse.model_validate(user))
 
@@ -100,22 +122,49 @@ async def login(body: LoginRequest, response: Response, db: Session = Depends(ge
             detail={"error": "Invalid email or password", "code": "INVALID_CREDENTIALS"},
         )
 
-    token = create_access_token({"sub": str(user.id)})
-    _set_auth_cookie(response, token)
+    _set_auth_cookies(response, str(user.id))
 
     return AuthSuccessResponse(user=UserResponse.model_validate(user))
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(response: Response) -> None:
-    """Clear the access token cookie, effectively logging the user out."""
-    response.delete_cookie(
-        key=_COOKIE_NAME,
-        httponly=True,
-        secure=_IS_PRODUCTION,
-        samesite="none" if _IS_PRODUCTION else "lax",
-        path="/",
-    )
+    """Clear both access and refresh token cookies, effectively logging the user out."""
+    for cookie_name in (_COOKIE_NAME, _REFRESH_COOKIE_NAME):
+        response.delete_cookie(
+            key=cookie_name,
+            httponly=True,
+            secure=_IS_PRODUCTION,
+            samesite="none" if _IS_PRODUCTION else "lax",
+            path="/",
+        )
+
+
+@router.post("/refresh", response_model=AuthSuccessResponse)
+async def refresh(request: Request, response: Response, db: Session = Depends(get_db)) -> AuthSuccessResponse:
+    """Refresh the access token using the refresh token cookie.
+
+    Validates the refresh token, checks the user still exists, and issues a
+    new access token cookie. The refresh token itself is rotated for security.
+    Returns the user profile so the frontend can sync auth state.
+    """
+    token: str | None = request.cookies.get(_REFRESH_COOKIE_NAME)
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"error": "No refresh token", "code": "NO_REFRESH_TOKEN"},
+        )
+
+    user_id = verify_refresh_token(token)
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"error": "User not found", "code": "USER_NOT_FOUND"},
+        )
+
+    _set_auth_cookies(response, str(user.id))
+    return AuthSuccessResponse(user=UserResponse.model_validate(user))
 
 
 @router.get("/me", response_model=UserResponse)
