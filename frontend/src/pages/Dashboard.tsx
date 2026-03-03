@@ -9,7 +9,7 @@ import { AppShell } from '@/components/layout/AppShell'
 import { KPICard } from '@/components/ui/KPICard'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useDashboard } from '@/hooks/useDashboard'
 import { useAuthStore } from '@/stores/authStore'
 import { api } from '@/lib/api'
@@ -108,12 +108,13 @@ function generateTrendData(current: number, points: number = 7, volatility: numb
 /** Dashboard — shows KPI overview when user has deals, empty state otherwise. */
 export default function Dashboard() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { data: stats, isLoading, isError, error } = useDashboard()
   const user = useAuthStore((s) => s.user)
   const isDemoUser = user?.email === 'demo@parcel.app'
   const [bannerDismissed, setBannerDismissed] = useState(false)
 
-  const { data: activityData, isLoading: activityLoading } = useQuery({
+  const { data: activityData, isLoading: activityLoading, isError: activityError } = useQuery({
     queryKey: ['activity'],
     queryFn: () => api.activity.list(),
     staleTime: 60_000,
@@ -173,11 +174,17 @@ export default function Dashboard() {
         {demoBanner}
         <div className="rounded-xl border border-accent-danger/30 bg-accent-danger/10 p-6 flex items-start gap-3 max-w-lg">
           <AlertCircle size={20} className="text-accent-danger shrink-0 mt-0.5" />
-          <div className="space-y-1">
+          <div className="space-y-2">
             <p className="text-sm font-medium text-text-primary">Failed to load dashboard</p>
             <p className="text-xs text-text-secondary">
               {error instanceof Error ? error.message : 'Something went wrong. Please try again.'}
             </p>
+            <button
+              onClick={() => queryClient.invalidateQueries({ queryKey: ['dashboard'] })}
+              className="text-xs font-medium text-accent-primary hover:text-accent-primary/80 transition-colors"
+            >
+              Try again
+            </button>
           </div>
         </div>
       </AppShell>
@@ -373,7 +380,20 @@ export default function Dashboard() {
             </div>
           )}
 
-          {!activityLoading && (!activityData?.activities || activityData.activities.length === 0) && (
+          {!activityLoading && activityError && (
+            <div className="rounded-xl border border-accent-danger/30 bg-accent-danger/10 px-4 py-4 flex items-center gap-3">
+              <AlertCircle size={16} className="text-accent-danger shrink-0" />
+              <p className="text-sm text-text-secondary flex-1">Failed to load activity</p>
+              <button
+                onClick={() => queryClient.invalidateQueries({ queryKey: ['activity'] })}
+                className="text-xs font-medium text-accent-primary hover:text-accent-primary/80 transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          {!activityLoading && !activityError && (!activityData?.activities || activityData.activities.length === 0) && (
             <div className="rounded-xl border border-border-subtle bg-app-surface px-4 py-8 text-center">
               <p className="text-sm text-text-muted">No recent activity. Analyze your first deal to get started.</p>
             </div>

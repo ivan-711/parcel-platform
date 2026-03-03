@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Check } from 'lucide-react'
+import { Check, AlertCircle } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -29,7 +29,7 @@ const itemVariants = {
 
 /** Settings page — profile editing and password change. */
 export default function SettingsPage() {
-  const { data: user, isLoading } = useQuery({
+  const { data: user, isLoading, isError: profileError } = useQuery({
     queryKey: ['me'],
     queryFn: api.auth.me,
   })
@@ -138,6 +138,26 @@ export default function SettingsPage() {
     }
 
     passwordMutation.mutate()
+  }
+
+  if (profileError) {
+    return (
+      <AppShell title="Settings">
+        <div className="rounded-xl border border-accent-danger/30 bg-accent-danger/10 p-6 flex items-start gap-3 max-w-lg">
+          <AlertCircle size={20} className="text-accent-danger shrink-0 mt-0.5" />
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-text-primary">Failed to load settings</p>
+            <p className="text-xs text-text-secondary">Something went wrong. Please try again.</p>
+            <button
+              onClick={() => queryClient.invalidateQueries({ queryKey: ['me'] })}
+              className="text-xs font-medium text-accent-primary hover:text-accent-primary/80 transition-colors"
+            >
+              Try again
+            </button>
+          </div>
+        </div>
+      </AppShell>
+    )
   }
 
   if (isLoading) {

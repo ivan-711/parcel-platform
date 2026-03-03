@@ -72,8 +72,8 @@ export default function ComparePage() {
   const dealBId = searchParams.get('b') ?? ''
 
   const { data: allDeals, isLoading: loadingList, isError } = useDeals({ per_page: 100 })
-  const { data: dealA, isLoading: loadingA } = useDeal(dealAId)
-  const { data: dealB, isLoading: loadingB } = useDeal(dealBId)
+  const { data: dealA, isLoading: loadingA, isError: errorA } = useDeal(dealAId)
+  const { data: dealB, isLoading: loadingB, isError: errorB } = useDeal(dealBId)
 
   const dealOptions = useMemo(() => allDeals ?? [], [allDeals])
 
@@ -201,6 +201,16 @@ export default function ComparePage() {
         {isLoading && (
           <div className="space-y-4">
             <SkeletonCard lines={8} />
+          </div>
+        )}
+
+        {/* Deal fetch error */}
+        {(errorA || errorB) && (
+          <div className="flex items-center gap-3 rounded-xl border border-accent-danger/30 bg-accent-danger/10 px-4 py-3">
+            <AlertTriangle size={16} className="text-accent-danger shrink-0" />
+            <p className="text-sm text-text-secondary">
+              Failed to load {errorA && errorB ? 'both deals' : errorA ? 'Deal A' : 'Deal B'}. Check the selection and try again.
+            </p>
           </div>
         )}
 

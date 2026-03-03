@@ -282,11 +282,17 @@ export default function MyDeals() {
         {isError && (
           <div className="rounded-xl border border-accent-danger/30 bg-accent-danger/10 p-6 flex items-start gap-3 max-w-lg">
             <AlertCircle size={20} className="text-accent-danger shrink-0 mt-0.5" />
-            <div className="space-y-1">
+            <div className="space-y-2">
               <p className="text-sm font-medium text-text-primary">Failed to load deals</p>
               <p className="text-xs text-text-secondary">
                 {error instanceof Error ? error.message : 'Something went wrong. Please try again.'}
               </p>
+              <button
+                onClick={() => queryClient.invalidateQueries({ queryKey: ['deals'] })}
+                className="text-xs font-medium text-accent-primary hover:text-accent-primary/80 transition-colors"
+              >
+                Try again
+              </button>
             </div>
           </div>
         )}

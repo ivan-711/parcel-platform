@@ -266,7 +266,7 @@ export function RightPanelContent({
 }: RightPanelContentProps) {
   const queryClient = useQueryClient()
 
-  const { data: doc, isLoading } = useQuery({
+  const { data: doc, isLoading, isError } = useQuery({
     queryKey: ['document', selectedId],
     queryFn: () => api.documents.get(selectedId!),
     enabled: !!selectedId,
@@ -308,6 +308,21 @@ export function RightPanelContent({
           <div className="h-3 w-full rounded bg-app-elevated animate-pulse" />
           <div className="h-3 w-3/4 rounded bg-app-elevated animate-pulse" />
         </div>
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center px-6 gap-3">
+        <AlertCircle size={32} className="text-accent-danger" />
+        <p className="text-sm text-text-secondary">Failed to load document</p>
+        <button
+          onClick={() => queryClient.invalidateQueries({ queryKey: ['document', selectedId] })}
+          className="text-xs font-medium text-accent-primary hover:text-accent-primary/80 transition-colors"
+        >
+          Try again
+        </button>
       </div>
     )
   }
@@ -374,14 +389,21 @@ export function RightPanelContent({
 
   return (
     <AnimatePresence mode="wait">
-      <DetailPanel
+      <motion.div
         key={doc.id}
-        doc={doc}
-        onDelete={() => deleteMutation.mutate(doc.id)}
-        isDeleting={deleteMutation.isPending}
-        onBack={onClearSelection}
-        showBack={isMobileDetail}
-      />
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -8 }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
+      >
+        <DetailPanel
+          doc={doc}
+          onDelete={() => deleteMutation.mutate(doc.id)}
+          isDeleting={deleteMutation.isPending}
+          onBack={onClearSelection}
+          showBack={isMobileDetail}
+        />
+      </motion.div>
     </AnimatePresence>
   )
 }
