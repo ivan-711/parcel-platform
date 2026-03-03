@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, PlusCircle, ChevronDown, ChevronRight, Share2, Save, Check, HelpCircle, FileDown, FileText, Trash2, MessageSquare } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, PlusCircle, ChevronDown, ChevronRight, Share2, Save, Check, HelpCircle, FileDown, FileText, Trash2, MessageSquare } from 'lucide-react'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
 import { KPICard } from '@/components/ui/KPICard'
@@ -65,7 +65,7 @@ const STRATEGY_DISPLAY_NAMES: Record<string, string> = {
 export default function ResultsPage() {
   const { dealId } = useParams<{ dealId: string }>()
   const navigate = useNavigate()
-  const { data: deal, isLoading } = useDeal(dealId ?? '')
+  const { data: deal, isLoading, isError, error } = useDeal(dealId ?? '')
   const addToPipeline = useAddToPipeline()
   const updateDeal = useUpdateDeal(dealId ?? '')
   const [saved, setSaved] = useState(false)
@@ -102,6 +102,27 @@ export default function ResultsPage() {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [stageMenuOpen])
+
+  if (isError) {
+    return (
+      <AppShell title="Deal Results">
+        <div className="max-w-5xl mx-auto">
+          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6 flex items-start gap-3">
+            <AlertTriangle size={20} className="text-red-400 shrink-0 mt-0.5" />
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-text-primary">Failed to load deal</p>
+              <p className="text-xs text-text-secondary">
+                {error instanceof Error ? error.message : 'Something went wrong.'}
+              </p>
+              <Link to="/deals" className="text-xs text-accent-primary hover:underline">
+                Back to My Deals
+              </Link>
+            </div>
+          </div>
+        </div>
+      </AppShell>
+    )
+  }
 
   if (isLoading || !deal) {
     return (
@@ -404,7 +425,7 @@ export default function ResultsPage() {
         </motion.div>
 
         {/* Section 4: Actions */}
-        <motion.div variants={slideUp} className="flex gap-3 justify-end flex-wrap">
+        <motion.div variants={slideUp} className="flex gap-2 sm:gap-3 justify-end flex-wrap">
           <Button variant="ghost" asChild>
             <Link to="/analyze" className="gap-2">
               <ArrowLeft size={14} />

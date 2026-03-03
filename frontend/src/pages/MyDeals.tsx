@@ -179,9 +179,9 @@ export default function MyDeals() {
     <AppShell title="My Deals">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h1 className="text-2xl font-semibold text-text-primary">My Deals</h1>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {selectionMode ? (
               <>
                 <button

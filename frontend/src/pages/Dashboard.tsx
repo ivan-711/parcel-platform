@@ -233,7 +233,7 @@ export default function Dashboard() {
             </motion.button>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="grid grid-cols-3 gap-4">
+          <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {HINT_CARDS.map(({ icon: Icon, title, description }) => (
               <div
                 key={title}
@@ -302,8 +302,8 @@ export default function Dashboard() {
                 View all →
               </Link>
             </div>
-            <div className="rounded-xl border border-border-subtle bg-app-surface overflow-hidden">
-              <table className="w-full">
+            <div className="rounded-xl border border-border-subtle bg-app-surface overflow-x-auto">
+              <table className="w-full min-w-[600px]">
                 <thead>
                   <tr className="border-b border-border-subtle">
                     <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Address</th>

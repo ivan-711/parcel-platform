@@ -320,7 +320,7 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
 /* ── Main Page ── */
 
 export default function PortfolioPage() {
-  const { data, isLoading } = usePortfolio()
+  const { data, isLoading, isError } = usePortfolio()
   const queryClient = useQueryClient()
   const [sheetOpen, setSheetOpen] = useState(false)
   const [editingEntry, setEditingEntry] = useState<PortfolioEntry | null>(null)
@@ -411,6 +411,21 @@ export default function PortfolioPage() {
     })
     return sorted.map(([month, cashFlow]) => ({ month, cashFlow }))
   }, [entries])
+
+  /* ── Error state ── */
+  if (isError) {
+    return (
+      <AppShell title="Portfolio">
+        <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+          <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
+            <Inbox className="w-6 h-6 text-red-400" />
+          </div>
+          <p className="text-base font-medium text-text-primary">Failed to load portfolio</p>
+          <p className="text-sm text-text-secondary">Check your connection and try again.</p>
+        </div>
+      </AppShell>
+    )
+  }
 
   /* ── Loading state ── */
   if (isLoading) {
@@ -666,7 +681,7 @@ export default function PortfolioPage() {
                         <td className="px-4 py-3">
                           <button
                             onClick={() => setEditingEntry(entry)}
-                            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-[#1A1A2E] transition-all"
+                            className="md:opacity-0 md:group-hover:opacity-100 p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-[#1A1A2E] transition-all"
                             aria-label="Edit entry"
                           >
                             <Pencil size={14} />

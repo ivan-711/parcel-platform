@@ -245,7 +245,7 @@ export default function ComparePage() {
 
         {/* Comparison table */}
         {!isLoading && (dealA || dealB) && (
-          <div className="rounded-xl border border-border-subtle bg-app-surface overflow-hidden">
+          <div className="rounded-xl border border-border-subtle bg-app-surface overflow-x-auto">
             {/* Common rows */}
             <ComparisonRow label="Address" valueA={dealA?.address ?? '—'} valueB={dealB?.address} />
             <ComparisonRow
@@ -349,7 +349,7 @@ function ComparisonRow({
   winnerSide?: 'a' | 'b' | null
 }) {
   return (
-    <div className="grid grid-cols-[180px_1fr_1fr] border-b border-border-subtle last:border-0">
+    <div className="grid grid-cols-[120px_1fr_1fr] sm:grid-cols-[180px_1fr_1fr] border-b border-border-subtle last:border-0 min-w-[400px]">
       <div className="px-4 py-3 text-sm text-text-secondary bg-app-elevated/30">
         {label}
       </div>

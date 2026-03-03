@@ -193,15 +193,15 @@ function Topbar({ title, onMenuToggle, onSearchClick }: { title?: string; onMenu
       </div>
 
       <div className="flex items-center gap-3">
-        {/* Search pill — opens command palette. Hidden on mobile, icon-only on small screens. */}
+        {/* Search pill — opens command palette. Icon-only on mobile, full on desktop. */}
         <button
           onClick={onSearchClick}
           aria-label="Open command palette"
-          className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle bg-app-surface text-text-muted text-xs hover:border-border-default transition-colors cursor-pointer"
+          className="flex items-center gap-2 px-2 md:px-3 py-1.5 rounded-lg border border-border-subtle bg-app-surface text-text-muted text-xs hover:border-border-default transition-colors cursor-pointer"
         >
           <Search size={14} className="shrink-0" />
-          <span>Search</span>
-          <kbd className="text-[10px] font-mono bg-app-elevated px-1.5 py-0.5 rounded">&#8984;K</kbd>
+          <span className="hidden md:inline">Search</span>
+          <kbd className="hidden md:inline text-[10px] font-mono bg-app-elevated px-1.5 py-0.5 rounded">&#8984;K</kbd>
         </button>
 
         {/* User avatar + dropdown menu */}
