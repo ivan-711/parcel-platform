@@ -119,7 +119,21 @@ export default function Dashboard() {
     staleTime: 60_000,
   })
 
-  /* ── Loading state ── */
+  /* ── Derived values (must be above early returns to preserve hook order) ── */
+  const closedDeals = stats?.closed_deals ?? 0
+
+  const pipelineEntries = Object.entries(stats?.pipeline_by_stage ?? {}).filter(
+    ([, count]) => count > 0
+  )
+
+  /* Memoize sparkline data so it stays stable across re-renders */
+  const sparklines = useMemo(() => ({
+    totalDeals: generateTrendData(stats?.total_deals ?? 0, 7, 0.12),
+    activePipeline: generateTrendData(stats?.active_pipeline_deals ?? 0, 7, 0.18),
+    closedDeals: generateTrendData(closedDeals, 7, 0.1),
+    dealsAnalyzed: generateTrendData(stats?.total_deals ?? 0, 7, 0.15),
+  }), [stats?.total_deals, stats?.active_pipeline_deals, closedDeals])
+
   const demoBanner = isDemoUser && !bannerDismissed ? (
     <div className="bg-[#6366F1]/10 border border-[#6366F1]/30 rounded-xl px-4 py-3 text-[13px] text-[#C4B5FD] flex items-center justify-between mb-6">
       <p>
@@ -134,6 +148,7 @@ export default function Dashboard() {
     </div>
   ) : null
 
+  /* ── Loading state ── */
   if (isLoading) {
     return (
       <AppShell title="Dashboard">
@@ -231,20 +246,6 @@ export default function Dashboard() {
   }
 
   /* ── Populated state ── */
-  const closedDeals = stats.closed_deals
-
-  const pipelineEntries = Object.entries(stats.pipeline_by_stage ?? {}).filter(
-    ([, count]) => count > 0
-  )
-
-  /* Memoize sparkline data so it stays stable across re-renders */
-  const sparklines = useMemo(() => ({
-    totalDeals: generateTrendData(stats.total_deals, 7, 0.12),
-    activePipeline: generateTrendData(stats.active_pipeline_deals, 7, 0.18),
-    closedDeals: generateTrendData(closedDeals, 7, 0.1),
-    dealsAnalyzed: generateTrendData(stats.total_deals, 7, 0.15),
-  }), [stats.total_deals, stats.active_pipeline_deals, closedDeals])
-
   return (
     <AppShell title="Dashboard">
       {demoBanner}

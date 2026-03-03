@@ -82,12 +82,12 @@ export const api = {
   },
   auth: {
     login: (email: string, password: string) =>
-      request<AuthResponse>('/api/v1/auth/login', {
+      requestPublic<AuthResponse>('/api/v1/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       }),
     register: (name: string, email: string, password: string, role: string) =>
-      request<AuthResponse>('/api/v1/auth/register', {
+      requestPublic<AuthResponse>('/api/v1/auth/register', {
         method: 'POST',
         body: JSON.stringify({ name, email, password, role }),
       }),
