@@ -281,7 +281,7 @@ export default function ResultsPage() {
       if (rawValue === null || rawValue === undefined) {
         return (
           <div key={kpi.key} className="rounded-xl border border-border-subtle bg-app-surface p-5 space-y-1">
-            <p className="text-xs font-medium text-text-secondary uppercase tracking-wide">
+            <p className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
               {kpi.label}
             </p>
             <p className="text-3xl font-semibold font-mono text-accent-success">∞</p>
@@ -305,7 +305,7 @@ export default function ResultsPage() {
       const strValue = typeof rawValue === 'string' ? rawValue : 'N/A'
       return (
         <div key={kpi.key} className="rounded-xl border border-border-subtle bg-app-surface p-5 space-y-1">
-          <p className="text-xs font-medium text-text-secondary uppercase tracking-wide">
+          <p className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
             {kpi.label}
           </p>
           <span
@@ -323,7 +323,7 @@ export default function ResultsPage() {
       const formatted = kpi.format === 'percent' ? formatPercent(numValue) : formatCurrency(numValue)
       return (
         <div key={kpi.key} className="rounded-xl border border-border-subtle bg-app-surface p-5 space-y-1">
-          <p className="text-xs font-medium text-text-secondary uppercase tracking-wide">
+          <p className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
             {kpi.label}
           </p>
           <p

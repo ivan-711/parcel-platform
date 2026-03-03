@@ -139,7 +139,7 @@ export default function ComparePage() {
         {/* Deal selectors */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-text-muted uppercase tracking-wide">Deal A</label>
+            <label className="text-xs font-medium text-text-muted uppercase tracking-[0.08em]">Deal A</label>
             <Select value={dealAId || undefined} onValueChange={handleSelectA}>
               <SelectTrigger className="bg-app-surface border-border-subtle text-text-primary text-sm">
                 <SelectValue placeholder="Select a deal..." />
@@ -170,7 +170,7 @@ export default function ComparePage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-text-muted uppercase tracking-wide">Deal B</label>
+            <label className="text-xs font-medium text-text-muted uppercase tracking-[0.08em]">Deal B</label>
             <Select value={dealBId || undefined} onValueChange={handleSelectB} disabled={!dealAId}>
               <SelectTrigger className="bg-app-surface border-border-subtle text-text-primary text-sm">
                 <SelectValue placeholder={dealAId ? 'Select a deal...' : 'Select Deal A first'} />
@@ -285,7 +285,7 @@ export default function ComparePage() {
             {/* Divider */}
             {strategyRows.length > 0 && (
               <div className="px-4 py-2.5 bg-app-elevated border-y border-border-subtle">
-                <p className="text-xs font-semibold text-text-muted uppercase tracking-wide">Strategy Outputs</p>
+                <p className="text-xs font-semibold text-text-muted uppercase tracking-[0.08em]">Strategy Outputs</p>
               </div>
             )}
 

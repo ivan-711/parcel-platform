@@ -115,7 +115,7 @@ export function HowItWorks() {
           transition={{ duration: 0.35 }}
           className="space-y-3"
         >
-          <p className="text-[10px] uppercase tracking-[0.15em] text-accent-primary font-semibold">
+          <p className="text-[10px] uppercase tracking-[0.08em] text-accent-primary font-semibold">
             Process
           </p>
           <h2 className="text-4xl font-semibold tracking-tight text-text-primary">

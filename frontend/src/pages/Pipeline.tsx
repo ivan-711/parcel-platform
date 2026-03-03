@@ -283,7 +283,7 @@ export default function PipelinePage() {
         action={
           <Link
             to="/analyze"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#6366F1] hover:bg-[#4F46E5] text-white text-[13px] font-medium transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent-primary hover:bg-accent-hover text-white text-xs font-medium transition-colors"
           >
             <Plus size={14} />
             Add Deal
@@ -341,17 +341,17 @@ export default function PipelinePage() {
             <DragOverlay dropAnimation={{ duration: 160, easing: 'ease-out' }}>
               {activeCard ? (
                 <div
-                  className="rounded-xl border border-[#252540] bg-[#16162A] p-4 space-y-3 shadow-2xl rotate-1"
+                  className="rounded-xl border border-border-default bg-app-elevated p-4 space-y-3 shadow-2xl rotate-1"
                   style={{ width: 240, cursor: 'grabbing' }}
                 >
-                  <p className="text-[13px] font-medium text-[#F1F5F9] leading-tight line-clamp-2">
+                  <p className="text-xs font-medium text-text-primary leading-tight line-clamp-2">
                     {activeCard.address}
                   </p>
                   <div className="flex items-center gap-2">
                     <OverlayStrategyBadge strategy={activeCard.strategy} />
                   </div>
                   {activeCard.asking_price != null && activeCard.asking_price > 0 && (
-                    <span className="text-[12px] font-mono text-[#94A3B8]">
+                    <span className="text-xs font-mono text-text-secondary">
                       ${activeCard.asking_price.toLocaleString()}
                     </span>
                   )}
@@ -376,15 +376,15 @@ export default function PipelinePage() {
 
       {/* Remove from pipeline confirmation dialog */}
       <AlertDialog open={removeTarget !== null} onOpenChange={(open) => { if (!open) setRemoveTarget(null) }}>
-        <AlertDialogContent className="bg-[#0F0F1A] border-[#1A1A2E]">
+        <AlertDialogContent className="bg-app-surface border-border-subtle">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-[#F1F5F9]">Remove from pipeline?</AlertDialogTitle>
-            <AlertDialogDescription className="text-[#94A3B8]">
+            <AlertDialogTitle className="text-text-primary">Remove from pipeline?</AlertDialogTitle>
+            <AlertDialogDescription className="text-text-secondary">
               This deal will be removed from your pipeline. You can always re-add it later from your deals list.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-[#1A1A2E] border-[#2A2A3E] text-[#F1F5F9] hover:bg-[#252540]">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="bg-app-elevated border-border-default text-text-primary hover:bg-border-default">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmRemoveCard}
               className="bg-red-600 hover:bg-red-700 text-white"

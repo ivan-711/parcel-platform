@@ -25,7 +25,7 @@ function AnimatedKPI({
 
   return (
     <div className="p-3 rounded-xl bg-app-elevated border border-border-subtle space-y-1">
-      <p className="text-[10px] uppercase tracking-widest text-text-muted">{label}</p>
+      <p className="text-[10px] uppercase tracking-[0.08em] text-text-muted">{label}</p>
       <p className="text-base font-mono font-semibold leading-none" style={{ color }}>
         {value.toFixed(decimals)}{suffix}
       </p>
@@ -47,7 +47,7 @@ function StaticKPI({
 }) {
   return (
     <div className="p-3 rounded-xl bg-app-elevated border border-border-subtle space-y-1">
-      <p className="text-[10px] uppercase tracking-widest text-text-muted">{label}</p>
+      <p className="text-[10px] uppercase tracking-[0.08em] text-text-muted">{label}</p>
       <p className="text-base font-mono font-semibold leading-none" style={{ color }}>
         {(0).toFixed(decimals)}{suffix}
       </p>
@@ -76,7 +76,7 @@ export function FeaturesBento() {
           transition={{ duration: 0.35 }}
           className="space-y-3"
         >
-          <p className="text-[10px] uppercase tracking-[0.15em] text-accent-primary font-semibold">
+          <p className="text-[10px] uppercase tracking-[0.08em] text-accent-primary font-semibold">
             Features
           </p>
           <h2 className="text-4xl font-semibold tracking-tight text-text-primary">
@@ -229,7 +229,7 @@ export function FeaturesBento() {
               ].map(({ stage, count, deals }) => (
                 <div key={stage} className="bg-app-elevated rounded-xl p-3 space-y-2">
                   <div className="flex items-center justify-between">
-                    <p className="text-[10px] uppercase tracking-[0.12em] text-text-muted font-semibold">
+                    <p className="text-[10px] uppercase tracking-[0.08em] text-text-muted font-semibold">
                       {stage}
                     </p>
                     <span className="text-[10px] font-mono text-text-disabled bg-app-overlay px-1.5 py-0.5 rounded">

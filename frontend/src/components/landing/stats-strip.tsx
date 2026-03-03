@@ -69,12 +69,12 @@ function StatCell({ stat, inView, reducedMotion }: { stat: StatItem; inView: boo
         strokeWidth={1.75}
         aria-hidden="true"
       />
-      <p className="text-3xl font-mono font-bold text-text-primary">
+      <p className="text-3xl font-mono font-semibold text-text-primary">
         {stat.prefix}
         {displayValue}
         {stat.suffix}
       </p>
-      <p className="text-xs text-text-muted tracking-wide">{stat.label}</p>
+      <p className="text-xs text-text-muted tracking-[0.08em]">{stat.label}</p>
     </div>
   )
 }

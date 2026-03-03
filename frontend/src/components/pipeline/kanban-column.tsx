@@ -64,7 +64,7 @@ export function KanbanColumn({
         />
         <span
           className={[
-            'text-[11px] font-medium uppercase tracking-widest transition-colors duration-150',
+            'text-[11px] font-medium uppercase tracking-[0.08em] transition-colors duration-150',
             isColumnFocused ? 'text-[#F1F5F9]' : 'text-[#94A3B8]',
           ].join(' ')}
         >

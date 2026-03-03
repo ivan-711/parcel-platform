@@ -60,7 +60,7 @@ const MD: React.ComponentProps<typeof ReactMarkdown>['components'] = {
   ),
   thead: ({ children }) => <thead className="bg-[#16162A]">{children}</thead>,
   th: ({ children }) => (
-    <th className="px-3 py-2 text-[11px] uppercase tracking-wider text-[#94A3B8] text-left font-medium">
+    <th className="px-3 py-2 text-[11px] uppercase tracking-[0.08em] text-[#94A3B8] text-left font-medium">
       {children}
     </th>
   ),
@@ -280,7 +280,7 @@ export default function ChatPage() {
                     onClick={() => void handleSend(q.question)}
                     className="text-left p-3 rounded-xl border border-[#252540] bg-[#0F0F1A] hover:border-[#6366F1]/40 hover:bg-[#16162A] transition-colors cursor-pointer space-y-0.5"
                   >
-                    <p className="text-[11px] uppercase tracking-wide text-[#475569] font-medium">
+                    <p className="text-[11px] uppercase tracking-[0.08em] text-[#475569] font-medium">
                       {q.category}
                     </p>
                     <p className="text-[13px] text-[#94A3B8] leading-snug">{q.question}</p>

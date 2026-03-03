@@ -145,7 +145,7 @@ function DetailPanel({
           transition={{ ...fadeUp.transition, delay: 0.05 }}
           className="rounded-xl border border-border-subtle bg-app-surface p-4"
         >
-          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">
+          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-[0.08em] mb-2">
             AI Summary
           </h3>
           <p className="text-sm text-text-primary leading-relaxed">{doc.ai_summary}</p>
@@ -172,7 +172,7 @@ function DetailPanel({
           transition={{ ...fadeUp.transition, delay: 0.1 }}
           className="rounded-xl border border-border-subtle bg-app-surface p-4"
         >
-          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">
+          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-[0.08em] mb-2">
             Risk Flags
           </h3>
           <div className="space-y-3">
@@ -196,13 +196,13 @@ function DetailPanel({
           transition={{ ...fadeUp.transition, delay: 0.15 }}
           className="rounded-xl border border-border-subtle bg-app-surface p-4"
         >
-          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">
+          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-[0.08em] mb-2">
             Extracted Numbers
           </h3>
           <div className="grid grid-cols-2 gap-x-4 gap-y-2">
             {numbers.map(([key, value]) => (
               <div key={key} className="flex flex-col">
-                <span className="text-[10px] text-text-muted uppercase tracking-wide">
+                <span className="text-[10px] text-text-muted uppercase tracking-[0.08em]">
                   {formatLabel(key)}
                 </span>
                 <NumberValue keyName={key} value={value} />
@@ -219,7 +219,7 @@ function DetailPanel({
           transition={{ ...fadeUp.transition, delay: 0.2 }}
           className="rounded-xl border border-border-subtle bg-app-surface p-4"
         >
-          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">
+          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-[0.08em] mb-2">
             Key Terms
           </h3>
           <ul className="space-y-1">

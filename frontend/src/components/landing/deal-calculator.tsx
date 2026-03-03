@@ -194,7 +194,7 @@ export function InteractiveDealCalc() {
           transition={{ duration: 0.35 }}
           className="space-y-3"
         >
-          <p className="text-[10px] uppercase tracking-[0.15em] text-accent-primary font-semibold">
+          <p className="text-[10px] uppercase tracking-[0.08em] text-accent-primary font-semibold">
             Try It Now
           </p>
           <h2 className="text-4xl font-semibold tracking-tight text-text-primary">
@@ -225,7 +225,7 @@ export function InteractiveDealCalc() {
             <div>
               <label
                 htmlFor="calc-purchase-price"
-                className="block text-xs font-medium text-text-secondary uppercase tracking-wide mb-1.5"
+                className="block text-xs font-medium text-text-secondary uppercase tracking-[0.08em] mb-1.5"
               >
                 Purchase Price
               </label>
@@ -252,7 +252,7 @@ export function InteractiveDealCalc() {
             <div>
               <label
                 htmlFor="calc-down-payment"
-                className="block text-xs font-medium text-text-secondary uppercase tracking-wide mb-1.5"
+                className="block text-xs font-medium text-text-secondary uppercase tracking-[0.08em] mb-1.5"
               >
                 Down Payment
               </label>
@@ -280,7 +280,7 @@ export function InteractiveDealCalc() {
             <div>
               <label
                 htmlFor="calc-monthly-rent"
-                className="block text-xs font-medium text-text-secondary uppercase tracking-wide mb-1.5"
+                className="block text-xs font-medium text-text-secondary uppercase tracking-[0.08em] mb-1.5"
               >
                 Monthly Rent
               </label>
@@ -307,7 +307,7 @@ export function InteractiveDealCalc() {
             <div>
               <label
                 htmlFor="calc-strategy"
-                className="block text-xs font-medium text-text-secondary uppercase tracking-wide mb-1.5"
+                className="block text-xs font-medium text-text-secondary uppercase tracking-[0.08em] mb-1.5"
               >
                 Strategy
               </label>
@@ -350,7 +350,7 @@ export function InteractiveDealCalc() {
                   key={kpi.label}
                   className="rounded-xl border border-border-subtle bg-app-surface p-4"
                 >
-                  <p className="text-[9px] uppercase tracking-widest text-text-muted mb-1">
+                  <p className="text-[9px] uppercase tracking-[0.08em] text-text-muted mb-1">
                     {kpi.label}
                   </p>
                   <p

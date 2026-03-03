@@ -118,7 +118,7 @@ export function DemoCard() {
           <div className="grid grid-cols-4 divide-x divide-border-subtle border-b border-border-subtle">
             {metricCells.map(({ label, value, color }) => (
               <div key={label} className="px-4 py-4 space-y-1">
-                <p className="text-[10px] uppercase tracking-[0.1em] text-text-muted font-medium">
+                <p className="text-[10px] uppercase tracking-[0.08em] text-text-muted font-medium">
                   {label}
                 </p>
                 <p
@@ -143,7 +143,7 @@ export function DemoCard() {
                 <span className="text-[10px] font-bold text-accent-primary">AI</span>
               </div>
               <div className="space-y-0.5">
-                <p className="text-[10px] uppercase tracking-[0.1em] text-accent-primary font-semibold">
+                <p className="text-[10px] uppercase tracking-[0.08em] text-accent-primary font-semibold">
                   Analysis
                 </p>
                 <p className="text-xs text-text-secondary leading-relaxed">

@@ -204,7 +204,7 @@ export default function ShareDealPage() {
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#08080F]/85 border-b border-[#1A1A2E]">
         <div className="max-w-[720px] mx-auto px-6 h-14 flex items-center justify-between">
           <ParcelLogo />
-          <span className="text-[10px] text-[#475569] font-mono uppercase tracking-widest">
+          <span className="text-[10px] text-[#475569] font-mono uppercase tracking-[0.08em]">
             Shared Deal
           </span>
         </div>
@@ -232,7 +232,7 @@ export default function ShareDealPage() {
           {/* Card 1: Primary metric (emphasized) */}
           {deal.primary_metric_label && (
             <div className="rounded-xl bg-[#0F0F1A] border border-[#1A1A2E] p-5 space-y-1 border-l-4 border-l-accent-primary">
-              <p className="text-[11px] uppercase tracking-wider text-[#94A3B8]">
+              <p className="text-[11px] uppercase tracking-[0.08em] text-[#94A3B8]">
                 {deal.primary_metric_label}
               </p>
               <p className="text-[28px] font-mono font-semibold text-[#F1F5F9] leading-tight">
@@ -247,7 +247,7 @@ export default function ShareDealPage() {
               key={key}
               className="rounded-xl bg-[#0F0F1A] border border-[#1A1A2E] p-5 space-y-1"
             >
-              <p className="text-[11px] uppercase tracking-wider text-[#94A3B8]">
+              <p className="text-[11px] uppercase tracking-[0.08em] text-[#94A3B8]">
                 {label}
               </p>
               <p className="text-[28px] font-mono font-semibold text-[#F1F5F9] leading-tight">
@@ -260,7 +260,7 @@ export default function ShareDealPage() {
           {deal.risk_score !== null && (
             <div className="rounded-xl bg-[#0F0F1A] border border-[#1A1A2E] p-5 space-y-1">
               <div className="flex items-center gap-1">
-                <p className="text-[11px] uppercase tracking-wider text-[#94A3B8]">
+                <p className="text-[11px] uppercase tracking-[0.08em] text-[#94A3B8]">
                   Risk Score
                 </p>
                 <Popover>

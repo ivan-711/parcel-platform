@@ -136,7 +136,7 @@ export default function Dashboard() {
   }), [stats?.total_deals, stats?.active_pipeline_deals, closedDeals])
 
   const demoBanner = isDemoUser && !bannerDismissed ? (
-    <div className="bg-[#6366F1]/10 border border-[#6366F1]/30 rounded-xl px-4 py-3 text-xs text-[#C4B5FD] flex items-center justify-between mb-6">
+    <div className="bg-accent-primary/10 border border-accent-primary/30 rounded-xl px-4 py-3 text-xs text-[#C4B5FD] flex items-center justify-between mb-6">
       <p>
         You're viewing a demo account. Create your free account to analyze your own deals.{' '}
         <Link to="/register" className="font-semibold text-accent-primary hover:underline">
@@ -306,10 +306,10 @@ export default function Dashboard() {
               <table className="w-full min-w-[600px]">
                 <thead>
                   <tr className="border-b border-border-subtle">
-                    <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Address</th>
-                    <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Strategy</th>
-                    <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Risk</th>
-                    <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Status</th>
+                    <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Address</th>
+                    <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Strategy</th>
+                    <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Risk</th>
+                    <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Status</th>
                     <th className="px-4 py-3" />
                   </tr>
                 </thead>
@@ -410,7 +410,7 @@ export default function Dashboard() {
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.18, ease: 'easeOut', delay: 0.05 * index }}
-                    className="flex items-center gap-3 bg-[#0F0F1A] rounded-lg px-4 py-3 hover:bg-[#16162A] transition-colors"
+                    className="flex items-center gap-3 bg-app-surface rounded-lg px-4 py-3 hover:bg-app-elevated transition-colors"
                   >
                     <div
                       className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"

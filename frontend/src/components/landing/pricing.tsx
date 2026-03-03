@@ -28,7 +28,7 @@ export function Pricing() {
           transition={{ duration: 0.35 }}
           className="space-y-3"
         >
-          <p className="text-[10px] uppercase tracking-[0.15em] text-accent-primary font-semibold">
+          <p className="text-[10px] uppercase tracking-[0.08em] text-accent-primary font-semibold">
             Pricing
           </p>
           <h2 className="text-4xl font-semibold tracking-tight text-text-primary">Simple, transparent pricing</h2>
@@ -63,7 +63,7 @@ export function Pricing() {
               )}
             >
               Annual
-              <span className="text-[10px] font-bold uppercase tracking-wide bg-accent-success/20 text-accent-success px-1.5 py-0.5 rounded">
+              <span className="text-[10px] font-bold uppercase tracking-[0.08em] bg-accent-success/20 text-accent-success px-1.5 py-0.5 rounded">
                 Save 20%
               </span>
             </button>
@@ -108,7 +108,7 @@ export function Pricing() {
                 {/* Header */}
                 <div className="space-y-1">
                   {tier.highlighted && (
-                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-accent-primary mb-2">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-accent-primary mb-2">
                       Most popular
                     </p>
                   )}

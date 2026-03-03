@@ -466,7 +466,7 @@ export default function PortfolioPage() {
         {/* Cash Flow Over Time Chart */}
         <motion.div variants={itemVariants}>
           <div className="bg-[#0F0F1A] border border-[#1A1A2E] rounded-xl p-5">
-            <p className="text-[11px] font-medium uppercase tracking-wider text-[#94A3B8] mb-4">
+            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#94A3B8] mb-4">
               Cash Flow Over Time
             </p>
             {chartData.length >= 2 ? (
@@ -516,7 +516,7 @@ export default function PortfolioPage() {
           <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Strategy Breakdown Donut Chart */}
             <div className="bg-[#0F0F1A] border border-white/10 rounded-xl p-6">
-              <p className="text-[11px] font-medium uppercase tracking-wider text-[#94A3B8] mb-4">
+              <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#94A3B8] mb-4">
                 Portfolio by Strategy
               </p>
               {strategyBreakdownData.length > 0 ? (
@@ -575,7 +575,7 @@ export default function PortfolioPage() {
 
             {/* Monthly Cash Flow Bar Chart */}
             <div className="bg-[#0F0F1A] border border-white/10 rounded-xl p-6">
-              <p className="text-[11px] font-medium uppercase tracking-wider text-[#94A3B8] mb-4">
+              <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#94A3B8] mb-4">
                 Monthly Cash Flow
               </p>
               {monthlyCashFlowData.length > 0 ? (
@@ -623,7 +623,7 @@ export default function PortfolioPage() {
         {/* Closed Deals Table */}
         <motion.div variants={itemVariants} className="space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] font-medium uppercase tracking-wider text-[#94A3B8]">
+            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#94A3B8]">
               Closed Deals
             </p>
             <button
@@ -646,14 +646,14 @@ export default function PortfolioPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-[#1A1A2E]">
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Address</th>
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Strategy</th>
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Closed Date</th>
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Price</th>
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Profit</th>
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Monthly CF</th>
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3">Notes</th>
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-wide px-4 py-3 w-[60px]"></th>
+                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Address</th>
+                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Strategy</th>
+                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Closed Date</th>
+                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Price</th>
+                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Profit</th>
+                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Monthly CF</th>
+                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Notes</th>
+                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3 w-[60px]"></th>
                     </tr>
                   </thead>
                   <tbody>

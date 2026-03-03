@@ -60,7 +60,7 @@ export function ComparisonTable() {
           transition={{ duration: 0.35 }}
           className="space-y-3"
         >
-          <p className="text-[10px] uppercase tracking-[0.15em] text-accent-primary font-semibold">
+          <p className="text-[10px] uppercase tracking-[0.08em] text-accent-primary font-semibold">
             Comparison
           </p>
           <h2 className="text-4xl font-semibold tracking-tight text-text-primary">
@@ -78,14 +78,14 @@ export function ComparisonTable() {
               {/* Header row */}
               <thead>
                 <tr className="border-b border-border-subtle">
-                  <th className="sticky left-0 z-10 bg-app-surface text-left py-4 px-5 text-xs font-medium text-text-muted uppercase tracking-wider w-[45%]">
+                  <th className="sticky left-0 z-10 bg-app-surface text-left py-4 px-5 text-xs font-medium text-text-muted uppercase tracking-[0.08em] w-[45%]">
                     Feature
                   </th>
                   {COLUMNS.map((col) => (
                     <th
                       key={col}
                       className={cn(
-                        'py-4 px-5 text-center text-xs font-medium uppercase tracking-wider',
+                        'py-4 px-5 text-center text-xs font-medium uppercase tracking-[0.08em]',
                         col === 'Parcel'
                           ? 'text-accent-primary font-semibold border-l-2 border-accent-primary/30'
                           : 'text-text-muted',
