@@ -91,6 +91,9 @@ export default function SettingsPage() {
           { ...existingUser, name: updated.name, email: updated.email }
         )
       }
+
+      // Sync the query cache so the form shows fresh data
+      queryClient.invalidateQueries({ queryKey: ['me'] })
     },
     onError: (err: Error) => {
       setProfileMsg({ type: 'error', text: err.message })

@@ -1,6 +1,7 @@
 /** SSE streaming utility for AI chat — uses fetch + ReadableStream (not EventSource). */
 
 import type { ChatRequest } from '@/types'
+import { useAuthStore } from '@/stores/authStore'
 
 const API_URL = (import.meta.env.VITE_API_URL ?? 'https://api.parceldesk.io').replace('http://', 'https://')
 
@@ -27,6 +28,11 @@ export async function* streamChat(
     throw err
   }
 
+  if (res.status === 401) {
+    useAuthStore.getState().clearAuth()
+    throw new Error('Session expired')
+  }
+
   if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`)
 
   const reader = res.body.getReader()
@@ -46,7 +52,12 @@ export async function* streamChat(
       for (const event of events) {
         for (const line of event.split('\n')) {
           if (!line.startsWith('data: ')) continue
-          const json = JSON.parse(line.slice(6)) as { delta?: string; done?: boolean; error?: string }
+          let json: { delta?: string; done?: boolean; error?: string }
+          try {
+            json = JSON.parse(line.slice(6)) as { delta?: string; done?: boolean; error?: string }
+          } catch {
+            continue
+          }
           if (json.error) throw new Error(json.error)
           if (json.done) return
           if (json.delta) yield json.delta

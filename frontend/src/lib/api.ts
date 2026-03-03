@@ -54,11 +54,16 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     ...(options?.headers as Record<string, string>),
   }
 
-  const res = await fetch(`${API_URL}${path}`, {
-    credentials: 'include',
-    ...options,
-    headers,
-  })
+  let res: Response
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      credentials: 'include',
+      ...options,
+      headers,
+    })
+  } catch {
+    throw new Error('Network error — please check your connection and try again.')
+  }
 
   if (res.status === 401) {
     // Don't attempt refresh for the refresh endpoint itself
