@@ -256,8 +256,8 @@ export function ParallaxBackground() {
         }}
       />
 
-      {/* Ghost card layers — scroll canvas */}
-      <div style={{ position: 'absolute', inset: 0 }}>
+      {/* Ghost card layers — scroll canvas. Hidden on mobile for performance. */}
+      <div className="hidden md:block" style={{ position: 'absolute', inset: 0 }}>
         {LAYERS.map((layer) => (
           <ParallaxLayer
             key={layer.yEnd}
