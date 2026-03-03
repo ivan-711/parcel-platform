@@ -130,6 +130,17 @@ export default {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0' },
         },
+        'glow-breathe': {
+          '0%, 100%': { opacity: '0.12' },
+          '50%': { opacity: '0.2' },
+        },
+        'pipeline-slide': {
+          '0%': { transform: 'translateX(0)' },
+          '40%': { transform: 'translateX(0)' },
+          '50%': { transform: 'translateX(calc(100% + 12px))' },
+          '90%': { transform: 'translateX(calc(100% + 12px))' },
+          '100%': { transform: 'translateX(0)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -139,6 +150,8 @@ export default {
         drift2: 'drift2 12s ease-in-out infinite',
         drift3: 'drift3 18s ease-in-out infinite',
         blink: 'blink 1s step-end infinite',
+        'glow-breathe': 'glow-breathe 6s ease-in-out infinite',
+        'pipeline-slide': 'pipeline-slide 5s ease-in-out infinite',
       },
     },
   },
