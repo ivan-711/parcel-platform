@@ -13,10 +13,11 @@ interface MobilePipelineProps {
   isLoading: boolean
   onRemove?: (pipelineId: string, stage: Stage) => void
   onCloseDeal?: (card: PipelineCard) => void
+  onMoveStage?: (pipelineId: string, fromStage: Stage, toStage: Stage) => void
 }
 
 /** MobilePipeline renders a tabbed stage selector with a vertically scrollable card list. */
-export function MobilePipeline({ board, isLoading, onRemove, onCloseDeal }: MobilePipelineProps) {
+export function MobilePipeline({ board, isLoading, onRemove, onCloseDeal, onMoveStage }: MobilePipelineProps) {
   const [activeStage, setActiveStage] = useState<Stage>('lead')
   const tabsRef = useRef<HTMLDivElement>(null)
   const activeTabRef = useRef<HTMLButtonElement>(null)
@@ -137,6 +138,7 @@ export function MobilePipeline({ board, isLoading, onRemove, onCloseDeal }: Mobi
                     card={card}
                     onRemove={onRemove}
                     onCloseDeal={onCloseDeal}
+                    onMoveStage={onMoveStage}
                   />
                 </motion.div>
               ))}

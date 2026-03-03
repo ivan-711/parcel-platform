@@ -3,8 +3,8 @@
 import { memo, useState, useRef, useEffect, useCallback } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, MoreHorizontal, Trash2, CheckCircle2 } from 'lucide-react'
-import { STRATEGY_COLORS, STRATEGY_LABELS } from './constants'
+import { GripVertical, MoreHorizontal, Trash2, CheckCircle2, ArrowRight } from 'lucide-react'
+import { STAGES, STRATEGY_COLORS, STRATEGY_LABELS } from './constants'
 import type { PipelineCard, Stage } from './constants'
 
 /** Strategy badge — color-coded pill by strategy key. */
@@ -26,10 +26,12 @@ interface DealCardProps {
   isFocused?: boolean
   onRemove?: (pipelineId: string, stage: Stage) => void
   onCloseDeal?: (card: PipelineCard) => void
+  onMoveStage?: (pipelineId: string, fromStage: Stage, toStage: Stage) => void
 }
 
-export const DealCard = memo(function DealCard({ card, isDragging = false, isFocused = false, onRemove, onCloseDeal }: DealCardProps) {
+export const DealCard = memo(function DealCard({ card, isDragging = false, isFocused = false, onRemove, onCloseDeal, onMoveStage }: DealCardProps) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [showMoveMenu, setShowMoveMenu] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -41,6 +43,11 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [menuOpen])
+
+  // Reset move submenu when menu closes
+  useEffect(() => {
+    if (!menuOpen) setShowMoveMenu(false)
   }, [menuOpen])
 
   return (
@@ -101,6 +108,42 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
               <CheckCircle2 size={14} />
               Close Deal
             </button>
+          )}
+          {onMoveStage && (
+            <>
+              <button
+                type="button"
+                className="flex items-center justify-between gap-2 px-3 py-1.5 text-[12px] text-[#94A3B8] hover:bg-[#1A1A2E] hover:text-[#6366F1] w-full transition-colors"
+                onClick={() => setShowMoveMenu((v) => !v)}
+              >
+                <span className="flex items-center gap-2">
+                  <ArrowRight size={14} />
+                  Move to...
+                </span>
+              </button>
+              {showMoveMenu && (
+                <div className="border-t border-[#1A1A2E] py-1">
+                  {STAGES.filter((s) => s.key !== card.stage).map((stage) => (
+                    <button
+                      key={stage.key}
+                      type="button"
+                      className="flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#94A3B8] hover:bg-[#1A1A2E] hover:text-text-primary w-full transition-colors"
+                      onClick={() => {
+                        onMoveStage(card.pipeline_id, card.stage, stage.key)
+                        setMenuOpen(false)
+                        setShowMoveMenu(false)
+                      }}
+                    >
+                      <span
+                        className="w-2 h-2 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: stage.color }}
+                      />
+                      {stage.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
           )}
           {onRemove && (
             <button

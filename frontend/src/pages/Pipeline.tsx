@@ -6,7 +6,7 @@
  * Route: /pipeline
  */
 import { useState, useCallback, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   DndContext,
@@ -83,9 +83,10 @@ export default function PipelinePage() {
   // Local board state — derived from server, mutated optimistically
   const [localBoard, setLocalBoard] = useState<Record<Stage, PipelineCard[]> | null>(null)
 
+  const rawBoard = (pipelineData as { data?: Record<string, PipelineCard[]> } | undefined)?.data ?? pipelineData
   const board: Record<Stage, PipelineCard[]> =
     localBoard ??
-    (pipelineData as Record<Stage, PipelineCard[]> | undefined) ??
+    (rawBoard as Record<Stage, PipelineCard[]> | undefined) ??
     (Object.fromEntries(STAGES.map((s) => [s.key, []])) as unknown as Record<Stage, PipelineCard[]>)
 
   // ── Keyboard navigation ────────────────────────────────────────────────
@@ -150,6 +151,19 @@ export default function PipelinePage() {
       setRemoveTarget({ pipelineId, stage })
     },
     []
+  )
+
+  /** Move a card to a different stage (used by mobile "Move to..." menu). */
+  const handleMoveStage = useCallback(
+    (pipelineId: string, fromStage: Stage, toStage: Stage) => {
+      const card = board[fromStage]?.find((c) => c.pipeline_id === pipelineId)
+      if (!card) return
+      const sourceCards = board[fromStage].filter((c) => c.pipeline_id !== pipelineId)
+      const destCards = [{ ...card, stage: toStage }, ...board[toStage]]
+      setLocalBoard({ ...board, [fromStage]: sourceCards, [toStage]: destCards })
+      updateStageMutation.mutate({ pipelineId, stage: toStage })
+    },
+    [board, updateStageMutation]
   )
 
   const confirmRemoveCard = useCallback(() => {
@@ -266,13 +280,13 @@ export default function PipelinePage() {
         title="Pipeline"
         subtitle={totalDeals > 0 ? `${totalDeals} deal${totalDeals !== 1 ? 's' : ''} tracked` : undefined}
         action={
-          <a
-            href="/analyze"
+          <Link
+            to="/analyze"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#6366F1] hover:bg-[#4F46E5] text-white text-[13px] font-medium transition-colors"
           >
             <Plus size={14} />
             Add Deal
-          </a>
+          </Link>
         }
       />
 
@@ -284,6 +298,7 @@ export default function PipelinePage() {
             isLoading={isLoading}
             onRemove={handleRemoveCard}
             onCloseDeal={handleCloseDeal}
+            onMoveStage={handleMoveStage}
           />
         </div>
 
