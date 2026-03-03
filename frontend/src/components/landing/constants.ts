@@ -96,7 +96,7 @@ export const STATS: StatItem[] = [
 export const PRICING: PricingTier[] = [
   {
     name: 'Free', price: '$0', period: 'forever',
-    description: 'Everything you need to get started.',
+    description: '5 deals/month. Full pipeline. PDF exports.',
     features: ['5 deal analyses / month', 'Pipeline (up to 10 deals)', 'Basic AI chat', 'PDF exports'],
     highlighted: false, cta: 'Start free',
   },

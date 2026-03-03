@@ -75,7 +75,7 @@ export function Hero() {
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-accent-primary/30 bg-accent-primary/8 text-accent-primary text-xs font-medium"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-pulse" />
-          Built for real estate professionals
+          Built for wholesalers, investors, and agents
         </motion.div>
 
         {/* Headline */}
@@ -89,7 +89,7 @@ export function Hero() {
             className="font-bold text-text-primary leading-[0.95] tracking-tight"
             style={{ fontSize: 'clamp(48px, 7vw, 80px)' }}
           >
-            Close More Deals.
+            Underwrite Any Deal in 60 Seconds.
           </h1>
           <h1
             className="font-bold leading-[0.95] tracking-tight"
@@ -106,8 +106,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-base text-text-secondary max-w-md leading-relaxed"
         >
-          Analyze any deal in seconds. Track your pipeline. Process documents with AI.
-          Everything a real estate professional needs — in one platform.
+          Five strategies. One analysis. Run wholesale, BRRRR, creative finance, buy-and-hold, and flip numbers side by side — then track every deal from lead to close.
         </motion.p>
 
         {/* CTAs */}

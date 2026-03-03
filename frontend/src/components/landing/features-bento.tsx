@@ -80,7 +80,7 @@ export function FeaturesBento() {
             Features
           </p>
           <h2 className="text-4xl font-semibold tracking-tight text-text-primary">
-            The full stack for deal professionals
+            Calculator. Pipeline. AI. One login.
           </h2>
           <p className="text-sm text-text-secondary max-w-md leading-relaxed">
             One platform replaces five spreadsheets, two apps, and your legal pad.
@@ -107,7 +107,7 @@ export function FeaturesBento() {
               <div className="w-9 h-9 rounded-xl bg-accent-primary/10 border border-accent-primary/20 flex items-center justify-center">
                 <Calculator size={17} className="text-accent-primary" />
               </div>
-              <h3 className="font-semibold text-text-primary">Multi-Strategy Analysis</h3>
+              <h3 className="font-semibold text-text-primary">Five strategies. One click.</h3>
               <p className="text-xs text-text-secondary leading-relaxed max-w-sm">
                 Run wholesale, creative finance, BRRRR, buy & hold, and flip simultaneously. Know which strategy wins before you make the call.
               </p>
@@ -170,7 +170,7 @@ export function FeaturesBento() {
               <div className="w-9 h-9 rounded-xl bg-accent-secondary/10 border border-accent-secondary/20 flex items-center justify-center">
                 <FileText size={17} className="text-accent-secondary" />
               </div>
-              <h3 className="font-semibold text-text-primary">AI Document Processing</h3>
+              <h3 className="font-semibold text-text-primary">Upload a contract. Get answers.</h3>
               <p className="text-xs text-text-secondary leading-relaxed">
                 Upload contracts and leases. Claude extracts key terms, flags risks, and answers your questions in plain English.
               </p>

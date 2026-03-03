@@ -31,7 +31,7 @@ export function Pricing() {
           <p className="text-[10px] uppercase tracking-[0.08em] text-accent-primary font-semibold">
             Pricing
           </p>
-          <h2 className="text-4xl font-semibold tracking-tight text-text-primary">Simple, transparent pricing</h2>
+          <h2 className="text-4xl font-semibold tracking-tight text-text-primary">Five free analyses. Upgrade when you close.</h2>
           <p className="text-sm text-text-secondary">
             No annual contracts. No per-deal fees. Cancel any time.
           </p>

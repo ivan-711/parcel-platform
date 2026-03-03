@@ -64,7 +64,7 @@ export function ComparisonTable() {
             Comparison
           </p>
           <h2 className="text-4xl font-semibold tracking-tight text-text-primary">
-            Why investors choose Parcel
+            Parcel vs. your spreadsheet
           </h2>
           <p className="text-sm text-text-secondary max-w-lg">
             See how Parcel stacks up against spreadsheets and other deal analysis tools.

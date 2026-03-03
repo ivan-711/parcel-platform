@@ -194,7 +194,7 @@ export function Testimonials() {
             Testimonials
           </p>
           <h2 className="text-4xl font-semibold tracking-tight text-text-primary">
-            Trusted by investors nationwide
+            What investors are closing with Parcel
           </h2>
         </motion.div>
 
