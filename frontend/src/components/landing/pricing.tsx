@@ -84,7 +84,7 @@ export function Pricing() {
               </ul>
 
               {/* CTA */}
-              <Link to="/register" className="block">
+              <Link to="/register" className="block rounded-lg focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none">
                 <Button
                   className={cn(
                     'w-full text-sm font-semibold cursor-pointer transition-colors duration-150',

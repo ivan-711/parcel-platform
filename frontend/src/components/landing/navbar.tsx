@@ -42,7 +42,7 @@ export function Navbar() {
             <a
               key={label}
               href={href}
-              className="hover:text-text-primary transition-colors duration-150 cursor-pointer"
+              className="hover:text-text-primary transition-colors duration-150 cursor-pointer rounded focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none"
             >
               {label}
             </a>
@@ -53,11 +53,11 @@ export function Navbar() {
         <div className="flex items-center gap-3">
           <Link
             to="/login"
-            className="text-sm text-text-secondary hover:text-text-primary transition-colors duration-150 cursor-pointer"
+            className="text-sm text-text-secondary hover:text-text-primary transition-colors duration-150 cursor-pointer rounded focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none"
           >
             Sign in
           </Link>
-          <Link to="/register">
+          <Link to="/register" className="rounded focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none">
             <Button
               size="sm"
               className="bg-accent-primary hover:bg-accent-hover text-white text-sm h-8 px-4 cursor-pointer transition-colors duration-150"

@@ -6,6 +6,7 @@
  */
 
 import { ParallaxBackground } from '@/components/landing/ParallaxBackground'
+import { SkipToContent } from '@/components/landing/skip-to-content'
 import { Navbar } from '@/components/landing/navbar'
 import { Hero } from '@/components/landing/hero'
 import { Ticker } from '@/components/landing/ticker'
@@ -19,17 +20,20 @@ import { Footer } from '@/components/landing/footer'
 export default function Landing() {
   return (
     <div className="min-h-screen text-text-primary">
+      <SkipToContent />
       <ParallaxBackground />
       <div className="relative z-10">
         <Navbar />
-        <Hero />
-        <Ticker />
-        <StatsStrip />
-        <FeaturesBento />
-        <HowItWorks />
-        <Pricing />
-        <FinalCTA />
-        <Footer />
+        <main id="main-content">
+          <Hero />
+          <Ticker />
+          <StatsStrip />
+          <FeaturesBento />
+          <HowItWorks />
+          <Pricing />
+          <FinalCTA />
+          <Footer />
+        </main>
       </div>
     </div>
   )

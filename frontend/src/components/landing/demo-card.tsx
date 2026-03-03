@@ -52,7 +52,7 @@ export function DemoCard() {
             key={s}
             onClick={() => setActive(s)}
             className={cn(
-              'flex-1 py-2.5 text-[11px] font-medium transition-all duration-150 cursor-pointer whitespace-nowrap min-w-0 px-2',
+              'flex-1 py-2.5 text-[11px] font-medium transition-all duration-150 cursor-pointer whitespace-nowrap min-w-0 px-2 rounded focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none',
               active === s
                 ? 'text-accent-primary bg-accent-primary/5 border-b-2 border-accent-primary'
                 : 'text-text-muted hover:text-text-secondary hover:bg-app-elevated/30',

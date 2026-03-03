@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import { DemoCard } from './demo-card'
+import { TrustBadges } from './trust-badges'
 
 export function Hero() {
   const navigate = useNavigate()
@@ -112,7 +113,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="flex items-center gap-3"
         >
-          <Link to="/register">
+          <Link to="/register" className="focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none rounded-lg">
             <Button className="bg-accent-primary hover:bg-accent-hover text-white h-11 px-6 text-sm font-semibold cursor-pointer transition-colors duration-150">
               Get Started Free
               <ArrowRight size={14} className="ml-1.5" />
@@ -121,7 +122,7 @@ export function Hero() {
           <button
             onClick={handleDemoLogin}
             disabled={demoLoading}
-            className="h-11 px-6 text-sm text-text-secondary hover:text-text-primary border border-border-default hover:border-border-strong rounded-lg transition-colors duration-150 cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-11 px-6 text-sm text-text-secondary hover:text-text-primary border border-border-default hover:border-border-strong rounded-lg transition-colors duration-150 cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none"
           >
             {demoLoading ? 'Loading...' : 'View demo'}
           </button>
@@ -130,6 +131,14 @@ export function Hero() {
         {demoError && (
           <p className="text-xs text-red-400 mt-2">Demo unavailable — try again shortly</p>
         )}
+
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.4, ease: 'easeOut' }}
+        >
+          <TrustBadges />
+        </motion.div>
 
         {/* Interactive demo card */}
         <DemoCard />
