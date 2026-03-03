@@ -96,8 +96,11 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['"Satoshi"', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
+      },
+      fontSize: {
+        micro: ['10px', { lineHeight: '14px', letterSpacing: '0.06em' }],
       },
       keyframes: {
         'accordion-down': {

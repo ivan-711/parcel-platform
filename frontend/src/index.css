@@ -1,8 +1,25 @@
-/* Fonts loaded via <link> in index.html — do NOT duplicate with @import (render-blocking chain) */
+/* Satoshi self-hosted, JetBrains Mono via Google Fonts <link> in index.html */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: 'Satoshi';
+    font-style: normal;
+    font-weight: 300 900;
+    font-display: swap;
+    src: url('/fonts/Satoshi-Variable.woff2') format('woff2-variations');
+  }
+  @font-face {
+    font-family: 'Satoshi';
+    font-style: italic;
+    font-weight: 300 900;
+    font-display: swap;
+    src: url('/fonts/Satoshi-VariableItalic.woff2') format('woff2-variations');
+  }
+}
 
 @layer base {
   :root {
@@ -51,7 +68,7 @@
   body {
     @apply bg-background text-foreground;
     background-color: #08080f;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
   }
 
   /* JetBrains Mono for all financial numbers */
