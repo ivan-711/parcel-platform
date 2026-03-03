@@ -72,6 +72,9 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
           {(onRemove || onCloseDeal) && (
             <button
               type="button"
+              aria-label="Deal actions"
+              aria-haspopup="true"
+              aria-expanded={menuOpen}
               className="opacity-100 md:opacity-0 md:group-hover:opacity-100 text-[#475569] md:text-[#334155] hover:text-[#94A3B8] transition-all min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 flex items-center justify-center"
               onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => {
@@ -95,6 +98,12 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
           ref={menuRef}
           className="absolute top-10 right-3 z-40 rounded-lg border border-[#1A1A2E] bg-[#0F0F1A] shadow-lg py-1"
           onPointerDown={(e) => e.stopPropagation()}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              e.stopPropagation()
+              setMenuOpen(false)
+            }
+          }}
         >
           {onCloseDeal && card.stage !== 'dead' && (
             <button

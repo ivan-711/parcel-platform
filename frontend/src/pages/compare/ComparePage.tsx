@@ -124,7 +124,7 @@ export default function ComparePage() {
 
   const crossStrategy = dealA && dealB && dealA.strategy !== dealB.strategy
 
-  const isLoading = loadingList || (dealAId && loadingA) || (dealBId && loadingB)
+  const isLoading = loadingList || (!!dealAId && loadingA) || (!!dealBId && loadingB)
 
   return (
     <AppShell title="Compare Deals">

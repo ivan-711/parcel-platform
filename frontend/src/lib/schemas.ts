@@ -2,7 +2,13 @@
 
 import { z } from 'zod'
 
-export const wholesaleSchema = z.object({
+/** Shared property info fields included on every strategy form. */
+const propertyInfoSchema = z.object({
+  address: z.string().min(1, 'Property address is required'),
+  zip_code: z.string().regex(/^\d{5}$/, 'Enter a valid 5-digit zip code'),
+})
+
+export const wholesaleSchema = propertyInfoSchema.extend({
   arv: z.number({ message: 'ARV is required' }).positive('ARV must be greater than 0'),
   repair_costs: z.number({ message: 'Repair costs are required' }).positive('Repair costs must be greater than 0'),
   desired_profit: z.number({ message: 'Desired profit is required' }).positive('Desired profit must be greater than 0'),
@@ -16,7 +22,7 @@ export const wholesaleSchema = z.object({
 
 export type WholesaleFormValues = z.infer<typeof wholesaleSchema>
 
-export const buyAndHoldSchema = z.object({
+export const buyAndHoldSchema = propertyInfoSchema.extend({
   purchase_price: z.number({ message: 'Purchase price is required' }).min(10000, 'Min $10,000'),
   down_payment_pct: z.number({ message: 'Down payment is required' }).min(0).max(100),
   interest_rate: z.number({ message: 'Interest rate is required' }).min(0.1).max(25),
@@ -31,7 +37,7 @@ export const buyAndHoldSchema = z.object({
 
 export type BuyAndHoldFormValues = z.infer<typeof buyAndHoldSchema>
 
-export const flipSchema = z.object({
+export const flipSchema = propertyInfoSchema.extend({
   purchase_price: z.number({ message: 'Purchase price is required' }).min(10000),
   rehab_budget: z.number({ message: 'Rehab budget is required' }).min(0),
   arv: z.number({ message: 'ARV is required' }).min(10000),
@@ -42,7 +48,7 @@ export const flipSchema = z.object({
 
 export type FlipFormValues = z.infer<typeof flipSchema>
 
-export const brrrrSchema = z.object({
+export const brrrrSchema = propertyInfoSchema.extend({
   purchase_price: z.number({ message: 'Purchase price is required' }).min(1000),
   rehab_costs: z.number({ message: 'Rehab costs are required' }).min(0),
   arv_post_rehab: z.number({ message: 'ARV is required' }).min(1000),
@@ -55,7 +61,7 @@ export const brrrrSchema = z.object({
 
 export type BRRRRFormValues = z.infer<typeof brrrrSchema>
 
-export const creativeFinanceSchema = z.object({
+export const creativeFinanceSchema = propertyInfoSchema.extend({
   existing_loan_balance: z.number({ message: 'Loan balance is required' }).min(0),
   existing_interest_rate: z.number({ message: 'Interest rate is required' }).min(0).max(25),
   monthly_piti: z.number({ message: 'Monthly PITI is required' }).min(0),

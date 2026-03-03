@@ -14,7 +14,7 @@ export interface PipelineCard {
   deal_id: string
   address: string
   strategy: string
-  asking_price: number
+  asking_price: number | null
   stage: Stage
   days_in_stage: number
   entered_stage_at: string

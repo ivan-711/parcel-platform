@@ -1,6 +1,6 @@
 /** Deal results page — strategy-aware KPI cards, outputs table, risk gauge, and action buttons. */
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { useParams, Link, useNavigate } from 'react-router-dom'
@@ -76,9 +76,11 @@ export default function ResultsPage() {
   const [offerLetterOpen, setOfferLetterOpen] = useState(false)
   const [generatingPDF, setGeneratingPDF] = useState(false)
   const stageMenuRef = useRef<HTMLDivElement>(null)
+  const stageItemsRef = useRef<(HTMLButtonElement | null)[]>([])
+  const [focusedStageIndex, setFocusedStageIndex] = useState(-1)
 
   const deleteDeal = useMutation({
-    mutationFn: () => api.deals.delete(dealId!),
+    mutationFn: () => api.deals.delete(dealId ?? ''),
     onSuccess: () => {
       toast.success('Deal deleted')
       navigate('/deals')
@@ -101,6 +103,16 @@ export default function ResultsPage() {
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [stageMenuOpen])
+
+  useEffect(() => {
+    if (stageMenuOpen && focusedStageIndex >= 0) {
+      stageItemsRef.current[focusedStageIndex]?.focus()
+    }
+  }, [stageMenuOpen, focusedStageIndex])
+
+  useEffect(() => {
+    if (!stageMenuOpen) setFocusedStageIndex(-1)
   }, [stageMenuOpen])
 
   if (isError) {
@@ -173,6 +185,35 @@ export default function ResultsPage() {
       }
     )
   }
+
+  const handleTriggerKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      setStageMenuOpen((v) => !v)
+      if (!stageMenuOpen) setFocusedStageIndex(0)
+    } else if (e.key === 'Escape') {
+      setStageMenuOpen(false)
+    }
+  }, [stageMenuOpen])
+
+  const handleMenuKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setFocusedStageIndex((prev) => Math.min(prev + 1, PIPELINE_STAGES.length - 1))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setFocusedStageIndex((prev) => Math.max(prev - 1, 0))
+    } else if (e.key === 'Enter') {
+      e.preventDefault()
+      if (focusedStageIndex >= 0 && focusedStageIndex < PIPELINE_STAGES.length) {
+        handleAddToPipeline(PIPELINE_STAGES[focusedStageIndex].key)
+      }
+    } else if (e.key === 'Escape') {
+      e.preventDefault()
+      setStageMenuOpen(false)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusedStageIndex])
 
   const showCopied = () => {
     setCopied(true)
@@ -446,7 +487,10 @@ export default function ResultsPage() {
               <button
                 type="button"
                 onClick={() => setStageMenuOpen((v) => !v)}
+                onKeyDown={handleTriggerKeyDown}
                 disabled={addToPipeline.isPending}
+                aria-haspopup="true"
+                aria-expanded={stageMenuOpen}
                 className="inline-flex items-center gap-2 rounded-lg bg-[#6366F1] px-4 py-2 text-sm font-medium text-white hover:bg-[#5558E3] transition-colors disabled:opacity-50"
               >
                 <PlusCircle size={14} />
@@ -455,11 +499,18 @@ export default function ResultsPage() {
               </button>
             )}
             {stageMenuOpen && (
-              <div className="absolute bottom-full mb-1 right-0 z-50 min-w-[180px] rounded-lg border border-[#1A1A2E] bg-[#0F0F1A] py-1 shadow-lg">
-                {PIPELINE_STAGES.map((s) => (
+              <div
+                role="menu"
+                onKeyDown={handleMenuKeyDown}
+                className="absolute bottom-full mb-1 right-0 z-50 min-w-[180px] rounded-lg border border-[#1A1A2E] bg-[#0F0F1A] py-1 shadow-lg"
+              >
+                {PIPELINE_STAGES.map((s, i) => (
                   <button
                     key={s.key}
+                    ref={(el) => { stageItemsRef.current[i] = el }}
                     type="button"
+                    role="menuitem"
+                    tabIndex={focusedStageIndex === i ? 0 : -1}
                     className="flex w-full items-center px-3 py-2 text-sm text-[#F1F5F9] hover:bg-[#6366F1]/20 transition-colors"
                     onClick={() => handleAddToPipeline(s.key)}
                   >
@@ -540,7 +591,7 @@ export default function ResultsPage() {
         onClose={() => setOfferLetterOpen(false)}
         dealId={deal.id}
         address={deal.address}
-        strategy={deal.strategy}
+        strategy={deal.strategy as Strategy}
       />
     </AppShell>
   )

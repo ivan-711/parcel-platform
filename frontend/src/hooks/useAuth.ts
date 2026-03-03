@@ -1,6 +1,6 @@
 /** Auth mutation hooks — wraps api.auth calls with React Query and Zustand store updates. */
 
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
@@ -45,15 +45,18 @@ export function useRegister() {
 export function useLogout() {
   const navigate = useNavigate()
   const clearAuth = useAuthStore((s) => s.clearAuth)
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: () => api.auth.logout(),
     onSuccess: () => {
       clearAuth()
+      queryClient.clear()
       navigate('/login')
     },
     onError: () => {
       clearAuth()
+      queryClient.clear()
       navigate('/login')
     },
   })

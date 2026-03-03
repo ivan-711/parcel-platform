@@ -10,9 +10,18 @@ interface AuthState {
   clearAuth: () => void
 }
 
+function safeParseUser(): User | null {
+  try {
+    return JSON.parse(localStorage.getItem('parcel_user') ?? 'null') as User | null
+  } catch {
+    localStorage.removeItem('parcel_user')
+    return null
+  }
+}
+
 export const useAuthStore = create<AuthState>()((set) => ({
-  user: JSON.parse(localStorage.getItem('parcel_user') ?? 'null') as User | null,
-  isAuthenticated: localStorage.getItem('parcel_user') !== null,
+  user: safeParseUser(),
+  isAuthenticated: safeParseUser() !== null,
 
   setAuth: (user: User) => {
     localStorage.setItem('parcel_user', JSON.stringify(user))

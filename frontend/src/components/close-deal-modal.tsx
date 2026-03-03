@@ -22,7 +22,7 @@ interface CloseDealModalProps {
   onClose: () => void
   dealId: string
   address: string
-  strategy: string
+  strategy: Strategy
   askingPrice: number
   pipelineId: string
 }
@@ -114,7 +114,7 @@ export function CloseDealModal({
           <DialogHeader>
             <div className="flex items-center gap-2">
               <DialogTitle className="text-text-primary">Close Deal</DialogTitle>
-              <StrategyBadge strategy={strategy as Strategy} />
+              <StrategyBadge strategy={strategy} />
             </div>
             <DialogDescription className="text-[#94A3B8]">
               {address}

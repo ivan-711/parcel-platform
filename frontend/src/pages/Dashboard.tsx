@@ -291,7 +291,7 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Recent Deals */}
-        {stats.recent_deals.length > 0 && (
+        {(stats.recent_deals ?? []).length > 0 && (
           <motion.div variants={itemVariants} className="space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-text-primary">Recent Deals</h2>
@@ -314,7 +314,7 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {stats.recent_deals.map((deal) => (
+                  {(stats.recent_deals ?? []).map((deal) => (
                     <tr key={deal.id} className="border-b border-border-subtle last:border-0 hover:bg-app-elevated/50 transition-colors">
                       <td className="px-4 py-3 text-sm text-text-primary">{deal.address}</td>
                       <td className="px-4 py-3">

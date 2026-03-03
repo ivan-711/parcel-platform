@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { AlertTriangle } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { cn } from '@/lib/utils'
 import { api } from '@/lib/api'
@@ -68,7 +69,7 @@ export default function DocumentsPage() {
   const [page, setPage] = useState(1)
   const queryClient = useQueryClient()
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['documents', page],
     queryFn: () => api.documents.list(page),
     placeholderData: (previousData) => previousData,
@@ -90,6 +91,20 @@ export default function DocumentsPage() {
   })
 
   const showMobileDetail = selectedId !== null
+
+  if (isError) {
+    return (
+      <AppShell title="Documents">
+        <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+          <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
+            <AlertTriangle className="w-6 h-6 text-red-400" />
+          </div>
+          <p className="text-base font-medium text-text-primary">Failed to load documents</p>
+          <p className="text-sm text-text-secondary">Check your connection and try again.</p>
+        </div>
+      </AppShell>
+    )
+  }
 
   return (
     <AppShell title="Documents" noPadding>

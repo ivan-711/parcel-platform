@@ -325,7 +325,7 @@ export function CashFlowProjection({ outputs, strategy, dealId }: CashFlowProjec
         </div>
       </div>
 
-      <div className="h-[300px] w-full">
+      <div className="h-[300px] w-full" aria-label="12-month cash flow projection chart">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data}

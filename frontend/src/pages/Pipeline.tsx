@@ -37,6 +37,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { STAGES, STRATEGY_COLORS, STRATEGY_LABELS } from '@/components/pipeline/constants'
 import type { PipelineCard, Stage } from '@/components/pipeline/constants'
+import type { Strategy } from '@/types'
 import { KanbanColumn } from '@/components/pipeline/kanban-column'
 import { MobilePipeline } from '@/components/pipeline/mobile-pipeline'
 import { PipelineEmpty } from '@/components/pipeline/pipeline-empty'
@@ -367,7 +368,7 @@ export default function PipelinePage() {
           onClose={() => setCloseDealCard(null)}
           dealId={closeDealCard.deal_id}
           address={closeDealCard.address}
-          strategy={closeDealCard.strategy}
+          strategy={closeDealCard.strategy as Strategy}
           askingPrice={closeDealCard.asking_price ?? 0}
           pipelineId={closeDealCard.pipeline_id}
         />

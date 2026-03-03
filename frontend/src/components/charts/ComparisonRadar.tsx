@@ -92,7 +92,7 @@ function extractRawValue(deal: RadarDeal, dim: RadarDimension): number | null {
     return deal.riskScore
   }
   for (const key of dim.outputKeys) {
-    const val = deal.outputs[key]
+    const val = deal.outputs?.[key]
     if (typeof val === 'number' && !isNaN(val)) return val
   }
   return null
@@ -102,7 +102,7 @@ function extractRawValue(deal: RadarDeal, dim: RadarDimension): number | null {
 function findMatchedKey(deal: RadarDeal, dim: RadarDimension): string | null {
   if (dim.fromRiskScore) return 'risk_score'
   for (const key of dim.outputKeys) {
-    const val = deal.outputs[key]
+    const val = deal.outputs?.[key]
     if (typeof val === 'number' && !isNaN(val)) return key
   }
   return null
@@ -272,7 +272,7 @@ export function ComparisonRadar({ deals }: ComparisonRadarProps) {
   }
 
   return (
-    <div className="rounded-xl border border-border-subtle bg-app-surface p-5">
+    <div className="rounded-xl border border-border-subtle bg-app-surface p-5" aria-label="Deal comparison radar chart">
       <h2 className="mb-4 text-lg font-semibold text-text-primary">Deal Comparison Overview</h2>
       <ResponsiveContainer width="100%" height={380}>
         <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>

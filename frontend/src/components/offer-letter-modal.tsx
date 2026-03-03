@@ -26,7 +26,7 @@ interface OfferLetterModalProps {
   onClose: () => void
   dealId: string
   address: string
-  strategy: string
+  strategy: Strategy
 }
 
 export function OfferLetterModal({
@@ -54,9 +54,13 @@ export function OfferLetterModal({
 
   const handleCopy = async () => {
     if (!data?.offer_letter) return
-    await navigator.clipboard.writeText(cleanLetter(data.offer_letter))
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    try {
+      await navigator.clipboard.writeText(cleanLetter(data.offer_letter))
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      setCopied(false)
+    }
   }
 
   const handleDownloadPDF = () => {
@@ -80,7 +84,7 @@ export function OfferLetterModal({
           <DialogHeader>
             <div className="flex items-center gap-2">
               <DialogTitle className="text-text-primary">Offer Letter</DialogTitle>
-              <StrategyBadge strategy={strategy as Strategy} />
+              <StrategyBadge strategy={strategy} />
             </div>
             <DialogDescription className="text-[#94A3B8]">
               {address}
@@ -96,7 +100,7 @@ export function OfferLetterModal({
                     <div
                       key={i}
                       className="h-4 rounded bg-[#1A1A2E] animate-pulse"
-                      style={{ width: `${70 + Math.random() * 30}%` }}
+                      style={{ width: `${70 + ((i * 17) % 30)}%` }}
                     />
                   ))}
                 </div>

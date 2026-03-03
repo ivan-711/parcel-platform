@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 import { api } from '@/lib/api'
 import type { DealCreateRequest, DealsFilters, PipelineCreateRequest } from '@/types'
 
@@ -21,6 +22,9 @@ export function useCreateDeal() {
     mutationFn: (data: DealCreateRequest) => api.deals.create(data),
     onSuccess: (deal) => {
       navigate(`/analyze/results/${deal.id}`)
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : 'Failed to analyze deal — try again')
     },
   })
 }

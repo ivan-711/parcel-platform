@@ -164,15 +164,16 @@ function WholesaleForm() {
   })
 
   const onSubmit = (values: WholesaleFormValues) => {
-    const coerced = Object.fromEntries(
-      Object.entries(values).map(([k, v]) => [k, Number(v)])
+    const { address, zip_code, ...rest } = values
+    const inputs = Object.fromEntries(
+      Object.entries(rest).map(([k, v]) => [k, Number(v)])
     )
     createDeal.mutate({
-      address: `Analysis — ${new Date().toLocaleDateString()}`,
-      zip_code: '00000',
+      address,
+      zip_code,
       property_type: 'single_family',
       strategy: 'wholesale',
-      inputs: coerced,
+      inputs,
     })
   }
 
@@ -185,6 +186,31 @@ function WholesaleForm() {
       )}
 
       <form onSubmit={handleSubmit(onSubmit, triggerShake)} className="space-y-6">
+        {/* Property Info */}
+        <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="address" className="text-text-secondary">Property Address</Label>
+            <Input
+              id="address"
+              placeholder="123 Main St, City, State"
+              className={`bg-app-bg border-border-default text-text-primary ${errors.address ? 'border-accent-danger' : ''}`}
+              {...register('address')}
+            />
+            {errors.address && <p className="text-accent-danger text-xs">{errors.address.message}</p>}
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="zip_code" className="text-text-secondary">Zip Code</Label>
+            <Input
+              id="zip_code"
+              placeholder="00000"
+              maxLength={5}
+              className={`font-mono bg-app-bg border-border-default text-text-primary w-32 ${errors.zip_code ? 'border-accent-danger' : ''}`}
+              {...register('zip_code')}
+            />
+            {errors.zip_code && <p className="text-accent-danger text-xs">{errors.zip_code.message}</p>}
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           {WHOLESALE_FIELDS.map((field) => (
             <div key={field.name} className="space-y-1.5">
@@ -203,6 +229,7 @@ function WholesaleForm() {
                   id={field.name}
                   type="number"
                   step="any"
+                  min={0}
                   placeholder="0"
                   className={`font-mono bg-app-bg border-border-default text-text-primary ${
                     field.adornment === 'dollar' ? 'pl-7' : 'pr-8'
@@ -261,15 +288,16 @@ function BuyAndHoldForm() {
   })
 
   const onSubmit = (values: BuyAndHoldFormValues) => {
-    const coerced = Object.fromEntries(
-      Object.entries(values).map(([k, v]) => [k, Number(v)])
+    const { address, zip_code, ...rest } = values
+    const inputs = Object.fromEntries(
+      Object.entries(rest).map(([k, v]) => [k, Number(v)])
     )
     createDeal.mutate({
-      address: `Buy & Hold Analysis — ${new Date().toLocaleDateString()}`,
-      zip_code: '00000',
+      address,
+      zip_code,
       property_type: 'single_family',
       strategy: 'buy_and_hold',
-      inputs: coerced,
+      inputs,
     })
   }
 
@@ -282,6 +310,31 @@ function BuyAndHoldForm() {
       )}
 
       <form onSubmit={handleSubmit(onSubmit, triggerShake)} className="space-y-6">
+        {/* Property Info */}
+        <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="bh-address" className="text-text-secondary">Property Address</Label>
+            <Input
+              id="bh-address"
+              placeholder="123 Main St, City, State"
+              className={`bg-app-bg border-border-default text-text-primary ${errors.address ? 'border-accent-danger' : ''}`}
+              {...register('address')}
+            />
+            {errors.address && <p className="text-accent-danger text-xs">{errors.address.message}</p>}
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="bh-zip" className="text-text-secondary">Zip Code</Label>
+            <Input
+              id="bh-zip"
+              placeholder="00000"
+              maxLength={5}
+              className={`font-mono bg-app-bg border-border-default text-text-primary w-32 ${errors.zip_code ? 'border-accent-danger' : ''}`}
+              {...register('zip_code')}
+            />
+            {errors.zip_code && <p className="text-accent-danger text-xs">{errors.zip_code.message}</p>}
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           {BUY_AND_HOLD_FIELDS.map((field) => (
             <div key={field.name} className="space-y-1.5">
@@ -300,6 +353,7 @@ function BuyAndHoldForm() {
                   id={field.name}
                   type="number"
                   step="any"
+                  min={0}
                   placeholder="0"
                   className={`font-mono bg-app-bg border-border-default text-text-primary ${
                     field.adornment === 'dollar' ? 'pl-7' : 'pr-8'
@@ -442,15 +496,16 @@ function FlipForm() {
   })
 
   const onSubmit = (values: FlipFormValues) => {
-    const coerced = Object.fromEntries(
-      Object.entries(values).map(([k, v]) => [k, Number(v)])
+    const { address, zip_code, ...rest } = values
+    const inputs = Object.fromEntries(
+      Object.entries(rest).map(([k, v]) => [k, Number(v)])
     )
     createDeal.mutate({
-      address: `Flip Analysis — ${new Date().toLocaleDateString()}`,
-      zip_code: '00000',
+      address,
+      zip_code,
       property_type: 'single_family',
       strategy: 'flip',
-      inputs: coerced,
+      inputs,
     })
   }
 
@@ -463,6 +518,31 @@ function FlipForm() {
       )}
 
       <form onSubmit={handleSubmit(onSubmit, triggerShake)} className="space-y-6">
+        {/* Property Info */}
+        <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="flip-address" className="text-text-secondary">Property Address</Label>
+            <Input
+              id="flip-address"
+              placeholder="123 Main St, City, State"
+              className={`bg-app-bg border-border-default text-text-primary ${errors.address ? 'border-accent-danger' : ''}`}
+              {...register('address')}
+            />
+            {errors.address && <p className="text-accent-danger text-xs">{errors.address.message}</p>}
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="flip-zip" className="text-text-secondary">Zip Code</Label>
+            <Input
+              id="flip-zip"
+              placeholder="00000"
+              maxLength={5}
+              className={`font-mono bg-app-bg border-border-default text-text-primary w-32 ${errors.zip_code ? 'border-accent-danger' : ''}`}
+              {...register('zip_code')}
+            />
+            {errors.zip_code && <p className="text-accent-danger text-xs">{errors.zip_code.message}</p>}
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           {FLIP_FIELDS.map((field) => (
             <div key={field.name} className="space-y-1.5">
@@ -584,20 +664,21 @@ function BRRRRForm() {
   })
 
   const onSubmit = (values: BRRRRFormValues) => {
+    const { address, zip_code, ...rest } = values
     createDeal.mutate({
-      address: `BRRRR Analysis — ${new Date().toLocaleDateString()}`,
-      zip_code: '00000',
+      address,
+      zip_code,
       property_type: 'single_family',
       strategy: 'brrrr',
       inputs: {
-        purchase_price: Number(values.purchase_price),
-        rehab_costs: Number(values.rehab_costs),
-        arv_post_rehab: Number(values.arv_post_rehab),
-        refinance_ltv_pct: Number(values.refinance_ltv_pct),
-        new_loan_rate: Number(values.new_loan_rate),
-        new_loan_term_years: Number(values.new_loan_term_years),
-        monthly_rent: Number(values.monthly_rent),
-        monthly_expenses: Number(values.monthly_expenses),
+        purchase_price: Number(rest.purchase_price),
+        rehab_costs: Number(rest.rehab_costs),
+        arv_post_rehab: Number(rest.arv_post_rehab),
+        refinance_ltv_pct: Number(rest.refinance_ltv_pct),
+        new_loan_rate: Number(rest.new_loan_rate),
+        new_loan_term_years: Number(rest.new_loan_term_years),
+        monthly_rent: Number(rest.monthly_rent),
+        monthly_expenses: Number(rest.monthly_expenses),
       },
     })
   }
@@ -611,6 +692,31 @@ function BRRRRForm() {
       )}
 
       <form onSubmit={handleSubmit(onSubmit, triggerShake)} className="space-y-6">
+        {/* Property Info */}
+        <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="brrrr-address" className="text-text-secondary">Property Address</Label>
+            <Input
+              id="brrrr-address"
+              placeholder="123 Main St, City, State"
+              className={`bg-app-bg border-border-default text-text-primary ${errors.address ? 'border-accent-danger' : ''}`}
+              {...register('address')}
+            />
+            {errors.address && <p className="text-accent-danger text-xs">{errors.address.message}</p>}
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="brrrr-zip" className="text-text-secondary">Zip Code</Label>
+            <Input
+              id="brrrr-zip"
+              placeholder="00000"
+              maxLength={5}
+              className={`font-mono bg-app-bg border-border-default text-text-primary w-32 ${errors.zip_code ? 'border-accent-danger' : ''}`}
+              {...register('zip_code')}
+            />
+            {errors.zip_code && <p className="text-accent-danger text-xs">{errors.zip_code.message}</p>}
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           {BRRRR_FIELDS.map((field) => (
             <div key={field.name} className="space-y-1.5">
@@ -746,9 +852,10 @@ function CreativeFinanceForm() {
   }
 
   const onSubmit = (values: CreativeFinanceFormValues) => {
+    const { address, zip_code } = values
     createDeal.mutate({
-      address: `Creative Finance Analysis — ${new Date().toLocaleDateString()}`,
-      zip_code: '00000',
+      address,
+      zip_code,
       property_type: 'single_family',
       strategy: 'creative_finance',
       inputs: {
@@ -774,6 +881,31 @@ function CreativeFinanceForm() {
       )}
 
       <form onSubmit={handleSubmit(onSubmit, triggerShake)} className="space-y-6">
+        {/* Property Info */}
+        <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="cf-address" className="text-text-secondary">Property Address</Label>
+            <Input
+              id="cf-address"
+              placeholder="123 Main St, City, State"
+              className={`bg-app-bg border-border-default text-text-primary ${errors.address ? 'border-accent-danger' : ''}`}
+              {...register('address')}
+            />
+            {errors.address && <p className="text-accent-danger text-xs">{errors.address.message}</p>}
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="cf-zip" className="text-text-secondary">Zip Code</Label>
+            <Input
+              id="cf-zip"
+              placeholder="00000"
+              maxLength={5}
+              className={`font-mono bg-app-bg border-border-default text-text-primary w-32 ${errors.zip_code ? 'border-accent-danger' : ''}`}
+              {...register('zip_code')}
+            />
+            {errors.zip_code && <p className="text-accent-danger text-xs">{errors.zip_code.message}</p>}
+          </div>
+        </div>
+
         {/* Finance Type Toggle — full width, rendered first */}
         <div className="space-y-1.5">
           <Label className="text-text-secondary">
@@ -830,6 +962,7 @@ function CreativeFinanceForm() {
                 id="existing_loan_balance"
                 type="number"
                 step="any"
+                min={0}
                 placeholder="0"
                 className={`font-mono bg-app-bg border-border-default text-text-primary pl-7 ${errors.existing_loan_balance ? 'border-accent-danger' : ''}`}
                 {...register('existing_loan_balance', { valueAsNumber: true })}
@@ -856,6 +989,7 @@ function CreativeFinanceForm() {
                 id="monthly_rent_estimate"
                 type="number"
                 step="any"
+                min={0}
                 placeholder="0"
                 className={`font-mono bg-app-bg border-border-default text-text-primary pl-7 ${errors.monthly_rent_estimate ? 'border-accent-danger' : ''}`}
                 {...register('monthly_rent_estimate', { valueAsNumber: true })}
@@ -882,6 +1016,7 @@ function CreativeFinanceForm() {
                 id="monthly_expenses"
                 type="number"
                 step="any"
+                min={0}
                 placeholder="0"
                 className={`font-mono bg-app-bg border-border-default text-text-primary pl-7 ${errors.monthly_expenses ? 'border-accent-danger' : ''}`}
                 {...register('monthly_expenses', { valueAsNumber: true })}
@@ -908,6 +1043,7 @@ function CreativeFinanceForm() {
                 id="arv"
                 type="number"
                 step="any"
+                min={0}
                 placeholder="0"
                 className={`font-mono bg-app-bg border-border-default text-text-primary pl-7 ${errors.arv ? 'border-accent-danger' : ''}`}
                 {...register('arv', { valueAsNumber: true })}
@@ -938,6 +1074,7 @@ function CreativeFinanceForm() {
                     id="existing_interest_rate"
                     type="number"
                     step="any"
+                    min={0}
                     placeholder="0"
                     className={`font-mono bg-app-bg border-border-default text-text-primary pr-8 ${errors.existing_interest_rate ? 'border-accent-danger' : ''}`}
                     {...register('existing_interest_rate', { valueAsNumber: true })}
@@ -965,6 +1102,7 @@ function CreativeFinanceForm() {
                     id="monthly_piti"
                     type="number"
                     step="any"
+                    min={0}
                     placeholder="0"
                     className={`font-mono bg-app-bg border-border-default text-text-primary pl-7 ${errors.monthly_piti ? 'border-accent-danger' : ''}`}
                     {...register('monthly_piti', { valueAsNumber: true })}
@@ -992,6 +1130,7 @@ function CreativeFinanceForm() {
                     id="new_rate"
                     type="number"
                     step="any"
+                    min={0}
                     placeholder="0"
                     className={`font-mono bg-app-bg border-border-default text-text-primary pr-8 ${errors.new_rate ? 'border-accent-danger' : ''}`}
                     {...register('new_rate', { valueAsNumber: true })}
@@ -1018,6 +1157,7 @@ function CreativeFinanceForm() {
                     id="new_term_years"
                     type="number"
                     step="1"
+                    min={0}
                     placeholder="30"
                     className={`font-mono bg-app-bg border-border-default text-text-primary ${errors.new_term_years ? 'border-accent-danger' : ''}`}
                     {...register('new_term_years', { valueAsNumber: true })}
@@ -1044,6 +1184,7 @@ function CreativeFinanceForm() {
                     id="monthly_piti"
                     type="number"
                     step="any"
+                    min={0}
                     placeholder="0"
                     className={`font-mono bg-app-bg border-border-default text-text-primary pl-7 ${errors.monthly_piti ? 'border-accent-danger' : ''}`}
                     {...register('monthly_piti', { valueAsNumber: true })}

@@ -14,11 +14,11 @@ export default function NotFound() {
 
         <div className="mt-8 flex items-center justify-center gap-3">
           <Link
-            to="/dashboard"
+            to="/"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-primary text-white text-sm font-medium hover:bg-accent-primary/90 transition-colors"
           >
             <Home size={16} />
-            Dashboard
+            Go Home
           </Link>
           <button
             onClick={() => window.history.back()}
