@@ -9,6 +9,7 @@ import { api } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import { DemoCard } from './demo-card'
 import { TrustBadges } from './trust-badges'
+import { CursorSpotlight } from './cursor-spotlight'
 
 export function Hero() {
   const navigate = useNavigate()
@@ -57,6 +58,9 @@ export function Hero() {
           style={{ background: '#6366F1', opacity: 0.12, width: 340, height: 340, bottom: '10%', left: '42%' }}
         />
       </div>
+
+      {/* Cursor spotlight — follows mouse on pointer devices */}
+      <CursorSpotlight />
 
       {/* Vignette — bottom fade into next section */}
       <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-app-bg to-transparent pointer-events-none z-10" />
