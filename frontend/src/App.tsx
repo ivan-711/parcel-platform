@@ -1,11 +1,12 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
 import { AnimatePresence, motion } from 'framer-motion'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { Toaster } from '@/components/ui/sonner'
 import { ErrorBoundary, PageErrorBoundary } from '@/components/error-boundary'
 import { useAuthStore } from '@/stores/authStore'
+import { api } from '@/lib/api'
 import { pageTransition } from '@/lib/motion'
 
 // Lazy-loaded pages
@@ -28,7 +29,17 @@ const ShareDeal = lazy(() => import('@/pages/share/ShareDealPage'))
 const ComparePage = lazy(() => import('@/pages/compare/ComparePage'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,
+      retry: (failureCount, error) => {
+        if (error instanceof Error && error.message === 'Session expired') return false
+        return failureCount < 2
+      },
+    },
+  },
+})
 
 function PageFallback() {
   return (
@@ -39,6 +50,34 @@ function PageFallback() {
   )
 }
 
+/** Validates the session cookie on mount when localStorage says we're authenticated. */
+function useSessionValidation() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const clearAuth = useAuthStore((s) => s.clearAuth)
+  const setAuth = useAuthStore((s) => s.setAuth)
+
+  const { data, isError } = useQuery({
+    queryKey: ['session-check'],
+    queryFn: () => api.auth.me(),
+    enabled: isAuthenticated,
+    retry: false,
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+  })
+
+  useEffect(() => {
+    if (isError) {
+      clearAuth()
+    }
+  }, [isError, clearAuth])
+
+  useEffect(() => {
+    if (data) {
+      setAuth(data)
+    }
+  }, [data, setAuth])
+}
+
 /** Redirects unauthenticated users to /login. */
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
@@ -46,9 +85,17 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
+/** Redirects authenticated users to /dashboard (prevents accessing login/register when logged in). */
+function GuestRoute({ children }: { children: React.ReactNode }) {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  if (isAuthenticated) return <Navigate to="/dashboard" replace />
+  return <>{children}</>
+}
+
 /** Renders all routes wrapped in AnimatePresence for opacity crossfade transitions. */
 function AnimatedRoutes() {
   const location = useLocation()
+  useSessionValidation()
 
   return (
     <AnimatePresence mode="wait">
@@ -63,10 +110,10 @@ function AnimatedRoutes() {
           <Routes location={location}>
             {/* Public routes — no auth guard */}
             <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
+            <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
+            <Route path="/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
+            <Route path="/reset-password" element={<GuestRoute><ResetPassword /></GuestRoute>} />
             <Route path="/share/:dealId" element={<ShareDeal />} />
 
             {/* Protected app routes — AppShell is rendered inside each page */}
