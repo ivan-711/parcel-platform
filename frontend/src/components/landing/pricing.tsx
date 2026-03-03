@@ -144,18 +144,35 @@ export function Pricing() {
                 </ul>
 
                 {/* CTA */}
-                <Link to="/register" className="block rounded-lg focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none">
-                  <Button
-                    className={cn(
-                      'w-full text-sm font-semibold cursor-pointer transition-colors duration-150',
-                      tier.highlighted
-                        ? 'bg-accent-primary hover:bg-accent-hover text-white'
-                        : 'bg-app-elevated hover:bg-border-subtle text-text-primary border border-border-default hover:border-border-strong',
-                    )}
+                {tier.name === 'Team' ? (
+                  <a
+                    href="mailto:ivan.flores1207@gmail.com"
+                    className="block rounded-lg focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none"
                   >
-                    {tier.cta}
-                  </Button>
-                </Link>
+                    <Button
+                      className="w-full text-sm font-semibold cursor-pointer transition-colors duration-150 bg-app-elevated hover:bg-border-subtle text-text-primary border border-border-default hover:border-border-strong"
+                    >
+                      {tier.cta}
+                    </Button>
+                  </a>
+                ) : (
+                  /* Pro trial navigates to /register — would connect to Stripe checkout in production */
+                  <Link
+                    to="/register"
+                    className="block rounded-lg focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none"
+                  >
+                    <Button
+                      className={cn(
+                        'w-full text-sm font-semibold cursor-pointer transition-colors duration-150',
+                        tier.highlighted
+                          ? 'bg-accent-primary hover:bg-accent-hover text-white'
+                          : 'bg-app-elevated hover:bg-border-subtle text-text-primary border border-border-default hover:border-border-strong',
+                      )}
+                    >
+                      {tier.cta}
+                    </Button>
+                  </Link>
+                )}
               </motion.div>
             )
           })}
