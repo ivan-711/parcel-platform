@@ -89,7 +89,7 @@ export function Hero() {
             className="font-bold text-text-primary leading-[0.95] tracking-tight"
             style={{ fontSize: 'clamp(48px, 7vw, 80px)' }}
           >
-            Underwrite Any Deal in 60 Seconds.
+            Close More Deals.
           </h1>
           <h1
             className="font-bold leading-[0.95] tracking-tight"
