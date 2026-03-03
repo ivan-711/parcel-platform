@@ -51,6 +51,20 @@ const NAV_ACCOUNT: NavItem[] = [
   { label: 'Settings', path: '/settings', icon: Settings },
 ]
 
+/** Sidebar logo — links to landing page for demo users, dashboard for real users. */
+function SidebarLogo() {
+  const user = useAuthStore((s) => s.user)
+  const to = user?.email === 'demo@parcel.app' ? '/' : '/dashboard'
+
+  return (
+    <div className="h-[52px] flex items-center px-4 border-b border-border-subtle">
+      <Link to={to} className="text-lg font-semibold text-accent-primary tracking-tight hover:opacity-80 transition-opacity">
+        Parcel
+      </Link>
+    </div>
+  )
+}
+
 function NavGroup({ label, items, onNavigate }: { label: string; items: NavItem[]; onNavigate?: () => void }) {
   const { pathname } = useLocation()
 
@@ -91,10 +105,7 @@ function Sidebar() {
     <aside
       className="hidden md:flex w-[216px] shrink-0 flex-col border-r border-border-subtle bg-app-bg h-screen sticky top-0"
     >
-      {/* Logo */}
-      <div className="h-[52px] flex items-center px-4 border-b border-border-subtle">
-        <span className="text-lg font-semibold text-accent-primary tracking-tight">Parcel</span>
-      </div>
+      <SidebarLogo />
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto p-3 space-y-5 mt-2">
@@ -119,10 +130,7 @@ function MobileSidebar({ open, onOpenChange }: { open: boolean; onOpenChange: (o
         {/* Accessible title (visually hidden) */}
         <SheetTitle className="sr-only">Navigation</SheetTitle>
 
-        {/* Logo */}
-        <div className="h-[52px] flex items-center px-4 border-b border-border-subtle">
-          <span className="text-lg font-semibold text-accent-primary tracking-tight">Parcel</span>
-        </div>
+        <SidebarLogo />
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto p-3 space-y-5 mt-2">
@@ -172,6 +180,8 @@ function UserMenu() {
 }
 
 function Topbar({ title, onMenuToggle, onSearchClick }: { title?: string; onMenuToggle: () => void; onSearchClick: () => void }) {
+  const user = useAuthStore((s) => s.user)
+
   return (
     <header className="h-[52px] shrink-0 flex items-center justify-between px-4 md:px-6 border-b border-border-subtle">
       {/* Left side: hamburger (mobile) + logo (mobile) + page title */}
@@ -186,7 +196,12 @@ function Topbar({ title, onMenuToggle, onSearchClick }: { title?: string; onMenu
         </button>
 
         {/* Mobile Parcel logo — visible only below md (sidebar is hidden) */}
-        <span className="md:hidden text-lg font-semibold text-accent-primary tracking-tight">Parcel</span>
+        <Link
+          to={user?.email === 'demo@parcel.app' ? '/' : '/dashboard'}
+          className="md:hidden text-lg font-semibold text-accent-primary tracking-tight hover:opacity-80 transition-opacity"
+        >
+          Parcel
+        </Link>
 
         {/* Page title */}
         <h1 className="text-sm font-semibold text-text-primary">{title ?? 'Parcel'}</h1>
