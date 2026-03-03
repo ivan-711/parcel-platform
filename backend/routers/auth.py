@@ -39,8 +39,8 @@ _IS_PRODUCTION = os.getenv("ENVIRONMENT", "development") == "production"
 def _set_auth_cookie(response: Response, token: str) -> None:
     """Set the JWT as an httpOnly cookie on the response.
 
-    Production (cross-origin): SameSite=None + Secure required for cookies
-    to be sent between Railway backend and Vercel frontend.
+    Production: SameSite=None + Secure for cookies sent between
+    parceldesk.io (Vercel) and api.parceldesk.io (Railway).
     Development: SameSite=Lax + no Secure for localhost.
     """
     response.set_cookie(

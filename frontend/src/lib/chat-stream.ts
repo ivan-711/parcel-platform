@@ -2,7 +2,7 @@
 
 import type { ChatRequest } from '@/types'
 
-const API_URL = (import.meta.env.VITE_API_URL ?? 'https://parcel-platform-production.up.railway.app').replace('http://', 'https://')
+const API_URL = (import.meta.env.VITE_API_URL ?? 'https://api.parceldesk.io').replace('http://', 'https://')
 
 /**
  * Streams an AI chat response as an async generator yielding delta strings.

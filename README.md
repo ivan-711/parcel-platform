@@ -2,7 +2,7 @@
 
 **AI-powered real estate investment workspace** — analyze deals across 5 strategies, manage your pipeline, process documents with AI, and chat with a real estate specialist, all in one platform.
 
-**[Live Demo](https://parcel-platform-kappa.vercel.app)** &nbsp;|&nbsp; **Demo login:** `demo@parcel.app` / `Demo1234!`
+**[Live Demo](https://parceldesk.io)** &nbsp;|&nbsp; **Demo login:** `demo@parcel.app` / `Demo1234!`
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=black)

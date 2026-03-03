@@ -26,7 +26,7 @@ import type {
   NotificationPreferences,
 } from '@/types'
 
-const API_URL = (import.meta.env.VITE_API_URL ?? 'https://parcel-platform-production.up.railway.app').replace('http://', 'https://')
+const API_URL = (import.meta.env.VITE_API_URL ?? 'https://api.parceldesk.io').replace('http://', 'https://')
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const headers: Record<string, string> = {

@@ -11,9 +11,14 @@ app = FastAPI(
     version="0.1.0",
 )
 
+_frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+_allowed_origins = [_frontend_url]
+if _frontend_url.startswith("https://") and not _frontend_url.startswith("https://www."):
+    _allowed_origins.append(_frontend_url.replace("https://", "https://www."))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("FRONTEND_URL", "http://localhost:5173")],
+    allow_origins=_allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

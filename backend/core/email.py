@@ -25,7 +25,7 @@ def send_document_complete_email(
     try:
         resend.Emails.send(
             {
-                "from": "Parcel <notifications@parcel-platform.app>",
+                "from": "Parcel <notifications@parceldesk.io>",
                 "to": user_email,
                 "subject": f"Document analysis complete: {filename}",
                 "html": build_document_complete_html(filename, document_id),
@@ -52,7 +52,7 @@ def send_password_reset_email(user_email: str, reset_url: str) -> bool:
     try:
         resend.Emails.send(
             {
-                "from": "Parcel <notifications@parcel-platform.app>",
+                "from": "Parcel <notifications@parceldesk.io>",
                 "to": user_email,
                 "subject": "Reset your Parcel password",
                 "html": _build_password_reset_html(reset_url),
@@ -78,7 +78,7 @@ def _build_password_reset_html(reset_url: str) -> str:
       <p style="color: #94A3B8; margin-bottom: 24px;">We received a request to reset your password. Click the button below to choose a new one. This link expires in 1 hour.</p>
       <a href="{reset_url}" style="display: inline-block; background: #6366F1; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500;">Reset Password &rarr;</a>
       <p style="color: #475569; font-size: 12px; margin-top: 40px;">If you didn't request this, you can safely ignore this email. Your password won't change until you click the link above.</p>
-      <p style="color: #475569; font-size: 12px; margin-top: 16px;"><a href="https://parcel-platform-kappa.vercel.app/settings" style="color: #6366F1;">Manage preferences</a></p>
+      <p style="color: #475569; font-size: 12px; margin-top: 16px;"><a href="https://parceldesk.io/settings" style="color: #6366F1;">Manage preferences</a></p>
     </body>
     </html>
     """
@@ -99,8 +99,8 @@ def build_document_complete_html(filename: str, document_id: str) -> str:
       <div style="background: #0F0F1A; border: 1px solid #1A1A2E; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
         <p style="margin: 0; font-weight: 500;">{filename}</p>
       </div>
-      <a href="https://parcel-platform-kappa.vercel.app/documents" style="display: inline-block; background: #6366F1; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500;">View Analysis →</a>
-      <p style="color: #475569; font-size: 12px; margin-top: 40px;">You're receiving this because you have document notifications enabled in Parcel. <a href="https://parcel-platform-kappa.vercel.app/settings" style="color: #6366F1;">Manage preferences</a></p>
+      <a href="https://parceldesk.io/documents" style="display: inline-block; background: #6366F1; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500;">View Analysis →</a>
+      <p style="color: #475569; font-size: 12px; margin-top: 40px;">You're receiving this because you have document notifications enabled in Parcel. <a href="https://parceldesk.io/settings" style="color: #6366F1;">Manage preferences</a></p>
     </body>
     </html>
     """
