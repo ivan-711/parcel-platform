@@ -75,6 +75,7 @@
   [data-financial],
   .financial {
     font-family: 'JetBrains Mono', monospace;
+    font-feature-settings: 'tnum' 1;
   }
 }
 

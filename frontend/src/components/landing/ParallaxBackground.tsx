@@ -132,7 +132,7 @@ function GhostCardEl({ card, width, opacity, layerY }: GhostCardProps) {
         }}
       >
         {/* Address */}
-        <p style={{ color: '#F1F5F9', fontSize: 11, lineHeight: 1.3, fontFamily: 'Inter, sans-serif', margin: 0 }}>
+        <p style={{ color: '#F1F5F9', fontSize: 11, lineHeight: 1.3, fontFamily: '"Satoshi", sans-serif', margin: 0 }}>
           {card.address}
         </p>
 
@@ -147,7 +147,7 @@ function GhostCardEl({ card, width, opacity, layerY }: GhostCardProps) {
             fontWeight: 600,
             padding: '2px 6px',
             borderRadius: 4,
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: '"Satoshi", sans-serif',
           }}
         >
           {badge.label}
