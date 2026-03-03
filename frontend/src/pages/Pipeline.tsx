@@ -334,7 +334,7 @@ export default function PipelinePage() {
                   <div className="flex items-center gap-2">
                     <OverlayStrategyBadge strategy={activeCard.strategy} />
                   </div>
-                  {activeCard.asking_price > 0 && (
+                  {activeCard.asking_price != null && activeCard.asking_price > 0 && (
                     <span className="text-[12px] font-mono text-[#94A3B8]">
                       ${activeCard.asking_price.toLocaleString()}
                     </span>

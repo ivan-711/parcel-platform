@@ -20,23 +20,6 @@ function StrategyBadge({ strategy }: { strategy: string }) {
   )
 }
 
-/** Risk score badge — color-coded by severity threshold. */
-function RiskBadge({ score }: { score?: number }) {
-  if (score == null) return null
-  const color =
-    score <= 30 ? '#10B981' :
-    score <= 60 ? '#F59E0B' :
-    score <= 80 ? '#EF4444' : '#7F1D1D'
-  return (
-    <span
-      className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded"
-      style={{ color, backgroundColor: `${color}22` }}
-    >
-      {score}
-    </span>
-  )
-}
-
 interface DealCardProps {
   card: PipelineCard
   isDragging?: boolean
@@ -138,12 +121,11 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
       {/* Badges row */}
       <div className="flex items-center gap-2 flex-wrap">
         <StrategyBadge strategy={card.strategy} />
-        <RiskBadge score={card.asking_price} />
       </div>
 
       {/* Meta row */}
       <div className="flex items-center justify-between">
-        {card.asking_price > 0 && (
+        {card.asking_price != null && card.asking_price > 0 && (
           <span className="text-[12px] font-mono text-[#94A3B8]">
             ${card.asking_price.toLocaleString()}
           </span>
@@ -199,7 +181,7 @@ export function SortableDealCard({ card, isFocused = false, onRemove, onCloseDea
       {...listeners}
       tabIndex={0}
       role="option"
-      aria-label={`${card.address}, ${STRATEGY_LABELS[card.strategy] ?? card.strategy}, $${card.asking_price.toLocaleString()}`}
+      aria-label={`${card.address}, ${STRATEGY_LABELS[card.strategy] ?? card.strategy}${card.asking_price != null ? `, $${card.asking_price.toLocaleString()}` : ''}`}
       aria-selected={isFocused}
       className="outline-none"
     >

@@ -74,6 +74,7 @@ export default function ResultsPage() {
   const [addedToPipeline, setAddedToPipeline] = useState(false)
   const [stageMenuOpen, setStageMenuOpen] = useState(false)
   const [offerLetterOpen, setOfferLetterOpen] = useState(false)
+  const [generatingPDF, setGeneratingPDF] = useState(false)
   const stageMenuRef = useRef<HTMLDivElement>(null)
 
   const deleteDeal = useMutation({
@@ -193,8 +194,6 @@ export default function ResultsPage() {
       }
     )
   }
-
-  const [generatingPDF, setGeneratingPDF] = useState(false)
 
   const handleDownloadReport = () => {
     setGeneratingPDF(true)
