@@ -5,6 +5,7 @@
  *           How It Works -> Pricing -> Final CTA -> Footer
  */
 
+import { LenisProvider } from '@/components/landing/lenis-provider'
 import { ParallaxBackground } from '@/components/landing/ParallaxBackground'
 import { SkipToContent } from '@/components/landing/skip-to-content'
 import { Navbar } from '@/components/landing/navbar'
@@ -19,22 +20,24 @@ import { Footer } from '@/components/landing/footer'
 
 export default function Landing() {
   return (
-    <div className="min-h-screen text-text-primary">
-      <SkipToContent />
-      <ParallaxBackground />
-      <div className="relative z-10">
-        <Navbar />
-        <main id="main-content">
-          <Hero />
-          <Ticker />
-          <StatsStrip />
-          <FeaturesBento />
-          <HowItWorks />
-          <Pricing />
-          <FinalCTA />
-          <Footer />
-        </main>
+    <LenisProvider>
+      <div className="min-h-screen text-text-primary">
+        <SkipToContent />
+        <ParallaxBackground />
+        <div className="relative z-10">
+          <Navbar />
+          <main id="main-content">
+            <Hero />
+            <Ticker />
+            <StatsStrip />
+            <FeaturesBento />
+            <HowItWorks />
+            <Pricing />
+            <FinalCTA />
+            <Footer />
+          </main>
+        </div>
       </div>
-    </div>
+    </LenisProvider>
   )
 }

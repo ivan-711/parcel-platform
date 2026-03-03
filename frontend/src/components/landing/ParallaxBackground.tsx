@@ -5,7 +5,7 @@
  */
 
 import { useRef } from 'react'
-import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion'
+import { motion, useScroll, useTransform, useReducedMotion, type MotionValue } from 'framer-motion'
 
 /* ── Strategy badge colors (from design-brief.jsonc) ── */
 type Strategy = 'Buy & Hold' | 'BRRRR' | 'Wholesale' | 'Creative Finance' | 'Flip'
@@ -91,6 +91,19 @@ interface GhostCardProps {
 
 function GhostCardEl({ card, width, opacity, layerY }: GhostCardProps) {
   const badge = BADGE[card.strategy]
+  const prefersReduced = useReducedMotion()
+
+  const floatProps = prefersReduced
+    ? {}
+    : {
+        animate: { y: [0, -6, 0] },
+        transition: {
+          duration: card.floatDuration,
+          delay: card.floatDelay,
+          repeat: Infinity,
+          ease: 'easeInOut' as const,
+        },
+      }
 
   return (
     <motion.div
@@ -104,15 +117,9 @@ function GhostCardEl({ card, width, opacity, layerY }: GhostCardProps) {
         opacity,
       }}
     >
-      {/* Floating drift on top of parallax */}
+      {/* Floating drift on top of parallax — disabled when user prefers reduced motion */}
       <motion.div
-        animate={{ y: [0, -6, 0] }}
-        transition={{
-          duration: card.floatDuration,
-          delay: card.floatDelay,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
+        {...floatProps}
         style={{
           background: 'rgba(15,15,26,0.4)',
           border: '1px solid rgba(99,102,241,0.15)',
