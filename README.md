@@ -22,12 +22,13 @@
 
 Real estate investors evaluate deals differently depending on whether they're wholesaling, flipping, buying and holding, using creative finance, or executing a BRRRR strategy. Each requires different math, different risk factors, and different KPIs. Parcel handles all five in one workspace — with hand-written financial calculators, a weighted risk scoring algorithm, AI-powered document analysis, and a Kanban pipeline to track deals from lead to close.
 
-<!-- SCREENSHOT: 2x2 grid, each 1440x900, captured with populated demo data:
-  Top-left: Dashboard with KPI cards showing real numbers, activity feed with 3-4 entries
-  Top-right: Deal Results page — Buy & Hold with risk gauge (score 30-40, green), cash flow chart visible
-  Bottom-left: Pipeline Kanban with 4-5 cards across 3-4 stages
-  Bottom-right: Document Detail view showing AI analysis results (summary, risk flags, key terms, extracted numbers)
--->
+<div align="center">
+  <img src="screenshots/dashboard.png" width="49%" alt="Dashboard" />
+  <img src="screenshots/deal-results.png" width="49%" alt="Deal Analysis Results" />
+  <br />
+  <img src="screenshots/pipeline.png" width="49%" alt="Pipeline Kanban" />
+  <img src="screenshots/documents.png" width="49%" alt="AI Document Analysis" />
+</div>
 
 ## By the Numbers
 
