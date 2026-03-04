@@ -1,5 +1,6 @@
 {
   "name": "parcel-frontend",
+  "description": "Real estate deal analysis platform — 5 investment strategy calculators, AI-powered document processing, Kanban pipeline, portfolio tracking. React + TypeScript + FastAPI + PostgreSQL + Claude AI.",
   "private": true,
   "version": "0.0.1",
   "type": "module",

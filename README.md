@@ -1,340 +1,128 @@
 # Parcel
 
-**AI-powered real estate investment workspace** — analyze deals across 5 strategies, manage your pipeline, process documents with AI, and chat with a real estate specialist, all in one platform.
+**Real estate deal analysis for every strategy.** Analyze deals across 5 investment strategies, manage your pipeline from lead to close, and let AI process your documents — all in one deployed platform.
 
-**[Live Demo](https://parceldesk.io)** &nbsp;|&nbsp; **Demo login:** `demo@parcel.app` / `Demo1234!`
+**[Live Demo — parceldesk.io](https://parceldesk.io)** | Demo login: `demo@parcel.app` / `Demo1234!`
+
+<!-- GIF: 30-second screen recording — Landing hero → Login → Dashboard with animated KPIs → Analyze Deal (Buy & Hold) → Results page with risk gauge + cash flow chart → Pipeline Kanban drag-and-drop → AI Chat streaming response → Document upload with AI analysis results. Record at 1280x720, optimize with gifsicle to <8MB. -->
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)
-![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=black)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
 ![Claude AI](https://img.shields.io/badge/Claude_AI-Anthropic-CC785C?logo=anthropic&logoColor=white)
-![Vitest](https://img.shields.io/badge/Tests-44_passing-6DA13F?logo=vitest&logoColor=white)
+![Tests](https://img.shields.io/badge/Tests-76_passing-6DA13F?logo=vitest&logoColor=white)
 ![CI](https://img.shields.io/badge/CI-GitHub_Actions-2088FF?logo=githubactions&logoColor=white)
 
 ---
 
-## Features
+## What It Does
 
-### Deal Analysis Engine
-- **5 investment strategy calculators** — Wholesale (MAO), Creative Finance (subject-to / seller finance), BRRRR, Buy & Hold, Flip
-- **Real-time financial calculations** — cap rate, cash-on-cash return, NOI, debt service coverage ratio, net profit, annualized ROI
-- **Multi-factor risk scoring** — 7 weighted factors produce a composite 0-100 risk score per deal
-- **Side-by-side deal comparison** with 6-dimension radar chart and automatic winner highlighting
-- **12-month cash flow projection** — Recharts AreaChart with monthly breakdown
-- **Branded PDF report generation** — strategy-specific multi-page reports with financials, risk breakdown, and charts via jsPDF
-- **AI offer letter generation** — Claude produces professional offer letters from deal data in one click
+Real estate investors evaluate deals differently depending on whether they're wholesaling, flipping, buying and holding, using creative finance, or executing a BRRRR strategy. Each requires different math, different risk factors, and different KPIs. Parcel handles all five in one workspace — with hand-written financial calculators, a weighted risk scoring algorithm, AI-powered document analysis, and a Kanban pipeline to track deals from lead to close.
 
-### Pipeline Management
-- **Kanban board** with 7 stages (Lead → Analyzing → Offer Sent → Under Contract → Due Diligence → Closed / Dead)
-- **Drag-and-drop** via dnd-kit with column highlight glow on drag-over
-- **Mobile-responsive tabbed view** — stages become swipeable tabs below the `md` breakpoint
-- **Full keyboard navigation** — arrow keys between cards/columns, Enter to open, Escape to deselect
-- **Days-in-stage tracking** displayed on each card
-- **Pipeline-to-portfolio flow** — close deals directly from the Kanban with a modal that captures closing details
+<!-- SCREENSHOT: 2x2 grid, each 1440x900, captured with populated demo data:
+  Top-left: Dashboard with KPI cards showing real numbers, activity feed with 3-4 entries
+  Top-right: Deal Results page — Buy & Hold with risk gauge (score 30-40, green), cash flow chart visible
+  Bottom-left: Pipeline Kanban with 4-5 cards across 3-4 stages
+  Bottom-right: Document Detail view showing AI analysis results (summary, risk flags, key terms, extracted numbers)
+-->
 
-### AI Integration (Claude API)
-- **Streaming chat** — real-time SSE responses with markdown rendering, 3-dot typing indicator, and conversation history
-- **Context-aware conversations** — attach any deal or document to a chat session; Claude sees the full analysis
-- **Document processing** — upload PDFs/DOCX/images, Claude extracts document type, parties, key terms, risk flags, and financial figures
-- **Offer letters** — one-click generation of professional offer letters built dynamically from deal strategy and outputs
+## By the Numbers
 
-### Portfolio Tracking
-- **Aggregate KPIs** — total equity, monthly cash flow, annualized return, total profit, deals closed
-- **Strategy breakdown donut chart** and monthly cash flow bar chart (Recharts)
-- **Editable entries** — update closed price, profit, cash flow, and notes after closing
+| 34 API Endpoints | 76 Automated Tests | 5 Strategy Calculators | 3 AI Integration Patterns |
+|:---:|:---:|:---:|:---:|
+| 9 Database Models | 18 Lazy-Loaded Pages | 7 Pipeline Stages | 22,700+ Lines of TypeScript & Python |
 
-### Document Management
-- **Drag-and-drop upload** via react-dropzone (PDF, DOCX, JPG, PNG — up to 10 MB)
-- **AI-powered analysis pipeline** — pending → processing → complete, with status indicators
-- **Structured extraction** — document type classification, party identification, risk flag detection, key terms, financial figure parsing
-- **S3 storage** with presigned download URLs (1-hour expiry)
-- **Paginated list** with detail view
+---
 
-### Platform & UX
-- **Command palette** (Cmd+K / Ctrl+K) — fuzzy search across deals, pages, and actions via cmdk
-- **Dark theme** — #08080F base, #0F0F1A surface, indigo #6366F1 accent throughout
-- **JetBrains Mono** for all financial figures — cap rates, dollar amounts, percentages, cash flow
-- **Skeleton loading screens** — never spinners; shimmer effect with indigo tint
-- **Framer Motion animations** — page crossfade transitions, staggered card reveals, sidebar active indicator with `layoutId`, form validation shake
-- **Responsive mobile layout** — 216px sidebar collapses to a Sheet drawer below `md`
-- **Password reset flow** — secure token-based reset via Resend email with branded HTML template
-- **Error boundaries** — app-level and per-page with branded fallback UI
-- **404 catch-all** with link back to dashboard
-- **Toast notifications** with navigation links ("View Portfolio →", "View My Deals →")
-- **Accessibility** — skip-to-content link, focus management on route change, `aria-label` on icon buttons, keyboard-navigable pipeline
-- **Breadcrumbs** on analyzer and results pages with `aria-current`
-- **Route-level code splitting** — all 18 pages lazy-loaded via `React.lazy` + `Suspense`
+## Key Features
+
+- **5 Investment Strategy Calculators** — Wholesale (MAO), BRRRR, creative finance (subject-to & seller finance), buy & hold, and fix & flip. Each produces strategy-specific KPIs, a 12-month cash flow projection, and a weighted risk score from 0–100 using 3–4 factors per strategy.
+
+- **Kanban Deal Pipeline** — Drag-and-drop 7-stage board (Lead through Closed) with keyboard navigation, days-in-stage tracking, mobile-responsive tabbed fallback, and pipeline-to-portfolio close flow.
+
+- **AI Streaming Chat** — Real-time conversations with Claude via Server-Sent Events (SSE). Attach any deal or document for context-aware analysis. Markdown rendering, conversation history, and mid-stream cancellation.
+
+- **Document Processing Pipeline** — Upload PDFs, DOCX, or images. Claude extracts document type, parties, key terms, risk flags with severity ratings, and financial figures into structured JSON.
+
+- **PDF Deal Reports** — One-click branded, multi-page PDF reports with strategy-specific financials, risk breakdown, and print-friendly formatting via jsPDF.
+
+- **Portfolio Tracking** — Aggregate KPIs (total equity, monthly cash flow, annualized return), strategy breakdown charts, and editable entries updated after closing.
+
+---
+
+## Architecture
+
+```mermaid
+graph LR
+    A[React + TypeScript<br/>Vercel CDN] -->|REST API| B[FastAPI<br/>Railway]
+    B --> C[(PostgreSQL 16)]
+    B -->|Streaming SSE| D[Claude AI<br/>Anthropic]
+    B -->|Presigned URLs| E[AWS S3]
+    B -->|Transactional Email| F[Resend]
+```
+
+The frontend deploys to Vercel's global CDN. The FastAPI backend runs on Railway alongside a managed PostgreSQL instance. Documents are stored in S3 with presigned download URLs. The backend manages three distinct Claude AI integration patterns: streaming chat, background document processing, and strategy-aware offer letter generation.
+
+---
+
+## AI Integration Architecture
+
+Parcel integrates Claude AI through three patterns, each solving a different product need. The approach is built around **context engineering** — assembling the right data from multiple sources at runtime and injecting it directly into the conversation.
+
+**1. Streaming Chat with Context Engineering** — SSE via FastAPI `StreamingResponse` + `fetch` with `ReadableStream`. Deal data and document analysis are pulled from PostgreSQL and injected as structured `[DEAL CONTEXT]` blocks. An XML-structured system prompt defines domain knowledge, guardrails, and response format constraints. A rolling buffer handles SSE chunk boundary reassembly.
+
+**2. Document Processing Pipeline** — Background task extracts text (pdfplumber for PDFs, python-docx for DOCX, Claude vision for images), then Claude returns structured JSON: document type, parties, summary, risk flags with severity, extracted numbers, and key terms. Error handling at every step — malformed JSON is caught and the document is marked failed.
+
+**3. Strategy-Aware Offer Letter Generation** — Dynamic prompt construction extracts different financial terms per strategy (wholesale MAO vs. creative finance PITI vs. BRRRR equity captured). Claude produces professional offer letters from deal data in a single call.
+
+**Why context injection, not RAG** — Deal analyses are ~500 tokens. Document summaries are ~800 tokens. Both fit comfortably in Claude's context window. RAG would add embedding infrastructure, vector database costs, and retrieval latency for data that doesn't need it. Start simple; add RAG when data scale demands it.
+
+---
+
+## Technical Decisions
+
+**httpOnly Cookie Auth (not localStorage)** — JWTs stored in httpOnly cookies are invisible to JavaScript, preventing XSS token theft. The frontend never handles raw tokens — `credentials: 'include'` sends them automatically. A `refreshPromise` singleton prevents concurrent 401 responses from triggering multiple refresh attempts.
+
+**JSONB for Polymorphic Strategy Data** — Each of 5 strategies has a different input/output schema. JSONB columns avoid a 50+ column table or 5 separate tables with JOINs. Adding a field to any calculator requires zero database migrations.
+
+**Dynamic Calculator Dispatch** — `importlib.import_module()` loads the correct strategy calculator at runtime. Adding a new investment strategy requires only a new calculator module — zero changes to the API router.
+
+**Hand-Written Financial Calculators & Risk Scoring** — All 5 strategy calculators and the weighted risk scoring algorithm are written by hand — not generated, not templated. Each strategy uses 3–4 weighted factors with industry-threshold-based point systems: DSCR thresholds, cap rate benchmarks, rehab-to-ARV ratios, spread-to-break-even margins. Wholesale uses 3 factors (40/30/30 weighting); buy & hold, BRRRR, creative finance, and flip each use 4 factors.
+
+**Context Injection Over RAG** — Deal analyses (~500 tokens) and document summaries (~800 tokens) fit in Claude's context window. Injecting data directly avoids embedding infrastructure, vector database costs, and retrieval latency. Start simple; add RAG when data scale demands it.
 
 ---
 
 ## Tech Stack
 
-### Frontend
+**Frontend:** React 18 · TypeScript 5.7 (strict) · Vite 6 · TanStack Query · Zustand · Tailwind CSS · shadcn/ui · Framer Motion · Recharts · dnd-kit · Zod · jsPDF
 
-| Technology | Version | Purpose |
-|---|---|---|
-| React | 18.3 | UI framework |
-| TypeScript | 5.7 (strict mode, zero `any` types) | Type safety |
-| Vite | 6.0 | Build tool and dev server |
-| React Router | 6.28 | Client-side routing with lazy-loaded pages |
-| TanStack React Query | 5.62 | Server state, caching, optimistic updates |
-| Zustand | 4.5 | UI state only (modals, sidebar, command palette) |
-| Tailwind CSS | 3.4 | Utility-first styling with design tokens |
-| shadcn/ui (Radix) | — | Dialogs, tooltips, popovers, selects, switches, alerts |
-| Framer Motion | 11.15 | Page transitions, staggered animations, layout animations |
-| Recharts | 2.14 | Area charts, radar charts, bar charts, donut charts |
-| dnd-kit | 6.3 | Drag-and-drop Kanban pipeline |
-| Zod | 4.3 | Form validation schemas for all 5 strategies |
-| cmdk | 1.1 | Command palette (Cmd+K) |
-| jsPDF | 4.2 | Client-side PDF deal report generation |
-| react-dropzone | 14.3 | Document upload with drag-and-drop |
-| Vitest + Testing Library | 4.0 / 16.3 | 44 unit, component, and integration tests |
+**Backend:** Python 3.12 · FastAPI · SQLAlchemy 2 · PostgreSQL 16 · Alembic · Pydantic 2 · Anthropic Claude SDK · boto3 (S3) · Resend · bcrypt
 
-### Backend
-
-| Technology | Version | Purpose |
-|---|---|---|
-| FastAPI | 0.115 | Async REST API with automatic OpenAPI docs |
-| Python | 3.12+ | Runtime |
-| SQLAlchemy | 2.0 | ORM with PostgreSQL |
-| Alembic | 1.14 | Database schema migrations |
-| PostgreSQL | 16 | Primary database (Railway) |
-| Pydantic | 2.0 | Request/response validation with field validators |
-| Anthropic SDK | 0.40 | Claude AI — streaming chat, document processing, offer letters |
-| Resend | 2.0 | Transactional email (password reset, document notifications) |
-| boto3 | 1.35 | S3 document storage with presigned URLs |
-| python-jose | 3.3 | JWT creation and verification |
-| bcrypt (passlib) | 1.7 | Password hashing |
-| pdfplumber + python-docx | — | Server-side document text extraction before Claude analysis |
-
----
-
-## Architecture Decisions
-
-### httpOnly Cookie Authentication
-JWTs are stored in httpOnly cookies, not localStorage. This prevents XSS attacks from accessing tokens via `document.cookie` or JavaScript. The access token has a 15-minute TTL. The frontend never sees or handles the raw token — `credentials: 'include'` sends it automatically on every request. Password reset uses separate SHA-256-hashed tokens stored in a dedicated database table with 1-hour expiry and single-use enforcement.
-
-**Why not localStorage?** A single XSS vulnerability would expose every token in localStorage. httpOnly cookies are invisible to JavaScript, making token theft significantly harder even if an XSS vector exists.
-
-### Vercel + Railway Split Deployment
-The React SPA deploys to Vercel (global CDN, automatic preview deploys on PRs, zero-config Vite support) while the FastAPI backend deploys to Railway (managed PostgreSQL, persistent filesystem, environment variable management). Each service scales independently.
-
-**Why not a monolith?** Decoupling lets the frontend serve from edge nodes worldwide while the backend stays close to its database. Vercel's CDN means the landing page loads in under 400ms globally. Railway's managed Postgres eliminates database operations overhead.
-
-### Claude AI for Three Distinct Features
-Claude powers streaming chat (SSE via FastAPI `StreamingResponse`), document analysis (structured extraction into typed fields), and offer letter generation. The system prompt is hand-written and strategy-aware — it understands wholesale MAO calculations, DSCR ratios, cap rates, and creative finance structures. Context is injected directly into the system prompt rather than using RAG, which keeps architecture simple and latency low (first token appears in under 500ms).
-
-**Why not RAG?** The context window is large enough to hold a full deal analysis or document summary. RAG adds retrieval latency, embedding infrastructure, and vector DB costs for a problem that fits cleanly in-context.
-
-### S3 Document Storage with Presigned URLs
-Uploaded documents are stored in S3. The API returns presigned download URLs with 1-hour expiry. This keeps binary files out of PostgreSQL, enables direct browser downloads without proxying through the API server, and handles arbitrarily large files. The database stores only metadata and AI analysis results.
-
-**Why not store files in Postgres?** Binary blobs in Postgres inflate backup sizes, slow down queries on the same connection pool, and can't be served directly to browsers. S3 with presigned URLs gives CDN-quality download performance with no backend load.
-
-### JSONB for Calculator Inputs/Outputs
-Deal inputs and outputs are stored as JSONB columns. Each of the 5 strategies has a different schema — wholesale needs ARV and assignment fee; buy-and-hold needs loan terms, rental income, and expense ratios. JSONB avoids a 50+ column table and eliminates the need for complex EAV (entity-attribute-value) patterns.
-
-**Why not separate tables per strategy?** That creates 5 tables that need to be JOINed on every deal query and adds migration overhead whenever a calculator field changes. JSONB keeps the schema flexible — adding a field to a calculator requires zero migrations.
-
-### Code Splitting with React.lazy
-All 18 pages are lazy-loaded. The initial bundle contains only the router, auth store, and landing page. Authenticated pages (which pull in Recharts, dnd-kit, jsPDF, react-dropzone, and cmdk) are downloaded on first navigation. This keeps the landing page bundle small and fast.
-
----
-
-## Local Development
-
-### Prerequisites
-- Node.js 20+
-- Python 3.12+
-- PostgreSQL 16 (local install or Docker)
-
-### Backend
-
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-
-# Create .env file
-cat > .env << 'EOF'
-DATABASE_URL=postgresql://localhost/parcel
-SECRET_KEY=your-dev-secret-key
-ANTHROPIC_API_KEY=sk-ant-your-key
-ENVIRONMENT=development
-FRONTEND_URL=http://localhost:5173
-RESEND_API_KEY=re_your-key      # Optional — emails are skipped without this
-EOF
-
-# Set up database
-createdb parcel
-alembic upgrade head
-
-# Optionally seed demo data
-python seed_demo.py
-
-# Run
-uvicorn main:app --reload       # → http://localhost:8000
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-
-echo "VITE_API_URL=http://localhost:8000" > .env.local
-
-npm run dev                     # → http://localhost:5173
-```
-
-### Environment Variables
-
-| Variable | Required | Description |
-|---|---|---|
-| `DATABASE_URL` | Yes | PostgreSQL connection string |
-| `ANTHROPIC_API_KEY` | Yes | Claude API key for AI features |
-| `SECRET_KEY` | Yes | JWT signing key |
-| `FRONTEND_URL` | Yes | Frontend origin for CORS and email links |
-| `RESEND_API_KEY` | No | Transactional email — gracefully skipped if missing |
-| `AWS_ACCESS_KEY_ID` | For docs | S3 access for document storage |
-| `AWS_SECRET_ACCESS_KEY` | For docs | S3 secret for document storage |
-| `VITE_API_URL` | No | API base URL (defaults to `http://localhost:8000`) |
-
----
-
-## API Documentation
-
-Full contract with request/response shapes: [`CONTRACTS.md`](./CONTRACTS.md)
-
-### Auth
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| POST | `/api/v1/auth/register` | No | Create account, receive JWT cookie |
-| POST | `/api/v1/auth/login` | No | Authenticate, receive JWT cookie |
-| POST | `/api/v1/auth/logout` | No | Clear JWT cookie |
-| GET | `/api/v1/auth/me` | Yes | Current user profile |
-| PUT | `/api/v1/auth/me/` | Yes | Update name, email, or password |
-| POST | `/api/v1/auth/forgot-password` | No | Send password reset email (never reveals if email exists) |
-| POST | `/api/v1/auth/reset-password` | No | Reset password with secure token |
-
-### Deals
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| POST | `/api/v1/deals` | Yes | Analyze deal — runs calculator + risk scoring |
-| GET | `/api/v1/deals` | Yes | List with search, filters, pagination, sorting |
-| GET | `/api/v1/deals/:id` | Yes | Full deal with risk factors |
-| DELETE | `/api/v1/deals/:id` | Yes | Soft delete (sets `deleted_at`) |
-| PUT | `/api/v1/deals/:id/share/` | Yes | Generate shareable link |
-| GET | `/api/v1/deals/:id/share/` | No | Public shared deal view |
-| POST | `/api/v1/deals/:id/offer-letter/` | Yes | AI-generated offer letter |
-
-### Pipeline & Portfolio
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| GET | `/api/v1/pipeline` | Yes | All entries grouped by stage |
-| POST | `/api/v1/pipeline` | Yes | Add deal to pipeline |
-| PUT | `/api/v1/pipeline/:id/stage` | Yes | Move deal to new stage |
-| DELETE | `/api/v1/pipeline/:id` | Yes | Remove from pipeline |
-| GET | `/api/v1/portfolio` | Yes | Summary KPIs + all entries |
-| POST | `/api/v1/portfolio` | Yes | Close deal into portfolio |
-| PUT | `/api/v1/portfolio/:id/` | Yes | Edit portfolio entry |
-
-### AI & Documents
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| POST | `/api/v1/chat` | Yes | Streaming AI chat (SSE) |
-| GET | `/api/v1/chat/history` | Yes | Last 50 messages |
-| POST | `/api/v1/documents/` | Yes | Upload document for AI analysis |
-| GET | `/api/v1/documents/` | Yes | Paginated document list |
-| GET | `/api/v1/documents/:id` | Yes | Full document with AI results |
-| DELETE | `/api/v1/documents/:id` | Yes | Delete document and S3 object |
-
-### Dashboard
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| GET | `/api/v1/dashboard/stats/` | Yes | KPIs, strategy counts, recent deals |
-| GET | `/api/v1/dashboard/activity/` | Yes | Recent activity feed (15 events) |
+**Infrastructure:** Vercel (frontend CDN) · Railway (backend + Postgres) · AWS S3 · GitHub Actions CI
 
 ---
 
 ## Testing
 
 ```bash
-cd frontend
-npm test                # Watch mode
-npm run test:run        # Single run (used in CI)
+cd frontend && npm run test:run   # 44 tests across 5 suites
+cd backend && pytest              # 32 tests across calculators, auth, and API endpoints
 ```
 
-**44 tests** across 5 suites, all passing:
-
-| Suite | Tests | Coverage |
-|---|---|---|
-| `utils.test.ts` | 20 | `formatCurrency`, `formatPercent`, `formatLabel`, `formatOutputValue`, `formatFileSize` — null/undefined handling, negative values, string parsing, zero edge case, domain-specific label overrides (MAO, ARV, NOI, Cash-on-Cash Return) |
-| `schemas.test.ts` | 12 | Zod validation for all 5 strategy calculators — required fields, min/max value constraints, enum validation (`finance_type`, `loan_term_years`), negative value rejection |
-| `components.test.tsx` | 7 | `KPICard` (percent/currency formatting, positive/negative delta arrows with correct colors, loading skeleton state), `StrategyBadge` (all 5 strategy labels), `SkeletonCard` (configurable line count, default behavior) |
-| `hooks.test.ts` | 2 | `useCountUp` — requestAnimationFrame-based count-up animation reaching target value, cubic easing curve verification at midpoint |
-| `integration.test.tsx` | 3 | Full page renders with providers: `NotFound` (404 text + dashboard link href), `Login` (email/password fields + submit button), `Register` (name/email/password fields + 3 role selection cards + submit) |
-
-**CI Pipeline** (`.github/workflows/ci.yml`) runs on every push to `main`:
-1. `npx tsc --noEmit` — TypeScript type checking
-2. `npx vitest run` — all 44 tests
-3. `npm run build` — production build
+**76 tests total.** Frontend tests cover utility functions, Zod validation schemas for all 5 strategies, component rendering, animation hooks, and full page integration renders. Backend tests cover all 5 strategy calculators with known inputs/outputs, risk scoring edge cases, auth endpoints, and API route behavior. CI runs TypeScript checking, all tests, and a production build on every push to `main`.
 
 ---
 
-## Project Structure
+## Built by Ivan Flores
 
-```
-parcel-platform/
-├── frontend/                       # React + TypeScript + Vite → Vercel
-│   └── src/
-│       ├── components/             # 54 components
-│       │   ├── ui/                 # KPICard, StrategyBadge, SkeletonCard, RiskGauge, shadcn primitives
-│       │   ├── layout/             # AppShell (sidebar + topbar), PageHeader, PageContent
-│       │   ├── landing/            # Hero, DemoCard, Ticker, FeaturesBento, Pricing, HowItWorks, Footer
-│       │   ├── pipeline/           # KanbanColumn, DealCard, MobilePipeline, empty/error states
-│       │   ├── deals/              # DealCard, DealGrid, FilterBar, PresetChips, CompareBar
-│       │   ├── documents/          # UploadZone, DocumentList, DocumentDetail, ProcessingSteps
-│       │   └── charts/             # CashFlowProjection (AreaChart), ComparisonRadar (RadarChart)
-│       ├── pages/                  # 18 lazy-loaded route pages
-│       ├── hooks/                  # useAuth, useDeals, useCountUp, usePortfolio, useDebouncedValue,
-│       │                           #   useKanbanKeyboard, useDashboard
-│       ├── lib/                    # api.ts, format.ts, schemas.ts, motion.ts, pdf-report.ts,
-│       │                           #   chat-stream.ts, strategy-kpis.ts
-│       ├── stores/                 # Zustand (authStore, uiStore)
-│       └── __tests__/              # 5 test suites, 44 tests
-├── backend/                        # FastAPI + PostgreSQL → Railway
-│   ├── routers/                    # 8 route modules
-│   │   ├── auth.py                 # Register, login, logout, profile, password reset
-│   │   ├── deals.py                # CRUD, search, sharing, offer letters
-│   │   ├── pipeline.py             # Kanban CRUD, stage transitions
-│   │   ├── portfolio.py            # Portfolio entries and summary
-│   │   ├── dashboard.py            # Aggregated stats and activity feed
-│   │   ├── chat.py                 # Streaming AI chat (SSE)
-│   │   ├── documents.py            # Upload, S3, AI analysis pipeline
-│   │   └── settings.py             # Notification preferences
-│   ├── models/                     # 9 SQLAlchemy models (User, Deal, PipelineEntry, Document,
-│   │                               #   ChatMessage, PortfolioEntry, Team, TeamMember, PasswordResetToken)
-│   ├── schemas/                    # Pydantic request/response schemas
-│   ├── core/
-│   │   ├── calculators/            # 5 strategy calculators + risk scoring (hand-written)
-│   │   ├── ai/                     # Claude API integration (chat specialist, document analyzer)
-│   │   ├── security/               # JWT auth, bcrypt password hashing
-│   │   └── email.py                # Resend transactional email (password reset, doc notifications)
-│   ├── alembic/                    # 5 database migrations
-│   └── main.py                     # FastAPI app entry point
-├── .github/workflows/ci.yml       # CI: tsc + vitest + build
-├── CONTRACTS.md                    # Full API contract documentation
-├── PRD.md                          # Product requirements document
-└── design-brief.jsonc              # Design system specification
-```
+Full-stack developer graduating December 2026 from Lakeland University. Built Parcel solo to bring real estate deal analysis into one platform — from financial modeling and risk scoring to AI-powered document processing. Bilingual in English and Spanish.
 
-**Codebase:** ~15,000 lines TypeScript/TSX + ~5,400 lines Python across 160 source files.
+[LinkedIn](https://linkedin.com/in/ivan-flores) · [Email](mailto:ivanflores@parcel.app)
 
 ---
 
 ## License
 
-Private repository. All rights reserved.
+MIT — see [LICENSE](./LICENSE).
