@@ -4,7 +4,9 @@
 
 **[Live Demo — parceldesk.io](https://parceldesk.io)** | Demo login: `demo@parcel.app` / `Demo1234!`
 
-<!-- GIF: 30-second screen recording — Landing hero → Login → Dashboard with animated KPIs → Analyze Deal (Buy & Hold) → Results page with risk gauge + cash flow chart → Pipeline Kanban drag-and-drop → AI Chat streaming response → Document upload with AI analysis results. Record at 1280x720, optimize with gifsicle to <8MB. -->
+<div align="center">
+  <video src="https://github.com/user-attachments/assets/67f4ef81-75fb-41d4-9caf-027b4f7b9930" width="100%" autoplay loop muted playsinline></video>
+</div>
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
