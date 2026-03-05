@@ -9,4 +9,8 @@ dist/
 .DS_Store
 *.egg-info/
 .vite/
+
+# AI tool directories
 .claude/
+.cursor/
+.aider*
