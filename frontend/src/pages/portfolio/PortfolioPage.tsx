@@ -104,7 +104,7 @@ function truncate(text: string, max: number): string {
   return text.length > max ? text.slice(0, max) + '...' : text
 }
 
-/* ── Strategy color map (from design-brief.jsonc) ── */
+/* ── Strategy color map ── */
 
 const STRATEGY_COLORS: Record<Strategy, string> = {
   wholesale: '#10B981',

@@ -12,7 +12,7 @@ import type { KPIDefinition } from '@/lib/strategy-kpis'
 import type { Strategy, DealResponse } from '@/types'
 
 // ---------------------------------------------------------------------------
-// Color constants (from design-brief.jsonc)
+// Color constants
 // ---------------------------------------------------------------------------
 
 const INDIGO: [number, number, number] = [99, 102, 241]
@@ -24,7 +24,7 @@ const ROW_EVEN: [number, number, number] = [245, 245, 250]
 const ROW_ODD: [number, number, number] = [255, 255, 255]
 const BORDER_LIGHT: [number, number, number] = [220, 220, 230]
 
-// Strategy badge colors (print-friendly versions of design-brief values)
+// Strategy badge colors (print-friendly versions)
 const STRATEGY_COLORS: Record<Strategy, { bg: [number, number, number]; text: [number, number, number] }> = {
   wholesale: { bg: [255, 237, 180], text: [120, 80, 0] },
   creative_finance: { bg: [220, 210, 255], text: [80, 40, 150] },

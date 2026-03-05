@@ -7,7 +7,7 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion, type MotionValue } from 'framer-motion'
 
-/* ── Strategy badge colors (from design-brief.jsonc) ── */
+/* ── Strategy badge colors ── */
 type Strategy = 'Buy & Hold' | 'BRRRR' | 'Wholesale' | 'Creative Finance' | 'Flip'
 
 const BADGE: Record<Strategy, { bg: string; text: string; label: string }> = {

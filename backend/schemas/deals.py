@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 
 # ---------------------------------------------------------------------------
-# Strategy-specific input schemas (field names match CONTRACTS.md exactly)
+# Strategy-specific input schemas
 # ---------------------------------------------------------------------------
 
 class DealInputsWholesale(BaseModel):
