@@ -54,7 +54,7 @@ except ImportError as exc:
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
-DEMO_EMAIL = "demo@parcel.app"
+from core.demo import DEMO_EMAIL  # noqa: E402 — single source of truth
 DEMO_PASSWORD = "Demo1234!"
 DEMO_NAME = "Alex Rivera"
 DEMO_ROLE = "investor"
@@ -592,65 +592,9 @@ DOCUMENT_SPECS: list[dict] = [
     },
 ]
 
-CHAT_SESSION_ID = "demo-session"
-
-CHAT_MESSAGES: list[dict] = [
-    {
-        "role": "user",
-        "content": "What's a good cap rate target for buy and hold in the Midwest?",
-        "context_type": "general",
-        "context_id": None,
-    },
-    {
-        "role": "assistant",
-        "content": (
-            "In the Midwest \u2014 particularly markets like Milwaukee, Sheboygan, "
-            "and Green Bay \u2014 **6-8% cap rate** is a solid target for buy-and-hold. Here\u2019s "
-            "how to think about it:\n\n"
-            "**Cap Rate = NOI / Purchase Price**\n\n"
-            "A 6% cap in a stable Midwest market is often better than an 8% cap in a volatile "
-            "coastal market because your vacancy risk is lower and your tenant pool is "
-            "more stable.\n\n"
-            "| Market Type | Target Cap Rate |\n"
-            "|---|---|\n"
-            "| Tier 1 (Milwaukee, Madison) | 6-7% |\n"
-            "| Tier 2 (Sheboygan, Racine) | 7-9% |\n"
-            "| Rural/small market | 9%+ (higher risk) |\n\n"
-            "What market are you analyzing?"
-        ),
-        "context_type": "general",
-        "context_id": None,
-    },
-    {
-        "role": "user",
-        "content": "Explain subject-to financing like I'm new to creative finance",
-        "context_type": "general",
-        "context_id": None,
-    },
-    {
-        "role": "assistant",
-        "content": (
-            "Subject-to means you\u2019re buying a property **subject to the "
-            "existing mortgage** \u2014 the loan stays in the seller\u2019s name, but you take "
-            "over the payments and get the deed.\n\n"
-            "**Why sellers agree to it:**\n"
-            "\u25b8 They\u2019re behind on payments and need out fast\n"
-            "\u25b8 They\u2019ve already moved and are paying two mortgages\n"
-            "\u25b8 They owe more than the house is worth\n\n"
-            "**Why you want it:**\n"
-            "\u25b8 You inherit the seller\u2019s interest rate \u2014 if they "
-            "have a 3.5% loan, you keep that rate\n"
-            "\u25b8 No bank qualifying, no new loan origination fees\n"
-            "\u25b8 You control the asset with minimal cash in\n\n"
-            "`Monthly Cash Flow = Rent - PITI - Expenses`\n\n"
-            "The risk: the lender technically has a due-on-sale clause that lets them call "
-            "the loan due. In practice this rarely happens when payments are current, but "
-            "it\u2019s real risk you need to price in. Are you looking at a specific deal?"
-        ),
-        "context_type": "general",
-        "context_id": None,
-    },
-]
+# Chat messages are now served from fixtures/demo_chat.json via core.demo.chat_service
+# No DB-seeded chat messages needed — the chat history endpoint returns fixture data
+# for demo users without touching the database.
 
 
 # ===========================================================================
@@ -775,21 +719,7 @@ def _create_document(db, user_id, original_filename, file_type, file_size_bytes,
     return doc
 
 
-def _create_chat_message(db, user_id, role, content, context_type, context_id, created_at):
-    """Create a chat message with a specific timestamp."""
-    msg = ChatMessage(
-        user_id=user_id,
-        session_id=CHAT_SESSION_ID,
-        role=role,
-        content=content,
-        context_type=context_type,
-        context_id=context_id,
-    )
-    msg.created_at = created_at
-    msg.updated_at = created_at
-    db.add(msg)
-    db.flush()
-    return msg
+# _create_chat_message removed — demo chat is now fixture-based (see core.demo.chat_service)
 
 
 # ===========================================================================
@@ -852,21 +782,8 @@ def seed():
             print(f"    {doc.document_type:25s} | {doc.original_filename}")
         print(f"  Created {len(DOCUMENT_SPECS)} documents")
 
-        # 8. Create 4 chat messages (2 exchanges, 3 days ago)
-        print("\n  Creating chat messages...")
-        three_days_ago = datetime.utcnow() - timedelta(days=3)
-        for i, msg_spec in enumerate(CHAT_MESSAGES):
-            ts = three_days_ago + timedelta(minutes=i * 2)
-            _create_chat_message(
-                db,
-                user.id,
-                msg_spec["role"],
-                msg_spec["content"],
-                msg_spec["context_type"],
-                msg_spec["context_id"],
-                ts,
-            )
-        print(f"  Created {len(CHAT_MESSAGES)} chat messages")
+        # Chat messages are no longer seeded to DB — served from fixtures/demo_chat.json
+        print("\n  Chat history: served from fixture file (no DB seeding needed)")
 
         # 8. Commit
         db.commit()
@@ -877,12 +794,11 @@ def seed():
         pipeline_count = db.query(PipelineEntry).filter(PipelineEntry.user_id == user.id).count()
         portfolio_count = db.query(PortfolioEntry).filter(PortfolioEntry.user_id == user.id).count()
         doc_count = db.query(Document).filter(Document.user_id == user.id).count()
-        chat_count = db.query(ChatMessage).filter(ChatMessage.user_id == user.id).count()
         print(f"  Deals:            {deal_count} (12 active + 3 historical)")
         print(f"  Pipeline entries: {pipeline_count}")
         print(f"  Portfolio entries: {portfolio_count}")
         print(f"  Documents:        {doc_count}")
-        print(f"  Chat messages:    {chat_count}")
+        print(f"  Chat messages:    fixture-based (not in DB)")
 
         # 10. Summary
         deal_a = active_deals[0]

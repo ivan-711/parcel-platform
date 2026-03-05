@@ -9,6 +9,8 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from core.ai.chat_specialist import stream_chat_response
+from core.demo import is_demo_user
+from core.demo.chat_service import get_seeded_history
 from core.security.jwt import get_current_user
 from database import get_db
 from models.chat_messages import ChatMessage
@@ -143,17 +145,21 @@ async def chat(
     assembled_message = body.message + context_block
     history_dicts = [{"role": m.role, "content": m.content} for m in body.history]
 
-    # Persist user message before streaming starts
-    user_msg = ChatMessage(
-        user_id=current_user.id,
-        session_id=body.session_id,
-        role="user",
-        content=body.message,
-        context_type=body.context_type if body.context_type != "general" else None,
-        context_id=body.context_id,
-    )
-    db.add(user_msg)
-    db.commit()
+    # Skip persistence for demo users — streaming still works normally
+    _demo = is_demo_user(current_user)
+
+    if not _demo:
+        # Persist user message before streaming starts
+        user_msg = ChatMessage(
+            user_id=current_user.id,
+            session_id=body.session_id,
+            role="user",
+            content=body.message,
+            context_type=body.context_type if body.context_type != "general" else None,
+            context_id=body.context_id,
+        )
+        db.add(user_msg)
+        db.commit()
 
     def event_generator():
         full_reply: list[str] = []
@@ -166,8 +172,8 @@ async def chat(
                 full_reply.append(chunk)
                 yield f"data: {json.dumps({'delta': chunk})}\n\n"
         finally:
-            # Persist assistant message after stream completes (or on error)
-            if full_reply:
+            # Persist assistant message after stream completes (skip for demo)
+            if full_reply and not _demo:
                 assistant_msg = ChatMessage(
                     user_id=current_user.id,
                     session_id=body.session_id,
@@ -192,7 +198,13 @@ async def get_chat_history(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> ChatHistoryResponse:
-    """Return last 50 chat messages for the current user in chronological order."""
+    """Return last 50 chat messages for the current user in chronological order.
+
+    Demo users receive fixture-based seeded history instead of a DB query.
+    """
+    if is_demo_user(current_user):
+        return get_seeded_history()
+
     messages = (
         db.query(ChatMessage)
         .filter(ChatMessage.user_id == current_user.id)

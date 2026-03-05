@@ -1,0 +1,94 @@
+{
+  "conversations": [
+    {
+      "session_id": "demo-seed-wholesale",
+      "title": "Wholesale Deal Risk Analysis",
+      "messages": [
+        {
+          "role": "user",
+          "content": "I'm looking at a wholesale deal on N. 23rd St in Milwaukee. ARV is $185k, repairs estimated at $42k, and the seller is asking $95k. Is this worth pursuing?",
+          "context_type": null,
+          "context_id": null
+        },
+        {
+          "role": "assistant",
+          "content": "Let me break down the numbers on this Milwaukee wholesale deal.\n\n**Quick MAO Calculation:**\n\nUsing the 70% rule:\n- ARV: $185,000\n- 70% of ARV: $129,500\n- Minus repairs ($42,000): **$87,500 MAO**\n\nThe seller is asking $95,000 \u2014 that's **$7,500 above your MAO**. Here's how to think about it:\n\n| Metric | Value |\n|---|---|\n| Spread at asking | $43,000 |\n| Your assignment fee (at $87.5k) | ~$18,000 |\n| Your assignment fee (at $95k) | ~$10,500 |\n\n**Risk factors to watch:**\n\n1. **Repair estimate confidence** \u2014 $42k in rehab on a Milwaukee property can swing $8-12k depending on foundation and mechanicals. Have you walked the property?\n2. **ARV validation** \u2014 $185k in 53205 is achievable but you need 3+ comps within 0.5 miles sold in the last 90 days\n3. **Holding costs** \u2014 Factor in ~$3,500 for taxes, insurance, and utilities during the assignment period\n\n**Bottom line:** At $95k asking, the spread is thin for a comfortable assignment fee. I'd counter at $82-85k to give yourself room. If the seller won't come below $88k, the risk-reward doesn't justify tying up your earnest money.\n\nWant me to run the full calculator with your specific numbers?",
+          "context_type": null,
+          "context_id": null
+        },
+        {
+          "role": "user",
+          "content": "Good breakdown. What if I negotiate down to $85k? And what should I look for in the comps to validate that $185k ARV?",
+          "context_type": null,
+          "context_id": null
+        },
+        {
+          "role": "assistant",
+          "content": "At $85k, the deal gets significantly better:\n\n**Revised Numbers at $85k:**\n- Spread: $185k - $42k repairs - $85k purchase = **$58,000 gross spread**\n- After closing costs (~3%): **$52,450 net spread**\n- Assignment fee potential: **$18,000-$22,000**\n- End buyer's profit margin: **$30,000-$34,000** (attractive enough to move fast)\n\nThat's a solid wholesale deal at $85k. Your end buyer has enough meat on the bone to absorb surprise costs.\n\n**Comp Validation for $185k ARV:**\n\nHere's exactly what to look for:\n\n1. **Distance**: Comps within **0.5 miles** of N. 23rd St. Milwaukee neighborhoods can shift dramatically block-to-block, so closer is critical\n2. **Recency**: Sold within **90 days**. Anything older than 6 months is unreliable in this market\n3. **Condition match**: You need comps that are **post-rehab quality** \u2014 updated kitchen, bath, and mechanicals. Don't comp against distressed sales\n4. **Square footage**: Within **15% of your subject property**\n5. **Bed/bath count**: Match exactly if possible\n\n**Red flags in comps:**\n- If the highest comp is $185k and others cluster around $165-170k, your ARV is likely $170k, not $185k\n- Watch for seller concessions that inflate the sale price\n- FHA and VA sales can close above market due to lower buyer barriers\n\n**Where to pull comps:**\n- MLS (ask your agent for a CMA)\n- PropStream or DealMachine for investor-focused data\n- County assessor records for recent transfers\n\nI'd recommend validating with at least 3 comps above $180k before committing. Would you like me to analyze the deal with adjusted numbers?",
+          "context_type": null,
+          "context_id": null
+        }
+      ]
+    },
+    {
+      "session_id": "demo-seed-cap-rate",
+      "title": "Midwest Cap Rate Analysis",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What's a good cap rate target for buy and hold in the Midwest?",
+          "context_type": null,
+          "context_id": null
+        },
+        {
+          "role": "assistant",
+          "content": "In the Midwest \u2014 particularly markets like Milwaukee, Sheboygan, and Green Bay \u2014 **6-8% cap rate** is a solid target for buy-and-hold. Here\u2019s how to think about it:\n\n**Cap Rate = NOI / Purchase Price**\n\nA 6% cap in a stable Midwest market is often better than an 8% cap in a volatile coastal market because your vacancy risk is lower and your tenant pool is more stable.\n\n| Market Type | Target Cap Rate |\n|---|---|\n| Tier 1 (Milwaukee, Madison) | 6-7% |\n| Tier 2 (Sheboygan, Racine) | 7-9% |\n| Rural/small market | 9%+ (higher risk) |\n\nWhat market are you analyzing?",
+          "context_type": null,
+          "context_id": null
+        },
+        {
+          "role": "user",
+          "content": "I'm looking at Sheboygan. I found a duplex at $185k with projected rent of $2,200/month. How does that look?",
+          "context_type": null,
+          "context_id": null
+        },
+        {
+          "role": "assistant",
+          "content": "Sheboygan is a great market for buy-and-hold \u2014 strong rental demand, low entry prices, and landlord-friendly Wisconsin laws. Let me run your numbers:\n\n**Quick Cap Rate Estimate:**\n\n- Monthly gross rent: $2,200\n- Annual gross rent: $26,400\n- Estimated operating expenses (45-50% rule): ~$12,540\n- **NOI: ~$13,860**\n- **Cap rate: 13,860 / 185,000 = 7.5%**\n\nThat's right in the sweet spot for Sheboygan Tier 2 market.\n\n**Expense Breakdown to Verify:**\n\n| Expense | Monthly | Annual |\n|---|---|---|\n| Property taxes | ~$280 | $3,360 |\n| Insurance | ~$95 | $1,140 |\n| Vacancy (8%) | $176 | $2,112 |\n| Maintenance (5%) | $110 | $1,320 |\n| Management (8%) | $176 | $2,112 |\n| **Total expenses** | **$837** | **$10,044** |\n\nWith more precise expenses:\n- NOI: $26,400 - $10,044 = **$16,356**\n- Adjusted cap rate: **8.8%**\n\n**Cash-on-Cash (with financing):**\nAt 20% down ($37,000), 7.25% rate, 30-year term:\n- Monthly PITI: ~$1,250\n- Monthly cash flow: $2,200 - $837 expenses - $1,250 debt service = **$113/month**\n- Annual cash flow: **$1,356**\n- Cash-on-cash return: **3.7%**\n\nThe cap rate looks excellent. Cash-on-cash is moderate due to current interest rates, but you're building equity in a market with 3-5% annual appreciation. Want me to run the full buy-and-hold analysis with these inputs?",
+          "context_type": null,
+          "context_id": null
+        }
+      ]
+    },
+    {
+      "session_id": "demo-seed-creative",
+      "title": "Subject-To Creative Finance Explained",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Explain subject-to financing like I'm new to creative finance",
+          "context_type": null,
+          "context_id": null
+        },
+        {
+          "role": "assistant",
+          "content": "Subject-to means you\u2019re buying a property **subject to the existing mortgage** \u2014 the loan stays in the seller\u2019s name, but you take over the payments and get the deed.\n\n**Why sellers agree to it:**\n\u25b8 They\u2019re behind on payments and need out fast\n\u25b8 They\u2019ve already moved and are paying two mortgages\n\u25b8 They owe more than the house is worth\n\n**Why you want it:**\n\u25b8 You inherit the seller\u2019s interest rate \u2014 if they have a 3.5% loan, you keep that rate\n\u25b8 No bank qualifying, no new loan origination fees\n\u25b8 You control the asset with minimal cash in\n\n`Monthly Cash Flow = Rent - PITI - Expenses`\n\nThe risk: the lender technically has a due-on-sale clause that lets them call the loan due. In practice this rarely happens when payments are current, but it\u2019s real risk you need to price in. Are you looking at a specific deal?",
+          "context_type": null,
+          "context_id": null
+        },
+        {
+          "role": "user",
+          "content": "Yes, I found a property in Milwaukee where the seller has a 3.25% rate with $128k remaining on the loan. Market rent is about $1,850/month. What would my cash flow look like?",
+          "context_type": null,
+          "context_id": null
+        },
+        {
+          "role": "assistant",
+          "content": "Great find \u2014 a 3.25% rate in today's market is a huge competitive advantage. Let me model this out:\n\n**Subject-To Cash Flow Analysis:**\n\n- Existing loan balance: $128,000\n- Interest rate: 3.25% (you inherit this!)\n- Estimated PITI: ~$985/month\n- Market rent: $1,850/month\n- Operating expenses: ~$380/month\n\n| Line Item | Monthly |\n|---|---|\n| Gross rent | $1,850 |\n| Minus PITI | -$985 |\n| Minus expenses | -$380 |\n| **Net cash flow** | **$485** |\n\n**Annual return:**\n- Annual cash flow: **$5,820**\n- Cash invested (closing costs + any arrears): ~$3,000-$5,000\n- **Cash-on-cash return: 116-194%** (this is why investors love subject-to)\n\n**Why this deal works:**\n1. **Rate arbitrage** \u2014 You're borrowing at 3.25% while today's rates are 7%+. That saves you ~$300/month vs. getting a new loan\n2. **Minimal cash in** \u2014 Your only out-of-pocket is closing costs and any seller arrears\n3. **Instant equity** \u2014 If ARV is $198k, you have $70k in equity day one\n\n**Risks to manage:**\n- Due-on-sale clause (low probability but plan for it)\n- Seller's credit is still tied to the mortgage\n- Insurance must be structured carefully (you need to be named)\n- Keep payments current \u2014 one missed payment and the lender may investigate\n\n**My recommendation:** This is a strong deal. The spread between PITI and market rent gives you a $485/month cushion, which is well above the $200 minimum I recommend for subject-to deals. Set up automatic payments and build a 6-month reserve fund from the cash flow.\n\nWant me to run the full creative finance analysis in Parcel?",
+          "context_type": null,
+          "context_id": null
+        }
+      ]
+    }
+  ]
+}
