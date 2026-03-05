@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
 
+from core.demo import is_reserved_email
 from core.email import send_password_reset_email
 from core.security.jwt import create_access_token, create_refresh_token, get_current_user, hash_password, verify_password, verify_refresh_token
 from database import get_db
@@ -85,6 +86,12 @@ async def register(body: RegisterRequest, response: Response, db: Session = Depe
     The token is NOT returned in the response body — only via the cookie.
     Returns 400 if the email is already in use.
     """
+    if is_reserved_email(body.email):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"error": "This email is reserved", "code": "EMAIL_RESERVED"},
+        )
+
     existing = db.query(User).filter(User.email == body.email).first()
     if existing:
         raise HTTPException(
@@ -194,6 +201,11 @@ async def update_profile(
         current_user.name = body.name
 
     if body.email is not None and body.email != current_user.email:
+        if is_reserved_email(body.email):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={"error": "This email is reserved", "code": "EMAIL_RESERVED"},
+            )
         existing = db.query(User).filter(User.email == body.email, User.id != current_user.id).first()
         if existing:
             raise HTTPException(
