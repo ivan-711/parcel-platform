@@ -39,16 +39,21 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-app-bg flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-        className="w-full max-w-[480px] bg-app-surface border border-border-subtle rounded-xl p-8 space-y-6"
+        className="w-full max-w-[480px] bg-white border border-gray-200 rounded-xl p-8 space-y-6 shadow-xs"
       >
         {/* Header */}
         <div className="space-y-1 text-center">
-          <p className="text-2xl font-semibold text-accent-primary tracking-tight">Parcel</p>
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <div className="w-7 h-7 rounded bg-lime-700 flex items-center justify-center">
+              <span className="text-[11px] font-bold text-white font-mono">P</span>
+            </div>
+          </div>
+          <p className="text-2xl font-semibold text-gray-900 tracking-tight">Parcel</p>
           <AnimatePresence mode="wait">
             {isSuccess ? (
               <motion.p
@@ -56,7 +61,7 @@ export default function ForgotPassword() {
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className="text-sm text-text-secondary"
+                className="text-sm text-gray-500"
               >
                 Check your inbox
               </motion.p>
@@ -66,7 +71,7 @@ export default function ForgotPassword() {
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className="text-sm text-text-secondary"
+                className="text-sm text-gray-500"
               >
                 Reset your password
               </motion.p>
@@ -86,16 +91,16 @@ export default function ForgotPassword() {
               className="space-y-4"
             >
               <div className="flex flex-col items-center gap-3 py-4">
-                <div className="w-12 h-12 rounded-full bg-accent-primary/15 flex items-center justify-center">
-                  <Mail size={22} className="text-accent-primary" />
+                <div className="w-12 h-12 rounded-full bg-sky-50 flex items-center justify-center">
+                  <Mail size={22} className="text-sky-600" />
                 </div>
                 <div className="text-center space-y-1.5">
-                  <p className="text-sm font-medium text-text-primary">
+                  <p className="text-sm font-medium text-gray-900">
                     Check your email for a reset link
                   </p>
-                  <p className="text-xs text-text-muted max-w-[280px]">
+                  <p className="text-xs text-gray-400 max-w-[280px]">
                     We sent a password reset link to{' '}
-                    <span className="text-text-secondary font-medium">{email}</span>.
+                    <span className="text-gray-600 font-medium">{email}</span>.
                     If you don&apos;t see it, check your spam folder.
                   </p>
                 </div>
@@ -105,7 +110,7 @@ export default function ForgotPassword() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full border-border-default text-text-secondary hover:text-text-primary hover:bg-app-elevated"
+                  className="w-full border-gray-300 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 >
                   <ArrowLeft size={14} className="mr-2" />
                   Back to sign in
@@ -121,13 +126,13 @@ export default function ForgotPassword() {
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             >
-              <p className="text-xs text-text-muted text-center mb-4">
+              <p className="text-xs text-gray-400 text-center mb-4">
                 Enter your email and we&apos;ll send you a reset link
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="forgot-email" className="text-text-secondary text-xs">
+                  <Label htmlFor="forgot-email" className="text-gray-700 text-xs">
                     Email
                   </Label>
                   <Input
@@ -138,29 +143,29 @@ export default function ForgotPassword() {
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setError(null) }}
-                    className="bg-app-elevated border-border-default text-text-primary placeholder:text-text-disabled focus:border-accent-primary"
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-lime-500 focus:ring-lime-500/20"
                   />
                 </div>
 
                 {/* Inline error */}
                 {error && (
-                  <p className="text-accent-danger text-xs">{error}</p>
+                  <p className="text-red-500 text-xs">{error}</p>
                 )}
 
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-accent-primary hover:bg-accent-hover text-white font-medium"
+                  className="w-full bg-lime-700 hover:bg-lime-800 text-white font-medium"
                 >
-                  {isSubmitting ? 'Sending…' : 'Send Reset Link'}
+                  {isSubmitting ? 'Sending...' : 'Send Reset Link'}
                 </Button>
               </form>
 
               {/* Footer link */}
-              <p className="text-center text-xs text-text-muted mt-6">
+              <p className="text-center text-xs text-gray-400 mt-6">
                 <Link
                   to="/login"
-                  className="inline-flex items-center gap-1 text-accent-primary hover:text-accent-hover transition-colors"
+                  className="inline-flex items-center gap-1 text-lime-700 hover:text-lime-800 transition-colors"
                 >
                   <ArrowLeft size={12} />
                   Back to sign in

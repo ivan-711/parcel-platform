@@ -128,13 +128,14 @@ class TestBuyAndHoldCalculator:
         assert 2 <= result["cap_rate"] <= 12
 
     def test_buy_hold_dscr_calculation(self):
-        """DSCR = effective gross income / monthly P&I — measures debt coverage."""
+        """DSCR = monthly NOI / monthly P&I — measures debt coverage."""
         result = calculate_buy_and_hold(self.INPUTS)
-        # DSCR should be around 1.0-1.5 for a typical deal
+        # DSCR should be around 0.8-1.5 for a typical deal
         assert result["dscr"] > 0
-        # Verify it's calculated correctly: EGI / monthly_pi
+        # Verify it's calculated correctly: monthly_noi / monthly_pi
         egi = 2_000 * (1 - 8.0 / 100)  # 1840
-        expected_dscr = round(egi / result["monthly_pi"], 2)
+        monthly_noi = egi - 250 - 100 - (2_000 * 0.05) - (2_000 * 0.10)  # 1190
+        expected_dscr = round(monthly_noi / result["monthly_pi"], 2)
         assert result["dscr"] == expected_dscr
 
 

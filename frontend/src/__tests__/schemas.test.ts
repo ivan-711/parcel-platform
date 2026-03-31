@@ -11,6 +11,8 @@ import {
 
 describe('wholesaleSchema', () => {
   const validWholesale = {
+    address: '123 Main St',
+    zip_code: '90210',
     arv: 200000,
     repair_costs: 30000,
     desired_profit: 20000,
@@ -48,6 +50,8 @@ describe('wholesaleSchema', () => {
 
 describe('buyAndHoldSchema', () => {
   const validBuyAndHold = {
+    address: '456 Oak Ave',
+    zip_code: '60601',
     purchase_price: 250000,
     down_payment_pct: 20,
     interest_rate: 6.5,
@@ -78,6 +82,8 @@ describe('buyAndHoldSchema', () => {
 
 describe('creativeFinanceSchema', () => {
   const validCreative = {
+    address: '789 Elm St',
+    zip_code: '30301',
     existing_loan_balance: 180000,
     existing_interest_rate: 4.5,
     monthly_piti: 1200,
@@ -114,6 +120,8 @@ describe('creativeFinanceSchema', () => {
 describe('flipSchema', () => {
   it('accepts valid flip inputs', () => {
     const result = flipSchema.safeParse({
+      address: '321 Pine Rd',
+      zip_code: '10001',
       purchase_price: 150000,
       rehab_budget: 40000,
       arv: 250000,

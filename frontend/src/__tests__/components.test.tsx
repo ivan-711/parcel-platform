@@ -38,7 +38,7 @@ describe('KPICard', () => {
 
     const deltaEl = screen.getByText((content) => content.includes('2.5'))
     expect(deltaEl).toBeInTheDocument()
-    expect(deltaEl.textContent).toContain('\u25B2')
+    expect(deltaEl.textContent).toContain('\u2191')
   })
 
   it('shows negative delta with down arrow', () => {
@@ -46,8 +46,8 @@ describe('KPICard', () => {
 
     const deltaEl = screen.getByText((content) => content.includes('1.3'))
     expect(deltaEl).toBeInTheDocument()
-    expect(deltaEl.textContent).toContain('\u25BC')
-    expect(deltaEl.className).toContain('text-accent-danger')
+    expect(deltaEl.textContent).toContain('\u2193')
+    expect(deltaEl.className).toContain('text-red-600')
   })
 
   it('renders SkeletonCard when loading is true', () => {

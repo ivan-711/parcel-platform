@@ -1,4 +1,4 @@
-/** MobilePipeline — tabbed/stacked stage view for small screens. */
+/** MobilePipeline — tabbed/stacked stage view for small screens (light theme). */
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -73,10 +73,10 @@ export function MobilePipeline({ board, isLoading, onRemove, onCloseDeal, onMove
                 transition-all duration-200
                 min-h-[44px]
                 cursor-pointer
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50
                 ${isActive
-                  ? 'bg-accent-primary text-white shadow-lg shadow-accent-primary/20'
-                  : 'bg-app-elevated text-text-secondary hover:text-text-primary hover:bg-app-overlay'
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }
               `}
             >
@@ -87,10 +87,10 @@ export function MobilePipeline({ board, isLoading, onRemove, onCloseDeal, onMove
               {stage.label}
               <span
                 className={`
-                  text-[11px] font-mono px-1.5 py-0.5 rounded-full min-w-[22px] text-center
+                  text-[11px] tabular-nums px-1.5 py-0.5 rounded-full min-w-[22px] text-center
                   ${isActive
                     ? 'bg-white/20 text-white'
-                    : 'bg-app-overlay text-text-muted'
+                    : 'bg-gray-200 text-gray-500'
                   }
                 `}
               >
@@ -111,9 +111,9 @@ export function MobilePipeline({ board, isLoading, onRemove, onCloseDeal, onMove
         {isLoading ? (
           <ColumnSkeleton />
         ) : cards.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 gap-3 opacity-40">
-            <Inbox size={28} className="text-text-muted" />
-            <p className="text-sm text-text-muted">
+          <div className="flex flex-col items-center justify-center py-16 gap-3">
+            <Inbox size={28} className="text-gray-300" />
+            <p className="text-sm text-gray-400">
               No deals in {STAGES.find((s) => s.key === activeStage)?.label ?? activeStage}
             </p>
           </div>

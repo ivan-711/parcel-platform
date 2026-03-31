@@ -64,17 +64,17 @@ function StatCell({ stat, inView, reducedMotion }: { stat: StatItem; inView: boo
   return (
     <div className="text-center space-y-2">
       <Icon
-        className="mx-auto text-indigo-500"
+        className="mx-auto text-lime-600"
         size={20}
         strokeWidth={1.75}
         aria-hidden="true"
       />
-      <p className="text-3xl font-mono font-semibold text-text-primary">
+      <p className="text-3xl font-semibold text-gray-900 tabular-nums">
         {stat.prefix}
         {displayValue}
         {stat.suffix}
       </p>
-      <p className="text-xs text-text-muted tracking-[0.08em]">{stat.label}</p>
+      <p className="text-xs text-gray-400 tracking-[0.08em]">{stat.label}</p>
     </div>
   )
 }
@@ -87,7 +87,7 @@ export function StatsStrip() {
   return (
     <section
       ref={sectionRef}
-      className="py-16 px-6 border-b border-border-subtle"
+      className="py-16 px-6 border-b border-gray-200"
       aria-label="Platform statistics"
     >
       <motion.div

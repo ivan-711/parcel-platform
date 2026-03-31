@@ -9,6 +9,7 @@ import math
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, UploadFile, status
 from sqlalchemy.orm import Session
 
+from core.billing.tier_gate import require_quota, record_usage
 from core.documents.processor import process_document
 from core.security.jwt import get_current_user
 from core.storage.s3_service import delete_file, generate_presigned_url, upload_file
@@ -37,6 +38,7 @@ async def upload_document(
     background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    _quota: None = Depends(require_quota("document_uploads_per_month")),
 ) -> DocumentResponse:
     """Upload a document for AI processing.
 
@@ -82,6 +84,7 @@ async def upload_document(
         status="pending",
     )
     db.add(doc)
+    record_usage(current_user.id, "document_uploads_per_month", db)
     db.commit()
     db.refresh(doc)
 

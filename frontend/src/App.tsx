@@ -25,6 +25,7 @@ const Portfolio = lazy(() => import('@/pages/portfolio/PortfolioPage'))
 const Documents = lazy(() => import('@/pages/documents/DocumentsPage'))
 const Chat = lazy(() => import('@/pages/chat/ChatPage'))
 const Settings = lazy(() => import('@/pages/settings/SettingsPage'))
+const PricingPage = lazy(() => import('@/pages/PricingPage'))
 const ShareDeal = lazy(() => import('@/pages/share/ShareDealPage'))
 const ComparePage = lazy(() => import('@/pages/compare/ComparePage'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
@@ -43,7 +44,7 @@ const queryClient = new QueryClient({
 
 function PageFallback() {
   return (
-    <div className="min-h-screen bg-app-bg p-8 space-y-4">
+    <div className="min-h-screen bg-gray-50 p-8 space-y-4">
       <SkeletonCard lines={2} />
       <SkeletonCard lines={4} />
     </div>
@@ -128,6 +129,7 @@ function AnimatedRoutes() {
             <Route path="/documents" element={<ProtectedRoute><PageErrorBoundary><Documents /></PageErrorBoundary></ProtectedRoute>} />
             <Route path="/chat" element={<ProtectedRoute><PageErrorBoundary><Chat /></PageErrorBoundary></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><PageErrorBoundary><Settings /></PageErrorBoundary></ProtectedRoute>} />
+            <Route path="/pricing" element={<ProtectedRoute><PageErrorBoundary><PricingPage /></PageErrorBoundary></ProtectedRoute>} />
 
             {/* Catch-all 404 */}
             <Route path="*" element={<NotFound />} />

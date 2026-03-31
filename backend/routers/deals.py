@@ -7,11 +7,13 @@ from datetime import datetime
 from typing import Any, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.orm import Session
 
+from core.billing.tier_gate import require_feature, require_quota, record_usage
 from core.security.jwt import get_current_user
 from database import get_db
+from limiter import limiter
 from models.deals import Deal
 from models.users import User
 from schemas.deals import (
@@ -78,7 +80,7 @@ def build_risk_factors(
         repair = inputs.get("repair_costs") or 0
         factors["spread_vs_arv_pct"] = round((arv - asking) / arv * 100, 2) if arv else None
         factors["repair_to_arv_ratio"] = round(repair / arv * 100, 2) if arv else None
-        factors["estimated_profit"] = outputs.get("estimated_profit")
+        factors["estimated_profit"] = outputs.get("profit_at_ask")
         mao = outputs.get("mao")
         factors["mao_vs_asking"] = round(mao - asking, 2) if mao is not None else None
 
@@ -86,32 +88,28 @@ def build_risk_factors(
         factors["monthly_cash_flow"] = outputs.get("monthly_cash_flow")
         factors["cash_on_cash_return"] = outputs.get("coc_return")
         factors["cap_rate"] = outputs.get("cap_rate")
-        mortgage = outputs.get("monthly_mortgage_payment")
-        rent = outputs.get("monthly_rent") or inputs.get("monthly_rent")
-        factors["debt_service_coverage"] = (
-            round(rent / mortgage, 2) if mortgage and rent else None
-        )
+        factors["debt_service_coverage"] = outputs.get("dscr")
         monthly_rent = inputs.get("monthly_rent") or 0
         vacancy = inputs.get("vacancy_rate_pct") or 0
         factors["vacancy_impact_monthly"] = round(monthly_rent * vacancy / 100, 2)
 
     elif strategy == "brrrr":
-        factors["equity_left_in"] = outputs.get("equity_left_in_deal") or outputs.get("money_left_in")
+        factors["equity_left_in"] = outputs.get("money_left_in")
         factors["monthly_cash_flow"] = outputs.get("monthly_cash_flow")
-        factors["refinance_proceeds"] = outputs.get("refinance_loan_amount")
+        factors["refinance_proceeds"] = outputs.get("refi_proceeds")
         purchase = inputs.get("purchase_price") or 0
         rehab = inputs.get("rehab_costs") or 0
         factors["total_invested"] = round(purchase + rehab, 2)
 
     elif strategy == "flip":
-        factors["projected_profit"] = outputs.get("net_profit") or outputs.get("gross_profit")
+        factors["projected_profit"] = outputs.get("gross_profit")
         factors["roi_pct"] = outputs.get("roi")
         purchase = inputs.get("purchase_price") or 0
         rehab = inputs.get("rehab_budget") or 0
         financing = inputs.get("financing_costs") or 0
         factors["total_cost"] = round(purchase + rehab + financing, 2)
         arv = inputs.get("arv") or 0
-        net_profit = outputs.get("net_profit") or outputs.get("gross_profit")
+        net_profit = outputs.get("gross_profit")
         factors["profit_margin_pct"] = (
             round(net_profit / arv * 100, 2) if arv and net_profit is not None else None
         )
@@ -157,10 +155,14 @@ def _get_owned_deal(deal_id: UUID, current_user: User, db: Session) -> Deal:
 # ---------------------------------------------------------------------------
 
 @router.post("/", response_model=DealResponse, status_code=status.HTTP_201_CREATED)
+@limiter.limit("30/minute")
 async def create_deal(
+    request: Request,
     body: DealCreateRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    _quota_deals: None = Depends(require_quota("saved_deals")),
+    _quota_analyses: None = Depends(require_quota("analyses_per_month")),
 ) -> DealResponse:
     """Create a new deal analysis.
 
@@ -202,13 +204,16 @@ async def create_deal(
         status="draft",
     )
     db.add(deal)
+    record_usage(current_user.id, "analyses_per_month", db)
     db.commit()
     db.refresh(deal)
     return DealResponse.model_validate(deal)
 
 
 @router.get("/", response_model=list[DealListItem])
+@limiter.limit("60/minute")
 async def list_deals(
+    request: Request,
     strategy: Optional[str] = Query(None),
     deal_status: Optional[str] = Query(None, alias="status"),
     zip_code: Optional[str] = Query(None),
@@ -262,7 +267,9 @@ async def list_deals(
 
 
 @router.get("/{deal_id}", response_model=DealResponse)
+@limiter.limit("60/minute")
 async def get_deal(
+    request: Request,
     deal_id: UUID,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
@@ -388,7 +395,9 @@ async def share_deal(
 
 
 @router.get("/{deal_id}/share/", response_model=SharedDealResponse)
+@limiter.limit("60/minute")
 async def get_shared_deal(
+    request: Request,
     deal_id: UUID,
     db: Session = Depends(get_db),
 ) -> SharedDealResponse:
@@ -439,10 +448,13 @@ logger = logging.getLogger(__name__)
     "/{deal_id}/offer-letter/",
     response_model=OfferLetterResponse,
 )
+@limiter.limit("5/minute")
 async def generate_deal_offer_letter(
+    request: Request,
     deal_id: UUID,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    _gate: None = Depends(require_feature("offer_letter")),
 ) -> OfferLetterResponse:
     """Generate a professional offer letter for a deal using Claude AI."""
     deal = _get_owned_deal(deal_id, current_user, db)

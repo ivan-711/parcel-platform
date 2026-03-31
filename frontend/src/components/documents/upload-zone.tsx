@@ -38,26 +38,26 @@ export function UploadZone({ onUpload, isUploading }: UploadZoneProps) {
     <div
       {...getRootProps()}
       className={cn(
-        'border border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors',
+        'border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors',
         isDragActive
-          ? 'border-accent-primary bg-accent-primary/10'
-          : 'border-border-subtle hover:border-border-default',
+          ? 'border-lime-500 bg-lime-50'
+          : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50',
         isUploading && 'pointer-events-none opacity-60',
       )}
     >
       <input {...getInputProps()} />
       {isUploading ? (
         <div className="flex flex-col items-center gap-2 py-2">
-          <Loader2 size={20} className="text-accent-primary animate-spin" />
-          <p className="text-xs text-text-muted">Uploading...</p>
+          <Loader2 size={20} className="text-lime-700 animate-spin" />
+          <p className="text-xs text-gray-400">Uploading...</p>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-2 py-2">
-          <Upload size={20} className="text-text-muted" />
-          <p className="text-xs text-text-secondary">
+          <Upload size={20} className="text-gray-400" />
+          <p className="text-xs text-gray-600">
             {isDragActive ? 'Drop file here' : 'Drag & drop or click to upload'}
           </p>
-          <p className="text-[10px] text-text-muted">PDF, DOCX, PNG, JPG — max 10 MB</p>
+          <p className="text-[10px] text-gray-400">PDF, DOCX, PNG, JPG — max 10 MB</p>
         </div>
       )}
     </div>

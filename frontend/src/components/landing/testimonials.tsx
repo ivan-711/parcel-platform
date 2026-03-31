@@ -1,6 +1,6 @@
 /**
  * Testimonials — auto-advancing carousel of investor testimonials with strategy badges,
- * key financial metrics in JetBrains Mono, and crossfade transitions via AnimatePresence.
+ * key financial metrics, and crossfade transitions via AnimatePresence.
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react'
@@ -24,15 +24,15 @@ interface Testimonial {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Strategy badge config                                              */
+/*  Strategy badge config (light theme pastels)                        */
 /* ------------------------------------------------------------------ */
 
 const STRATEGY_STYLE: Record<Strategy, { bg: string; text: string; label: string }> = {
-  wholesale: { bg: '#451A03', text: '#FCD34D', label: 'Wholesale' },
-  creative_finance: { bg: '#2E1065', text: '#C4B5FD', label: 'Creative Finance' },
-  brrrr: { bg: '#0C1A4A', text: '#93C5FD', label: 'BRRRR' },
-  buy_and_hold: { bg: '#064E3B', text: '#6EE7B7', label: 'Buy & Hold' },
-  flip: { bg: '#431407', text: '#FCA5A1', label: 'Flip' },
+  wholesale: { bg: '#FEF3C7', text: '#92400E', label: 'Wholesale' },
+  creative_finance: { bg: '#EDE9FE', text: '#5B21B6', label: 'Creative Finance' },
+  brrrr: { bg: '#DBEAFE', text: '#1E40AF', label: 'BRRRR' },
+  buy_and_hold: { bg: '#D1FAE5', text: '#065F46', label: 'Buy & Hold' },
+  flip: { bg: '#FFE4E6', text: '#9F1239', label: 'Flip' },
 }
 
 /* ------------------------------------------------------------------ */
@@ -179,7 +179,7 @@ export function Testimonials() {
   return (
     <section
       id="testimonials"
-      className="py-24 px-6 border-t border-border-subtle"
+      className="py-24 px-6 border-t border-gray-200 bg-gray-50"
     >
       <div className="max-w-2xl mx-auto space-y-12">
         {/* Section header */}
@@ -190,10 +190,10 @@ export function Testimonials() {
           transition={{ duration: 0.35 }}
           className="space-y-3"
         >
-          <p className="text-[10px] uppercase tracking-[0.08em] text-accent-primary font-semibold">
+          <p className="text-[10px] uppercase tracking-[0.08em] text-lime-700 font-semibold">
             Testimonials
           </p>
-          <h2 className="text-4xl font-semibold tracking-tight text-text-primary">
+          <h2 className="text-4xl font-semibold tracking-tight text-gray-900">
             What investors are closing with Parcel
           </h2>
         </motion.div>
@@ -211,7 +211,7 @@ export function Testimonials() {
             <button
               onClick={goPrev}
               aria-label="Previous testimonial"
-              className="hidden sm:flex w-8 h-8 shrink-0 items-center justify-center rounded-full bg-app-elevated border border-border-subtle text-text-secondary hover:text-text-primary hover:border-border-default transition-colors focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none"
+              className="hidden sm:flex w-8 h-8 shrink-0 items-center justify-center rounded-full bg-white border border-gray-200 text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-colors focus-visible:ring-2 focus-visible:ring-lime-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 focus-visible:outline-none"
             >
               <ChevronLeft size={14} />
             </button>
@@ -225,7 +225,7 @@ export function Testimonials() {
               onBlurCapture={resume}
             >
               <div
-                className="rounded-2xl border border-border-subtle bg-app-surface p-8 relative overflow-hidden"
+                className="rounded-2xl border border-gray-200 bg-white p-8 relative overflow-hidden shadow-xs"
                 aria-live="polite"
                 aria-atomic="true"
               >
@@ -244,19 +244,19 @@ export function Testimonials() {
                       <div
                         className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-semibold shrink-0"
                         style={{
-                          backgroundColor: 'rgba(99,102,241,0.1)',
-                          color: '#6366F1',
+                          backgroundColor: '#F7FEE7',
+                          color: '#4D7C0F',
                         }}
                         aria-hidden="true"
                       >
                         {current.initials}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-text-primary truncate">
+                        <p className="text-sm font-semibold text-gray-900 truncate">
                           {current.name}
                         </p>
                         <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                          <span className="text-xs text-text-secondary">
+                          <span className="text-xs text-gray-500">
                             {current.role}
                           </span>
                           <span
@@ -273,16 +273,16 @@ export function Testimonials() {
                     </div>
 
                     {/* Quote */}
-                    <blockquote className="text-sm text-text-secondary leading-relaxed">
+                    <blockquote className="text-sm text-gray-600 leading-relaxed">
                       &ldquo;{current.quote}&rdquo;
                     </blockquote>
 
                     {/* Key metric */}
-                    <div className="pt-2 border-t border-border-subtle">
-                      <p className="font-mono text-2xl text-accent-primary font-semibold">
+                    <div className="pt-2 border-t border-gray-200">
+                      <p className="text-2xl text-lime-700 font-semibold tabular-nums">
                         {current.metric}
                       </p>
-                      <p className="text-xs text-text-muted mt-1">
+                      <p className="text-xs text-gray-400 mt-1">
                         {current.metricLabel}
                       </p>
                     </div>
@@ -295,7 +295,7 @@ export function Testimonials() {
             <button
               onClick={goNext}
               aria-label="Next testimonial"
-              className="hidden sm:flex w-8 h-8 shrink-0 items-center justify-center rounded-full bg-app-elevated border border-border-subtle text-text-secondary hover:text-text-primary hover:border-border-default transition-colors focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none"
+              className="hidden sm:flex w-8 h-8 shrink-0 items-center justify-center rounded-full bg-white border border-gray-200 text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-colors focus-visible:ring-2 focus-visible:ring-lime-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 focus-visible:outline-none"
             >
               <ChevronRight size={14} />
             </button>
@@ -306,14 +306,14 @@ export function Testimonials() {
             <button
               onClick={goPrev}
               aria-label="Previous testimonial"
-              className="flex w-8 h-8 items-center justify-center rounded-full bg-app-elevated border border-border-subtle text-text-secondary hover:text-text-primary hover:border-border-default transition-colors focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none"
+              className="flex w-8 h-8 items-center justify-center rounded-full bg-white border border-gray-200 text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-colors focus-visible:ring-2 focus-visible:ring-lime-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 focus-visible:outline-none"
             >
               <ChevronLeft size={14} />
             </button>
             <button
               onClick={goNext}
               aria-label="Next testimonial"
-              className="flex w-8 h-8 items-center justify-center rounded-full bg-app-elevated border border-border-subtle text-text-secondary hover:text-text-primary hover:border-border-default transition-colors focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none"
+              className="flex w-8 h-8 items-center justify-center rounded-full bg-white border border-gray-200 text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-colors focus-visible:ring-2 focus-visible:ring-lime-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 focus-visible:outline-none"
             >
               <ChevronRight size={14} />
             </button>
@@ -328,14 +328,14 @@ export function Testimonials() {
                 aria-selected={i === activeIndex}
                 aria-label={`Testimonial from ${t.name}`}
                 onClick={() => goTo(i)}
-                className="group p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg rounded-full"
+                className="group p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50 rounded-full"
               >
                 <span
                   className="block rounded-full transition-all duration-300"
                   style={{
                     width: i === activeIndex ? 24 : 8,
                     height: 8,
-                    backgroundColor: i === activeIndex ? '#6366F1' : '#1A1A2E',
+                    backgroundColor: i === activeIndex ? '#4D7C0F' : '#D0D5DD',
                   }}
                 />
               </button>

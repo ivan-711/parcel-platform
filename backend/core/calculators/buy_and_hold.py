@@ -1,8 +1,17 @@
-from .utils import pmt
+from .utils import pmt, validate_inputs
+
+_REQUIRED = [
+    "purchase_price", "down_payment_pct", "interest_rate", "loan_term_years",
+    "monthly_rent", "monthly_taxes", "monthly_insurance", "vacancy_rate_pct",
+    "maintenance_pct", "mgmt_fee_pct",
+]
+_NON_NEGATIVE = ["purchase_price", "interest_rate", "monthly_rent"]
 
 
 def calculate_buy_and_hold(inputs: dict) -> dict:
     """Calculate buy-and-hold rental property metrics."""
+    validate_inputs(inputs, _REQUIRED, _NON_NEGATIVE)
+
     purchase_price = inputs["purchase_price"]
     down_payment_pct = inputs["down_payment_pct"]
     interest_rate = inputs["interest_rate"]
@@ -41,13 +50,12 @@ def calculate_buy_and_hold(inputs: dict) -> dict:
     monthly_cash_flow = effective_gross_income - total_monthly_expenses
     annual_cash_flow = monthly_cash_flow * 12
 
-    cap_rate = (annual_noi / purchase_price) * 100
+    cap_rate = (annual_noi / purchase_price) * 100 if purchase_price > 0 else 0
     coc_return = (annual_cash_flow / down_payment) * 100 if down_payment > 0 else 0
     grm = purchase_price / (monthly_rent * 12) if monthly_rent > 0 else 0
-    dscr = effective_gross_income / monthly_pi if monthly_pi > 0 else 0
+    dscr = monthly_noi / monthly_pi if monthly_pi > 0 else 0
 
-    occupancy = 1 - vacancy_rate_pct / 100
-    break_even_rent = total_monthly_expenses / occupancy if occupancy > 0 else 0
+    break_even_rent = total_monthly_expenses / inputs.get("number_of_units", 1)
 
     return {
         "purchase_price": round(purchase_price, 2),

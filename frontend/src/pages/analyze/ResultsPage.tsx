@@ -1,6 +1,6 @@
 /** Deal results page — strategy-aware KPI cards, outputs table, risk gauge, and action buttons. */
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { useParams, Link, useNavigate } from 'react-router-dom'
@@ -44,7 +44,10 @@ import {
 } from '@/lib/format'
 import { getStrategyKPIs } from '@/lib/strategy-kpis'
 import type { KPIDefinition } from '@/lib/strategy-kpis'
-import type { Strategy } from '@/types'
+import type { Strategy, PlanTier } from '@/types'
+import { hasAccess } from '@/types'
+import { useAuthStore } from '@/stores/authStore'
+import { Lock } from 'lucide-react'
 
 const PIPELINE_STAGES = [
   { key: 'lead', label: 'Lead' },
@@ -78,6 +81,14 @@ export default function ResultsPage() {
   const stageMenuRef = useRef<HTMLDivElement>(null)
   const stageItemsRef = useRef<(HTMLButtonElement | null)[]>([])
   const [focusedStageIndex, setFocusedStageIndex] = useState(-1)
+
+  const authUser = useAuthStore((s) => s.user)
+  const effectiveTier: PlanTier =
+    authUser?.trial_active && authUser.plan_tier === 'free'
+      ? 'pro'
+      : (authUser?.plan_tier ?? 'free') as PlanTier
+  const isDemo = authUser?.email === 'demo@parcel.app'
+  const canAccessPro = isDemo || hasAccess(effectiveTier, 'pro')
 
   const deleteDeal = useMutation({
     mutationFn: () => api.deals.delete(dealId ?? ''),
@@ -119,14 +130,14 @@ export default function ResultsPage() {
     return (
       <AppShell title="Deal Results">
         <div className="max-w-5xl mx-auto">
-          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6 flex items-start gap-3">
-            <AlertTriangle size={20} className="text-red-400 shrink-0 mt-0.5" />
+          <div className="rounded-xl border border-red-200 bg-red-50 p-6 flex items-start gap-3">
+            <AlertTriangle size={20} className="text-red-500 shrink-0 mt-0.5" />
             <div className="space-y-2">
-              <p className="text-sm font-medium text-text-primary">Failed to load deal</p>
-              <p className="text-xs text-text-secondary">
+              <p className="text-sm font-medium text-gray-900">Failed to load deal</p>
+              <p className="text-xs text-gray-600">
                 {error instanceof Error ? error.message : 'Something went wrong.'}
               </p>
-              <Link to="/deals" className="text-xs text-accent-primary hover:underline">
+              <Link to="/deals" className="text-xs text-lime-700 hover:underline">
                 Back to My Deals
               </Link>
             </div>
@@ -186,7 +197,7 @@ export default function ResultsPage() {
     )
   }
 
-  const handleTriggerKeyDown = useCallback((e: React.KeyboardEvent) => {
+  const handleTriggerKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
       setStageMenuOpen((v) => !v)
@@ -194,9 +205,9 @@ export default function ResultsPage() {
     } else if (e.key === 'Escape') {
       setStageMenuOpen(false)
     }
-  }, [stageMenuOpen])
+  }
 
-  const handleMenuKeyDown = useCallback((e: React.KeyboardEvent) => {
+  const handleMenuKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault()
       setFocusedStageIndex((prev) => Math.min(prev + 1, PIPELINE_STAGES.length - 1))
@@ -212,8 +223,7 @@ export default function ResultsPage() {
       e.preventDefault()
       setStageMenuOpen(false)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [focusedStageIndex])
+  }
 
   const showCopied = () => {
     setCopied(true)
@@ -280,11 +290,11 @@ export default function ResultsPage() {
     if (kpi.format === 'percent_or_infinite') {
       if (rawValue === null || rawValue === undefined) {
         return (
-          <div key={kpi.key} className="rounded-xl border border-border-subtle bg-app-surface p-5 space-y-1">
-            <p className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
+          <div key={kpi.key} className="rounded-xl border border-gray-200 bg-white p-5 space-y-1 shadow-xs">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-[0.08em]">
               {kpi.label}
             </p>
-            <p className="text-3xl font-semibold font-mono text-accent-success">∞</p>
+            <p className="text-3xl font-semibold tabular-nums text-sky-600">&infin;</p>
           </div>
         )
       }
@@ -304,8 +314,8 @@ export default function ResultsPage() {
     if (kpi.renderMode === 'badge') {
       const strValue = typeof rawValue === 'string' ? rawValue : 'N/A'
       return (
-        <div key={kpi.key} className="rounded-xl border border-border-subtle bg-app-surface p-5 space-y-1">
-          <p className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
+        <div key={kpi.key} className="rounded-xl border border-gray-200 bg-white p-5 space-y-1 shadow-xs">
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-[0.08em]">
             {kpi.label}
           </p>
           <span
@@ -322,13 +332,13 @@ export default function ResultsPage() {
     if (kpi.renderMode === 'color_coded') {
       const formatted = kpi.format === 'percent' ? formatPercent(numValue) : formatCurrency(numValue)
       return (
-        <div key={kpi.key} className="rounded-xl border border-border-subtle bg-app-surface p-5 space-y-1">
-          <p className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
+        <div key={kpi.key} className="rounded-xl border border-gray-200 bg-white p-5 space-y-1 shadow-xs">
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-[0.08em]">
             {kpi.label}
           </p>
           <p
-            className={`text-3xl font-semibold font-mono ${
-              numValue >= 0 ? 'text-accent-success' : 'text-accent-danger'
+            className={`text-3xl font-semibold tabular-nums ${
+              numValue >= 0 ? 'text-sky-600' : 'text-red-600'
             }`}
           >
             {formatted}
@@ -354,27 +364,27 @@ export default function ResultsPage() {
         <motion.nav variants={staggerItem} aria-label="Breadcrumb">
           <ol className="flex items-center gap-1.5 text-xs">
             <li>
-              <Link to="/dashboard" className="text-text-muted hover:text-accent-primary transition-colors">
+              <Link to="/dashboard" className="text-gray-400 hover:text-lime-700 transition-colors">
                 Dashboard
               </Link>
             </li>
-            <li aria-hidden="true"><ChevronRight size={12} className="text-text-muted" /></li>
+            <li aria-hidden="true"><ChevronRight size={12} className="text-gray-400" /></li>
             <li>
-              <Link to="/analyze" className="text-text-muted hover:text-accent-primary transition-colors">
+              <Link to="/analyze" className="text-gray-400 hover:text-lime-700 transition-colors">
                 Analyzer
               </Link>
             </li>
-            <li aria-hidden="true"><ChevronRight size={12} className="text-text-muted" /></li>
+            <li aria-hidden="true"><ChevronRight size={12} className="text-gray-400" /></li>
             <li>
               <Link
                 to={`/analyze/${deal.strategy}`}
-                className="text-text-muted hover:text-accent-primary transition-colors"
+                className="text-gray-400 hover:text-lime-700 transition-colors"
               >
                 {STRATEGY_DISPLAY_NAMES[deal.strategy] ?? deal.strategy}
               </Link>
             </li>
-            <li aria-hidden="true"><ChevronRight size={12} className="text-text-muted" /></li>
-            <li aria-current="page" className="text-text-primary font-medium">
+            <li aria-hidden="true"><ChevronRight size={12} className="text-gray-400" /></li>
+            <li aria-current="page" className="text-gray-900 font-medium">
               Results
             </li>
           </ol>
@@ -383,7 +393,7 @@ export default function ResultsPage() {
         {/* Header */}
         <motion.div variants={staggerItem} className="flex items-center gap-3">
           <StrategyBadge strategy={deal.strategy as Strategy} />
-          <h2 className="text-lg font-semibold text-text-primary">{deal.address}</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{deal.address}</h2>
         </motion.div>
 
         {/* Section 1: KPI Row */}
@@ -394,19 +404,19 @@ export default function ResultsPage() {
         {/* Section 2: Two Columns */}
         <motion.div variants={staggerItem} className="grid md:grid-cols-5 gap-6">
           {/* Left — Outputs Table */}
-          <div className="md:col-span-3 rounded-xl border border-border-subtle bg-app-surface overflow-hidden">
-            <div className="px-4 py-3 border-b border-[#1A1A2E]">
-              <h3 className="text-sm font-semibold text-text-primary">All Outputs</h3>
+          <div className="md:col-span-3 rounded-xl border border-gray-200 bg-white overflow-hidden shadow-xs">
+            <div className="px-4 py-3 border-b border-gray-100">
+              <h3 className="text-sm font-semibold text-gray-900">All Outputs</h3>
             </div>
             <div>
               {outputEntries.map(([key, value], i) => (
                 <div
                   key={key}
-                  className={`flex items-center justify-between py-2 px-3 border-b border-[#1A1A2E] ${
-                    i % 2 === 0 ? 'bg-[#0F0F1A]' : 'bg-[#08080F]'
+                  className={`flex items-center justify-between py-2 px-3 border-b border-gray-100 last:border-0 ${
+                    i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'
                   }`}
                 >
-                  <span className="text-sm text-text-secondary">{formatLabel(key)}</span>
+                  <span className="text-sm text-gray-600">{formatLabel(key)}</span>
                   {typeof value === 'string' && key === 'recommendation' ? (
                     <span
                       className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${getRecommendationColor(value)}`}
@@ -414,7 +424,7 @@ export default function ResultsPage() {
                       {value}
                     </span>
                   ) : (
-                    <span className="font-mono text-[13px] text-text-primary">
+                    <span className="text-[13px] text-gray-900 tabular-nums">
                       {formatOutputValue(key, value as number | string | null | undefined)}
                     </span>
                   )}
@@ -424,30 +434,30 @@ export default function ResultsPage() {
           </div>
 
           {/* Right — Risk Gauge */}
-          <div className="md:col-span-2 rounded-xl border border-border-subtle bg-app-surface p-6 flex flex-col items-center justify-center">
+          <div className="md:col-span-2 rounded-xl border border-gray-200 bg-white p-6 flex flex-col items-center justify-center shadow-xs">
             <div className="flex items-center gap-1.5 mb-4">
-              <h3 className="text-sm font-semibold text-text-primary">Risk Score</h3>
+              <h3 className="text-sm font-semibold text-gray-900">Risk Score</h3>
               <Popover>
                 <PopoverTrigger asChild>
-                  <button type="button" aria-label="Risk score details" className="text-[#94A3B8] hover:text-[#F1F5F9] transition-colors">
+                  <button type="button" aria-label="Risk score details" className="text-gray-400 hover:text-gray-600 transition-colors">
                     <HelpCircle size={16} />
                   </button>
                 </PopoverTrigger>
-                <PopoverContent className="w-72 bg-app-surface border-border-subtle p-4" side="left">
-                  <p className="text-sm font-semibold text-text-primary mb-2">Risk Score Breakdown</p>
+                <PopoverContent className="w-72 bg-white border-gray-200 p-4 shadow-lg" side="left">
+                  <p className="text-sm font-semibold text-gray-900 mb-2">Risk Score Breakdown</p>
                   {deal.risk_factors && Object.keys(deal.risk_factors).length > 0 ? (
                     <div className="space-y-1.5">
                       {Object.entries(deal.risk_factors).map(([key, value]) => (
                         <div key={key} className="flex items-center justify-between text-sm">
-                          <span className="text-text-secondary">{formatLabel(key)}</span>
-                          <span className="font-mono text-text-primary">
+                          <span className="text-gray-600">{formatLabel(key)}</span>
+                          <span className="text-gray-900 tabular-nums">
                             {formatOutputValue(key, value as number | string)}
                           </span>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-text-muted">Breakdown not available for this deal.</p>
+                    <p className="text-sm text-gray-400">Breakdown not available for this deal.</p>
                   )}
                 </PopoverContent>
               </Popover>
@@ -478,7 +488,7 @@ export default function ResultsPage() {
               <button
                 type="button"
                 disabled
-                className="inline-flex items-center gap-2 rounded-lg border border-[#10B981]/30 bg-[#16162A] px-4 py-2 text-sm font-medium text-[#10B981] cursor-default"
+                className="inline-flex items-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-medium text-sky-700 cursor-default"
               >
                 <Check size={14} />
                 In Pipeline
@@ -491,7 +501,7 @@ export default function ResultsPage() {
                 disabled={addToPipeline.isPending}
                 aria-haspopup="true"
                 aria-expanded={stageMenuOpen}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#6366F1] px-4 py-2 text-sm font-medium text-white hover:bg-[#5558E3] transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg bg-lime-700 px-4 py-2 text-sm font-medium text-white hover:bg-lime-800 transition-colors disabled:opacity-50"
               >
                 <PlusCircle size={14} />
                 {addToPipeline.isPending ? 'Adding...' : 'Add to Pipeline'}
@@ -502,7 +512,7 @@ export default function ResultsPage() {
               <div
                 role="menu"
                 onKeyDown={handleMenuKeyDown}
-                className="absolute bottom-full mb-1 right-0 z-50 min-w-[180px] rounded-lg border border-[#1A1A2E] bg-[#0F0F1A] py-1 shadow-lg"
+                className="absolute bottom-full mb-1 right-0 z-50 min-w-[180px] rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
               >
                 {PIPELINE_STAGES.map((s, i) => (
                   <button
@@ -511,7 +521,7 @@ export default function ResultsPage() {
                     type="button"
                     role="menuitem"
                     tabIndex={focusedStageIndex === i ? 0 : -1}
-                    className="flex w-full items-center px-3 py-2 text-sm text-[#F1F5F9] hover:bg-[#6366F1]/20 transition-colors"
+                    className="flex w-full items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                     onClick={() => handleAddToPipeline(s.key)}
                   >
                     {s.label}
@@ -520,30 +530,37 @@ export default function ResultsPage() {
               </div>
             )}
           </div>
-          <Button variant="outline" onClick={handleShare} disabled={sharing || copied} className="gap-2">
+          <Button variant="outline" onClick={handleShare} disabled={sharing || copied} className="gap-2 border-gray-200 text-gray-600 hover:bg-gray-50">
             <Share2 size={14} />
             {copied ? 'Link copied!' : sharing ? 'Sharing...' : deal.status === 'shared' ? 'Copy Share Link' : 'Share Deal'}
           </Button>
-          <Button variant="outline" onClick={handleDownloadReport} disabled={generatingPDF} className="gap-2">
-            <FileDown size={14} />
-            {generatingPDF ? 'Generating...' : 'Download Report'}
-          </Button>
+          {canAccessPro ? (
+            <Button variant="outline" onClick={handleDownloadReport} disabled={generatingPDF} className="gap-2 border-gray-200 text-gray-600 hover:bg-gray-50">
+              <FileDown size={14} />
+              {generatingPDF ? 'Generating...' : 'Download Report'}
+            </Button>
+          ) : (
+            <Button variant="outline" onClick={() => navigate('/pricing')} className="gap-2 border-gray-200 text-gray-400 hover:bg-gray-50">
+              <Lock size={14} />
+              Export PDF (Pro)
+            </Button>
+          )}
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" className="gap-2 text-red-400 hover:text-red-300 hover:bg-red-900/20">
+              <Button variant="ghost" className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50">
                 <Trash2 size={14} />
                 Delete
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="bg-app-surface border-border-subtle">
+            <AlertDialogContent className="bg-white border-gray-200">
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-text-primary">Delete this deal?</AlertDialogTitle>
-                <AlertDialogDescription className="text-text-secondary">
+                <AlertDialogTitle className="text-gray-900">Delete this deal?</AlertDialogTitle>
+                <AlertDialogDescription className="text-gray-600">
                   This will permanently delete {deal.address}. This cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel className="bg-app-elevated border-border-subtle text-text-primary">Cancel</AlertDialogCancel>
+                <AlertDialogCancel className="bg-white border-gray-200 text-gray-700">Cancel</AlertDialogCancel>
                 <AlertDialogAction onClick={() => deleteDeal.mutate()} className="bg-red-600 hover:bg-red-700 text-white">
                   {deleteDeal.isPending ? 'Deleting...' : 'Delete'}
                 </AlertDialogAction>
@@ -553,23 +570,30 @@ export default function ResultsPage() {
           <Button
             variant="outline"
             onClick={() => navigate(`/chat?dealId=${deal.id}`)}
-            className="gap-2"
+            className="gap-2 border-gray-200 text-gray-600 hover:bg-gray-50"
           >
             <MessageSquare size={14} />
             Chat about Deal
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => setOfferLetterOpen(true)}
-            className="gap-2"
-          >
-            <FileText size={14} />
-            Offer Letter
-          </Button>
+          {canAccessPro ? (
+            <Button
+              variant="outline"
+              onClick={() => setOfferLetterOpen(true)}
+              className="gap-2 border-gray-200 text-gray-600 hover:bg-gray-50"
+            >
+              <FileText size={14} />
+              Offer Letter
+            </Button>
+          ) : (
+            <Button variant="outline" onClick={() => navigate('/pricing')} className="gap-2 border-gray-200 text-gray-400 hover:bg-gray-50">
+              <Lock size={14} />
+              Offer Letter (Pro)
+            </Button>
+          )}
           <Button
             onClick={handleSave}
             disabled={saved || updateDeal.isPending}
-            className="gap-2 bg-accent-primary hover:bg-accent-primary/90 text-white"
+            className="gap-2 bg-lime-700 hover:bg-lime-800 text-white"
           >
             {saved ? (
               <>
@@ -583,6 +607,14 @@ export default function ResultsPage() {
               </>
             )}
           </Button>
+        </motion.div>
+
+        {/* Disclaimer */}
+        <motion.div variants={staggerItem} className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+          <AlertTriangle size={16} className="text-amber-500 shrink-0 mt-0.5" />
+          <p className="text-xs text-gray-600 leading-relaxed">
+            This analysis is for informational purposes only. It does not constitute an appraisal, financial advice, or investment recommendation. AI-generated content may contain errors. Consult a qualified professional before making investment decisions.
+          </p>
         </motion.div>
       </motion.div>
 

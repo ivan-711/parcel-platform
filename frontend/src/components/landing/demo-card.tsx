@@ -54,17 +54,17 @@ export function DemoCard() {
       initial={{ opacity: 0, y: 28 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      className="w-full max-w-2xl mx-auto rounded-2xl border border-border-default bg-app-surface overflow-hidden shadow-[0_32px_80px_-16px_rgba(0,0,0,0.7)]"
+      className="w-full max-w-2xl mx-auto rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-lg"
     >
       {/* Window chrome */}
-      <div className="flex items-center justify-between px-5 py-3 border-b border-border-subtle bg-app-elevated/40">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-gray-200 bg-gray-50">
         <div className="flex items-center gap-2">
           <div className="flex gap-1.5">
-            {['#3a3a3a', '#3a3a3a', '#3a3a3a'].map((c, i) => (
+            {['#D0D5DD', '#D0D5DD', '#D0D5DD'].map((c, i) => (
               <div key={i} className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c }} />
             ))}
           </div>
-          <span className="text-[10px] font-mono text-text-muted ml-1">
+          <span className="text-[10px] font-mono text-gray-400 ml-1">
             2847 Oak Street, Memphis TN 38103
           </span>
         </div>
@@ -81,7 +81,7 @@ export function DemoCard() {
         role="tablist"
         aria-label="Investment strategies"
         onKeyDown={handleTabKeyDown}
-        className="flex border-b border-border-subtle overflow-x-auto scrollbar-none"
+        className="flex border-b border-gray-200 overflow-x-auto scrollbar-none"
       >
         {STRATEGIES.map((s, i) => (
           <button
@@ -92,10 +92,10 @@ export function DemoCard() {
             tabIndex={active === s ? 0 : -1}
             onClick={() => setActive(s)}
             className={cn(
-              'flex-1 py-2.5 text-[10px] font-medium transition-all duration-150 cursor-pointer whitespace-nowrap min-w-0 px-2 rounded focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none',
+              'flex-1 py-2.5 text-[10px] font-medium transition-all duration-150 cursor-pointer whitespace-nowrap min-w-0 px-2 rounded focus-visible:ring-2 focus-visible:ring-lime-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white focus-visible:outline-none',
               active === s
-                ? 'text-accent-primary bg-accent-primary/5 border-b-2 border-accent-primary'
-                : 'text-text-muted hover:text-text-secondary hover:bg-app-elevated/30',
+                ? 'text-lime-700 bg-lime-50 border-b-2 border-lime-600'
+                : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50',
             )}
           >
             {s}
@@ -115,14 +115,14 @@ export function DemoCard() {
           transition={{ duration: 0.12 }}
         >
           {/* KPI row */}
-          <div className="grid grid-cols-4 divide-x divide-border-subtle border-b border-border-subtle">
+          <div className="grid grid-cols-4 divide-x divide-gray-200 border-b border-gray-200">
             {metricCells.map(({ label, value, color }) => (
               <div key={label} className="px-4 py-4 space-y-1">
-                <p className="text-[10px] uppercase tracking-[0.08em] text-text-muted font-medium">
+                <p className="text-[10px] uppercase tracking-[0.08em] text-gray-400 font-medium">
                   {label}
                 </p>
                 <p
-                  className="text-xl font-mono font-semibold text-text-primary leading-none"
+                  className="text-xl font-semibold text-gray-900 leading-none tabular-nums"
                   style={color ? { color } : undefined}
                 >
                   {value}
@@ -138,15 +138,15 @@ export function DemoCard() {
 
           {/* AI summary */}
           <div className="px-5 py-4">
-            <div className="flex gap-3 p-3.5 rounded-xl bg-app-elevated border border-border-subtle">
-              <div className="w-5 h-5 rounded-md bg-accent-primary/20 border border-accent-primary/30 flex items-center justify-center shrink-0 mt-px">
-                <span className="text-[10px] font-bold text-accent-primary">AI</span>
+            <div className="flex gap-3 p-3.5 rounded-xl bg-gray-50 border border-gray-200">
+              <div className="w-5 h-5 rounded-md bg-lime-100 border border-lime-200 flex items-center justify-center shrink-0 mt-px">
+                <span className="text-[10px] font-bold text-lime-700">AI</span>
               </div>
               <div className="space-y-0.5">
-                <p className="text-[10px] uppercase tracking-[0.08em] text-accent-primary font-semibold">
+                <p className="text-[10px] uppercase tracking-[0.08em] text-lime-700 font-semibold">
                   Analysis
                 </p>
-                <p className="text-xs text-text-secondary leading-relaxed">
+                <p className="text-xs text-gray-600 leading-relaxed">
                   {metrics.aiSummary}
                 </p>
               </div>

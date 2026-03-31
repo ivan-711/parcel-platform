@@ -3,11 +3,13 @@
 from datetime import datetime
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
+from core.billing.tier_gate import require_feature
 from core.security.jwt import get_current_user
 from database import get_db
+from limiter import limiter
 from models.deals import Deal
 from models.pipeline_entries import PipelineEntry
 from models.users import User
@@ -51,9 +53,12 @@ def _build_card(entry: PipelineEntry, deal: Deal) -> PipelineCardResponse:
 
 
 @router.get("/", response_model=PipelineBoardResponse)
+@limiter.limit("60/minute")
 async def get_pipeline_board(
+    request: Request,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    _gate: None = Depends(require_feature("pipeline_enabled")),
 ) -> PipelineBoardResponse:
     """Return all pipeline entries for the current user grouped by stage.
 
@@ -82,6 +87,7 @@ async def add_to_pipeline(
     body: PipelineCreateRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    _gate: None = Depends(require_feature("pipeline_enabled")),
 ) -> PipelineCardResponse:
     """Add a deal to the pipeline at the specified stage.
 
@@ -123,6 +129,7 @@ async def move_stage(
     body: PipelineStageUpdateRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    _gate: None = Depends(require_feature("pipeline_enabled")),
 ) -> PipelineCardResponse:
     """Move a pipeline card to a new stage and reset its entered_stage_at timestamp."""
     if body.stage not in _ALL_STAGES:
@@ -159,6 +166,7 @@ async def remove_from_pipeline(
     entry_id: UUID,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    _gate: None = Depends(require_feature("pipeline_enabled")),
 ) -> dict[str, str]:
     """Remove a deal from the pipeline (hard delete — pipeline entries are ephemeral)."""
     entry = db.query(PipelineEntry).filter(

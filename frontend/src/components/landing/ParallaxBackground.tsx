@@ -1,21 +1,23 @@
 /**
  * ParallaxBackground — ghost deal cards drifting upward at 3 speeds on scroll.
- * Pure atmosphere: opacity 0.07–0.12. Never competes with foreground content.
+ * Pure atmosphere: low opacity. Never competes with foreground content.
  * Uses Framer Motion useScroll + useTransform. Fixed behind z-index 0.
+ *
+ * Light theme: soft gray/lime tinted cards on a white/gray-50 base.
  */
 
 import { useRef } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion, type MotionValue } from 'framer-motion'
 
-/* ── Strategy badge colors ── */
+/* ── Strategy badge colors (light theme pastels) ── */
 type Strategy = 'Buy & Hold' | 'BRRRR' | 'Wholesale' | 'Creative Finance' | 'Flip'
 
 const BADGE: Record<Strategy, { bg: string; text: string; label: string }> = {
-  'Buy & Hold':       { bg: '#064E3B', text: '#6EE7B7', label: 'Buy & Hold' },
-  'BRRRR':            { bg: '#0C1A4A', text: '#93C5FD', label: 'BRRRR' },
-  'Wholesale':        { bg: '#451A03', text: '#FCD34D', label: 'Wholesale' },
-  'Creative Finance': { bg: '#2E1065', text: '#C4B5FD', label: 'Creative Finance' },
-  'Flip':             { bg: '#431407', text: '#FCA5A1', label: 'Flip' },
+  'Buy & Hold':       { bg: '#D1FAE5', text: '#065F46', label: 'Buy & Hold' },
+  'BRRRR':            { bg: '#DBEAFE', text: '#1E40AF', label: 'BRRRR' },
+  'Wholesale':        { bg: '#FEF3C7', text: '#92400E', label: 'Wholesale' },
+  'Creative Finance': { bg: '#EDE9FE', text: '#5B21B6', label: 'Creative Finance' },
+  'Flip':             { bg: '#FFE4E6', text: '#9F1239', label: 'Flip' },
 }
 
 /* ── Card data ── */
@@ -121,18 +123,18 @@ function GhostCardEl({ card, width, opacity, layerY }: GhostCardProps) {
       <motion.div
         {...floatProps}
         style={{
-          background: 'rgba(15,15,26,0.4)',
-          border: '1px solid rgba(99,102,241,0.15)',
+          background: 'rgba(255,255,255,0.7)',
+          border: '1px solid rgba(234,236,240,0.8)',
           borderRadius: 12,
           padding: 16,
-          boxShadow: '0 0 20px rgba(99,102,241,0.08)',
+          boxShadow: '0 1px 3px rgba(16,24,40,0.06)',
           display: 'flex',
           flexDirection: 'column',
           gap: 8,
         }}
       >
         {/* Address */}
-        <p style={{ color: '#F1F5F9', fontSize: 11, lineHeight: 1.3, fontFamily: '"Satoshi", sans-serif', margin: 0 }}>
+        <p style={{ color: '#344054', fontSize: 11, lineHeight: 1.3, fontFamily: '"Satoshi", sans-serif', margin: 0 }}>
           {card.address}
         </p>
 
@@ -156,9 +158,10 @@ function GhostCardEl({ card, width, opacity, layerY }: GhostCardProps) {
         {/* Metric */}
         <p
           style={{
-            color: '#94A3B8',
+            color: '#667085',
             fontSize: 11,
-            fontFamily: "'JetBrains Mono', monospace",
+            fontFamily: "'Inter', sans-serif",
+            fontVariantNumeric: 'tabular-nums',
             fontWeight: 500,
             margin: 0,
           }}
@@ -210,21 +213,21 @@ export function ParallaxBackground() {
         zIndex: 0,
         pointerEvents: 'none',
         overflow: 'hidden',
-        backgroundColor: '#08080F',
+        backgroundColor: '#F9FAFB',
       }}
     >
-      {/* Dot grid overlay */}
+      {/* Subtle dot grid overlay */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: 'radial-gradient(circle, #1A1A2E 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(circle, #D0D5DD 1px, transparent 1px)',
           backgroundSize: '28px 28px',
-          opacity: 0.4,
+          opacity: 0.3,
         }}
       />
 
-      {/* Ambient blob 1 — indigo */}
+      {/* Ambient blob 1 — lime */}
       <div
         className="blob-1"
         style={{
@@ -232,15 +235,15 @@ export function ParallaxBackground() {
           width: 600,
           height: 600,
           borderRadius: '50%',
-          background: '#6366F1',
-          opacity: 0.08,
+          background: '#84CC16',
+          opacity: 0.06,
           filter: 'blur(140px)',
           top: '5%',
           left: '10%',
         }}
       />
 
-      {/* Ambient blob 2 — purple */}
+      {/* Ambient blob 2 — lime lighter */}
       <div
         className="blob-2"
         style={{
@@ -248,8 +251,8 @@ export function ParallaxBackground() {
           width: 480,
           height: 480,
           borderRadius: '50%',
-          background: '#8B5CF6',
-          opacity: 0.06,
+          background: '#A3E635',
+          opacity: 0.05,
           filter: 'blur(120px)',
           top: '35%',
           right: '8%',
@@ -272,7 +275,7 @@ export function ParallaxBackground() {
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'radial-gradient(ellipse 55% 60% at 50% 35%, rgba(8,8,15,0.85) 0%, transparent 100%)',
+          background: 'radial-gradient(ellipse 55% 60% at 50% 35%, rgba(249,250,251,0.85) 0%, transparent 100%)',
           pointerEvents: 'none',
           zIndex: 2,
         }}

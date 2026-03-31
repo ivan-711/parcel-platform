@@ -21,21 +21,21 @@ export interface PipelineCard {
 }
 
 export const STAGES: { key: Stage; label: string; color: string }[] = [
-  { key: 'lead',           label: 'Lead',           color: '#475569' },
-  { key: 'analyzing',      label: 'Analyzing',      color: '#6366F1' },
-  { key: 'offer_sent',     label: 'Offer Sent',     color: '#F59E0B' },
+  { key: 'lead',           label: 'Lead',           color: '#64748B' },
+  { key: 'analyzing',      label: 'Analyzing',      color: '#4D7C0F' },
+  { key: 'offer_sent',     label: 'Offer Sent',     color: '#D97706' },
   { key: 'under_contract', label: 'Under Contract', color: '#3B82F6' },
-  { key: 'due_diligence',  label: 'Due Diligence',  color: '#8B5CF6' },
-  { key: 'closed',         label: 'Closed',         color: '#10B981' },
-  { key: 'dead',           label: 'Dead',           color: '#EF4444' },
+  { key: 'due_diligence',  label: 'Due Diligence',  color: '#7C3AED' },
+  { key: 'closed',         label: 'Closed',         color: '#059669' },
+  { key: 'dead',           label: 'Dead',            color: '#DC2626' },
 ]
 
 export const STRATEGY_COLORS: Record<string, { bg: string; text: string }> = {
-  wholesale:        { bg: '#451A03', text: '#FCD34D' },
-  creative_finance: { bg: '#2E1065', text: '#C4B5FD' },
-  brrrr:            { bg: '#0C1A4A', text: '#93C5FD' },
-  buy_and_hold:     { bg: '#064E3B', text: '#6EE7B7' },
-  flip:             { bg: '#431407', text: '#FCA5A1' },
+  wholesale:        { bg: '#FEF3C7', text: '#92400E' },
+  creative_finance: { bg: '#EDE9FE', text: '#5B21B6' },
+  brrrr:            { bg: '#DBEAFE', text: '#1E40AF' },
+  buy_and_hold:     { bg: '#D1FAE5', text: '#065F46' },
+  flip:             { bg: '#FEE2E2', text: '#991B1B' },
 }
 
 export const STRATEGY_LABELS: Record<string, string> = {
@@ -44,4 +44,15 @@ export const STRATEGY_LABELS: Record<string, string> = {
   brrrr:            'BRRRR',
   buy_and_hold:     'Buy & Hold',
   flip:             'Flip',
+}
+
+/** Format a dollar amount in compact notation (e.g. "$1.2M", "$450K"). */
+export function formatCompactValue(value: number): string {
+  if (value === 0) return ''
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(value)
 }

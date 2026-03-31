@@ -1,11 +1,12 @@
 /** KanbanColumn — a single stage column in the pipeline Kanban board with sortable context. */
 
-import { useCallback } from 'react'
+import { useCallback, useRef, useState, useEffect, useMemo } from 'react'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Inbox } from 'lucide-react'
 import { ColumnSkeleton } from './column-skeleton'
 import { SortableDealCard } from './deal-card'
+import { formatCompactValue } from './constants'
 import type { PipelineCard, Stage } from './constants'
 
 interface KanbanColumnProps {
@@ -37,8 +38,6 @@ export function KanbanColumn({
   onRemove,
   onCloseDeal,
 }: KanbanColumnProps) {
-  const isColumnFocused = isKeyboardActive && focusedCardIndex >= 0
-
   /** Create a stable ref registration callback for a specific card index. */
   const makeRegisterRef = useCallback(
     (cardIdx: number) => {
@@ -50,51 +49,72 @@ export function KanbanColumn({
     [columnIndex, registerCardRef]
   )
 
+  // Column scroll overflow detection for gradient fade mask
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [isScrollable, setIsScrollable] = useState(false)
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const check = () => {
+      setIsScrollable(el.scrollHeight > el.clientHeight)
+    }
+    check()
+    const observer = new ResizeObserver(check)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [cards.length])
+
+  // Total column value
+  const totalValue = useMemo(
+    () => cards.reduce((sum, c) => sum + (c.asking_price ?? 0), 0),
+    [cards]
+  )
+
   return (
     <div
-      className="flex flex-col min-w-[240px] max-w-[240px]"
+      className="flex flex-col min-w-[280px] max-w-[280px]"
       role="listbox"
       aria-label={`${stage.label} column, ${cards.length} deal${cards.length !== 1 ? 's' : ''}`}
     >
       {/* Column header */}
-      <div className="flex items-center gap-2 mb-3 px-1">
+      <div className="flex items-center gap-2 h-9 px-1 mb-3">
         <div
           className="w-2 h-2 rounded-full flex-shrink-0"
           style={{ backgroundColor: stage.color }}
         />
-        <span
-          className={[
-            'text-[11px] font-medium uppercase tracking-[0.08em] transition-colors duration-150',
-            isColumnFocused ? 'text-[#F1F5F9]' : 'text-[#94A3B8]',
-          ].join(' ')}
-        >
+        <span className="text-[13px] font-semibold text-gray-900 tracking-[-0.01em]">
           {stage.label}
         </span>
-        <span
-          className="ml-auto text-[11px] font-mono px-1.5 py-0.5 rounded"
-          style={{
-            color: stage.color,
-            backgroundColor: `${stage.color}22`,
-          }}
-        >
+        <span className="text-[12px] tabular-nums text-gray-500 bg-gray-100 rounded-md px-1.5 py-0.5">
           {cards.length}
         </span>
+        {totalValue > 0 && (
+          <span className="text-[12px] tabular-nums text-gray-400 ml-auto">
+            {formatCompactValue(totalValue)}
+          </span>
+        )}
       </div>
 
-      {/* Drop zone */}
+      {/* Drop zone with per-column scroll */}
       <div
-        className="flex flex-col gap-2 min-h-[120px] rounded-xl p-2 transition-all duration-150"
+        ref={scrollRef}
+        className={[
+          'column-scroll flex flex-col gap-2 min-h-[100px] rounded-xl p-2 transition-all duration-150',
+          'max-h-[calc(100vh-200px)] overflow-y-auto',
+          isScrollable ? 'column-scroll-mask' : '',
+        ].join(' ')}
         style={{
-          backgroundColor: isOver ? `${stage.color}12` : 'transparent',
-          border: isOver ? `1px dashed ${stage.color}55` : '1px dashed transparent',
+          backgroundColor: isOver ? `${stage.color}0F` : 'transparent',
+          border: isOver ? `1px dashed ${stage.color}4D` : '1px dashed transparent',
         }}
       >
         {isLoading ? (
           <ColumnSkeleton />
         ) : cards.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-24 gap-2 opacity-30">
-            <Inbox size={20} className="text-[#475569]" />
-            <p className="text-[11px] text-[#475569]">Drop here</p>
+          <div className="flex flex-col items-center justify-center min-h-[100px] py-8 border border-dashed border-gray-200 rounded-xl">
+            <Inbox size={16} className="text-gray-300 mb-1.5" />
+            <p className="text-[12px] text-gray-400">No deals</p>
           </div>
         ) : (
           <SortableContext
@@ -108,7 +128,7 @@ export function KanbanColumn({
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.18, delay: i * 0.04 }}
+                  transition={{ duration: 0.18, delay: Math.min(i, 8) * 0.04 }}
                 >
                   <SortableDealCard
                     card={card}

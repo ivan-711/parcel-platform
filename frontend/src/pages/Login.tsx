@@ -31,24 +31,29 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-app-bg flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-        className="w-full max-w-[480px] bg-app-surface border border-border-subtle rounded-xl p-8 space-y-6"
+        className="w-full max-w-[480px] bg-white border border-gray-200 rounded-xl p-8 space-y-6 shadow-xs"
       >
         {/* Header */}
         <div className="space-y-1 text-center">
-          <p className="text-2xl font-semibold text-accent-primary tracking-tight">Parcel</p>
-          <p className="text-sm text-text-secondary">Sign in to your account</p>
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <div className="w-7 h-7 rounded bg-lime-700 flex items-center justify-center">
+              <span className="text-[11px] font-bold text-white font-mono">P</span>
+            </div>
+          </div>
+          <p className="text-2xl font-semibold text-gray-900 tracking-tight">Parcel</p>
+          <p className="text-sm text-gray-500">Sign in to your account</p>
         </div>
 
         {/* Form */}
         <motion.div {...shakeProps}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="email" className="text-text-secondary text-xs">
+            <Label htmlFor="email" className="text-gray-700 text-xs">
               Email
             </Label>
             <Input
@@ -59,12 +64,12 @@ export default function Login() {
               placeholder="you@example.com"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="bg-app-elevated border-border-default text-text-primary placeholder:text-text-disabled focus:border-accent-primary"
+              className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-lime-500 focus:ring-lime-500/20"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="password" className="text-text-secondary text-xs">
+            <Label htmlFor="password" className="text-gray-700 text-xs">
               Password
             </Label>
             <Input
@@ -75,14 +80,14 @@ export default function Login() {
               placeholder="••••••••"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="bg-app-elevated border-border-default text-text-primary placeholder:text-text-disabled focus:border-accent-primary"
+              className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-lime-500 focus:ring-lime-500/20"
             />
           </div>
 
           <div className="flex justify-end">
             <Link
               to="/forgot-password"
-              className="text-xs text-accent-primary hover:text-accent-hover transition-colors"
+              className="text-xs text-lime-700 hover:text-lime-800 transition-colors"
             >
               Forgot password?
             </Link>
@@ -90,23 +95,23 @@ export default function Login() {
 
           {/* Inline error */}
           {login.error && (
-            <p className="text-accent-danger text-xs">{login.error.message}</p>
+            <p className="text-red-500 text-xs">{login.error.message}</p>
           )}
 
           <Button
             type="submit"
             disabled={login.isPending}
-            className="w-full bg-accent-primary hover:bg-accent-hover text-white font-medium"
+            className="w-full bg-lime-700 hover:bg-lime-800 text-white font-medium"
           >
-            {login.isPending ? 'Signing in…' : 'Sign in'}
+            {login.isPending ? 'Signing in...' : 'Sign in'}
           </Button>
         </form>
         </motion.div>
 
         {/* Footer link */}
-        <p className="text-center text-xs text-text-muted">
+        <p className="text-center text-xs text-gray-400">
           Don&apos;t have an account?{' '}
-          <Link to="/register" className="text-accent-primary hover:text-accent-hover transition-colors">
+          <Link to="/register" className="text-lime-700 hover:text-lime-800 transition-colors">
             Get started
           </Link>
         </p>

@@ -3,10 +3,10 @@
 import { Github, Linkedin, AtSign } from 'lucide-react'
 
 const linkClasses =
-  'hover:text-text-secondary transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none rounded'
+  'hover:text-gray-600 transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-lime-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white focus-visible:outline-none rounded'
 
 const iconLinkClasses =
-  'text-text-muted hover:text-text-secondary transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg focus-visible:outline-none rounded p-1'
+  'text-gray-400 hover:text-gray-600 transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-lime-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white focus-visible:outline-none rounded p-1'
 
 const footerColumns = [
   {
@@ -36,29 +36,29 @@ const footerColumns = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border-subtle py-12 px-6">
+    <footer className="border-t border-gray-200 py-12 px-6 bg-white">
       <div className="max-w-6xl mx-auto">
         {/* Top section: Logo/status + nav columns */}
         <div className="flex flex-col md:flex-row gap-10 md:gap-16">
           {/* Logo + status indicator */}
           <div className="flex flex-col gap-4 md:min-w-[180px]">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded bg-accent-primary/20 border border-accent-primary/30 flex items-center justify-center">
-                <span className="text-[10px] font-bold text-accent-primary font-mono">
+              <div className="w-6 h-6 rounded bg-lime-100 border border-lime-200 flex items-center justify-center">
+                <span className="text-[10px] font-bold text-lime-700 font-mono">
                   P
                 </span>
               </div>
-              <span className="text-sm font-semibold text-text-secondary">
+              <span className="text-sm font-semibold text-gray-600">
                 Parcel
               </span>
             </div>
 
             <div className="flex items-center gap-2">
               <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-sky-500" />
               </span>
-              <span className="text-xs text-text-muted">
+              <span className="text-xs text-gray-400">
                 All systems operational
               </span>
             </div>
@@ -68,7 +68,7 @@ export function Footer() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-16 flex-1">
             {footerColumns.map((column) => (
               <div key={column.title}>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.08em] text-text-secondary mb-3">
+                <h4 className="text-xs font-semibold uppercase tracking-[0.08em] text-gray-600 mb-3">
                   {column.title}
                 </h4>
                 <ul className="flex flex-col gap-2">
@@ -76,7 +76,7 @@ export function Footer() {
                     <li key={link.label}>
                       <a
                         href={link.href}
-                        className={`text-sm text-text-muted ${linkClasses}`}
+                        className={`text-sm text-gray-400 ${linkClasses}`}
                       >
                         {link.label}
                       </a>
@@ -89,13 +89,13 @@ export function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="border-t border-border-subtle mt-10 pt-6" />
+        <div className="border-t border-gray-200 mt-10 pt-6" />
 
         {/* Bottom section: Social icons + copyright */}
         <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-gray-400">
             &copy; 2026 Parcel &middot; Powered by{' '}
-            <span className="text-text-secondary">Anthropic</span>
+            <span className="text-gray-600">Anthropic</span>
           </p>
 
           <div className="flex items-center gap-3">

@@ -38,7 +38,82 @@ export interface User {
   email: string
   role: 'wholesaler' | 'investor' | 'agent'
   team_id?: string | null
+  plan_tier: PlanTier
+  trial_ends_at: string | null
+  trial_active?: boolean
   created_at: string
+}
+
+// ---------------------------------------------------------------------------
+// Billing types
+// ---------------------------------------------------------------------------
+
+export type PlanTier = 'free' | 'starter' | 'pro' | 'team'
+export type SubscriptionStatus = 'active' | 'trialing' | 'past_due' | 'canceled' | 'incomplete' | 'unpaid'
+export type BillingCycle = 'monthly' | 'annual'
+
+export const PLAN_RANK: Record<PlanTier, number> = { free: 0, starter: 1, pro: 2, team: 3 }
+
+export function hasAccess(current: PlanTier, required: PlanTier): boolean {
+  return PLAN_RANK[current] >= PLAN_RANK[required]
+}
+
+export interface UsageMetric {
+  metric: string
+  display_name: string
+  current: number
+  limit: number | null
+  resets_at: string | null
+  warning: boolean
+}
+
+export interface BillingStatus {
+  plan: PlanTier
+  status: SubscriptionStatus | null
+  interval: BillingCycle | null
+  current_period_end: string | null
+  cancel_at_period_end: boolean
+  trial_ends_at: string | null
+  trial_active: boolean
+  usage: UsageMetric[]
+}
+
+export interface CheckoutRequest {
+  plan: 'starter' | 'pro' | 'team'
+  interval: BillingCycle
+}
+
+export interface CheckoutResponse {
+  checkout_url: string
+}
+
+export interface PortalResponse {
+  portal_url: string
+}
+
+export interface CancelRequest {
+  reason?: string
+  immediate?: boolean
+}
+
+export interface CancelResponse {
+  status: string
+  cancel_at: string | null
+  message: string
+}
+
+export type GatedFeature =
+  | 'ai_chat' | 'pdf_export' | 'pipeline' | 'portfolio'
+  | 'offer_letter' | 'compare_deals' | 'document_upload'
+
+export const FEATURE_LABELS: Record<GatedFeature, { label: string; tier: PlanTier; description: string }> = {
+  ai_chat:         { label: 'AI Deal Chat',           tier: 'pro', description: 'Ask AI questions about your deals' },
+  pdf_export:      { label: 'PDF Reports',            tier: 'pro', description: 'Download branded PDF deal reports' },
+  pipeline:        { label: 'Deal Pipeline',          tier: 'pro', description: 'Organize deals across pipeline stages' },
+  portfolio:       { label: 'Portfolio Tracking',      tier: 'pro', description: 'Track closed deals and cash flow' },
+  offer_letter:    { label: 'Offer Letter Generator',  tier: 'pro', description: 'Generate professional offer letters' },
+  compare_deals:   { label: 'Deal Comparison',         tier: 'pro', description: 'Compare deals side-by-side' },
+  document_upload: { label: 'Document AI',             tier: 'pro', description: 'Upload and analyze deal documents' },
 }
 
 export interface AuthResponse {

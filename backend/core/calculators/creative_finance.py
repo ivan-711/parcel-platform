@@ -1,4 +1,10 @@
-from .utils import pmt
+from .utils import pmt, validate_inputs
+
+_REQUIRED = [
+    "existing_loan_balance", "monthly_piti", "monthly_rent_estimate",
+    "monthly_expenses", "finance_type", "new_rate", "new_term_years", "arv",
+]
+_NON_NEGATIVE = ["arv", "monthly_rent_estimate"]
 
 
 def calculate_creative_finance(inputs: dict) -> dict:
@@ -7,6 +13,8 @@ def calculate_creative_finance(inputs: dict) -> dict:
 
     Returns monthly payment, cash flow, DSCR, equity day one, and effective yield.
     """
+    validate_inputs(inputs, _REQUIRED, _NON_NEGATIVE)
+
     existing_loan_balance  = inputs["existing_loan_balance"]
     monthly_piti           = inputs["monthly_piti"]
     monthly_rent_estimate  = inputs["monthly_rent_estimate"]

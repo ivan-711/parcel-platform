@@ -2,12 +2,13 @@
 
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from core.security.jwt import get_current_user
 from database import get_db
+from limiter import limiter
 from models.deals import Deal
 from models.documents import Document
 from models.pipeline_entries import PipelineEntry
@@ -41,7 +42,9 @@ _STAGE_LABELS: dict[str, str] = {
 
 
 @router.get("/stats/", response_model=DashboardStatsResponse)
+@limiter.limit("60/minute")
 def get_dashboard_stats(
+    request: Request,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> DashboardStatsResponse:
@@ -107,7 +110,9 @@ def get_dashboard_stats(
 
 
 @router.get("/activity/", response_model=ActivityFeedResponse)
+@limiter.limit("60/minute")
 def get_activity_feed(
+    request: Request,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> ActivityFeedResponse:

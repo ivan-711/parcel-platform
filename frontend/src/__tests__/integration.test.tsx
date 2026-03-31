@@ -51,9 +51,9 @@ describe('NotFound page', () => {
     expect(screen.getByText('404')).toBeInTheDocument()
     expect(screen.getByText('Page not found')).toBeInTheDocument()
 
-    const dashboardLink = screen.getByRole('link', { name: /dashboard/i })
-    expect(dashboardLink).toBeInTheDocument()
-    expect(dashboardLink).toHaveAttribute('href', '/dashboard')
+    const homeLink = screen.getByRole('link', { name: /go home/i })
+    expect(homeLink).toBeInTheDocument()
+    expect(homeLink).toHaveAttribute('href', '/')
   })
 })
 

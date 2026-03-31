@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { Check, AlertCircle } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { Input } from '@/components/ui/input'
@@ -9,6 +11,9 @@ import { Switch } from '@/components/ui/switch'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { useAuthStore } from '@/stores/authStore'
 import { api } from '@/lib/api'
+import { cn } from '@/lib/utils'
+import { BillingSettings } from './BillingSettings'
+import { SuccessOverlay } from '@/components/billing/SuccessOverlay'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -27,8 +32,21 @@ const itemVariants = {
   },
 }
 
-/** Settings page — profile editing and password change. */
+const tabs = [
+  { id: 'profile', label: 'Profile' },
+  { id: 'notifications', label: 'Notifications' },
+  { id: 'billing', label: 'Billing' },
+] as const
+
+type TabId = (typeof tabs)[number]['id']
+
+/** Settings page — profile editing, password change, and notification preferences with tabbed layout. */
 export default function SettingsPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const initialTab = (searchParams.get('tab') as TabId) || 'profile'
+  const [activeTab, setActiveTab] = useState<TabId>(
+    tabs.some((t) => t.id === initialTab) ? initialTab : 'profile'
+  )
   const { data: user, isLoading, isError: profileError } = useQuery({
     queryKey: ['me'],
     queryFn: api.auth.me,
@@ -69,6 +87,21 @@ export default function SettingsPage() {
       setTimeout(() => setNotifError(false), 2000)
     },
   })
+
+  // Handle ?billing=success / ?billing=canceled (Stripe redirect)
+  useEffect(() => {
+    const billingParam = searchParams.get('billing')
+    if (billingParam === 'success') {
+      toast.success('Welcome to Pro! Your subscription is active.')
+      queryClient.invalidateQueries({ queryKey: ['billing'] })
+      queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
+      queryClient.invalidateQueries({ queryKey: ['session-check'] })
+      setSearchParams({}, { replace: true })
+    } else if (billingParam === 'canceled') {
+      toast('Checkout canceled — no charges were made.')
+      setSearchParams({}, { replace: true })
+    }
+  }, [searchParams, setSearchParams, queryClient])
 
   // Populate form when user data loads
   useEffect(() => {
@@ -143,14 +176,14 @@ export default function SettingsPage() {
   if (profileError) {
     return (
       <AppShell title="Settings">
-        <div className="rounded-xl border border-accent-danger/30 bg-accent-danger/10 p-6 flex items-start gap-3 max-w-lg">
-          <AlertCircle size={20} className="text-accent-danger shrink-0 mt-0.5" />
+        <div className="rounded-lg border border-red-200 bg-red-50 p-6 flex items-start gap-3 max-w-lg">
+          <AlertCircle size={20} className="text-red-500 shrink-0 mt-0.5" />
           <div className="space-y-2">
-            <p className="text-sm font-medium text-text-primary">Failed to load settings</p>
-            <p className="text-xs text-text-secondary">Something went wrong. Please try again.</p>
+            <p className="text-sm font-medium text-gray-900">Failed to load settings</p>
+            <p className="text-xs text-gray-600">Something went wrong. Please try again.</p>
             <button
               onClick={() => queryClient.invalidateQueries({ queryKey: ['me'] })}
-              className="text-xs font-medium text-accent-primary hover:text-accent-primary/80 transition-colors"
+              className="text-xs font-medium text-lime-700 hover:text-lime-600 transition-colors"
             >
               Try again
             </button>
@@ -163,7 +196,7 @@ export default function SettingsPage() {
   if (isLoading) {
     return (
       <AppShell title="Settings">
-        <div className="max-w-[600px] space-y-8">
+        <div className="max-w-[640px] mx-auto space-y-8">
           <SkeletonCard lines={3} />
           <SkeletonCard lines={3} />
         </div>
@@ -173,150 +206,208 @@ export default function SettingsPage() {
 
   return (
     <AppShell title="Settings">
+      {/* Desktop underline tabs — hidden below md */}
+      <div className="hidden md:flex gap-1 border-b border-gray-200 mb-8">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={cn(
+              'px-4 py-2.5 text-sm font-medium transition-colors relative',
+              'hover:text-gray-900',
+              activeTab === tab.id
+                ? 'text-gray-900'
+                : 'text-gray-600'
+            )}
+          >
+            {tab.label}
+            {activeTab === tab.id && (
+              <motion.div
+                layoutId="settings-tab-indicator"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-lime-700 rounded-full"
+              />
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Mobile pill tabs — visible < md */}
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 md:hidden scrollbar-none mb-6">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={cn(
+              'shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors',
+              activeTab === tab.id
+                ? 'bg-lime-50 text-lime-700 ring-1 ring-lime-200'
+                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       <motion.div
-        className="max-w-[600px] space-y-8"
+        className="max-w-[640px] mx-auto space-y-6"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
+        key={activeTab}
       >
-        {/* Profile Section */}
-        <motion.div variants={itemVariants}>
-          <div className="bg-[#0F0F1A] border border-[#1A1A2E] rounded-xl p-6">
-            <h2 className="text-sm font-semibold text-[#F1F5F9] mb-4">Profile</h2>
-            <form onSubmit={handleProfileSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your name"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
-                <Input
-                  id="role"
-                  value={user?.role ?? ''}
-                  readOnly
-                  className="opacity-50 cursor-not-allowed"
-                />
-              </div>
+        {activeTab === 'profile' && (
+          <>
+            {/* Profile Section */}
+            <motion.div variants={itemVariants}>
+              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-xs">
+                <h2 className="text-sm font-semibold text-gray-900 mb-4">Profile</h2>
+                <form onSubmit={handleProfileSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-sm font-medium text-gray-700">Name</Label>
+                    <Input
+                      id="name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your name"
+                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="role" className="text-sm font-medium text-gray-700">Role</Label>
+                    <Input
+                      id="role"
+                      value={user?.role ?? ''}
+                      readOnly
+                      className="bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed"
+                    />
+                  </div>
 
-              {profileMsg && (
-                <p className={profileMsg.type === 'success' ? 'text-accent-success text-sm' : 'text-accent-danger text-sm'}>
-                  {profileMsg.text}
+                  {profileMsg && (
+                    <p className={profileMsg.type === 'success' ? 'text-sky-600 text-sm' : 'text-red-600 text-sm'}>
+                      {profileMsg.text}
+                    </p>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={profileMutation.isPending}
+                    className="px-4 py-2 rounded-lg bg-lime-700 text-white text-sm font-medium hover:bg-lime-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {profileMutation.isPending ? 'Saving...' : 'Save changes'}
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+
+            {/* Change Password Section */}
+            <motion.div variants={itemVariants}>
+              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-xs">
+                <h2 className="text-sm font-semibold text-gray-900 mb-4">Change Password</h2>
+                <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="current-password" className="text-sm font-medium text-gray-700">Current Password</Label>
+                    <Input
+                      id="current-password"
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      required
+                      className="bg-white border-gray-300 text-gray-900 focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="new-password" className="text-sm font-medium text-gray-700">New Password</Label>
+                    <Input
+                      id="new-password"
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      required
+                      className="bg-white border-gray-300 text-gray-900 focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm-password" className="text-sm font-medium text-gray-700">Confirm Password</Label>
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => {
+                        setConfirmPassword(e.target.value)
+                        if (confirmError) setConfirmError('')
+                      }}
+                      required
+                      className="bg-white border-gray-300 text-gray-900 focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20"
+                    />
+                    {confirmError && (
+                      <p className="text-red-600 text-sm">{confirmError}</p>
+                    )}
+                  </div>
+
+                  {passwordMsg && (
+                    <p className={passwordMsg.type === 'success' ? 'text-sky-600 text-sm' : 'text-red-600 text-sm'}>
+                      {passwordMsg.text}
+                    </p>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={passwordMutation.isPending}
+                    className="px-4 py-2 rounded-lg bg-lime-700 text-white text-sm font-medium hover:bg-lime-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {passwordMutation.isPending ? 'Updating...' : 'Update password'}
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          </>
+        )}
+
+        {activeTab === 'notifications' && (
+          <motion.div variants={itemVariants}>
+            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-xs">
+              <h2 className="text-sm font-semibold text-gray-900 mb-4">Notifications</h2>
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Email Notifications</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Get notified when your document analysis is complete</p>
+                  <p className="text-xs text-gray-500 mt-1">We&apos;ll send you an email when AI finishes analyzing your uploaded documents.</p>
+                </div>
+                <Switch
+                  checked={notifPrefs?.email_notifications ?? false}
+                  onCheckedChange={(checked) => notifMutation.mutate({ email_notifications: checked })}
+                  disabled={notifMutation.isPending}
+                />
+              </div>
+              {notifSaved && (
+                <p className="flex items-center gap-1 text-sky-600 text-sm mt-3">
+                  <Check size={14} />
+                  Saved
                 </p>
               )}
-
-              <button
-                type="submit"
-                disabled={profileMutation.isPending}
-                className="px-4 py-2 rounded-lg bg-accent-primary text-white text-sm font-medium hover:bg-accent-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {profileMutation.isPending ? 'Saving...' : 'Save changes'}
-              </button>
-            </form>
-          </div>
-        </motion.div>
-
-        {/* Change Password Section */}
-        <motion.div variants={itemVariants}>
-          <div className="bg-[#0F0F1A] border border-[#1A1A2E] rounded-xl p-6">
-            <h2 className="text-sm font-semibold text-[#F1F5F9] mb-4">Change Password</h2>
-            <form onSubmit={handlePasswordSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="current-password">Current Password</Label>
-                <Input
-                  id="current-password"
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="new-password">New Password</Label>
-                <Input
-                  id="new-password"
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm Password</Label>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value)
-                    if (confirmError) setConfirmError('')
-                  }}
-                  required
-                />
-                {confirmError && (
-                  <p className="text-accent-danger text-sm">{confirmError}</p>
-                )}
-              </div>
-
-              {passwordMsg && (
-                <p className={passwordMsg.type === 'success' ? 'text-accent-success text-sm' : 'text-accent-danger text-sm'}>
-                  {passwordMsg.text}
-                </p>
+              {notifError && (
+                <p className="text-red-600 text-sm mt-3">Failed to save</p>
               )}
-
-              <button
-                type="submit"
-                disabled={passwordMutation.isPending}
-                className="px-4 py-2 rounded-lg bg-accent-primary text-white text-sm font-medium hover:bg-accent-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {passwordMutation.isPending ? 'Updating...' : 'Update password'}
-              </button>
-            </form>
-          </div>
-        </motion.div>
-
-        {/* Notifications Section */}
-        <motion.div variants={itemVariants}>
-          <div className="bg-[#0F0F1A] border border-[#1A1A2E] rounded-xl p-6">
-            <h2 className="text-sm font-semibold text-[#F1F5F9] mb-4">Notifications</h2>
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-medium text-text-primary">Email Notifications</p>
-                <p className="text-xs text-text-muted mt-0.5">Get notified when your document analysis is complete</p>
-                <p className="text-xs text-text-muted mt-1">We&apos;ll send you an email when AI finishes analyzing your uploaded documents.</p>
-              </div>
-              <Switch
-                checked={notifPrefs?.email_notifications ?? false}
-                onCheckedChange={(checked) => notifMutation.mutate({ email_notifications: checked })}
-                disabled={notifMutation.isPending}
-              />
             </div>
-            {notifSaved && (
-              <p className="flex items-center gap-1 text-accent-success text-sm mt-3">
-                <Check size={14} />
-                Saved
-              </p>
-            )}
-            {notifError && (
-              <p className="text-accent-danger text-sm mt-3">Failed to save</p>
-            )}
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
+
+        {activeTab === 'billing' && <BillingSettings />}
       </motion.div>
+
+      <SuccessOverlay />
     </AppShell>
   )
 }

@@ -20,11 +20,11 @@ export function ConceptTooltip({ term, definition, children }: ConceptTooltipPro
           </span>
         </TooltipTrigger>
         <TooltipContent
-          className="max-w-[280px] bg-app-overlay border border-border-default text-text-primary p-3"
+          className="max-w-[280px] bg-gray-900 border border-gray-800 text-white p-3"
           sideOffset={4}
         >
-          <p className="font-semibold text-sm mb-1">{term}</p>
-          <p className="text-xs text-text-secondary leading-relaxed">{definition}</p>
+          <p className="font-semibold text-sm mb-1 text-white">{term}</p>
+          <p className="text-xs text-gray-300 leading-relaxed">{definition}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

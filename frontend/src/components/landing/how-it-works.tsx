@@ -88,7 +88,7 @@ function ConnectorLine({ reduced }: { reduced: boolean }) {
           y1="0"
           x2="1"
           y2="24"
-          stroke="rgba(99,102,241,0.2)"
+          stroke="rgba(132,204,22,0.2)"
           strokeWidth="1.5"
           strokeLinecap="round"
           variants={connectorLineVariants}
@@ -105,7 +105,7 @@ export function HowItWorks() {
   const prefersReduced = useReducedMotion()
 
   return (
-    <section id="how-it-works" className="py-24 px-6 border-t border-border-subtle">
+    <section id="how-it-works" className="py-24 px-6 border-t border-gray-200">
       <div className="max-w-4xl mx-auto space-y-16">
         {/* Section header */}
         <motion.div
@@ -115,10 +115,10 @@ export function HowItWorks() {
           transition={{ duration: 0.35 }}
           className="space-y-3"
         >
-          <p className="text-[10px] uppercase tracking-[0.08em] text-accent-primary font-semibold">
+          <p className="text-[10px] uppercase tracking-[0.08em] text-lime-700 font-semibold">
             Process
           </p>
-          <h2 className="text-4xl font-semibold tracking-tight text-text-primary">
+          <h2 className="text-4xl font-semibold tracking-tight text-gray-900">
             From lead to close in three steps
           </h2>
         </motion.div>
@@ -146,7 +146,7 @@ export function HowItWorks() {
                   className="font-mono font-bold shrink-0 leading-none select-none tabular-nums"
                   style={{
                     fontSize: 'clamp(52px, 6vw, 72px)',
-                    color: 'rgba(99,102,241,0.13)',
+                    color: 'rgba(132,204,22,0.15)',
                   }}
                   aria-hidden="true"
                 >
@@ -156,12 +156,12 @@ export function HowItWorks() {
                 {/* Content */}
                 <div className="pt-1.5 flex-1 space-y-2">
                   <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-lg bg-app-elevated border border-border-subtle flex items-center justify-center">
-                      <Icon size={14} className="text-accent-primary" />
+                    <div className="w-7 h-7 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center">
+                      <Icon size={14} className="text-lime-700" />
                     </div>
-                    <h3 className="text-lg font-semibold text-text-primary">{title}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
                   </div>
-                  <p className="text-sm text-text-secondary leading-relaxed max-w-lg">
+                  <p className="text-sm text-gray-500 leading-relaxed max-w-lg">
                     {description}
                   </p>
                 </div>

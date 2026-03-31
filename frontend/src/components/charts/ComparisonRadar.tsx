@@ -27,8 +27,8 @@ export interface ComparisonRadarProps {
   deals: RadarDeal[]
 }
 
-/** Colors assigned to each deal slot in the radar. */
-const DEAL_COLORS = ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'] as const
+/** Colors assigned to each deal slot in the radar — light-theme optimized. */
+const DEAL_COLORS = ['#4D7C0F', '#0284C7', '#D97706', '#DC2626', '#7C3AED'] as const
 
 /** Radar dimension definition. */
 interface RadarDimension {
@@ -146,8 +146,8 @@ function RadarTooltipContent({
   if (!active || !payload || payload.length === 0) return null
 
   return (
-    <div className="rounded-lg border border-border-subtle bg-app-elevated px-3 py-2 shadow-xl">
-      <p className="mb-1.5 text-xs font-medium text-text-secondary">{label}</p>
+    <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-lg">
+      <p className="mb-1.5 text-xs font-medium text-gray-500">{label}</p>
       {payload.map((entry) => {
         const rawKey = `${entry.name}_raw`
         const unitKey = `${entry.name}_unit`
@@ -159,8 +159,8 @@ function RadarTooltipContent({
               className="inline-block h-2 w-2 rounded-full"
               style={{ backgroundColor: entry.color }}
             />
-            <span className="text-text-secondary">{entry.name}:</span>
-            <span className="font-mono font-medium text-text-primary">
+            <span className="text-gray-500">{entry.name}:</span>
+            <span className="font-medium text-gray-900 tabular-nums">
               {typeof rawValue === 'number' && typeof unit === 'string'
                 ? formatOutputValue(unit, rawValue)
                 : `${entry.value}/100`}
@@ -172,7 +172,7 @@ function RadarTooltipContent({
   )
 }
 
-/** Custom legend matching the dark theme aesthetic. */
+/** Custom legend matching the light theme aesthetic. */
 function RadarLegendContent({
   payload,
 }: {
@@ -191,7 +191,7 @@ function RadarLegendContent({
             className="inline-block h-2.5 w-2.5 rounded-full"
             style={{ backgroundColor: entry.color }}
           />
-          <span className="text-xs text-text-secondary">{entry.value}</span>
+          <span className="text-xs text-gray-600">{entry.value}</span>
         </div>
       ))}
     </div>
@@ -261,8 +261,8 @@ export function ComparisonRadar({ deals }: ComparisonRadarProps) {
   // Not enough data for a chart
   if (deals.length < 2 || activeDimensions.length < 3) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-border-subtle bg-app-surface py-12">
-        <p className="text-sm text-text-muted">
+      <div className="flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-white py-12 shadow-xs">
+        <p className="text-sm text-gray-400">
           {deals.length < 2
             ? 'Select at least two deals to see the radar comparison.'
             : 'Not enough comparable metrics to render the radar chart.'}
@@ -272,22 +272,21 @@ export function ComparisonRadar({ deals }: ComparisonRadarProps) {
   }
 
   return (
-    <div className="rounded-xl border border-border-subtle bg-app-surface p-5" aria-label="Deal comparison radar chart">
-      <h2 className="mb-4 text-lg font-semibold text-text-primary">Deal Comparison Overview</h2>
+    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs" aria-label="Deal comparison radar chart">
+      <h2 className="mb-4 text-lg font-semibold text-gray-900">Deal Comparison Overview</h2>
       <ResponsiveContainer width="100%" height={380}>
         <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
           <PolarGrid
-            stroke="#252540"
-            strokeOpacity={0.5}
+            stroke="#EAECF0"
           />
           <PolarAngleAxis
             dataKey="dimension"
-            tick={{ fill: '#94A3B8', fontSize: 12 }}
+            tick={{ fill: '#667085', fontSize: 12 }}
           />
           <PolarRadiusAxis
             angle={90}
             domain={[0, 100]}
-            tick={{ fill: '#475569', fontSize: 10 }}
+            tick={{ fill: '#98A2B3', fontSize: 10 }}
             tickCount={5}
             axisLine={false}
           />

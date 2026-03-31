@@ -1,8 +1,16 @@
+from .utils import validate_inputs
+
+_REQUIRED = ["arv", "repair_costs", "desired_profit", "closing_costs_pct", "asking_price"]
+_NON_NEGATIVE = ["arv"]
+
+
 def calculate_wholesale(inputs: dict) -> dict:
     """
     Calculate wholesale deal metrics: MAO, break-even price, profit at ask,
     spread to break-even, closing costs, and deal recommendation.
     """
+    validate_inputs(inputs, _REQUIRED, _NON_NEGATIVE)
+
     arv: float = inputs["arv"]
     repair_costs: float = inputs["repair_costs"]
     desired_profit: float = inputs["desired_profit"]

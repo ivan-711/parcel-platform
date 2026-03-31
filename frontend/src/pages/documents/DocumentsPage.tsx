@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { AlertTriangle } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
+import { FeatureGate } from '@/components/billing/FeatureGate'
 import { cn } from '@/lib/utils'
 import { api } from '@/lib/api'
 import { UploadZone } from '@/components/documents/upload-zone'
@@ -25,25 +26,25 @@ function PaginationControls({
   if (pages <= 1) return null
 
   return (
-    <div className="flex items-center justify-between px-3 py-2 border-t border-border-subtle">
+    <div className="flex items-center justify-between px-3 py-2 border-t border-gray-200">
       <button
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
         aria-label="Previous page"
         className={cn(
           'flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs transition-colors',
-          'border border-border-subtle bg-app-surface hover:bg-app-elevated',
-          'text-text-secondary',
-          page <= 1 && 'opacity-50 cursor-not-allowed hover:bg-app-surface',
+          'border border-gray-200 bg-white hover:bg-gray-50',
+          'text-gray-600',
+          page <= 1 && 'opacity-50 cursor-not-allowed hover:bg-white',
         )}
       >
         <ChevronLeft size={14} />
         Previous
       </button>
 
-      <span className="text-xs text-text-muted">
-        Page <span className="font-mono text-text-primary">{page}</span> of{' '}
-        <span className="font-mono text-text-primary">{pages}</span>
+      <span className="text-xs text-gray-400">
+        Page <span className="tabular-nums text-gray-900">{page}</span> of{' '}
+        <span className="tabular-nums text-gray-900">{pages}</span>
       </span>
 
       <button
@@ -52,9 +53,9 @@ function PaginationControls({
         aria-label="Next page"
         className={cn(
           'flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs transition-colors',
-          'border border-border-subtle bg-app-surface hover:bg-app-elevated',
-          'text-text-secondary',
-          page >= pages && 'opacity-50 cursor-not-allowed hover:bg-app-surface',
+          'border border-gray-200 bg-white hover:bg-gray-50',
+          'text-gray-600',
+          page >= pages && 'opacity-50 cursor-not-allowed hover:bg-white',
         )}
       >
         Next
@@ -96,11 +97,11 @@ export default function DocumentsPage() {
     return (
       <AppShell title="Documents">
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-          <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
-            <AlertTriangle className="w-6 h-6 text-red-400" />
+          <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+            <AlertTriangle className="w-6 h-6 text-red-500" />
           </div>
-          <p className="text-base font-medium text-text-primary">Failed to load documents</p>
-          <p className="text-sm text-text-secondary">Check your connection and try again.</p>
+          <p className="text-base font-medium text-gray-900">Failed to load documents</p>
+          <p className="text-sm text-gray-600">Check your connection and try again.</p>
         </div>
       </AppShell>
     )
@@ -108,11 +109,12 @@ export default function DocumentsPage() {
 
   return (
     <AppShell title="Documents" noPadding>
+      <FeatureGate feature="document_upload">
       <div className="flex h-full">
         {/* Left Panel */}
         <div
           className={cn(
-            'w-full md:w-[320px] md:shrink-0 border-r border-border-subtle flex flex-col',
+            'w-full md:w-[320px] md:shrink-0 border-r border-gray-200 flex flex-col bg-white',
             showMobileDetail && 'hidden md:flex',
           )}
         >
@@ -135,7 +137,7 @@ export default function DocumentsPage() {
         {/* Right Panel */}
         <div
           className={cn(
-            'flex-1 overflow-y-auto p-4',
+            'flex-1 overflow-y-auto p-4 bg-gray-50',
             !showMobileDetail && 'hidden md:block',
           )}
         >
@@ -146,6 +148,7 @@ export default function DocumentsPage() {
           />
         </div>
       </div>
+      </FeatureGate>
     </AppShell>
   )
 }

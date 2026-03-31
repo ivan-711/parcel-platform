@@ -25,10 +25,10 @@ export const SORTS: { value: string; label: string }[] = [
 export const PER_PAGE = 12
 
 export function riskColor(score: number | null): string {
-  if (score === null) return 'text-text-muted'
-  if (score <= 30) return 'text-accent-success'
-  if (score <= 60) return 'text-yellow-400'
-  return 'text-accent-danger'
+  if (score === null) return 'text-gray-400'
+  if (score <= 30) return 'text-sky-600'
+  if (score <= 60) return 'text-amber-600'
+  return 'text-red-600'
 }
 
 export function statusLabel(status: string): string {

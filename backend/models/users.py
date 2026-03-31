@@ -3,7 +3,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Boolean, Column, Enum, ForeignKey, String
+from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -11,6 +11,7 @@ from database import Base
 from models.base import TimestampMixin
 
 UserRole = Enum("wholesaler", "investor", "agent", name="userrole")
+PlanTier = Enum("free", "starter", "pro", "team", name="plantier")
 
 
 class User(TimestampMixin, Base):
@@ -26,6 +27,9 @@ class User(TimestampMixin, Base):
     email_notifications = Column(
         Boolean, nullable=False, default=True, server_default="true"
     )
+    stripe_customer_id = Column(String, unique=True, nullable=True, index=True)
+    plan_tier = Column(PlanTier, nullable=False, default="free", server_default="free")
+    trial_ends_at = Column(DateTime, nullable=True)
 
     # Relationships
     deals = relationship("Deal", back_populates="user", foreign_keys="Deal.user_id")
@@ -34,3 +38,5 @@ class User(TimestampMixin, Base):
     documents = relationship("Document", back_populates="user", foreign_keys="Document.user_id")
     chat_messages = relationship("ChatMessage", back_populates="user")
     portfolio_entries = relationship("PortfolioEntry", back_populates="user", foreign_keys="PortfolioEntry.user_id")
+    subscriptions = relationship("Subscription", back_populates="user", foreign_keys="Subscription.user_id")
+    usage_records = relationship("UsageRecord", back_populates="user", foreign_keys="UsageRecord.user_id")

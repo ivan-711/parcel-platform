@@ -1,4 +1,4 @@
-/** App-wide error boundary — catches render errors and shows a branded fallback UI. */
+/** App-wide error boundary -- catches render errors and shows a branded fallback UI. */
 import { Component } from 'react'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -39,21 +39,21 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       }
 
       return (
-        <div className="min-h-screen bg-app-bg flex items-center justify-center p-6">
-          <div className="max-w-md w-full bg-app-surface border border-border-subtle rounded-xl p-8 text-center space-y-6">
-            <div className="mx-auto w-14 h-14 rounded-full bg-red-500/10 flex items-center justify-center">
-              <AlertTriangle className="w-7 h-7 text-red-400" />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+          <div className="max-w-md w-full bg-white border border-gray-200 rounded-xl p-8 text-center space-y-6 shadow-sm">
+            <div className="mx-auto w-14 h-14 rounded-full bg-red-50 flex items-center justify-center">
+              <AlertTriangle className="w-7 h-7 text-red-500" />
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-xl font-semibold text-text-primary">Something went wrong</h1>
-              <p className="text-sm text-text-secondary">
+              <h1 className="text-xl font-semibold text-gray-900">Something went wrong</h1>
+              <p className="text-sm text-gray-500">
                 An unexpected error occurred. Try refreshing, or go back to the dashboard.
               </p>
             </div>
 
             {this.state.error && import.meta.env.DEV && (
-              <pre className="text-left text-xs text-red-400 bg-red-500/5 border border-red-500/10 rounded-lg p-3 overflow-auto max-h-32">
+              <pre className="text-left text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg p-3 overflow-auto max-h-32">
                 {this.state.error.message}
               </pre>
             )}
@@ -69,7 +69,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               </Button>
               <Button
                 onClick={this.handleReset}
-                className="gap-2 bg-accent-primary hover:bg-accent-primary/90 text-white"
+                className="gap-2 bg-lime-600 hover:bg-lime-700 text-white"
               >
                 <RefreshCw size={14} />
                 Try Again
@@ -106,12 +106,12 @@ export class PageErrorBoundary extends Component<
     if (this.state.hasError) {
       return (
         <div className="flex flex-col items-center justify-center py-20 px-6 text-center space-y-4">
-          <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
-            <AlertTriangle className="w-6 h-6 text-red-400" />
+          <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+            <AlertTriangle className="w-6 h-6 text-red-500" />
           </div>
           <div className="space-y-1">
-            <p className="text-base font-medium text-text-primary">This section encountered an error</p>
-            <p className="text-sm text-text-secondary">
+            <p className="text-base font-medium text-gray-900">This section encountered an error</p>
+            <p className="text-sm text-gray-500">
               The rest of the app is still working.
             </p>
           </div>

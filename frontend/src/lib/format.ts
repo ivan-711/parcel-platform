@@ -57,9 +57,9 @@ export function formatPercent(value: number | string | null | undefined): string
 /** Color class for recommendation badge. */
 export function getRecommendationColor(value: string): string {
   const lower = value.toLowerCase()
-  if (lower.includes('strong') || lower.includes('good')) return 'bg-emerald-500/20 text-emerald-400'
-  if (lower.includes('marginal') || lower.includes('caution')) return 'bg-amber-500/20 text-amber-400'
-  return 'bg-red-500/20 text-red-400'
+  if (lower.includes('strong') || lower.includes('good')) return 'bg-sky-50 text-sky-700'
+  if (lower.includes('marginal') || lower.includes('caution')) return 'bg-amber-50 text-amber-700'
+  return 'bg-red-50 text-red-700'
 }
 
 /** Determine if an output key should be formatted as a percentage. */

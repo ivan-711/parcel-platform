@@ -1,6 +1,7 @@
 /** API client — all backend calls go through this module. Never use fetch directly in components. */
 
 import { useAuthStore } from '@/stores/authStore'
+import { useBillingStore } from '@/stores/billingStore'
 import type {
   AuthResponse,
   User,
@@ -24,6 +25,12 @@ import type {
   ActivityResponse,
   OfferLetterResponse,
   NotificationPreferences,
+  BillingStatus,
+  CheckoutRequest,
+  CheckoutResponse,
+  PortalResponse,
+  CancelRequest,
+  CancelResponse,
 } from '@/types'
 
 const API_URL = (import.meta.env.VITE_API_URL ?? 'https://api.parceldesk.io').replace('http://', 'https://')
@@ -99,6 +106,17 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
     useAuthStore.getState().clearAuth()
     throw new Error('Session expired')
+  }
+
+  if (res.status === 402) {
+    const error = await res.json().catch(() => ({ error: 'Upgrade required' }))
+    const parsed = error as { error?: string; code?: string; feature?: string; upgrade_url?: string }
+    useBillingStore.getState().setPaywallError({
+      feature: parsed.feature,
+      code: parsed.code,
+      upgrade_url: parsed.upgrade_url,
+    })
+    throw new Error(parsed.error ?? 'Upgrade required')
   }
 
   if (!res.ok) {
@@ -256,6 +274,22 @@ export const api = {
       request<NotificationPreferences>('/api/v1/settings/notifications/', {
         method: 'PATCH',
         body: JSON.stringify(prefs),
+      }),
+  },
+  billing: {
+    status: () =>
+      request<BillingStatus>('/api/v1/billing/status'),
+    checkout: (data: CheckoutRequest) =>
+      request<CheckoutResponse>('/api/v1/billing/checkout', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    portal: () =>
+      request<PortalResponse>('/api/v1/billing/portal', { method: 'POST' }),
+    cancel: (data: CancelRequest) =>
+      request<CancelResponse>('/api/v1/billing/cancel', {
+        method: 'POST',
+        body: JSON.stringify(data),
       }),
   },
 }

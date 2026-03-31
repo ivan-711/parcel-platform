@@ -9,23 +9,23 @@ import type { DocumentListItem } from '@/types'
 function StatusBadge({ status }: { status: DocumentListItem['status'] }) {
   if (status === 'complete') {
     return (
-      <span className="flex items-center gap-1 text-[10px] text-emerald-400">
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+      <span className="inline-flex items-center gap-1 text-[10px] font-medium text-sky-700 bg-sky-50 rounded-full px-2 py-0.5">
+        <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
         Done
       </span>
     )
   }
   if (status === 'failed') {
     return (
-      <span className="flex items-center gap-1 text-[10px] text-red-400">
-        <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+      <span className="inline-flex items-center gap-1 text-[10px] font-medium text-red-700 bg-red-50 rounded-full px-2 py-0.5">
+        <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
         Failed
       </span>
     )
   }
   return (
-    <span className="flex items-center gap-1 text-[10px] text-amber-400">
-      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-700 bg-amber-50 rounded-full px-2 py-0.5">
+      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
       Processing
     </span>
   )
@@ -47,16 +47,16 @@ function DocRow({
       className={cn(
         'w-full text-left px-3 py-2.5 rounded-lg transition-colors',
         isSelected
-          ? 'bg-accent-primary/10 border border-accent-primary/30'
-          : 'hover:bg-app-elevated/50 border border-transparent',
+          ? 'bg-lime-50 border border-lime-300'
+          : 'hover:bg-gray-50 border border-transparent',
       )}
     >
       <div className="flex items-start gap-2.5">
-        <FileText size={14} className="text-text-muted mt-0.5 shrink-0" />
+        <FileText size={14} className="text-gray-400 mt-0.5 shrink-0" />
         <div className="min-w-0 flex-1">
-          <p className="text-sm text-text-primary truncate">{doc.original_filename}</p>
+          <p className="text-sm text-gray-900 truncate">{doc.original_filename}</p>
           <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-[10px] text-text-muted font-mono">
+            <span className="text-[10px] text-gray-400 tabular-nums">
               {formatFileSize(doc.file_size_bytes)}
             </span>
             <StatusBadge status={doc.status} />
@@ -73,8 +73,8 @@ function SkeletonList() {
     <div className="space-y-2 px-1">
       {Array.from({ length: 3 }).map((_, i) => (
         <div key={i} className="px-3 py-2.5 rounded-lg space-y-2">
-          <div className="h-3.5 w-4/5 rounded bg-app-elevated animate-pulse" />
-          <div className="h-2.5 w-2/5 rounded bg-app-elevated animate-pulse" />
+          <div className="h-3.5 w-4/5 rounded bg-gray-100 animate-pulse" />
+          <div className="h-2.5 w-2/5 rounded bg-gray-100 animate-pulse" />
         </div>
       ))}
     </div>
@@ -96,9 +96,9 @@ export function DocumentList({ documents, isLoading, selectedId, onSelect }: Doc
   if (!documents || documents.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <FileText size={28} className="text-text-muted mb-2" />
-        <p className="text-sm text-text-secondary">No documents yet</p>
-        <p className="text-xs text-text-muted mt-0.5">Upload a file to get started</p>
+        <FileText size={28} className="text-gray-400 mb-2" />
+        <p className="text-sm text-gray-600">No documents yet</p>
+        <p className="text-xs text-gray-400 mt-0.5">Upload a file to get started</p>
       </div>
     )
   }

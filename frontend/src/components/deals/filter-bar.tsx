@@ -54,12 +54,12 @@ export function FilterBar({
   return (
     <div className="flex flex-wrap items-center gap-3">
       <Select value={strategy} onValueChange={onStrategyChange}>
-        <SelectTrigger className="w-[170px] bg-app-surface border-border-subtle text-text-primary text-sm">
+        <SelectTrigger className="w-[170px] bg-white border-gray-200 text-gray-900 text-sm">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="bg-app-surface border-border-subtle">
+        <SelectContent className="bg-white border-gray-200">
           {STRATEGIES.map((s) => (
-            <SelectItem key={s.value} value={s.value} className="text-text-primary text-sm focus:bg-app-elevated focus:text-text-primary">
+            <SelectItem key={s.value} value={s.value} className="text-gray-900 text-sm focus:bg-gray-50 focus:text-gray-900">
               {s.label}
             </SelectItem>
           ))}
@@ -67,12 +67,12 @@ export function FilterBar({
       </Select>
 
       <Select value={status} onValueChange={onStatusChange}>
-        <SelectTrigger className="w-[160px] bg-app-surface border-border-subtle text-text-primary text-sm">
+        <SelectTrigger className="w-[160px] bg-white border-gray-200 text-gray-900 text-sm">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="bg-app-surface border-border-subtle">
+        <SelectContent className="bg-white border-gray-200">
           {STATUSES.map((s) => (
-            <SelectItem key={s.value} value={s.value} className="text-text-primary text-sm focus:bg-app-elevated focus:text-text-primary">
+            <SelectItem key={s.value} value={s.value} className="text-gray-900 text-sm focus:bg-gray-50 focus:text-gray-900">
               {s.label}
             </SelectItem>
           ))}
@@ -80,12 +80,12 @@ export function FilterBar({
       </Select>
 
       <Select value={sort} onValueChange={onSortChange}>
-        <SelectTrigger className="w-[160px] bg-app-surface border-border-subtle text-text-primary text-sm">
+        <SelectTrigger className="w-[160px] bg-white border-gray-200 text-gray-900 text-sm">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="bg-app-surface border-border-subtle">
+        <SelectContent className="bg-white border-gray-200">
           {SORTS.map((s) => (
-            <SelectItem key={s.value} value={s.value} className="text-text-primary text-sm focus:bg-app-elevated focus:text-text-primary">
+            <SelectItem key={s.value} value={s.value} className="text-gray-900 text-sm focus:bg-gray-50 focus:text-gray-900">
               {s.label}
             </SelectItem>
           ))}
@@ -95,7 +95,7 @@ export function FilterBar({
       {hasActiveFilters && (
         <button
           onClick={onClearFilters}
-          className="text-xs font-medium text-accent-primary hover:text-accent-primary/80 transition-colors"
+          className="text-xs font-medium text-lime-700 hover:text-lime-600 transition-colors"
         >
           Clear filters
         </button>
@@ -104,7 +104,7 @@ export function FilterBar({
       <button
         onClick={onShowPresetInput}
         disabled={!hasActiveFilters || showPresetInput}
-        className="inline-flex items-center gap-1.5 text-xs font-medium text-text-secondary hover:text-text-primary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
       >
         <Bookmark size={14} />
         Save Preset
@@ -121,20 +121,20 @@ export function FilterBar({
               if (e.key === 'Escape') onCancelPresetInput()
             }}
             placeholder="Preset name…"
-            className="h-8 w-[140px] text-xs bg-app-surface border-border-subtle"
+            className="h-8 w-[140px] text-xs bg-white border-gray-200"
           />
           <button
             onClick={onSavePreset}
             disabled={!presetName.trim()}
             aria-label="Save preset"
-            className="p-1 rounded hover:bg-app-elevated text-accent-success transition-colors disabled:opacity-40"
+            className="p-1 rounded hover:bg-gray-50 text-sky-600 transition-colors disabled:opacity-40"
           >
             <Check size={14} />
           </button>
           <button
             onClick={onCancelPresetInput}
             aria-label="Cancel preset"
-            className="p-1 rounded hover:bg-app-elevated text-text-muted transition-colors"
+            className="p-1 rounded hover:bg-gray-50 text-gray-400 transition-colors"
           >
             <X size={14} />
           </button>

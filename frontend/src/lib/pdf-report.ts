@@ -1,9 +1,14 @@
 /**
- * Branded PDF deal report generation.
+ * Branded PDF deal report generation (light theme).
  *
  * Produces a professional multi-page deal analysis report using jsPDF.
  * Each strategy renders its own primary KPIs. The report is designed to be
  * shared with lenders, partners, and co-investors.
+ *
+ * Color scheme follows the light theme spec (agent-17-pdf-theme.md):
+ * - White page background with indigo-600 accent headings/rules
+ * - Cool-tinted grays from Untitled UI scale for text
+ * - Print-friendly: minimal background fills, high contrast ratios
  */
 
 import jsPDF from 'jspdf'
@@ -12,26 +17,41 @@ import type { KPIDefinition } from '@/lib/strategy-kpis'
 import type { Strategy, DealResponse } from '@/types'
 
 // ---------------------------------------------------------------------------
-// Color constants
+// Color constants (light theme — per agent-17-pdf-theme.md)
 // ---------------------------------------------------------------------------
 
-const INDIGO: [number, number, number] = [99, 102, 241]
-const WHITE: [number, number, number] = [255, 255, 255]
-const DARK_HEADER: [number, number, number] = [8, 8, 15]
-const TEXT_PRIMARY: [number, number, number] = [30, 30, 30]
-const TEXT_SECONDARY: [number, number, number] = [100, 100, 110]
-const ROW_EVEN: [number, number, number] = [245, 245, 250]
-const ROW_ODD: [number, number, number] = [255, 255, 255]
-const BORDER_LIGHT: [number, number, number] = [220, 220, 230]
+// Brand accent
+const INDIGO_600: [number, number, number] = [79, 70, 229]
+const INDIGO_50: [number, number, number] = [238, 240, 255]
 
-// Strategy badge colors (print-friendly versions)
+// Neutral text & backgrounds
+const GRAY_900: [number, number, number] = [16, 24, 40]
+const GRAY_700: [number, number, number] = [52, 64, 84]
+const GRAY_500: [number, number, number] = [102, 112, 133]
+const GRAY_300: [number, number, number] = [208, 213, 221]
+const GRAY_200: [number, number, number] = [234, 236, 240]
+const WHITE: [number, number, number] = [255, 255, 255]
+
+// Semantic: cash flow / risk
+const SUCCESS_700: [number, number, number] = [4, 120, 87]
+const WARNING_600: [number, number, number] = [217, 119, 6]
+const ERROR_700: [number, number, number] = [185, 28, 28]
+const CRITICAL: [number, number, number] = [127, 29, 29]
+
+// Strategy badge colors (from design tokens — pastel bg, dark text)
 const STRATEGY_COLORS: Record<Strategy, { bg: [number, number, number]; text: [number, number, number] }> = {
-  wholesale: { bg: [255, 237, 180], text: [120, 80, 0] },
-  creative_finance: { bg: [220, 210, 255], text: [80, 40, 150] },
-  brrrr: { bg: [200, 220, 255], text: [30, 60, 140] },
-  buy_and_hold: { bg: [200, 240, 220], text: [20, 100, 60] },
-  flip: { bg: [255, 215, 210], text: [150, 40, 30] },
+  wholesale: { bg: [254, 243, 199], text: [146, 64, 14] },
+  creative_finance: { bg: [237, 233, 254], text: [91, 33, 182] },
+  brrrr: { bg: [219, 234, 254], text: [30, 64, 175] },
+  buy_and_hold: { bg: [209, 250, 229], text: [6, 95, 70] },
+  flip: { bg: [255, 228, 230], text: [159, 18, 57] },
 }
+
+// Cash-flow-sensitive keys that get green coloring when positive
+const CASH_FLOW_KEYS = [
+  'monthly_cash_flow', 'annual_cash_flow', 'net_profit',
+  'total_profit', 'cash_flow', 'spread',
+]
 
 // ---------------------------------------------------------------------------
 // Formatting helpers (PDF-specific, no `any`)
@@ -56,10 +76,10 @@ function getRiskLabel(score: number): string {
 }
 
 function getRiskColor(score: number): [number, number, number] {
-  if (score <= 30) return [16, 185, 129]     // success green
-  if (score <= 60) return [245, 158, 11]      // warning amber
-  if (score <= 80) return [239, 68, 68]       // danger red
-  return [127, 29, 29]                         // critical dark red
+  if (score <= 30) return SUCCESS_700
+  if (score <= 60) return WARNING_600
+  if (score <= 80) return ERROR_700
+  return CRITICAL
 }
 
 function isPercentKey(key: string): boolean {
@@ -133,36 +153,53 @@ const PAGE_HEIGHT = 297
 const MARGIN = 15
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2
 const HEADER_HEIGHT = 22
-const FOOTER_HEIGHT = 12
+const FOOTER_HEIGHT = 18
 
 function drawPageHeader(doc: jsPDF): void {
-  // Dark bar across top
-  doc.setFillColor(...DARK_HEADER)
-  doc.rect(0, 0, PAGE_WIDTH, HEADER_HEIGHT, 'F')
+  // Logo icon — indigo rounded square
+  doc.setFillColor(...INDIGO_600)
+  doc.roundedRect(MARGIN, 6, 8, 8, 1.5, 1.5, 'F')
+  doc.setFont('Helvetica', 'bold')
+  doc.setFontSize(12)
+  doc.setTextColor(...WHITE)
+  doc.text('P', MARGIN + 4, 12.5, { align: 'center' })
 
-  // PARCEL text
+  // Brand name
   doc.setFont('Helvetica', 'bold')
   doc.setFontSize(14)
-  doc.setTextColor(...WHITE)
-  doc.text('PARCEL', MARGIN, 15)
+  doc.setTextColor(...INDIGO_600)
+  doc.text('PARCEL', MARGIN + 11, 13)
 
-  // Indigo accent line beneath header
-  doc.setDrawColor(...INDIGO)
+  // Tagline
+  doc.setFont('Helvetica', 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(...GRAY_500)
+  doc.text('Real Estate Deal Intelligence', PAGE_WIDTH - MARGIN, 13, { align: 'right' })
+
+  // Accent underline (margin-to-margin, not full bleed)
+  doc.setDrawColor(...INDIGO_600)
   doc.setLineWidth(0.8)
-  doc.line(0, HEADER_HEIGHT, PAGE_WIDTH, HEADER_HEIGHT)
+  doc.line(MARGIN, HEADER_HEIGHT, PAGE_WIDTH - MARGIN, HEADER_HEIGHT)
 }
 
 function drawPageFooter(doc: jsPDF, pageNum: number, totalPages: number, dateStr: string): void {
   const y = PAGE_HEIGHT - FOOTER_HEIGHT
-  doc.setDrawColor(...BORDER_LIGHT)
+  doc.setDrawColor(...GRAY_300)
   doc.setLineWidth(0.3)
   doc.line(MARGIN, y, PAGE_WIDTH - MARGIN, y)
 
   doc.setFont('Helvetica', 'normal')
   doc.setFontSize(8)
-  doc.setTextColor(...TEXT_SECONDARY)
-  doc.text(`Generated by Parcel  \u2022  ${dateStr}  \u2022  parcel-platform.com`, MARGIN, y + 7)
+  doc.setTextColor(...GRAY_500)
+  doc.text(`Generated by Parcel  |  ${dateStr}  |  parcel-platform.com`, MARGIN, y + 7)
   doc.text(`Page ${pageNum} of ${totalPages}`, PAGE_WIDTH - MARGIN, y + 7, { align: 'right' })
+
+  // Legal disclaimer
+  doc.setFontSize(6)
+  doc.text(
+    'For informational purposes only. Not an appraisal, financial advice, or investment recommendation. AI content may contain errors.',
+    MARGIN, y + 11
+  )
 }
 
 function contentStartY(): number {
@@ -180,6 +217,10 @@ function maxContentY(): number {
 interface TableRow {
   label: string
   value: string
+  /** Raw numeric value for cash-flow coloring (optional). */
+  rawNumeric?: number
+  /** Whether this key is a cash-flow-sensitive key. */
+  isCashFlow?: boolean
 }
 
 function drawTable(doc: jsPDF, title: string, rows: TableRow[], startY: number): number {
@@ -195,12 +236,12 @@ function drawTable(doc: jsPDF, title: string, rows: TableRow[], startY: number):
   // Section title
   doc.setFont('Helvetica', 'bold')
   doc.setFontSize(12)
-  doc.setTextColor(...INDIGO)
+  doc.setTextColor(...INDIGO_600)
   doc.text(title, MARGIN, y)
   y += 2
 
   // Thin accent line under title
-  doc.setDrawColor(...INDIGO)
+  doc.setDrawColor(...INDIGO_600)
   doc.setLineWidth(0.4)
   doc.line(MARGIN, y, MARGIN + CONTENT_WIDTH, y)
   y += 6
@@ -217,24 +258,35 @@ function drawTable(doc: jsPDF, title: string, rows: TableRow[], startY: number):
     }
 
     const row = rows[i]
-    const bgColor = i % 2 === 0 ? ROW_EVEN : ROW_ODD
+    const bgColor = i % 2 === 0 ? GRAY_200 : WHITE
     doc.setFillColor(...bgColor)
     doc.rect(MARGIN, y - 4.5, CONTENT_WIDTH, ROW_HEIGHT, 'F')
 
     // Label
     doc.setFont('Helvetica', 'normal')
     doc.setFontSize(9)
-    doc.setTextColor(...TEXT_SECONDARY)
+    doc.setTextColor(...GRAY_500)
     doc.text(row.label, LABEL_X, y)
 
-    // Value (monospace for financial numbers)
+    // Value (monospace for financial numbers) with cash-flow coloring
     doc.setFont('Courier', 'bold')
     doc.setFontSize(9)
-    doc.setTextColor(...TEXT_PRIMARY)
+    if (row.isCashFlow && row.rawNumeric !== undefined && row.rawNumeric > 0) {
+      doc.setTextColor(...SUCCESS_700)
+    } else if (row.rawNumeric !== undefined && row.rawNumeric < 0) {
+      doc.setTextColor(...ERROR_700)
+    } else {
+      doc.setTextColor(...GRAY_700)
+    }
     doc.text(row.value, VALUE_X, y, { align: 'right' })
 
     y += ROW_HEIGHT
   }
+
+  // Table bottom border
+  doc.setDrawColor(...GRAY_300)
+  doc.setLineWidth(0.2)
+  doc.line(MARGIN, y - 3.5, MARGIN + CONTENT_WIDTH, y - 3.5)
 
   return y + 4
 }
@@ -261,16 +313,16 @@ function drawKPIGrid(
     const x = MARGIN + col * (CARD_W + GAP)
     const cardY = y + row * (CARD_H + GAP)
 
-    // Card background with border
-    doc.setFillColor(250, 250, 255)
-    doc.setDrawColor(...BORDER_LIGHT)
+    // Card background with border (INDIGO_50 fill, GRAY_300 border)
+    doc.setFillColor(...INDIGO_50)
+    doc.setDrawColor(...GRAY_300)
     doc.setLineWidth(0.3)
     doc.roundedRect(x, cardY, CARD_W, CARD_H, 3, 3, 'FD')
 
     // Label
     doc.setFont('Helvetica', 'normal')
     doc.setFontSize(8)
-    doc.setTextColor(...TEXT_SECONDARY)
+    doc.setTextColor(...GRAY_500)
     doc.text(kpis[i].label.toUpperCase(), x + 6, cardY + 10)
 
     // Value
@@ -278,7 +330,7 @@ function drawKPIGrid(
     const formattedValue = formatKPIValue(kpis[i], rawValue)
     doc.setFont('Courier', 'bold')
     doc.setFontSize(16)
-    doc.setTextColor(...TEXT_PRIMARY)
+    doc.setTextColor(...GRAY_900)
     doc.text(formattedValue, x + 6, cardY + 22)
   }
 
@@ -302,13 +354,13 @@ function drawRiskScore(doc: jsPDF, score: number, startY: number): number {
   const label = getRiskLabel(score)
   const color = getRiskColor(score)
 
-  // Risk score badge
+  // Section label
   doc.setFont('Helvetica', 'bold')
   doc.setFontSize(10)
-  doc.setTextColor(...INDIGO)
+  doc.setTextColor(...INDIGO_600)
   doc.text('RISK SCORE', MARGIN, y)
 
-  // Score circle-like badge
+  // Score badge — filled rounded rect
   const badgeX = MARGIN + 42
   doc.setFillColor(...color)
   doc.roundedRect(badgeX, y - 6, 24, 9, 2, 2, 'F')
@@ -317,7 +369,7 @@ function drawRiskScore(doc: jsPDF, score: number, startY: number): number {
   doc.setTextColor(...WHITE)
   doc.text(`${score}`, badgeX + 12, y, { align: 'center' })
 
-  // Label text
+  // Label text in matching semantic color
   doc.setFont('Helvetica', 'normal')
   doc.setFontSize(10)
   doc.setTextColor(...color)
@@ -383,7 +435,7 @@ export function generateDealReport(deal: DealResponse): void {
   // "Deal Analysis Report" subtitle
   doc.setFont('Helvetica', 'normal')
   doc.setFontSize(10)
-  doc.setTextColor(...TEXT_SECONDARY)
+  doc.setTextColor(...GRAY_500)
   doc.text('Deal Analysis Report', MARGIN, y)
   y += 5
 
@@ -393,7 +445,7 @@ export function generateDealReport(deal: DealResponse): void {
   y += 10
 
   // Indigo divider
-  doc.setDrawColor(...INDIGO)
+  doc.setDrawColor(...INDIGO_600)
   doc.setLineWidth(0.5)
   doc.line(MARGIN, y, MARGIN + CONTENT_WIDTH, y)
   y += 10
@@ -401,7 +453,7 @@ export function generateDealReport(deal: DealResponse): void {
   // Property address (large, bold)
   doc.setFont('Helvetica', 'bold')
   doc.setFontSize(20)
-  doc.setTextColor(...TEXT_PRIMARY)
+  doc.setTextColor(...GRAY_900)
 
   // Wrap address if it's long
   const addressLines = doc.splitTextToSize(deal.address, CONTENT_WIDTH)
@@ -418,7 +470,7 @@ export function generateDealReport(deal: DealResponse): void {
   if (deal.zip_code || deal.property_type) {
     doc.setFont('Helvetica', 'normal')
     doc.setFontSize(9)
-    doc.setTextColor(...TEXT_SECONDARY)
+    doc.setTextColor(...GRAY_500)
     const details: string[] = []
     if (deal.zip_code) details.push(`ZIP: ${deal.zip_code}`)
     if (deal.property_type) details.push(`Type: ${formatInputLabel(deal.property_type)}`)
@@ -429,7 +481,7 @@ export function generateDealReport(deal: DealResponse): void {
   // KPI Grid (2x2)
   doc.setFont('Helvetica', 'bold')
   doc.setFontSize(11)
-  doc.setTextColor(...INDIGO)
+  doc.setTextColor(...INDIGO_600)
   doc.text('Key Metrics', MARGIN, y)
   y += 8
 
@@ -450,13 +502,13 @@ export function generateDealReport(deal: DealResponse): void {
 
     doc.setFont('Helvetica', 'bold')
     doc.setFontSize(10)
-    doc.setTextColor(...INDIGO)
+    doc.setTextColor(...INDIGO_600)
     doc.text('AI RECOMMENDATION', MARGIN, y)
     y += 6
 
     doc.setFont('Helvetica', 'normal')
     doc.setFontSize(10)
-    doc.setTextColor(...TEXT_PRIMARY)
+    doc.setTextColor(...GRAY_700)
     const recLines = doc.splitTextToSize(recommendation, CONTENT_WIDTH) as string[]
     doc.text(recLines, MARGIN, y)
     y += recLines.length * 5 + 4
@@ -469,13 +521,18 @@ export function generateDealReport(deal: DealResponse): void {
   drawPageHeader(doc)
   y = contentStartY()
 
-  // Outputs table
+  // Outputs table (with cash-flow coloring)
   const outputRows: TableRow[] = Object.entries(outputs)
     .filter(([key]) => key !== 'recommendation')
-    .map(([key, value]) => ({
-      label: formatInputLabel(key),
-      value: formatPDFValue(key, value as number | string | null),
-    }))
+    .map(([key, value]) => {
+      const numericVal = typeof value === 'number' ? value : (typeof value === 'string' ? parseFloat(value) : undefined)
+      return {
+        label: formatInputLabel(key),
+        value: formatPDFValue(key, value as number | string | null),
+        rawNumeric: isNaN(numericVal as number) ? undefined : numericVal,
+        isCashFlow: CASH_FLOW_KEYS.includes(key),
+      }
+    })
 
   if (outputRows.length > 0) {
     y = drawTable(doc, 'Analysis Outputs', outputRows, y)
@@ -530,12 +587,12 @@ export function generateDealReport(deal: DealResponse): void {
     if (hasStatus) {
       doc.setFont('Helvetica', 'bold')
       doc.setFontSize(10)
-      doc.setTextColor(...INDIGO)
+      doc.setTextColor(...INDIGO_600)
       doc.text('Deal Status', MARGIN, y)
       y += 6
       doc.setFont('Helvetica', 'normal')
       doc.setFontSize(10)
-      doc.setTextColor(...TEXT_PRIMARY)
+      doc.setTextColor(...GRAY_700)
       doc.text(deal.status.charAt(0).toUpperCase() + deal.status.slice(1), MARGIN, y)
       y += 8
     }
@@ -543,7 +600,7 @@ export function generateDealReport(deal: DealResponse): void {
     // Created / updated dates
     doc.setFont('Helvetica', 'normal')
     doc.setFontSize(9)
-    doc.setTextColor(...TEXT_SECONDARY)
+    doc.setTextColor(...GRAY_500)
     if (deal.created_at) {
       doc.text(`Created: ${new Date(deal.created_at).toLocaleDateString('en-US')}`, MARGIN, y)
       y += 5

@@ -4,15 +4,17 @@ import json
 import uuid
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from core.ai.chat_specialist import stream_chat_response
+from core.billing.tier_gate import require_feature, require_quota, record_usage
 from core.demo import is_demo_user
 from core.demo.chat_service import get_seeded_history
 from core.security.jwt import get_current_user
 from database import get_db
+from limiter import limiter
 from models.chat_messages import ChatMessage
 from models.deals import Deal
 from models.documents import Document
@@ -94,10 +96,14 @@ def _build_document_system_context(doc: Document) -> str:
 
 
 @router.post("/", status_code=200)
+@limiter.limit("10/minute")
 async def chat(
+    request: Request,
     body: ChatRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    _feat: None = Depends(require_feature("ai_chat_enabled")),
+    _quota: None = Depends(require_quota("ai_messages_per_month")),
 ) -> StreamingResponse:
     """Stream an AI response to a chat message. Saves both messages to DB.
 
@@ -183,6 +189,7 @@ async def chat(
                     context_id=body.context_id,
                 )
                 db.add(assistant_msg)
+                record_usage(current_user.id, "ai_messages_per_month", db)
                 db.commit()
         yield 'data: {"done": true}\n\n'
 
@@ -194,7 +201,9 @@ async def chat(
 
 
 @router.get("/history/", response_model=ChatHistoryResponse)
+@limiter.limit("30/minute")
 async def get_chat_history(
+    request: Request,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> ChatHistoryResponse:

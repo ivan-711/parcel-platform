@@ -1,7 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 from dotenv import load_dotenv
 import os
+
+from core.billing.exceptions import BillingError
+from limiter import limiter
 
 load_dotenv()
 
@@ -10,6 +16,26 @@ app = FastAPI(
     description="Backend API for Parcel — the all-in-one platform for real estate professionals.",
     version="0.1.0",
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+
+@app.exception_handler(BillingError)
+async def billing_error_handler(request: Request, exc: BillingError):
+    """Map BillingError subtypes to appropriate HTTP status codes."""
+    status_map = {
+        "NO_STRIPE_CUSTOMER": 400,
+        "NO_SUBSCRIPTION": 404,
+        "CARD_DECLINED": 402,
+        "STRIPE_INVALID_REQUEST": 400,
+        "STRIPE_TRANSIENT": 503,
+    }
+    code = status_map.get(exc.code, 500)
+    return JSONResponse(
+        status_code=code,
+        content={"error": exc.message, "code": exc.code},
+    )
 
 _frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
 _allowed_origins = [_frontend_url]
@@ -25,6 +51,7 @@ app.add_middleware(
 )
 
 from routers import auth, dashboard, deals, pipeline, portfolio, chat, documents, settings  # noqa: E402
+from routers import webhooks, billing  # noqa: E402
 
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(dashboard.router, prefix="/api/v1")
@@ -34,6 +61,8 @@ app.include_router(portfolio.router, prefix="/api/v1")
 app.include_router(chat.router, prefix="/api/v1")
 app.include_router(documents.router, prefix="/api/v1")
 app.include_router(settings.router, prefix="/api/v1")
+app.include_router(webhooks.router)  # /webhooks/stripe — no /api/v1 prefix
+app.include_router(billing.router, prefix="/api/v1")
 
 
 @app.get("/health")

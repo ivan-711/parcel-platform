@@ -45,7 +45,7 @@ export function CursorSpotlight() {
         className="absolute inset-0 pointer-events-none"
         aria-hidden="true"
         style={{
-          background: 'radial-gradient(circle at 50% 40%, rgba(99,102,241,0.06) 0%, transparent 60%)',
+          background: 'radial-gradient(circle at 50% 40%, rgba(132,204,22,0.04) 0%, transparent 60%)',
         }}
       />
     )
@@ -62,7 +62,7 @@ export function CursorSpotlight() {
           height: SPOTLIGHT_SIZE,
           marginLeft: -SPOTLIGHT_SIZE / 2,
           marginTop: -SPOTLIGHT_SIZE / 2,
-          background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, rgba(99,102,241,0.03) 40%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(132,204,22,0.06) 0%, rgba(132,204,22,0.02) 40%, transparent 70%)',
           borderRadius: '50%',
         }}
       />

@@ -63,7 +63,7 @@ def _build_deal_terms(
             f"- Purchase Price: ${purchase:,.0f}\n"
             f"- Rehab Budget: ${inputs.get('rehab_budget', 0):,.0f}\n"
             f"- After Repair Value (ARV): ${inputs.get('arv', 0):,.0f}\n"
-            f"- Projected Profit: ${outputs.get('net_profit', outputs.get('gross_profit', 0)):,.0f}"
+            f"- Projected Profit: ${outputs.get('gross_profit', 0):,.0f}"
         )
 
     elif strategy == "creative_finance":

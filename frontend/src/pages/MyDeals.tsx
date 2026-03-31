@@ -180,19 +180,19 @@ export default function MyDeals() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h1 className="text-3xl font-semibold tracking-tight text-text-primary">My Deals</h1>
+          <h1 className="text-3xl font-semibold tracking-tight text-gray-900">My Deals</h1>
           <div className="flex items-center gap-2 flex-wrap">
             {selectionMode ? (
               <>
                 <button
                   onClick={selectAll}
-                  className="text-xs font-medium text-text-secondary hover:text-text-primary transition-colors"
+                  className="text-xs font-medium text-gray-600 hover:text-gray-900 transition-colors"
                 >
                   {deals && deals.every(d => selectedIds.has(d.id)) ? 'Deselect all' : 'Select all'}
                 </button>
                 <button
                   onClick={exitSelectionMode}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border-subtle text-text-secondary hover:text-text-primary hover:border-text-muted text-sm font-medium transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:text-gray-900 hover:border-gray-400 text-sm font-medium transition-colors"
                 >
                   Cancel
                 </button>
@@ -208,14 +208,14 @@ export default function MyDeals() {
               <>
                 <button
                   onClick={() => setSelectionMode(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border-subtle text-text-secondary hover:text-text-primary hover:border-text-muted text-sm font-medium transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:text-gray-900 hover:border-gray-400 text-sm font-medium transition-colors"
                 >
                   <CheckSquare size={16} />
                   Select
                 </button>
                 <Link
                   to="/analyze"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-primary hover:bg-accent-primary/90 text-white text-sm font-medium transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-lime-700 hover:bg-lime-800 text-white text-sm font-medium transition-colors"
                 >
                   <Plus size={16} />
                   Analyze New Deal
@@ -229,7 +229,7 @@ export default function MyDeals() {
         <div className="relative">
           <Search
             size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
             aria-hidden="true"
           />
           <input
@@ -239,13 +239,13 @@ export default function MyDeals() {
             onChange={(e) => { setSearchQuery(e.target.value); setPage(1) }}
             placeholder="Search deals by address..."
             aria-label="Search deals by address"
-            className="w-full pl-9 pr-9 py-2 rounded-lg bg-app-elevated border border-border-default text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-primary transition-colors"
+            className="w-full pl-9 pr-9 py-2 rounded-lg bg-white border border-gray-300 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20 transition-colors"
           />
           {searchQuery && (
             <button
               onClick={() => { setSearchQuery(''); setPage(1); searchInputRef.current?.focus() }}
               aria-label="Clear search"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors cursor-pointer"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900 transition-colors cursor-pointer"
             >
               <X size={16} />
             </button>
@@ -280,16 +280,16 @@ export default function MyDeals() {
 
         {/* Error state */}
         {isError && (
-          <div className="rounded-xl border border-accent-danger/30 bg-accent-danger/10 p-6 flex items-start gap-3 max-w-lg">
-            <AlertCircle size={20} className="text-accent-danger shrink-0 mt-0.5" />
+          <div className="rounded-xl border border-red-200 bg-red-50 p-6 flex items-start gap-3 max-w-lg">
+            <AlertCircle size={20} className="text-red-600 shrink-0 mt-0.5" />
             <div className="space-y-2">
-              <p className="text-sm font-medium text-text-primary">Failed to load deals</p>
-              <p className="text-xs text-text-secondary">
+              <p className="text-sm font-medium text-gray-900">Failed to load deals</p>
+              <p className="text-xs text-gray-600">
                 {error instanceof Error ? error.message : 'Something went wrong. Please try again.'}
               </p>
               <button
                 onClick={() => queryClient.invalidateQueries({ queryKey: ['deals'] })}
-                className="text-xs font-medium text-accent-primary hover:text-accent-primary/80 transition-colors"
+                className="text-xs font-medium text-lime-700 hover:text-lime-600 transition-colors"
               >
                 Try again
               </button>
@@ -309,16 +309,16 @@ export default function MyDeals() {
         {/* Empty state — no deals at all */}
         {!isLoading && !isError && deals && deals.length === 0 && !hasActiveFilters && !hasSearchQuery && (
           <div className="flex flex-col items-center justify-center py-16 space-y-4">
-            <div className="w-12 h-12 rounded-xl bg-app-surface border border-border-subtle flex items-center justify-center">
-              <Search size={20} className="text-text-muted" />
+            <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 flex items-center justify-center">
+              <Search size={20} className="text-gray-400" />
             </div>
             <div className="text-center space-y-1">
-              <p className="text-sm font-medium text-text-primary">No deals yet</p>
-              <p className="text-xs text-text-muted">Analyze your first property to get started.</p>
+              <p className="text-sm font-medium text-gray-900">No deals yet</p>
+              <p className="text-xs text-gray-400">Analyze your first property to get started.</p>
             </div>
             <Link
               to="/analyze"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-primary hover:bg-accent-primary/90 text-white text-sm font-medium transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-lime-700 hover:bg-lime-800 text-white text-sm font-medium transition-colors"
             >
               <Plus size={16} />
               Analyze a Deal
@@ -329,16 +329,16 @@ export default function MyDeals() {
         {/* Empty state — search active, no results */}
         {!isLoading && !isError && deals && deals.length === 0 && hasSearchQuery && !hasActiveFilters && (
           <div className="flex flex-col items-center justify-center py-16 space-y-4">
-            <div className="w-12 h-12 rounded-xl bg-app-surface border border-border-subtle flex items-center justify-center">
-              <Search size={20} className="text-text-muted" />
+            <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 flex items-center justify-center">
+              <Search size={20} className="text-gray-400" />
             </div>
             <div className="text-center space-y-1">
-              <p className="text-sm font-medium text-text-primary">No deals match your search</p>
-              <p className="text-xs text-text-muted">Try a different address or clear your search.</p>
+              <p className="text-sm font-medium text-gray-900">No deals match your search</p>
+              <p className="text-xs text-gray-400">Try a different address or clear your search.</p>
             </div>
             <button
               onClick={() => { setSearchQuery(''); searchInputRef.current?.focus() }}
-              className="text-sm font-medium text-accent-primary hover:text-accent-primary/80 transition-colors cursor-pointer"
+              className="text-sm font-medium text-lime-700 hover:text-lime-600 transition-colors cursor-pointer"
             >
               Clear search
             </button>
@@ -348,16 +348,16 @@ export default function MyDeals() {
         {/* Empty state — filters active (with or without search), no results */}
         {!isLoading && !isError && deals && deals.length === 0 && (hasActiveFilters || (hasSearchQuery && hasActiveFilters)) && (
           <div className="flex flex-col items-center justify-center py-16 space-y-4">
-            <div className="w-12 h-12 rounded-xl bg-app-surface border border-border-subtle flex items-center justify-center">
-              <Search size={20} className="text-text-muted" />
+            <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 flex items-center justify-center">
+              <Search size={20} className="text-gray-400" />
             </div>
             <div className="text-center space-y-1">
-              <p className="text-sm font-medium text-text-primary">No deals match your filters</p>
-              <p className="text-xs text-text-muted">Try adjusting your filters or clear them to see all deals.</p>
+              <p className="text-sm font-medium text-gray-900">No deals match your filters</p>
+              <p className="text-xs text-gray-400">Try adjusting your filters or clear them to see all deals.</p>
             </div>
             <button
               onClick={clearFilters}
-              className="text-sm font-medium text-accent-primary hover:text-accent-primary/80 transition-colors cursor-pointer"
+              className="text-sm font-medium text-lime-700 hover:text-lime-600 transition-colors cursor-pointer"
             >
               Clear filters
             </button>
@@ -386,15 +386,15 @@ export default function MyDeals() {
 
         {/* Delete confirmation dialog */}
         <AlertDialog open={deletingId !== null} onOpenChange={(open) => { if (!open) setDeletingId(null) }}>
-          <AlertDialogContent className="bg-app-surface border-border-subtle">
+          <AlertDialogContent className="bg-white border-gray-200">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-text-primary">Delete this deal?</AlertDialogTitle>
-              <AlertDialogDescription className="text-text-secondary">
+              <AlertDialogTitle className="text-gray-900">Delete this deal?</AlertDialogTitle>
+              <AlertDialogDescription className="text-gray-600">
                 This will permanently delete this deal. This cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="bg-app-elevated border-border-subtle text-text-primary">Cancel</AlertDialogCancel>
+              <AlertDialogCancel className="bg-white border-gray-200 text-gray-900">Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => { if (deletingId) deleteDeal.mutate(deletingId) }}
                 className="bg-red-600 hover:bg-red-700 text-white"
@@ -407,15 +407,15 @@ export default function MyDeals() {
 
         {/* Bulk delete confirmation dialog */}
         <AlertDialog open={bulkDeleteOpen} onOpenChange={setBulkDeleteOpen}>
-          <AlertDialogContent className="bg-app-surface border-border-subtle">
+          <AlertDialogContent className="bg-white border-gray-200">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-text-primary">Delete {selectedIds.size} deal{selectedIds.size > 1 ? 's' : ''}?</AlertDialogTitle>
-              <AlertDialogDescription className="text-text-secondary">
+              <AlertDialogTitle className="text-gray-900">Delete {selectedIds.size} deal{selectedIds.size > 1 ? 's' : ''}?</AlertDialogTitle>
+              <AlertDialogDescription className="text-gray-600">
                 This will permanently delete {selectedIds.size} selected deal{selectedIds.size > 1 ? 's' : ''}. This cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="bg-app-elevated border-border-subtle text-text-primary">Cancel</AlertDialogCancel>
+              <AlertDialogCancel className="bg-white border-gray-200 text-gray-900">Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleBulkDelete}
                 disabled={isDeleting}

@@ -1,5 +1,16 @@
+from .utils import validate_inputs
+
+_REQUIRED = [
+    "purchase_price", "rehab_budget", "arv", "holding_months",
+    "selling_costs_pct", "financing_costs",
+]
+_NON_NEGATIVE = ["purchase_price", "arv"]
+
+
 def calculate_flip(inputs: dict) -> dict:
     """Calculate fix-and-flip deal metrics from user inputs."""
+    validate_inputs(inputs, _REQUIRED, _NON_NEGATIVE)
+
     purchase_price = inputs["purchase_price"]
     rehab_budget = inputs["rehab_budget"]
     arv = inputs["arv"]

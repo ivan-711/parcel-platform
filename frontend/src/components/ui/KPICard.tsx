@@ -29,7 +29,7 @@ function formatValue(value: number, format: Format): string {
 }
 
 /**
- * KPI metric card with count-up animation, delta badge, optional sparkline, and JetBrains Mono value.
+ * KPI metric card with count-up animation, delta badge, optional sparkline, and Inter tabular-nums value.
  * Use for all financial metrics on dashboards and deal results.
  * Pass `sparklineData` (array of numbers) to render a mini area chart at the bottom.
  */
@@ -50,28 +50,29 @@ export function KPICard({ label, value, format, delta, loading, className, spark
     return <SkeletonCard className={className} lines={2} />
   }
 
-  const strokeColor = isPositive ? '#6366F1' : '#EF4444'
-  const fillOpacity = 0.2
+  const strokeColor = isPositive ? '#65A30D' : '#DC2626'
+  const fillOpacity = 0.08
 
   return (
     <div
       className={cn(
-        'rounded-xl border border-border-subtle bg-app-surface p-5 space-y-1 overflow-hidden',
+        'rounded-xl border border-gray-200 bg-white p-5 space-y-1 overflow-hidden',
+        'shadow-[0_1px_2px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)]',
         className
       )}
     >
-      <p className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">{label}</p>
-      <p className="text-4xl font-semibold font-mono text-text-primary">
+      <p className="text-xs font-medium text-gray-500 tracking-wide">{label}</p>
+      <p className="text-3xl font-semibold text-gray-900 tabular-nums">
         {formatValue(animated, format)}
       </p>
       {delta !== undefined && (
         <p
           className={cn(
-            'text-xs font-mono font-medium',
-            delta >= 0 ? 'text-accent-success' : 'text-accent-danger'
+            'text-xs font-medium tabular-nums',
+            delta >= 0 ? 'text-sky-600' : 'text-red-600'
           )}
         >
-          {delta >= 0 ? '▲' : '▼'} {Math.abs(delta).toFixed(1)}
+          {delta >= 0 ? '\u2191' : '\u2193'} {Math.abs(delta).toFixed(1)}
           {format === 'percent' ? 'pp' : ''}
         </p>
       )}

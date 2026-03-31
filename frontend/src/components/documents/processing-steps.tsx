@@ -23,24 +23,24 @@ export function ProcessingSteps({ status }: ProcessingStepsProps) {
         return (
           <div key={i} className="flex items-center gap-3">
             {step.done && !isActive ? (
-              <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                <Check size={12} className="text-emerald-400" />
+              <div className="w-5 h-5 rounded-full bg-sky-50 flex items-center justify-center">
+                <Check size={12} className="text-sky-600" />
               </div>
             ) : isActive ? (
-              <div className="w-5 h-5 rounded-full bg-accent-primary/20 flex items-center justify-center">
-                <Loader2 size={12} className="text-accent-primary animate-spin" />
+              <div className="w-5 h-5 rounded-full bg-lime-50 flex items-center justify-center">
+                <Loader2 size={12} className="text-lime-700 animate-spin" />
               </div>
             ) : (
-              <div className="w-5 h-5 rounded-full bg-app-elevated flex items-center justify-center">
-                <Clock size={10} className="text-text-muted" />
+              <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center">
+                <Clock size={10} className="text-gray-400" />
               </div>
             )}
             <span
               className={cn(
                 'text-sm',
-                step.done && !isActive && 'text-text-secondary',
-                isActive && 'text-text-primary',
-                isWaiting && 'text-text-muted',
+                step.done && !isActive && 'text-gray-600',
+                isActive && 'text-gray-900',
+                isWaiting && 'text-gray-400',
               )}
             >
               {step.label}

@@ -30,17 +30,7 @@ import { ProcessingSteps } from './processing-steps'
 import { fadeUp } from './constants'
 import type { DocumentResponse } from '@/types'
 
-/** SeverityDot — colored dot indicating risk flag severity level. */
-function SeverityDot({ severity }: { severity: 'high' | 'medium' | 'low' }) {
-  const colors = {
-    high: 'bg-red-400',
-    medium: 'bg-amber-400',
-    low: 'bg-blue-400',
-  }
-  return <span className={cn('w-2 h-2 rounded-full shrink-0', colors[severity])} />
-}
-
-/** NumberValue — formatted extracted number value using JetBrains Mono. */
+/** NumberValue — formatted extracted number value using tabular-nums. */
 function NumberValue({ keyName, value }: { keyName: string; value: number | string }) {
   const formatted =
     typeof value === 'string'
@@ -49,7 +39,7 @@ function NumberValue({ keyName, value }: { keyName: string; value: number | stri
         ? formatCurrency(value)
         : value.toLocaleString('en-US', { maximumFractionDigits: 2 })
 
-  return <span className="font-mono text-sm text-text-primary">{formatted}</span>
+  return <span className="tabular-nums text-sm text-gray-900">{formatted}</span>
 }
 
 /** DetailPanel — full analysis detail view for a completed document. */
@@ -80,7 +70,7 @@ function DetailPanel({
       {showBack && (
         <button
           onClick={onBack}
-          className="flex items-center gap-1 text-sm text-text-secondary hover:text-text-primary transition-colors md:hidden"
+          className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 transition-colors md:hidden"
         >
           <ChevronLeft size={16} />
           Back to list
@@ -88,20 +78,20 @@ function DetailPanel({
       )}
 
       {/* Header */}
-      <motion.div {...fadeUp} className="rounded-xl border border-border-subtle bg-app-surface p-4">
+      <motion.div {...fadeUp} className="rounded-lg border border-gray-200 bg-white p-4 shadow-xs">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h2 className="text-base font-semibold text-text-primary truncate">
+            <h2 className="text-base font-semibold text-gray-900 truncate">
               {doc.original_filename}
             </h2>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
-              <Badge className="bg-accent-primary/15 text-accent-primary border-accent-primary/25 text-[10px]">
+              <Badge className="bg-lime-50 text-lime-700 border-lime-200 text-[10px]">
                 {formatDocumentType(doc.document_type)}
               </Badge>
-              <span className="text-xs text-text-muted font-mono">
+              <span className="text-xs text-gray-400 tabular-nums">
                 {formatFileSize(doc.file_size_bytes)}
               </span>
-              <span className="text-xs text-text-muted">
+              <span className="text-xs text-gray-400">
                 {new Date(doc.created_at).toLocaleDateString()}
               </span>
             </div>
@@ -128,7 +118,7 @@ function DetailPanel({
           <Button
             variant="outline"
             size="sm"
-            className="h-7 text-xs gap-1.5 text-red-400 hover:text-red-300 hover:border-red-400/30"
+            className="h-7 text-xs gap-1.5 text-red-600 hover:text-red-700 hover:border-red-300"
             onClick={onDelete}
             disabled={isDeleting}
           >
@@ -138,26 +128,26 @@ function DetailPanel({
         </div>
       </motion.div>
 
-      {/* AI Summary */}
+      {/* AI Summary — dark card for emphasis */}
       {doc.ai_summary && (
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.05 }}
-          className="rounded-xl border border-border-subtle bg-app-surface p-4"
+          className="rounded-lg border border-gray-800 bg-gray-900 p-4 shadow-xs"
         >
-          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-[0.08em] mb-2">
+          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-[0.08em] mb-2">
             AI Summary
           </h3>
-          <p className="text-sm text-text-primary leading-relaxed">{doc.ai_summary}</p>
+          <p className="text-sm text-gray-100 leading-relaxed">{doc.ai_summary}</p>
           {doc.parties.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mt-3">
               {doc.parties.map((party, i) => (
                 <span
                   key={i}
-                  className="inline-flex items-center gap-1 rounded-full bg-app-elevated px-2 py-0.5 text-[10px] text-text-secondary"
+                  className="inline-flex items-center gap-1 rounded-full bg-gray-800 px-2 py-0.5 text-[10px] text-gray-300"
                 >
                   {party.name}
-                  <span className="text-text-muted">({party.role})</span>
+                  <span className="text-gray-500">({party.role})</span>
                 </span>
               ))}
             </div>
@@ -165,26 +155,28 @@ function DetailPanel({
         </motion.div>
       )}
 
-      {/* Risk Flags */}
+      {/* Risk Flags — left-border accent pattern */}
       {doc.risk_flags.length > 0 && (
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.1 }}
-          className="rounded-xl border border-border-subtle bg-app-surface p-4"
+          className="rounded-lg border border-gray-200 bg-white p-4 shadow-xs"
         >
-          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-[0.08em] mb-2">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-[0.08em] mb-2">
             Risk Flags
           </h3>
           <div className="space-y-3">
-            {doc.risk_flags.map((flag, i) => (
-              <div key={i} className="flex gap-2.5">
-                <SeverityDot severity={flag.severity} />
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm text-text-primary">{flag.description}</p>
-                  <p className="text-xs text-text-muted mt-0.5 italic">"{flag.quote}"</p>
+            {doc.risk_flags.map((flag, i) => {
+              const borderColor = flag.severity === 'high' ? 'border-l-red-500' : flag.severity === 'medium' ? 'border-l-amber-500' : 'border-l-blue-500'
+              return (
+                <div key={i} className={cn('flex gap-2.5 border-l-2 pl-3', borderColor)}>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm text-gray-900">{flag.description}</p>
+                    <p className="text-xs text-gray-400 mt-0.5 italic">"{flag.quote}"</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </motion.div>
       )}
@@ -194,15 +186,15 @@ function DetailPanel({
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.15 }}
-          className="rounded-xl border border-border-subtle bg-app-surface p-4"
+          className="rounded-lg border border-gray-200 bg-white p-4 shadow-xs"
         >
-          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-[0.08em] mb-2">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-[0.08em] mb-2">
             Extracted Numbers
           </h3>
           <div className="grid grid-cols-2 gap-x-4 gap-y-2">
             {numbers.map(([key, value]) => (
               <div key={key} className="flex flex-col">
-                <span className="text-[10px] text-text-muted uppercase tracking-[0.08em]">
+                <span className="text-[10px] text-gray-400 uppercase tracking-[0.08em]">
                   {formatLabel(key)}
                 </span>
                 <NumberValue keyName={key} value={value} />
@@ -217,15 +209,15 @@ function DetailPanel({
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.2 }}
-          className="rounded-xl border border-border-subtle bg-app-surface p-4"
+          className="rounded-lg border border-gray-200 bg-white p-4 shadow-xs"
         >
-          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-[0.08em] mb-2">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-[0.08em] mb-2">
             Key Terms
           </h3>
           <ul className="space-y-1">
             {visibleTerms.map((term, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-text-primary">
-                <span className="text-text-muted mt-1">•</span>
+              <li key={i} className="flex items-start gap-2 text-sm text-gray-900">
+                <span className="text-gray-400 mt-1">•</span>
                 {term}
               </li>
             ))}
@@ -233,7 +225,7 @@ function DetailPanel({
           {doc.key_terms.length > 8 && (
             <button
               onClick={() => setShowAllTerms(!showAllTerms)}
-              className="flex items-center gap-1 mt-2 text-xs text-accent-primary hover:text-accent-primary/80 transition-colors"
+              className="flex items-center gap-1 mt-2 text-xs text-lime-700 hover:text-lime-600 transition-colors"
             >
               {showAllTerms ? (
                 <>
@@ -290,8 +282,8 @@ export function RightPanelContent({
   if (!selectedId) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center px-6">
-        <FileSearch size={40} className="text-text-muted mb-3" />
-        <p className="text-sm text-text-secondary">Select a document to view AI analysis</p>
+        <FileSearch size={40} className="text-gray-300 mb-3" />
+        <p className="text-sm text-gray-600">Select a document to view AI analysis</p>
       </div>
     )
   }
@@ -299,14 +291,14 @@ export function RightPanelContent({
   if (isLoading) {
     return (
       <div className="space-y-3 p-1">
-        <div className="rounded-xl border border-border-subtle bg-app-surface p-4 space-y-3">
-          <div className="h-4 w-3/5 rounded bg-app-elevated animate-pulse" />
-          <div className="h-3 w-2/5 rounded bg-app-elevated animate-pulse" />
+        <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
+          <div className="h-4 w-3/5 rounded bg-gray-100 animate-pulse" />
+          <div className="h-3 w-2/5 rounded bg-gray-100 animate-pulse" />
         </div>
-        <div className="rounded-xl border border-border-subtle bg-app-surface p-4 space-y-2">
-          <div className="h-3 w-full rounded bg-app-elevated animate-pulse" />
-          <div className="h-3 w-full rounded bg-app-elevated animate-pulse" />
-          <div className="h-3 w-3/4 rounded bg-app-elevated animate-pulse" />
+        <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-2">
+          <div className="h-3 w-full rounded bg-gray-100 animate-pulse" />
+          <div className="h-3 w-full rounded bg-gray-100 animate-pulse" />
+          <div className="h-3 w-3/4 rounded bg-gray-100 animate-pulse" />
         </div>
       </div>
     )
@@ -315,11 +307,11 @@ export function RightPanelContent({
   if (isError) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center px-6 gap-3">
-        <AlertCircle size={32} className="text-accent-danger" />
-        <p className="text-sm text-text-secondary">Failed to load document</p>
+        <AlertCircle size={32} className="text-red-500" />
+        <p className="text-sm text-gray-600">Failed to load document</p>
         <button
           onClick={() => queryClient.invalidateQueries({ queryKey: ['document', selectedId] })}
-          className="text-xs font-medium text-accent-primary hover:text-accent-primary/80 transition-colors"
+          className="text-xs font-medium text-lime-700 hover:text-lime-600 transition-colors"
         >
           Try again
         </button>
@@ -335,16 +327,16 @@ export function RightPanelContent({
         {isMobileDetail && (
           <button
             onClick={onClearSelection}
-            className="self-start flex items-center gap-1 mb-6 text-sm text-text-secondary hover:text-text-primary transition-colors md:hidden"
+            className="self-start flex items-center gap-1 mb-6 text-sm text-gray-600 hover:text-gray-900 transition-colors md:hidden"
           >
             <ChevronLeft size={16} />
             Back to list
           </button>
         )}
-        <div className="rounded-xl border border-border-subtle bg-app-surface p-6 w-full max-w-sm">
-          <h3 className="text-sm font-semibold text-text-primary mb-4">Analyzing document...</h3>
+        <div className="rounded-lg border border-gray-200 bg-white p-6 w-full max-w-sm shadow-xs">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Analyzing document...</h3>
           <ProcessingSteps status={doc.status} />
-          <p className="text-[10px] text-text-muted mt-4">This usually takes 15–30 seconds</p>
+          <p className="text-[10px] text-gray-400 mt-4">This usually takes 15-30 seconds</p>
         </div>
       </div>
     )
@@ -356,24 +348,24 @@ export function RightPanelContent({
         {isMobileDetail && (
           <button
             onClick={onClearSelection}
-            className="flex items-center gap-1 mb-4 text-sm text-text-secondary hover:text-text-primary transition-colors md:hidden"
+            className="flex items-center gap-1 mb-4 text-sm text-gray-600 hover:text-gray-900 transition-colors md:hidden"
           >
             <ChevronLeft size={16} />
             Back to list
           </button>
         )}
-        <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
           <div className="flex items-start gap-3">
-            <AlertCircle size={16} className="text-red-400 mt-0.5 shrink-0" />
+            <AlertCircle size={16} className="text-red-500 mt-0.5 shrink-0" />
             <div>
-              <h3 className="text-sm font-semibold text-red-400">Analysis failed</h3>
-              <p className="text-xs text-text-secondary mt-1">
+              <h3 className="text-sm font-semibold text-red-700">Analysis failed</h3>
+              <p className="text-xs text-gray-600 mt-1">
                 {doc.processing_error ?? 'An unexpected error occurred while processing this document.'}
               </p>
               <Button
                 variant="outline"
                 size="sm"
-                className="mt-3 h-7 text-xs text-red-400 border-red-500/30 hover:border-red-400/50"
+                className="mt-3 h-7 text-xs text-red-600 border-red-300 hover:border-red-400"
                 onClick={() => deleteMutation.mutate(doc.id)}
                 disabled={deleteMutation.isPending}
               >

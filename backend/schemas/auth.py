@@ -5,7 +5,7 @@ import uuid
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, model_validator
 
 _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
@@ -57,8 +57,32 @@ class UserResponse(BaseModel):
     role: str
     team_id: Optional[uuid.UUID]
     created_at: datetime
+    plan_tier: str = "free"
+    trial_ends_at: Optional[datetime] = None
+    effective_tier: str = "free"
+    trial_active: bool = False
 
     model_config = {"from_attributes": True}
+
+    @model_validator(mode="after")
+    def _compute_billing_fields(self) -> "UserResponse":
+        tier_str = self.plan_tier or "free"
+        is_demo = self.email == "demo@parcel.app"
+
+        trial_active = (
+            self.trial_ends_at is not None
+            and self.trial_ends_at > datetime.utcnow()
+            and tier_str == "free"
+            and not is_demo
+        )
+
+        if is_demo or trial_active:
+            self.effective_tier = "pro"
+        else:
+            self.effective_tier = tier_str
+
+        self.trial_active = trial_active
+        return self
 
 
 class UserProfileResponse(BaseModel):

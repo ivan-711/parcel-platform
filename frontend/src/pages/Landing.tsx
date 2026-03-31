@@ -55,9 +55,9 @@ function SectionSkeleton() {
   return (
     <div className="py-20 flex justify-center">
       <div className="w-full max-w-5xl px-6 space-y-4 animate-pulse">
-        <div className="h-6 w-1/3 rounded bg-app-elevated/40" />
-        <div className="h-4 w-2/3 rounded bg-app-elevated/30" />
-        <div className="h-4 w-1/2 rounded bg-app-elevated/20" />
+        <div className="h-6 w-1/3 rounded bg-gray-200/60" />
+        <div className="h-4 w-2/3 rounded bg-gray-200/40" />
+        <div className="h-4 w-1/2 rounded bg-gray-200/30" />
       </div>
     </div>
   )
@@ -67,7 +67,7 @@ export default function Landing() {
   return (
     <LazyMotion features={loadFeatures} strict={false}>
       <LenisProvider>
-        <div className="min-h-screen text-text-primary">
+        <div className="min-h-screen text-gray-900 bg-[#F9FAFB]">
           <SkipToContent />
           <ScrollProgressBar />
           <ParallaxBackground />

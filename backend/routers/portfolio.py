@@ -3,11 +3,14 @@
 from decimal import Decimal
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
+from core.billing.tier_config import Tier
+from core.billing.tier_gate import require_tier
 from core.security.jwt import get_current_user
 from database import get_db
+from limiter import limiter
 from models.deals import Deal
 from models.portfolio_entries import PortfolioEntry
 from models.users import User
@@ -23,9 +26,12 @@ router = APIRouter(prefix="/portfolio", tags=["portfolio"])
 
 
 @router.get("/", response_model=PortfolioResponse)
+@limiter.limit("60/minute")
 async def get_portfolio(
+    request: Request,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    _gate: None = Depends(require_tier(Tier.PRO)),
 ) -> PortfolioResponse:
     """Return portfolio summary metrics and all entries for the current user.
 
@@ -78,6 +84,7 @@ async def add_portfolio_entry(
     body: PortfolioCreateRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    _gate: None = Depends(require_tier(Tier.PRO)),
 ) -> PortfolioEntryResponse:
     """Add a closed deal to the portfolio.
 
@@ -128,6 +135,7 @@ async def update_portfolio_entry(
     body: UpdatePortfolioEntryRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    _gate: None = Depends(require_tier(Tier.PRO)),
 ) -> PortfolioEntryResponse:
     """Update an existing portfolio entry's closed deal details."""
     entry = db.query(PortfolioEntry).filter(

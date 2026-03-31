@@ -27,15 +27,15 @@ export function PresetChips({ presets, onApply, onDelete, isPresetActive }: Pres
             onClick={() => onApply(preset)}
             className={`inline-flex items-center gap-1.5 shrink-0 rounded-full px-3 py-1 text-sm border transition-colors ${
               isPresetActive(preset)
-                ? 'border-[#6366F1] text-[#6366F1] bg-[#6366F1]/10'
-                : 'bg-[#1A1A2E] border-[#2A2A3E] text-text-secondary hover:border-text-muted'
+                ? 'border-lime-600 text-lime-700 bg-lime-50'
+                : 'bg-white border-gray-200 text-gray-600 hover:border-gray-400'
             }`}
           >
             {preset.name}
             <span
               role="button"
               onClick={(e) => { e.stopPropagation(); onDelete(preset.id) }}
-              className="ml-0.5 p-0.5 rounded-full hover:bg-white/10 transition-colors"
+              className="ml-0.5 p-0.5 rounded-full hover:bg-gray-100 transition-colors"
             >
               <X size={12} />
             </span>

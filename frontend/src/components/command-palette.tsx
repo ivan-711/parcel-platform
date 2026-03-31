@@ -204,7 +204,7 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             <CommandPrimitive
               label="Command palette"
               loop
-              className="w-full max-w-[540px] rounded-xl border border-white/10 bg-app-surface shadow-2xl shadow-black/40 overflow-hidden"
+              className="w-full max-w-[540px] rounded-xl border border-gray-200 bg-white shadow-2xl shadow-black/10 overflow-hidden"
               onKeyDown={(e: React.KeyboardEvent) => {
                 if (e.key === 'Escape') {
                   e.preventDefault()
@@ -213,30 +213,30 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               }}
             >
               {/* Search input */}
-              <div className="flex items-center gap-3 border-b border-white/10 px-4">
-                <Search size={16} className="shrink-0 text-accent-primary" />
+              <div className="flex items-center gap-3 border-b border-gray-200 px-4">
+                <Search size={16} className="shrink-0 text-lime-600" />
                 <CommandPrimitive.Input
                   ref={inputRef}
                   value={search}
                   onValueChange={setSearch}
                   placeholder="Search deals, pages, actions..."
-                  className="flex-1 h-12 bg-transparent text-sm text-text-primary placeholder:text-text-muted outline-none"
+                  className="flex-1 h-12 bg-transparent text-sm text-gray-900 placeholder:text-gray-400 outline-none"
                 />
-                <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-white/10 bg-app-elevated px-1.5 py-0.5 text-[10px] font-mono text-text-muted">
+                <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-gray-200 bg-gray-100 px-1.5 py-0.5 text-[10px] font-mono text-gray-400">
                   ESC
                 </kbd>
               </div>
 
               {/* Results list */}
               <CommandPrimitive.List className="max-h-[320px] overflow-y-auto p-2 scroll-smooth [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/10">
-                <CommandPrimitive.Empty className="py-8 text-center text-sm text-text-muted">
+                <CommandPrimitive.Empty className="py-8 text-center text-sm text-gray-400">
                   No results found.
                 </CommandPrimitive.Empty>
 
                 {/* Pages group */}
                 <CommandPrimitive.Group
                   heading="Pages"
-                  className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em] [&_[cmdk-group-heading]]:text-[#6B7280]"
+                  className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em] [&_[cmdk-group-heading]]:text-gray-400"
                 >
                   {PAGES.map((page) => {
                     const Icon = page.icon
@@ -246,9 +246,9 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                         value={page.label}
                         keywords={page.keywords}
                         onSelect={() => handleSelect(page.path)}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-text-primary cursor-pointer transition-colors data-[selected=true]:bg-[rgba(99,102,241,0.1)] data-[selected=true]:border-l-2 data-[selected=true]:border-l-accent-primary data-[selected=true]:pl-[calc(0.75rem-2px)]"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-900 cursor-pointer transition-colors data-[selected=true]:bg-lime-50 data-[selected=true]:border-l-2 data-[selected=true]:border-l-lime-500 data-[selected=true]:pl-[calc(0.75rem-2px)]"
                       >
-                        <Icon size={16} className="shrink-0 text-accent-primary" />
+                        <Icon size={16} className="shrink-0 text-lime-600" />
                         <span>{page.label}</span>
                       </CommandPrimitive.Item>
                     )
@@ -258,7 +258,7 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 {/* Quick Actions group */}
                 <CommandPrimitive.Group
                   heading="Quick Actions"
-                  className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em] [&_[cmdk-group-heading]]:text-[#6B7280]"
+                  className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em] [&_[cmdk-group-heading]]:text-gray-400"
                 >
                   {QUICK_ACTIONS.map((action) => {
                     const ActionIcon = action.icon
@@ -268,12 +268,12 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                         value={`action ${action.label}`}
                         keywords={action.keywords}
                         onSelect={() => handleSelect(action.path)}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm cursor-pointer transition-colors data-[selected=true]:bg-[rgba(99,102,241,0.1)] data-[selected=true]:border-l-2 data-[selected=true]:border-l-accent-primary data-[selected=true]:pl-[calc(0.75rem-2px)]"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm cursor-pointer transition-colors data-[selected=true]:bg-lime-50 data-[selected=true]:border-l-2 data-[selected=true]:border-l-lime-500 data-[selected=true]:pl-[calc(0.75rem-2px)]"
                       >
-                        <ActionIcon size={16} className="shrink-0 text-accent-primary" />
+                        <ActionIcon size={16} className="shrink-0 text-lime-600" />
                         <div className="flex flex-col">
-                          <span className="text-text-primary">{action.label}</span>
-                          <span className="text-xs text-[#94A3B8]">{action.description}</span>
+                          <span className="text-gray-900">{action.label}</span>
+                          <span className="text-xs text-gray-500">{action.description}</span>
                         </div>
                       </CommandPrimitive.Item>
                     )
@@ -285,13 +285,13 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                   <CommandPrimitive.Group
                     heading="Deals"
                     forceMount
-                    className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em] [&_[cmdk-group-heading]]:text-[#6B7280]"
+                    className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em] [&_[cmdk-group-heading]]:text-gray-400"
                   >
                     {isLoadingDeals && (
-                      <div className="px-3 py-4 text-xs text-text-muted">Searching deals...</div>
+                      <div className="px-3 py-4 text-xs text-gray-400">Searching deals...</div>
                     )}
                     {!isLoadingDeals && filteredDeals.length === 0 && (
-                      <div className="px-3 py-4 text-xs text-text-muted">No deals match your search.</div>
+                      <div className="px-3 py-4 text-xs text-gray-400">No deals match your search.</div>
                     )}
                     {filteredDeals.map((deal) => (
                       <CommandPrimitive.Item
@@ -300,12 +300,12 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                         keywords={[deal.strategy, deal.address, deal.zip_code]}
                         onSelect={() => handleSelect(`/analyze/results/${deal.id}`)}
                         forceMount
-                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm cursor-pointer transition-colors data-[selected=true]:bg-[rgba(99,102,241,0.1)] data-[selected=true]:border-l-2 data-[selected=true]:border-l-accent-primary data-[selected=true]:pl-[calc(0.75rem-2px)]"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm cursor-pointer transition-colors data-[selected=true]:bg-lime-50 data-[selected=true]:border-l-2 data-[selected=true]:border-l-lime-500 data-[selected=true]:pl-[calc(0.75rem-2px)]"
                       >
-                        <MapPin size={16} className="shrink-0 text-accent-primary" />
+                        <MapPin size={16} className="shrink-0 text-lime-600" />
                         <div className="flex flex-col min-w-0">
-                          <span className="text-text-primary truncate">{deal.address}</span>
-                          <span className="text-xs text-[#94A3B8]">
+                          <span className="text-gray-900 truncate">{deal.address}</span>
+                          <span className="text-xs text-gray-500">
                             {deal.strategy.replace('_', ' ')} &middot; {deal.zip_code}
                           </span>
                         </div>
@@ -316,18 +316,18 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               </CommandPrimitive.List>
 
               {/* Footer with keyboard hints */}
-              <div className="flex items-center gap-4 border-t border-white/10 px-4 py-2">
-                <div className="flex items-center gap-1.5 text-[10px] text-text-muted">
-                  <kbd className="rounded border border-white/10 bg-app-elevated px-1 py-0.5 font-mono">&uarr;</kbd>
-                  <kbd className="rounded border border-white/10 bg-app-elevated px-1 py-0.5 font-mono">&darr;</kbd>
+              <div className="flex items-center gap-4 border-t border-gray-200 px-4 py-2">
+                <div className="flex items-center gap-1.5 text-[10px] text-gray-400">
+                  <kbd className="rounded border border-gray-200 bg-gray-100 px-1 py-0.5 font-mono">&uarr;</kbd>
+                  <kbd className="rounded border border-gray-200 bg-gray-100 px-1 py-0.5 font-mono">&darr;</kbd>
                   <span>navigate</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[10px] text-text-muted">
-                  <kbd className="rounded border border-white/10 bg-app-elevated px-1 py-0.5 font-mono">&crarr;</kbd>
+                <div className="flex items-center gap-1.5 text-[10px] text-gray-400">
+                  <kbd className="rounded border border-gray-200 bg-gray-100 px-1 py-0.5 font-mono">&crarr;</kbd>
                   <span>select</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[10px] text-text-muted">
-                  <kbd className="rounded border border-white/10 bg-app-elevated px-1 py-0.5 font-mono">esc</kbd>
+                <div className="flex items-center gap-1.5 text-[10px] text-gray-400">
+                  <kbd className="rounded border border-gray-200 bg-gray-100 px-1 py-0.5 font-mono">esc</kbd>
                   <span>close</span>
                 </div>
               </div>

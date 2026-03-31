@@ -4,6 +4,8 @@ import sys
 import os
 import uuid
 
+os.environ["TESTING"] = "1"
+
 import pytest
 import sqlalchemy
 from sqlalchemy import create_engine, event
@@ -141,6 +143,7 @@ def test_user(db) -> User:
         email="test@parcel.dev",
         password_hash=hash_password("password123"),
         role="investor",
+        plan_tier="pro",
     )
     db.add(user)
     db.commit()

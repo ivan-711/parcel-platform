@@ -75,7 +75,7 @@ export function OfferLetterModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose() }}>
-      <DialogContent className="border-[#1A1A2E] bg-[#0F0F1A] sm:max-w-2xl">
+      <DialogContent className="border-gray-200 bg-white sm:max-w-2xl">
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -83,10 +83,10 @@ export function OfferLetterModal({
         >
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <DialogTitle className="text-text-primary">Offer Letter</DialogTitle>
+              <DialogTitle className="text-gray-900">Offer Letter</DialogTitle>
               <StrategyBadge strategy={strategy} />
             </div>
-            <DialogDescription className="text-[#94A3B8]">
+            <DialogDescription className="text-gray-500">
               {address}
             </DialogDescription>
           </DialogHeader>
@@ -99,12 +99,12 @@ export function OfferLetterModal({
                   {Array.from({ length: 8 }).map((_, i) => (
                     <div
                       key={i}
-                      className="h-4 rounded bg-[#1A1A2E] animate-pulse"
+                      className="h-4 rounded bg-gray-200 animate-pulse"
                       style={{ width: `${70 + ((i * 17) % 30)}%` }}
                     />
                   ))}
                 </div>
-                <p className="text-sm text-[#94A3B8] text-center pt-2">
+                <p className="text-sm text-gray-500 text-center pt-2">
                   Generating your offer letter with AI...
                 </p>
               </div>
@@ -113,7 +113,7 @@ export function OfferLetterModal({
             {/* Error State */}
             {isError && (
               <div className="text-center py-6 space-y-3">
-                <p className="text-sm text-red-400">
+                <p className="text-sm text-red-500">
                   {error instanceof Error ? error.message : 'Failed to generate offer letter'}
                 </p>
                 <Button
@@ -130,7 +130,7 @@ export function OfferLetterModal({
             {/* Generated State */}
             {data && !isLoading && !isError && (
               <div className="space-y-4">
-                <pre className="max-h-[400px] overflow-y-auto rounded-lg border border-[#1A1A2E] bg-[#08080F] p-4 text-sm text-[#E2E8F0] font-mono whitespace-pre-wrap leading-relaxed">
+                <pre className="max-h-[400px] overflow-y-auto rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
                   {cleanLetter(data.offer_letter)}
                 </pre>
 
@@ -145,7 +145,7 @@ export function OfferLetterModal({
                   </Button>
                   <Button
                     onClick={handleDownloadPDF}
-                    className="gap-2 bg-accent-primary hover:bg-accent-primary/90 text-white"
+                    className="gap-2 bg-lime-600 hover:bg-lime-700 text-white"
                   >
                     <Download size={14} />
                     Download as PDF

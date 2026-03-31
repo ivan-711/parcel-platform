@@ -15,10 +15,12 @@ import {
   DragOverEvent,
   DragEndEvent,
   PointerSensor,
+  KeyboardSensor,
   useSensor,
   useSensors,
   closestCorners,
 } from '@dnd-kit/core'
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { Plus } from 'lucide-react'
 import { api } from '@/lib/api'
 import { AppShell } from '@/components/layout/AppShell'
@@ -43,10 +45,11 @@ import { MobilePipeline } from '@/components/pipeline/mobile-pipeline'
 import { PipelineEmpty } from '@/components/pipeline/pipeline-empty'
 import { PipelineError } from '@/components/pipeline/pipeline-error'
 import { useKanbanKeyboard } from '@/hooks/useKanbanKeyboard'
+import { FeatureGate } from '@/components/billing/FeatureGate'
 
 /** Strategy badge used inside the drag overlay. */
 function OverlayStrategyBadge({ strategy }: { strategy: string }) {
-  const colors = STRATEGY_COLORS[strategy] ?? { bg: '#1A1A2E', text: '#94A3B8' }
+  const colors = STRATEGY_COLORS[strategy] ?? { bg: '#F2F4F7', text: '#667085' }
   return (
     <span
       className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
@@ -72,6 +75,9 @@ export default function PipelinePage() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 6 },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
     })
   )
 
@@ -277,13 +283,14 @@ export default function PipelinePage() {
 
   return (
     <AppShell>
+      <FeatureGate feature="pipeline">
       <PageHeader
         title="Pipeline"
         subtitle={totalDeals > 0 ? `${totalDeals} deal${totalDeals !== 1 ? 's' : ''} tracked` : undefined}
         action={
           <Link
             to="/analyze"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent-primary hover:bg-accent-hover text-white text-xs font-medium transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-lime-700 hover:bg-lime-800 text-white text-xs font-medium transition-colors"
           >
             <Plus size={14} />
             Add Deal
@@ -314,7 +321,7 @@ export default function PipelinePage() {
           >
             {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
-              className="flex gap-4 overflow-x-auto pb-6 min-h-[calc(100vh-160px)]"
+              className="pipeline-board flex gap-5 overflow-x-auto pb-6 px-1 min-h-[calc(100vh-180px)]"
               role="grid"
               aria-label="Pipeline Kanban board. Use arrow keys to navigate between columns and cards, Enter to open a deal, Escape to go back."
               onKeyDown={kanbanKeyDown}
@@ -338,20 +345,27 @@ export default function PipelinePage() {
             </div>
 
             {/* Drag overlay — floats under cursor */}
-            <DragOverlay dropAnimation={{ duration: 160, easing: 'ease-out' }}>
+            <DragOverlay dropAnimation={{
+              duration: 180,
+              easing: 'cubic-bezier(0.25, 0.1, 0.25, 1.0)',
+            }}>
               {activeCard ? (
                 <div
-                  className="rounded-xl border border-border-default bg-app-elevated p-4 space-y-3 shadow-2xl rotate-1"
-                  style={{ width: 240, cursor: 'grabbing' }}
+                  className="rounded-[10px] border border-gray-300 bg-white space-y-2.5"
+                  style={{
+                    width: 280,
+                    padding: '14px 16px',
+                    cursor: 'grabbing',
+                    boxShadow: '0 12px 24px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06)',
+                    transform: 'rotate(1.5deg) scale(1.02)',
+                  }}
                 >
-                  <p className="text-xs font-medium text-text-primary leading-tight line-clamp-2">
+                  <p className="text-[13px] font-medium text-gray-900 leading-tight line-clamp-2">
                     {activeCard.address}
                   </p>
-                  <div className="flex items-center gap-2">
-                    <OverlayStrategyBadge strategy={activeCard.strategy} />
-                  </div>
+                  <OverlayStrategyBadge strategy={activeCard.strategy} />
                   {activeCard.asking_price != null && activeCard.asking_price > 0 && (
-                    <span className="text-xs font-mono text-text-secondary">
+                    <span className="block text-[12px] tabular-nums font-medium text-gray-700">
                       ${activeCard.asking_price.toLocaleString()}
                     </span>
                   )}
@@ -376,15 +390,15 @@ export default function PipelinePage() {
 
       {/* Remove from pipeline confirmation dialog */}
       <AlertDialog open={removeTarget !== null} onOpenChange={(open) => { if (!open) setRemoveTarget(null) }}>
-        <AlertDialogContent className="bg-app-surface border-border-subtle">
+        <AlertDialogContent className="bg-white border-gray-200">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-text-primary">Remove from pipeline?</AlertDialogTitle>
-            <AlertDialogDescription className="text-text-secondary">
+            <AlertDialogTitle className="text-gray-900">Remove from pipeline?</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-500">
               This deal will be removed from your pipeline. You can always re-add it later from your deals list.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-app-elevated border-border-default text-text-primary hover:bg-border-default">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmRemoveCard}
               className="bg-red-600 hover:bg-red-700 text-white"
@@ -395,22 +409,64 @@ export default function PipelinePage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Shimmer keyframe — injected once */}
+      {/* Pipeline-specific styles */}
       <style>{`
-        @keyframes shimmer {
+        /* Board horizontal scrollbar */
+        .pipeline-board::-webkit-scrollbar { height: 6px; }
+        .pipeline-board::-webkit-scrollbar-track { background: transparent; }
+        .pipeline-board::-webkit-scrollbar-thumb {
+          background: #D0D5DD;
+          border-radius: 3px;
+        }
+        .pipeline-board::-webkit-scrollbar-thumb:hover { background: #98A2B3; }
+        .pipeline-board {
+          scrollbar-width: thin;
+          scrollbar-color: #D0D5DD transparent;
+        }
+
+        /* Column vertical scrollbar */
+        .column-scroll::-webkit-scrollbar { width: 4px; }
+        .column-scroll::-webkit-scrollbar-track { background: transparent; }
+        .column-scroll::-webkit-scrollbar-thumb {
+          background: #D0D5DD;
+          border-radius: 9999px;
+        }
+        .column-scroll::-webkit-scrollbar-thumb:hover { background: #98A2B3; }
+        .column-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: #D0D5DD transparent;
+        }
+
+        /* Column scroll gradient fade masks */
+        .column-scroll-mask {
+          mask-image: linear-gradient(
+            to bottom,
+            transparent 0px,
+            black 8px,
+            black calc(100% - 8px),
+            transparent 100%
+          );
+        }
+
+        /* Light shimmer for skeleton loading */
+        @keyframes shimmer-light {
           0%   { transform: translateX(-100%); }
           100% { transform: translateX(100%); }
         }
-        .shimmer {
+        .shimmer-light {
           background: linear-gradient(
             90deg,
             transparent 0%,
-            rgba(255,255,255,0.04) 50%,
+            rgba(0,0,0,0.04) 50%,
             transparent 100%
           );
-          animation: shimmer 1.5s infinite;
+          animation: shimmer-light 1.5s infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .shimmer-light { animation: none; }
         }
       `}</style>
+      </FeatureGate>
     </AppShell>
   )
 }

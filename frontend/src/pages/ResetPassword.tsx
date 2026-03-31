@@ -72,16 +72,21 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-app-bg flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-        className="w-full max-w-[480px] bg-app-surface border border-border-subtle rounded-xl p-8 space-y-6"
+        className="w-full max-w-[480px] bg-white border border-gray-200 rounded-xl p-8 space-y-6 shadow-xs"
       >
         {/* Header */}
         <div className="space-y-1 text-center">
-          <p className="text-2xl font-semibold text-accent-primary tracking-tight">Parcel</p>
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <div className="w-7 h-7 rounded bg-lime-700 flex items-center justify-center">
+              <span className="text-[11px] font-bold text-white font-mono">P</span>
+            </div>
+          </div>
+          <p className="text-2xl font-semibold text-gray-900 tracking-tight">Parcel</p>
           <AnimatePresence mode="wait">
             {pageState === 'success' ? (
               <motion.p
@@ -89,7 +94,7 @@ export default function ResetPassword() {
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className="text-sm text-text-secondary"
+                className="text-sm text-gray-500"
               >
                 Password updated
               </motion.p>
@@ -99,7 +104,7 @@ export default function ResetPassword() {
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className="text-sm text-text-secondary"
+                className="text-sm text-gray-500"
               >
                 Unable to reset password
               </motion.p>
@@ -109,7 +114,7 @@ export default function ResetPassword() {
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className="text-sm text-text-secondary"
+                className="text-sm text-gray-500"
               >
                 Create new password
               </motion.p>
@@ -129,14 +134,14 @@ export default function ResetPassword() {
               className="space-y-4"
             >
               <div className="flex flex-col items-center gap-3 py-4">
-                <div className="w-12 h-12 rounded-full bg-accent-success/15 flex items-center justify-center">
-                  <CheckCircle2 size={22} className="text-accent-success" />
+                <div className="w-12 h-12 rounded-full bg-sky-50 flex items-center justify-center">
+                  <CheckCircle2 size={22} className="text-sky-600" />
                 </div>
                 <div className="text-center space-y-1.5">
-                  <p className="text-sm font-medium text-text-primary">
+                  <p className="text-sm font-medium text-gray-900">
                     Password reset successfully
                   </p>
-                  <p className="text-xs text-text-muted">
+                  <p className="text-xs text-gray-400">
                     Redirecting you to sign in...
                   </p>
                 </div>
@@ -146,7 +151,7 @@ export default function ResetPassword() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full border-border-default text-text-secondary hover:text-text-primary hover:bg-app-elevated"
+                  className="w-full border-gray-300 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 >
                   <ArrowLeft size={14} className="mr-2" />
                   Go to sign in
@@ -164,14 +169,14 @@ export default function ResetPassword() {
               className="space-y-4"
             >
               <div className="flex flex-col items-center gap-3 py-4">
-                <div className="w-12 h-12 rounded-full bg-accent-danger/15 flex items-center justify-center">
-                  <AlertCircle size={22} className="text-accent-danger" />
+                <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+                  <AlertCircle size={22} className="text-red-500" />
                 </div>
                 <div className="text-center space-y-1.5">
-                  <p className="text-sm font-medium text-text-primary">
+                  <p className="text-sm font-medium text-gray-900">
                     Invalid or expired reset link
                   </p>
-                  <p className="text-xs text-text-muted max-w-[280px]">
+                  <p className="text-xs text-gray-400 max-w-[280px]">
                     This link may have expired or already been used. Request a new reset link and try again.
                   </p>
                 </div>
@@ -180,16 +185,16 @@ export default function ResetPassword() {
               <Link to="/forgot-password" className="block">
                 <Button
                   type="button"
-                  className="w-full bg-accent-primary hover:bg-accent-hover text-white font-medium"
+                  className="w-full bg-lime-700 hover:bg-lime-800 text-white font-medium"
                 >
                   Request new reset link
                 </Button>
               </Link>
 
-              <p className="text-center text-xs text-text-muted">
+              <p className="text-center text-xs text-gray-400">
                 <Link
                   to="/login"
-                  className="inline-flex items-center gap-1 text-accent-primary hover:text-accent-hover transition-colors"
+                  className="inline-flex items-center gap-1 text-lime-700 hover:text-lime-800 transition-colors"
                 >
                   <ArrowLeft size={12} />
                   Back to sign in
@@ -208,7 +213,7 @@ export default function ResetPassword() {
               <motion.div {...shakeProps}>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="new-password" className="text-text-secondary text-xs">
+                  <Label htmlFor="new-password" className="text-gray-700 text-xs">
                     New Password
                   </Label>
                   <Input
@@ -220,13 +225,13 @@ export default function ResetPassword() {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => { setPassword(e.target.value); setValidationError(null) }}
-                    className="bg-app-elevated border-border-default text-text-primary placeholder:text-text-disabled focus:border-accent-primary"
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-lime-500 focus:ring-lime-500/20"
                   />
-                  <p className="text-[11px] text-text-muted">Must be at least 8 characters</p>
+                  <p className="text-[11px] text-gray-400">Must be at least 8 characters</p>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="confirm-password" className="text-text-secondary text-xs">
+                  <Label htmlFor="confirm-password" className="text-gray-700 text-xs">
                     Confirm Password
                   </Label>
                   <Input
@@ -238,30 +243,30 @@ export default function ResetPassword() {
                     placeholder="••••••••"
                     value={confirmPassword}
                     onChange={(e) => { setConfirmPassword(e.target.value); setValidationError(null) }}
-                    className="bg-app-elevated border-border-default text-text-primary placeholder:text-text-disabled focus:border-accent-primary"
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-lime-500 focus:ring-lime-500/20"
                   />
                 </div>
 
                 {/* Validation error */}
                 {validationError && (
-                  <p className="text-accent-danger text-xs">{validationError}</p>
+                  <p className="text-red-500 text-xs">{validationError}</p>
                 )}
 
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-accent-primary hover:bg-accent-hover text-white font-medium"
+                  className="w-full bg-lime-700 hover:bg-lime-800 text-white font-medium"
                 >
-                  {isSubmitting ? 'Resetting…' : 'Reset Password'}
+                  {isSubmitting ? 'Resetting...' : 'Reset Password'}
                 </Button>
               </form>
               </motion.div>
 
               {/* Footer link */}
-              <p className="text-center text-xs text-text-muted mt-6">
+              <p className="text-center text-xs text-gray-400 mt-6">
                 <Link
                   to="/login"
-                  className="inline-flex items-center gap-1 text-accent-primary hover:text-accent-hover transition-colors"
+                  className="inline-flex items-center gap-1 text-lime-700 hover:text-lime-800 transition-colors"
                 >
                   <ArrowLeft size={12} />
                   Back to sign in

@@ -1,6 +1,9 @@
 /**
  * AI Chat page — streaming real estate specialist with context awareness,
  * history loading, react-markdown rendering, and AbortController stop button.
+ *
+ * Phase 5 light-theme redesign: flat full-width message rows (not bubbles),
+ * white/slate backgrounds, lime-700 send button, indigo AI accents.
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react'
@@ -8,8 +11,9 @@ import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
-import { Sparkles, Send, Square } from 'lucide-react'
+import { Sparkles, Send, Square, Copy, RotateCcw } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
+import { FeatureGate } from '@/components/billing/FeatureGate'
 import { api } from '@/lib/api'
 import { streamChat } from '@/lib/chat-stream'
 import { cn } from '@/lib/utils'
@@ -26,51 +30,66 @@ interface UIMessage {
 }
 
 // ---------------------------------------------------------------------------
-// Markdown component map — matches Parcel design system
+// Markdown component map — light theme
 // ---------------------------------------------------------------------------
 
-const MD: React.ComponentProps<typeof ReactMarkdown>['components'] = {
+const MD_LIGHT: React.ComponentProps<typeof ReactMarkdown>['components'] = {
   p: ({ children }) => (
-    <p className="text-[14px] text-[#F1F5F9] leading-relaxed mb-3 last:mb-0">{children}</p>
+    <p className="text-sm text-gray-800 leading-relaxed mb-3 last:mb-0">{children}</p>
   ),
-  strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
+  strong: ({ children }) => (
+    <strong className="font-semibold text-gray-900">{children}</strong>
+  ),
   // @ts-expect-error react-markdown passes inline prop not in types
   code: ({ inline, children }) =>
     inline ? (
-      <code className="font-mono text-[13px] bg-[#16162A] text-[#C4B5FD] px-1.5 py-0.5 rounded">
+      <code className="font-mono text-[13px] bg-gray-100 text-violet-600 px-1.5 py-0.5 rounded">
         {children}
       </code>
     ) : (
-      <pre className="bg-[#16162A] rounded-lg p-3 overflow-x-auto my-2">
-        <code className="font-mono text-[13px] text-[#C4B5FD]">{children}</code>
+      <pre className="bg-gray-100 rounded-lg p-4 overflow-x-auto my-3 border border-gray-200">
+        <code className="font-mono text-[13px] text-gray-800 leading-relaxed">
+          {children}
+        </code>
       </pre>
     ),
-  ul: ({ children }) => <ul className="space-y-1 my-2 pl-1">{children}</ul>,
-  ol: ({ children }) => <ol className="space-y-1 my-2 pl-1 list-decimal list-inside">{children}</ol>,
+  ul: ({ children }) => (
+    <ul className="space-y-1.5 my-2 pl-1">{children}</ul>
+  ),
+  ol: ({ children }) => (
+    <ol className="space-y-1.5 my-2 pl-1 list-decimal list-inside">{children}</ol>
+  ),
   li: ({ children }) => (
-    <li className="text-[14px] text-[#F1F5F9] flex items-start gap-2">
-      <span className="text-[#6366F1] mt-0.5 shrink-0">▸</span>
-      <span>{children}</span>
+    <li className="text-sm text-gray-800 flex items-start gap-2">
+      <span className="text-lime-600 mt-0.5 shrink-0">&#9656;</span>
+      <span className="leading-relaxed">{children}</span>
     </li>
   ),
   table: ({ children }) => (
-    <div className="overflow-x-auto my-3">
-      <table className="w-full border border-[#1A1A2E] rounded-lg overflow-hidden">{children}</table>
+    <div className="overflow-x-auto my-3 rounded-lg border border-gray-200">
+      <table className="w-full">{children}</table>
     </div>
   ),
-  thead: ({ children }) => <thead className="bg-[#16162A]">{children}</thead>,
+  thead: ({ children }) => (
+    <thead className="bg-gray-100/80">{children}</thead>
+  ),
   th: ({ children }) => (
-    <th className="px-3 py-2 text-[11px] uppercase tracking-[0.08em] text-[#94A3B8] text-left font-medium">
+    <th className="px-3 py-2 text-[11px] uppercase tracking-wide text-gray-500 text-left font-medium border-b border-gray-200">
       {children}
     </th>
   ),
   td: ({ children }) => (
-    <td className="px-3 py-2 font-mono text-[13px] text-[#F1F5F9] border-t border-[#1A1A2E]">
+    <td className="px-3 py-2 font-mono text-[13px] text-gray-700 border-t border-gray-100">
       {children}
     </td>
   ),
   h3: ({ children }) => (
-    <h3 className="text-[15px] font-semibold text-white mt-4 mb-2">{children}</h3>
+    <h3 className="text-[15px] font-semibold text-gray-900 mt-4 mb-2">{children}</h3>
+  ),
+  a: ({ children, href }) => (
+    <a href={href} className="text-lime-700 hover:text-lime-600 underline underline-offset-2 transition-colors" target="_blank" rel="noopener noreferrer">
+      {children}
+    </a>
   ),
 }
 
@@ -101,6 +120,7 @@ export default function ChatPage() {
   const [input, setInput] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
   const [sessionId] = useState(() => crypto.randomUUID())
+  const [copiedId, setCopiedId] = useState<string | null>(null)
 
   const abortRef = useRef<AbortController | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -213,25 +233,43 @@ export default function ChatPage() {
     ta.style.height = Math.min(ta.scrollHeight, 140) + 'px'
   }
 
+  const handleCopy = (msgId: string, content: string) => {
+    void navigator.clipboard.writeText(content)
+    setCopiedId(msgId)
+    setTimeout(() => setCopiedId(null), 2000)
+  }
+
+  const handleRegenerate = (msgId: string) => {
+    // Find the user message right before this assistant message
+    const idx = messages.findIndex((m) => m.id === msgId)
+    if (idx < 1) return
+    const userMsg = messages[idx - 1]
+    if (userMsg.role !== 'user') return
+    // Remove the assistant message and re-send
+    setMessages((prev) => prev.filter((m) => m.id !== msgId))
+    void handleSend(userMsg.content)
+  }
+
   const showEmpty = !historyLoading && messages.length === 0
 
   return (
     <AppShell title="AI Chat" noPadding>
-      <div className="flex flex-col h-full">
+      <FeatureGate feature="ai_chat">
+      <div className="flex flex-col h-[100dvh] md:h-full bg-white">
         {/* Header */}
-        <div className="shrink-0 px-6 py-4 border-b border-[#1A1A2E] bg-[#08080F]">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center">
-              <Sparkles size={15} className="text-[#6366F1]" />
+        <div className="shrink-0 px-6 py-4 border-b border-gray-200 bg-white">
+          <div className="max-w-3xl mx-auto flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-lime-50 border border-lime-200 flex items-center justify-center">
+              <Sparkles size={15} className="text-lime-700" />
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-[#F1F5F9]">AI Specialist</h2>
-              <p className="text-[11px] text-[#475569]">Real estate investment advisor</p>
+              <h2 className="text-sm font-semibold text-gray-900">AI Specialist</h2>
+              <p className="text-[11px] text-gray-400">Real estate investment advisor</p>
             </div>
           </div>
           {contextType !== 'general' && contextId && (
-            <div className="mt-3 flex items-center gap-2 text-[12px] text-[#94A3B8]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#6366F1] shrink-0" />
+            <div className="max-w-3xl mx-auto mt-3 flex items-center gap-2 text-[12px] text-gray-500">
+              <span className="w-1.5 h-1.5 rounded-full bg-lime-500 shrink-0 animate-pulse" />
               {contextType === 'deal'
                 ? 'Deal context active — AI knows the details of this deal'
                 : 'Document context active — AI has read this document'}
@@ -240,19 +278,33 @@ export default function ChatPage() {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
+        <div
+          className="flex-1 overflow-y-auto overscroll-contain"
+          role="log"
+          aria-live="polite"
+        >
           {historyLoading ? (
-            <div className="space-y-4">
-              {/* Skeleton bubbles — alternating left/right */}
-              <div className="flex justify-end">
-                <div className="h-10 w-48 rounded-2xl rounded-tr-sm bg-[#0F0F1A] border border-[#1A1A2E] animate-pulse" />
+            <div className="space-y-0">
+              {/* Skeleton rows */}
+              <div className="w-full py-5 px-6 bg-white border-b border-gray-100">
+                <div className="max-w-3xl mx-auto flex justify-end">
+                  <div className="h-5 w-48 rounded bg-gray-100 animate-pulse" />
+                </div>
               </div>
-              <div className="flex gap-3">
-                <div className="w-7 h-7 rounded-lg bg-[#0F0F1A] border border-[#1A1A2E] animate-pulse shrink-0" />
-                <div className="h-16 w-64 rounded-2xl rounded-tl-sm bg-[#0F0F1A] border border-[#1A1A2E] animate-pulse" />
+              <div className="w-full py-5 px-6 bg-gray-50/60 border-b border-gray-100">
+                <div className="max-w-3xl mx-auto flex gap-4">
+                  <div className="w-8 h-8 rounded-lg bg-gray-100 animate-pulse shrink-0" />
+                  <div className="space-y-2 flex-1">
+                    <div className="h-4 w-24 rounded bg-gray-100 animate-pulse" />
+                    <div className="h-4 w-64 rounded bg-gray-100 animate-pulse" />
+                    <div className="h-4 w-40 rounded bg-gray-100 animate-pulse" />
+                  </div>
+                </div>
               </div>
-              <div className="flex justify-end">
-                <div className="h-10 w-40 rounded-2xl rounded-tr-sm bg-[#0F0F1A] border border-[#1A1A2E] animate-pulse" />
+              <div className="w-full py-5 px-6 bg-white border-b border-gray-100">
+                <div className="max-w-3xl mx-auto flex justify-end">
+                  <div className="h-5 w-40 rounded bg-gray-100 animate-pulse" />
+                </div>
               </div>
             </div>
           ) : showEmpty ? (
@@ -260,133 +312,201 @@ export default function ChatPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="flex flex-col items-center justify-center h-full min-h-[400px] space-y-6"
+              className="flex flex-col items-center justify-center h-full min-h-[400px] space-y-8 px-6"
             >
               <div className="flex flex-col items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center">
-                  <Sparkles size={22} className="text-[#6366F1]" />
+                <div className="w-14 h-14 rounded-2xl bg-lime-50 border border-lime-200 flex items-center justify-center">
+                  <Sparkles size={24} className="text-lime-700" />
                 </div>
                 <div className="text-center space-y-1">
-                  <h3 className="text-base font-semibold text-[#F1F5F9]">Real Estate AI Specialist</h3>
-                  <p className="text-sm text-[#94A3B8]">
-                    Ask anything about deals, strategies, or financing structures.
+                  <h3 className="text-lg font-semibold text-gray-900">Parcel AI</h3>
+                  <p className="text-sm text-gray-500 max-w-sm">
+                    Ask about deal analysis, financing structures, market comps,
+                    or any real estate investment question.
                   </p>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-[480px]">
-                {SUGGESTED_QUESTIONS.map((q) => (
-                  <button
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full max-w-lg">
+                {SUGGESTED_QUESTIONS.map((q, index) => (
+                  <motion.button
                     key={q.question}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
                     onClick={() => void handleSend(q.question)}
-                    className="text-left p-3 rounded-xl border border-[#252540] bg-[#0F0F1A] hover:border-[#6366F1]/40 hover:bg-[#16162A] transition-colors cursor-pointer space-y-0.5"
+                    className="text-left p-3.5 rounded-xl border border-gray-200 bg-white hover:border-lime-400 hover:bg-lime-50/30 transition-all shadow-sm hover:shadow group cursor-pointer"
+                    aria-label={q.question}
                   >
-                    <p className="text-[11px] uppercase tracking-[0.08em] text-[#475569] font-medium">
+                    <p className="text-[11px] uppercase tracking-wide text-gray-400 font-medium group-hover:text-lime-600 transition-colors">
                       {q.category}
                     </p>
-                    <p className="text-[13px] text-[#94A3B8] leading-snug">{q.question}</p>
-                  </button>
+                    <p className="text-[13px] text-gray-600 leading-snug mt-1">
+                      {q.question}
+                    </p>
+                  </motion.button>
                 ))}
               </div>
             </motion.div>
           ) : (
-            <AnimatePresence initial={false}>
-              {messages.map((msg) => (
-                <motion.div
-                  key={msg.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2, ease: 'easeOut' }}
-                  className={cn('flex gap-3', msg.role === 'user' ? 'justify-end' : 'justify-start')}
-                >
-                  {msg.role === 'assistant' && (
-                    <div className="w-7 h-7 rounded-lg bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center shrink-0 mt-0.5">
-                      <Sparkles size={13} className="text-[#6366F1]" />
-                    </div>
-                  )}
-                  <div
+            <div>
+              <AnimatePresence initial={false}>
+                {messages.map((msg) => (
+                  <motion.div
+                    key={msg.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                     className={cn(
-                      'max-w-[75%] rounded-2xl px-4 py-3',
-                      msg.role === 'user'
-                        ? 'bg-[#6366F1] text-white rounded-tr-sm'
-                        : 'bg-[#0F0F1A] border border-[#1A1A2E] rounded-tl-sm'
+                      'w-full py-5 px-6 border-b border-gray-100',
+                      msg.role === 'user' ? 'bg-white' : 'bg-gray-50/60'
                     )}
                   >
-                    {msg.role === 'user' ? (
-                      <p className="text-[14px] leading-relaxed whitespace-pre-wrap">{msg.content}</p>
-                    ) : (
-                      <>
-                        <ReactMarkdown components={MD}>{msg.content}</ReactMarkdown>
-                        {msg.isStreaming && !msg.content && (
-                          <span className="inline-flex items-center gap-1 py-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-[typing_1.4s_ease-in-out_infinite]" />
-                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-[typing_1.4s_ease-in-out_0.2s_infinite]" />
-                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-[typing_1.4s_ease-in-out_0.4s_infinite]" />
-                          </span>
-                        )}
-                        {msg.isStreaming && msg.content && (
-                          <span className="inline-block w-0.5 h-4 bg-indigo-500 animate-pulse ml-0.5 align-middle" />
-                        )}
-                      </>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+                    <div className="max-w-3xl mx-auto flex gap-4">
+                      {msg.role === 'assistant' && (
+                        <div className="w-8 h-8 rounded-lg bg-lime-50 border border-lime-200 flex items-center justify-center shrink-0 mt-0.5">
+                          <Sparkles size={14} className="text-lime-700" />
+                        </div>
+                      )}
+
+                      {msg.role === 'user' ? (
+                        /* User message — right-aligned */
+                        <div className="flex-1 min-w-0 flex justify-end">
+                          <div className="max-w-[85%]">
+                            <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
+                              {msg.content}
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        /* Assistant message — left-aligned with markdown */
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-gray-400 mb-1.5">Parcel AI</p>
+                          <ReactMarkdown components={MD_LIGHT}>{msg.content}</ReactMarkdown>
+
+                          {/* State A: waiting — typing dots */}
+                          {msg.isStreaming && !msg.content && (
+                            <span
+                              className="inline-flex items-center gap-1.5 py-1"
+                              role="status"
+                              aria-label="AI is thinking"
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-[typing_1.4s_ease-in-out_infinite]" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-[typing_1.4s_ease-in-out_0.2s_infinite]" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-[typing_1.4s_ease-in-out_0.4s_infinite]" />
+                            </span>
+                          )}
+
+                          {/* State B: streaming — blinking cursor */}
+                          {msg.isStreaming && msg.content && (
+                            <span
+                              className="inline-block w-[2px] h-[18px] bg-lime-600 animate-pulse ml-0.5 align-text-bottom rounded-full"
+                              aria-hidden="true"
+                            />
+                          )}
+
+                          {/* State C: complete — post-message actions */}
+                          {!msg.isStreaming && msg.role === 'assistant' && msg.content && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ delay: 0.2, duration: 0.3 }}
+                              className="flex items-center gap-3 mt-3 pt-2 border-t border-gray-100"
+                            >
+                              <button
+                                onClick={() => handleCopy(msg.id, msg.content)}
+                                className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                              >
+                                <Copy size={12} />
+                                {copiedId === msg.id ? 'Copied!' : 'Copy'}
+                              </button>
+                              <button
+                                onClick={() => handleRegenerate(msg.id)}
+                                className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                              >
+                                <RotateCcw size={12} />
+                                Regenerate
+                              </button>
+                            </motion.div>
+                          )}
+                        </div>
+                      )}
+
+                      {msg.role === 'user' && (
+                        <div className="w-8 h-8 rounded-full bg-lime-700 flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="text-xs font-semibold text-white">U</span>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+              <div ref={messagesEndRef} />
+            </div>
           )}
-          <div ref={messagesEndRef} />
+          {/* End ref for empty/loading state */}
+          {(historyLoading || showEmpty) && <div ref={messagesEndRef} />}
         </div>
 
         {/* Input area */}
-        <div className="shrink-0 px-6 py-4 border-t border-[#1A1A2E] bg-[#08080F]">
-          <div className="flex gap-3 items-end">
-            <textarea
-              ref={textareaRef}
-              value={input}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              placeholder="Ask about deals, strategies, or financing..."
-              aria-label="Type your message"
-              disabled={isStreaming}
-              rows={1}
-              className={cn(
-                'flex-1 resize-none rounded-xl border border-[#252540] bg-[#0F0F1A] px-4 py-3',
-                'text-[14px] text-[#F1F5F9] placeholder:text-[#475569]',
-                'focus:outline-none focus:border-[#6366F1]/50 transition-colors',
-                'min-h-[48px] max-h-[140px] leading-relaxed',
-                isStreaming && 'opacity-50'
-              )}
-              style={{ height: '48px', overflowY: 'auto' }}
-            />
-            {isStreaming ? (
-              <button
-                onClick={handleStop}
-                className="w-11 h-11 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 hover:bg-red-500/20 transition-colors shrink-0 cursor-pointer"
-                aria-label="Stop generating"
-              >
-                <Square size={14} fill="currentColor" />
-              </button>
-            ) : (
-              <button
-                onClick={() => void handleSend(input)}
-                disabled={!input.trim()}
+        <div className="shrink-0 px-6 py-4 border-t border-gray-200 bg-white shadow-[0_-1px_3px_rgba(0,0,0,0.03)] pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex gap-3 items-end">
+              <textarea
+                ref={textareaRef}
+                value={input}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Ask about deals, strategies, or financing..."
+                aria-label="Type your message"
+                disabled={isStreaming}
+                rows={1}
                 className={cn(
-                  'w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors',
-                  input.trim()
-                    ? 'bg-[#6366F1] hover:bg-[#6366F1]/90 text-white cursor-pointer'
-                    : 'bg-[#0F0F1A] border border-[#252540] text-[#475569] cursor-not-allowed'
+                  'flex-1 resize-none rounded-xl border border-gray-200 bg-gray-50',
+                  'px-4 py-3 text-sm text-gray-800 placeholder:text-gray-400',
+                  'focus:outline-none focus:ring-2 focus:ring-lime-500/20',
+                  'focus:border-lime-400 transition-all',
+                  'min-h-[48px] max-h-[140px] md:max-h-[140px] leading-relaxed shadow-sm',
+                  isStreaming && 'opacity-50'
                 )}
-                aria-label="Send message"
-              >
-                <Send size={14} />
-              </button>
-            )}
+                style={{ height: '48px', overflowY: 'auto' }}
+              />
+              {isStreaming ? (
+                <button
+                  onClick={handleStop}
+                  className="w-10 h-10 rounded-xl bg-red-50 border border-red-200 flex items-center justify-center text-red-500 hover:bg-red-100 transition-colors shrink-0 cursor-pointer"
+                  aria-label="Stop generating"
+                >
+                  <Square size={14} fill="currentColor" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => void handleSend(input)}
+                  disabled={!input.trim()}
+                  className={cn(
+                    'w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors',
+                    input.trim()
+                      ? 'bg-lime-700 hover:bg-lime-800 text-white shadow-sm cursor-pointer'
+                      : 'bg-gray-100 border border-gray-200 text-gray-300 cursor-not-allowed'
+                  )}
+                  aria-label="Send message"
+                >
+                  <Send size={14} />
+                </button>
+              )}
+            </div>
+            <div className="flex justify-between items-center mt-2">
+              <p className="text-[11px] text-gray-400">
+                Enter to send &middot; Shift+Enter for new line
+              </p>
+            </div>
+            <p className="text-[11px] text-gray-400 mt-1 italic">
+              AI responses are for informational purposes only and may contain errors. Not financial advice.
+            </p>
           </div>
-          <p className="text-[11px] text-[#475569] mt-2">
-            Press Enter to send · Shift+Enter for new line
-          </p>
         </div>
       </div>
+      </FeatureGate>
     </AppShell>
   )
 }

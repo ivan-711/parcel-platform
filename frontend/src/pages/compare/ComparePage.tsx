@@ -52,10 +52,10 @@ function getNumericValue(deal: DealResponse, key: string): number | null {
 }
 
 function riskScoreColor(score: number | null): string {
-  if (score === null) return 'text-text-muted'
-  if (score <= 30) return 'text-accent-success'
-  if (score <= 60) return 'text-yellow-400'
-  return 'text-accent-danger'
+  if (score === null) return 'text-gray-400'
+  if (score <= 30) return 'text-sky-600'
+  if (score <= 60) return 'text-amber-600'
+  return 'text-red-600'
 }
 
 function formatDate(iso: string): string {
@@ -134,29 +134,29 @@ export default function ComparePage() {
         transition={{ duration: 0.3, ease: 'easeOut' }}
         className="max-w-5xl mx-auto space-y-6"
       >
-        <h1 className="text-2xl font-semibold text-text-primary">Compare Deals</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">Compare Deals</h1>
 
         {/* Deal selectors */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-text-muted uppercase tracking-[0.08em]">Deal A</label>
+            <label className="text-xs font-medium text-gray-400 uppercase tracking-[0.08em]">Deal A</label>
             <Select value={dealAId || undefined} onValueChange={handleSelectA}>
-              <SelectTrigger className="bg-app-surface border-border-subtle text-text-primary text-sm">
+              <SelectTrigger className="bg-white border-gray-200 text-gray-900 text-sm">
                 <SelectValue placeholder="Select a deal..." />
               </SelectTrigger>
-              <SelectContent className="bg-app-surface border-border-subtle max-h-[300px]">
+              <SelectContent className="bg-white border-gray-200 max-h-[300px]">
                 {loadingList ? (
-                  <div className="px-3 py-2 text-sm text-text-muted">Loading deals...</div>
+                  <div className="px-3 py-2 text-sm text-gray-400">Loading deals...</div>
                 ) : isError ? (
-                  <div className="px-3 py-2 text-sm text-accent-danger">Failed to load deals</div>
+                  <div className="px-3 py-2 text-sm text-red-600">Failed to load deals</div>
                 ) : dealOptions.length === 0 ? (
-                  <div className="px-3 py-2 text-sm text-text-muted">No deals found</div>
+                  <div className="px-3 py-2 text-sm text-gray-400">No deals found</div>
                 ) : (
                   dealOptions.map((d) => (
                     <SelectItem
                       key={d.id}
                       value={d.id}
-                      className="text-text-primary text-sm focus:bg-app-elevated focus:text-text-primary"
+                      className="text-gray-900 text-sm focus:bg-gray-50 focus:text-gray-900"
                     >
                       <span className="flex items-center gap-2">
                         {d.address}
@@ -170,20 +170,20 @@ export default function ComparePage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-text-muted uppercase tracking-[0.08em]">Deal B</label>
+            <label className="text-xs font-medium text-gray-400 uppercase tracking-[0.08em]">Deal B</label>
             <Select value={dealBId || undefined} onValueChange={handleSelectB} disabled={!dealAId}>
-              <SelectTrigger className="bg-app-surface border-border-subtle text-text-primary text-sm">
+              <SelectTrigger className="bg-white border-gray-200 text-gray-900 text-sm">
                 <SelectValue placeholder={dealAId ? 'Select a deal...' : 'Select Deal A first'} />
               </SelectTrigger>
-              <SelectContent className="bg-app-surface border-border-subtle max-h-[300px]">
+              <SelectContent className="bg-white border-gray-200 max-h-[300px]">
                 {dealBOptions.length === 0 ? (
-                  <div className="px-3 py-2 text-sm text-text-muted">No other deals with this strategy</div>
+                  <div className="px-3 py-2 text-sm text-gray-400">No other deals with this strategy</div>
                 ) : (
                   dealBOptions.map((d) => (
                     <SelectItem
                       key={d.id}
                       value={d.id}
-                      className="text-text-primary text-sm focus:bg-app-elevated focus:text-text-primary"
+                      className="text-gray-900 text-sm focus:bg-gray-50 focus:text-gray-900"
                     >
                       <span className="flex items-center gap-2">
                         {d.address}
@@ -206,9 +206,9 @@ export default function ComparePage() {
 
         {/* Deal fetch error */}
         {(errorA || errorB) && (
-          <div className="flex items-center gap-3 rounded-xl border border-accent-danger/30 bg-accent-danger/10 px-4 py-3">
-            <AlertTriangle size={16} className="text-accent-danger shrink-0" />
-            <p className="text-sm text-text-secondary">
+          <div className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+            <AlertTriangle size={16} className="text-red-600 shrink-0" />
+            <p className="text-sm text-gray-600">
               Failed to load {errorA && errorB ? 'both deals' : errorA ? 'Deal A' : 'Deal B'}. Check the selection and try again.
             </p>
           </div>
@@ -216,9 +216,9 @@ export default function ComparePage() {
 
         {/* Cross-strategy warning */}
         {crossStrategy && (
-          <div className="flex items-center gap-3 rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-4 py-3">
-            <AlertTriangle size={16} className="text-yellow-400 shrink-0" />
-            <p className="text-sm text-yellow-300">
+          <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+            <AlertTriangle size={16} className="text-amber-500 shrink-0" />
+            <p className="text-sm text-amber-700">
               These deals use different strategies — comparison may not be meaningful
             </p>
           </div>
@@ -245,7 +245,7 @@ export default function ComparePage() {
 
         {/* Comparison table */}
         {!isLoading && (dealA || dealB) && (
-          <div className="rounded-xl border border-border-subtle bg-app-surface overflow-x-auto">
+          <div className="rounded-xl border border-gray-200 bg-white overflow-x-auto shadow-xs">
             {/* Common rows */}
             <ComparisonRow label="Address" valueA={dealA?.address ?? '—'} valueB={dealB?.address} />
             <ComparisonRow
@@ -257,14 +257,14 @@ export default function ComparePage() {
               label="Risk Score"
               valueA={
                 dealA ? (
-                  <span className={cn('font-mono font-semibold', riskScoreColor(dealA.risk_score))}>
+                  <span className={cn('tabular-nums font-semibold', riskScoreColor(dealA.risk_score))}>
                     {dealA.risk_score ?? '—'}
                   </span>
                 ) : '—'
               }
               valueB={
                 dealB ? (
-                  <span className={cn('font-mono font-semibold', riskScoreColor(dealB.risk_score))}>
+                  <span className={cn('tabular-nums font-semibold', riskScoreColor(dealB.risk_score))}>
                     {dealB.risk_score ?? '—'}
                   </span>
                 ) : undefined
@@ -284,8 +284,8 @@ export default function ComparePage() {
 
             {/* Divider */}
             {strategyRows.length > 0 && (
-              <div className="px-4 py-2.5 bg-app-elevated border-y border-border-subtle">
-                <p className="text-xs font-semibold text-text-muted uppercase tracking-[0.08em]">Strategy Outputs</p>
+              <div className="px-4 py-2.5 bg-gray-50 border-y border-gray-200">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-[0.08em]">Strategy Outputs</p>
               </div>
             )}
 
@@ -302,12 +302,12 @@ export default function ComparePage() {
                   label={formatLabel(key)}
                   valueA={
                     dealA ? (
-                      <span className="font-mono">{formatOutputValue(key, valA as number | string | null | undefined)}</span>
+                      <span className="tabular-nums">{formatOutputValue(key, valA as number | string | null | undefined)}</span>
                     ) : '—'
                   }
                   valueB={
                     dealB ? (
-                      <span className="font-mono">{formatOutputValue(key, valB as number | string | null | undefined)}</span>
+                      <span className="tabular-nums">{formatOutputValue(key, valB as number | string | null | undefined)}</span>
                     ) : undefined
                   }
                   winnerSide={getWinnerSide(numA, numB, key)}
@@ -320,7 +320,7 @@ export default function ComparePage() {
         {/* Empty state */}
         {!isLoading && !dealA && !dealB && (
           <div className="flex flex-col items-center justify-center py-16 space-y-3">
-            <p className="text-sm text-text-muted">Select two deals above to compare their analysis results side by side.</p>
+            <p className="text-sm text-gray-400">Select two deals above to compare their analysis results side by side.</p>
           </div>
         )}
       </motion.div>
@@ -349,25 +349,25 @@ function ComparisonRow({
   winnerSide?: 'a' | 'b' | null
 }) {
   return (
-    <div className="grid grid-cols-[120px_1fr_1fr] sm:grid-cols-[180px_1fr_1fr] border-b border-border-subtle last:border-0 min-w-[400px]">
-      <div className="px-4 py-3 text-sm text-text-secondary bg-app-elevated/30">
+    <div className="grid grid-cols-[120px_1fr_1fr] sm:grid-cols-[180px_1fr_1fr] border-b border-gray-200 last:border-0 min-w-[400px]">
+      <div className="px-4 py-3 text-sm text-gray-600 bg-gray-50/30">
         {label}
       </div>
       <div
         className={cn(
-          'px-4 py-3 text-sm text-text-primary transition-colors duration-300',
-          winnerSide === 'a' && 'border-l-2 border-[#10B981] bg-[#10B981]/5'
+          'px-4 py-3 text-sm text-gray-900 transition-colors duration-300',
+          winnerSide === 'a' && 'border-l-2 border-sky-500 bg-sky-50'
         )}
       >
         {valueA}
       </div>
       <div
         className={cn(
-          'px-4 py-3 text-sm text-text-primary border-l border-border-subtle transition-colors duration-300',
-          winnerSide === 'b' && 'border-l-2 border-[#10B981] bg-[#10B981]/5'
+          'px-4 py-3 text-sm text-gray-900 border-l border-gray-200 transition-colors duration-300',
+          winnerSide === 'b' && 'border-l-2 border-sky-500 bg-sky-50'
         )}
       >
-        {valueB ?? <span className="text-text-muted">Select a deal to compare</span>}
+        {valueB ?? <span className="text-gray-400">Select a deal to compare</span>}
       </div>
     </div>
   )

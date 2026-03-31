@@ -12,7 +12,16 @@ interface AuthState {
 
 function safeParseUser(): User | null {
   try {
-    return JSON.parse(localStorage.getItem('parcel_user') ?? 'null') as User | null
+    const raw = localStorage.getItem('parcel_user')
+    if (!raw || raw === 'null') return null
+    const parsed = JSON.parse(raw) as Record<string, unknown>
+    if (!parsed || typeof parsed !== 'object' || !parsed.id) return null
+    return {
+      ...parsed,
+      plan_tier: (parsed.plan_tier as string) ?? 'free',
+      trial_ends_at: (parsed.trial_ends_at as string) ?? null,
+      trial_active: (parsed.trial_active as boolean) ?? false,
+    } as User
   } catch {
     localStorage.removeItem('parcel_user')
     return null

@@ -183,7 +183,7 @@ export function InteractiveDealCalc() {
   return (
     <section
       id="deal-calculator"
-      className="py-24 px-6 border-t border-border-subtle"
+      className="py-24 px-6 border-t border-gray-200 bg-gray-50"
     >
       <div className="max-w-5xl mx-auto space-y-14">
         {/* ── Section header ── */}
@@ -194,13 +194,13 @@ export function InteractiveDealCalc() {
           transition={{ duration: 0.35 }}
           className="space-y-3"
         >
-          <p className="text-[10px] uppercase tracking-[0.08em] text-accent-primary font-semibold">
+          <p className="text-[10px] uppercase tracking-[0.08em] text-lime-700 font-semibold">
             Try It Now
           </p>
-          <h2 className="text-4xl font-semibold tracking-tight text-text-primary">
+          <h2 className="text-4xl font-semibold tracking-tight text-gray-900">
             Run the numbers before you sign up
           </h2>
-          <p className="text-sm text-text-secondary max-w-lg">
+          <p className="text-sm text-gray-500 max-w-lg">
             Plug in a deal and see estimated returns instantly. This is a
             simplified preview — the full analyzer covers five strategies with
             deeper metrics.
@@ -215,9 +215,9 @@ export function InteractiveDealCalc() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: 0.05 }}
-            className="rounded-2xl border border-border-subtle bg-app-surface p-6 space-y-5"
+            className="rounded-2xl border border-gray-200 bg-white p-6 space-y-5 shadow-xs"
           >
-            <h3 className="text-sm font-medium text-text-primary">
+            <h3 className="text-sm font-medium text-gray-900">
               Deal Inputs
             </h3>
 
@@ -225,12 +225,12 @@ export function InteractiveDealCalc() {
             <div>
               <label
                 htmlFor="calc-purchase-price"
-                className="block text-xs font-medium text-text-secondary uppercase tracking-[0.08em] mb-1.5"
+                className="block text-xs font-medium text-gray-500 uppercase tracking-[0.08em] mb-1.5"
               >
                 Purchase Price
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-sm font-mono">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm tabular-nums">
                   $
                 </span>
                 <input
@@ -238,11 +238,11 @@ export function InteractiveDealCalc() {
                   type="number"
                   inputMode="numeric"
                   {...register('purchasePrice', { valueAsNumber: true })}
-                  className="bg-app-elevated border border-border-default rounded-lg pl-7 pr-3 py-2.5 text-sm text-text-primary font-mono focus:border-accent-primary focus:ring-1 focus:ring-accent-primary outline-none w-full transition-colors duration-150"
+                  className="bg-white border border-gray-300 rounded-lg pl-7 pr-3 py-2.5 text-sm text-gray-900 tabular-nums focus:border-lime-500 focus:ring-1 focus:ring-lime-500/20 outline-none w-full transition-colors duration-150"
                 />
               </div>
               {errors.purchasePrice && (
-                <p className="text-accent-danger text-xs mt-1">
+                <p className="text-red-500 text-xs mt-1">
                   {errors.purchasePrice.message}
                 </p>
               )}
@@ -252,7 +252,7 @@ export function InteractiveDealCalc() {
             <div>
               <label
                 htmlFor="calc-down-payment"
-                className="block text-xs font-medium text-text-secondary uppercase tracking-[0.08em] mb-1.5"
+                className="block text-xs font-medium text-gray-500 uppercase tracking-[0.08em] mb-1.5"
               >
                 Down Payment
               </label>
@@ -263,14 +263,14 @@ export function InteractiveDealCalc() {
                   inputMode="decimal"
                   step="0.1"
                   {...register('downPayment', { valueAsNumber: true })}
-                  className="bg-app-elevated border border-border-default rounded-lg px-3 py-2.5 text-sm text-text-primary font-mono focus:border-accent-primary focus:ring-1 focus:ring-accent-primary outline-none w-full pr-8 transition-colors duration-150"
+                  className="bg-white border border-gray-300 rounded-lg px-3 py-2.5 text-sm text-gray-900 tabular-nums focus:border-lime-500 focus:ring-1 focus:ring-lime-500/20 outline-none w-full pr-8 transition-colors duration-150"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted text-sm font-mono">
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm tabular-nums">
                   %
                 </span>
               </div>
               {errors.downPayment && (
-                <p className="text-accent-danger text-xs mt-1">
+                <p className="text-red-500 text-xs mt-1">
                   {errors.downPayment.message}
                 </p>
               )}
@@ -280,12 +280,12 @@ export function InteractiveDealCalc() {
             <div>
               <label
                 htmlFor="calc-monthly-rent"
-                className="block text-xs font-medium text-text-secondary uppercase tracking-[0.08em] mb-1.5"
+                className="block text-xs font-medium text-gray-500 uppercase tracking-[0.08em] mb-1.5"
               >
                 Monthly Rent
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-sm font-mono">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm tabular-nums">
                   $
                 </span>
                 <input
@@ -293,11 +293,11 @@ export function InteractiveDealCalc() {
                   type="number"
                   inputMode="numeric"
                   {...register('monthlyRent', { valueAsNumber: true })}
-                  className="bg-app-elevated border border-border-default rounded-lg pl-7 pr-3 py-2.5 text-sm text-text-primary font-mono focus:border-accent-primary focus:ring-1 focus:ring-accent-primary outline-none w-full transition-colors duration-150"
+                  className="bg-white border border-gray-300 rounded-lg pl-7 pr-3 py-2.5 text-sm text-gray-900 tabular-nums focus:border-lime-500 focus:ring-1 focus:ring-lime-500/20 outline-none w-full transition-colors duration-150"
                 />
               </div>
               {errors.monthlyRent && (
-                <p className="text-accent-danger text-xs mt-1">
+                <p className="text-red-500 text-xs mt-1">
                   {errors.monthlyRent.message}
                 </p>
               )}
@@ -307,16 +307,16 @@ export function InteractiveDealCalc() {
             <div>
               <label
                 htmlFor="calc-strategy"
-                className="block text-xs font-medium text-text-secondary uppercase tracking-[0.08em] mb-1.5"
+                className="block text-xs font-medium text-gray-500 uppercase tracking-[0.08em] mb-1.5"
               >
                 Strategy
               </label>
               <select
                 id="calc-strategy"
                 {...register('strategy')}
-                className="bg-app-elevated border border-border-default rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:ring-1 focus:ring-accent-primary outline-none w-full cursor-pointer transition-colors duration-150 appearance-none"
+                className="bg-white border border-gray-300 rounded-lg px-3 py-2.5 text-sm text-gray-900 focus:border-lime-500 focus:ring-1 focus:ring-lime-500/20 outline-none w-full cursor-pointer transition-colors duration-150 appearance-none"
                 style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'right 12px center',
                 }}
@@ -329,7 +329,7 @@ export function InteractiveDealCalc() {
               </select>
             </div>
 
-            <p className="text-[10px] text-text-muted leading-relaxed pt-1">
+            <p className="text-[10px] text-gray-400 leading-relaxed pt-1">
               Estimates assume 6.5% interest, 30-year fixed, 1.2% property tax,
               8% vacancy, and $100/mo maintenance. Actual results will vary.
             </p>
@@ -348,16 +348,16 @@ export function InteractiveDealCalc() {
               {kpis.map((kpi) => (
                 <div
                   key={kpi.label}
-                  className="rounded-xl border border-border-subtle bg-app-surface p-4"
+                  className="rounded-xl border border-gray-200 bg-white p-4 shadow-xs"
                 >
-                  <p className="text-[9px] uppercase tracking-[0.08em] text-text-muted mb-1">
+                  <p className="text-[9px] uppercase tracking-[0.08em] text-gray-400 mb-1">
                     {kpi.label}
                   </p>
                   <p
-                    className={`text-xl font-mono font-semibold ${
+                    className={`text-xl font-semibold tabular-nums ${
                       kpi.raw >= 0
-                        ? 'text-accent-success'
-                        : 'text-accent-danger'
+                        ? 'text-sky-600'
+                        : 'text-red-500'
                     }`}
                   >
                     {kpi.value}
@@ -367,8 +367,8 @@ export function InteractiveDealCalc() {
             </div>
 
             {/* 12-month projection chart */}
-            <div className="rounded-xl border border-border-subtle bg-app-surface p-4 mt-3">
-              <p className="text-xs text-text-secondary mb-3">
+            <div className="rounded-xl border border-gray-200 bg-white p-4 mt-3 shadow-xs">
+              <p className="text-xs text-gray-500 mb-3">
                 12-Month Cash Flow Projection
               </p>
               <ResponsiveContainer width="100%" height={160}>
@@ -386,24 +386,24 @@ export function InteractiveDealCalc() {
                     >
                       <stop
                         offset="0%"
-                        stopColor="#6366F1"
+                        stopColor="#84CC16"
                         stopOpacity={0.2}
                       />
                       <stop
                         offset="100%"
-                        stopColor="#6366F1"
+                        stopColor="#84CC16"
                         stopOpacity={0}
                       />
                     </linearGradient>
                   </defs>
                   <XAxis
                     dataKey="month"
-                    tick={{ fill: '#475569', fontSize: 10 }}
+                    tick={{ fill: '#667085', fontSize: 10 }}
                     axisLine={false}
                     tickLine={false}
                   />
                   <YAxis
-                    tick={{ fill: '#475569', fontSize: 10 }}
+                    tick={{ fill: '#667085', fontSize: 10 }}
                     axisLine={false}
                     tickLine={false}
                     tickFormatter={(v: number) =>
@@ -413,21 +413,22 @@ export function InteractiveDealCalc() {
                   />
                   <Tooltip
                     contentStyle={{
-                      background: '#0F0F1A',
-                      border: '1px solid #1A1A2E',
+                      background: '#FFFFFF',
+                      border: '1px solid #EAECF0',
                       borderRadius: '8px',
                       fontSize: '12px',
-                      fontFamily: "'JetBrains Mono', monospace",
+                      fontFamily: "'Inter', sans-serif",
+                      boxShadow: '0 4px 8px -2px rgba(16,24,40,0.10)',
                     }}
-                    labelStyle={{ color: '#94A3B8', fontSize: '10px' }}
-                    itemStyle={{ color: '#F1F5F9' }}
+                    labelStyle={{ color: '#667085', fontSize: '10px' }}
+                    itemStyle={{ color: '#1D2939' }}
                     formatter={(value: number) => [fmtCurrency(value), 'Cumulative']}
                     labelFormatter={(label: number) => `Month ${label}`}
                   />
                   <Area
                     type="monotone"
                     dataKey="cashFlow"
-                    stroke="#6366F1"
+                    stroke="#4D7C0F"
                     strokeWidth={2}
                     fill={`url(#${GRADIENT_ID})`}
                     isAnimationActive={true}

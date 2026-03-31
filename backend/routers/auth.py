@@ -13,6 +13,7 @@ from core.demo import is_reserved_email
 from core.email import send_password_reset_email
 from core.security.jwt import create_access_token, create_refresh_token, get_current_user, hash_password, verify_password, verify_refresh_token
 from database import get_db
+from limiter import limiter
 from models.password_reset_tokens import PasswordResetToken
 from models.users import User
 from schemas.auth import (
@@ -79,7 +80,8 @@ def _set_auth_cookies(response: Response, user_id: str) -> None:
 
 
 @router.post("/register", response_model=AuthSuccessResponse, status_code=status.HTTP_201_CREATED)
-async def register(body: RegisterRequest, response: Response, db: Session = Depends(get_db)) -> AuthSuccessResponse:
+@limiter.limit("3/minute")
+async def register(request: Request, body: RegisterRequest, response: Response, db: Session = Depends(get_db)) -> AuthSuccessResponse:
     """Register a new user account.
 
     Creates the user, issues a JWT access token, and sets it in an httpOnly cookie.
@@ -109,13 +111,23 @@ async def register(body: RegisterRequest, response: Response, db: Session = Depe
     db.commit()
     db.refresh(user)
 
+    # Set 7-day Pro trial for new users (skip for demo account)
+    if user.email != "demo@parcel.app":
+        from core.billing.config import get_stripe_settings
+
+        settings = get_stripe_settings()
+        user.trial_ends_at = datetime.utcnow() + timedelta(days=settings.TRIAL_PERIOD_DAYS)
+        db.commit()
+        db.refresh(user)
+
     _set_auth_cookies(response, str(user.id))
 
     return AuthSuccessResponse(user=UserResponse.model_validate(user))
 
 
 @router.post("/login", response_model=AuthSuccessResponse)
-async def login(body: LoginRequest, response: Response, db: Session = Depends(get_db)) -> AuthSuccessResponse:
+@limiter.limit("5/minute")
+async def login(request: Request, body: LoginRequest, response: Response, db: Session = Depends(get_db)) -> AuthSuccessResponse:
     """Authenticate an existing user.
 
     Verifies the password and issues a new JWT access token in an httpOnly cookie.
@@ -148,6 +160,7 @@ async def logout(response: Response) -> None:
 
 
 @router.post("/refresh", response_model=AuthSuccessResponse)
+@limiter.limit("20/minute")
 async def refresh(request: Request, response: Response, db: Session = Depends(get_db)) -> AuthSuccessResponse:
     """Refresh the access token using the refresh token cookie.
 
@@ -238,7 +251,8 @@ def _hash_token(token: str) -> str:
 
 
 @router.post("/forgot-password")
-async def forgot_password(body: ForgotPasswordRequest, db: Session = Depends(get_db)) -> dict:
+@limiter.limit("3/minute")
+async def forgot_password(request: Request, body: ForgotPasswordRequest, db: Session = Depends(get_db)) -> dict:
     """Initiate the password reset flow.
 
     Generates a secure reset token, stores its hash in the database, and sends
@@ -276,7 +290,8 @@ async def forgot_password(body: ForgotPasswordRequest, db: Session = Depends(get
 
 
 @router.post("/reset-password")
-async def reset_password(body: ResetPasswordRequest, db: Session = Depends(get_db)) -> dict:
+@limiter.limit("3/minute")
+async def reset_password(request: Request, body: ResetPasswordRequest, db: Session = Depends(get_db)) -> dict:
     """Reset a user's password using a valid reset token.
 
     Validates the token hash and expiry, updates the password, and marks the

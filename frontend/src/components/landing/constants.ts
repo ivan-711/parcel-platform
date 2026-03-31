@@ -25,11 +25,11 @@ export interface PricingTier {
 export const STRATEGIES: StrategyKey[] = ['Wholesale', 'Creative Finance', 'BRRRR', 'Buy & Hold', 'Flip']
 
 export const STRATEGY_COLORS: Record<StrategyKey, { bg: string; text: string }> = {
-  'Wholesale':        { bg: '#451A03', text: '#FCD34D' },
-  'Creative Finance': { bg: '#2E1065', text: '#C4B5FD' },
-  'BRRRR':            { bg: '#0C1A4A', text: '#93C5FD' },
-  'Buy & Hold':       { bg: '#064E3B', text: '#6EE7B7' },
-  'Flip':             { bg: '#431407', text: '#FCA5A1' },
+  'Wholesale':        { bg: '#FEF3C7', text: '#92400E' },
+  'Creative Finance': { bg: '#EDE9FE', text: '#5B21B6' },
+  'BRRRR':            { bg: '#DBEAFE', text: '#1E40AF' },
+  'Buy & Hold':       { bg: '#D1FAE5', text: '#065F46' },
+  'Flip':             { bg: '#FFE4E6', text: '#9F1239' },
 }
 
 export const DEMO_METRICS: Record<StrategyKey, DemoMetrics> = {
@@ -101,10 +101,10 @@ export const PRICING: PricingTier[] = [
     highlighted: false, cta: 'Start free',
   },
   {
-    name: 'Pro', price: '$29', period: 'per month',
-    description: 'For active investors and agents.',
+    name: 'Pro', price: '$69', period: 'per month',
+    description: 'For active investors and agents. 7-day free trial.',
     features: ['Unlimited deal analyses', 'Unlimited pipeline', 'Document AI (10 uploads / mo)', 'Offer letter generator', 'Deal sharing links', 'Priority support'],
-    highlighted: true, cta: 'Start Pro trial',
+    highlighted: true, cta: 'Start 7-day free trial',
   },
   {
     name: 'Team', price: '$99', period: 'per month',

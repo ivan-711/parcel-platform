@@ -1,4 +1,10 @@
-from .utils import pmt
+from .utils import pmt, validate_inputs
+
+_REQUIRED = [
+    "purchase_price", "rehab_costs", "arv_post_rehab", "refinance_ltv_pct",
+    "new_loan_rate", "new_loan_term_years", "monthly_rent", "monthly_expenses",
+]
+_NON_NEGATIVE = ["purchase_price", "arv_post_rehab", "monthly_rent"]
 
 
 def calculate_brrrr(inputs: dict) -> dict:
@@ -8,6 +14,8 @@ def calculate_brrrr(inputs: dict) -> dict:
     Returns all-in cost, refi proceeds, cash left in deal, monthly cash flow,
     CoC return, equity captured, and capital recycled percentage.
     """
+    validate_inputs(inputs, _REQUIRED, _NON_NEGATIVE)
+
     purchase_price      = inputs["purchase_price"]
     rehab_costs         = inputs["rehab_costs"]
     arv_post_rehab      = inputs["arv_post_rehab"]

@@ -53,10 +53,11 @@ import { usePortfolio } from '@/hooks/usePortfolio'
 import { useDeals } from '@/hooks/useDeals'
 import { api } from '@/lib/api'
 import { EditPortfolioModal } from '@/components/edit-portfolio-modal'
+import { FeatureGate } from '@/components/billing/FeatureGate'
 import type { Strategy, AddPortfolioEntryRequest, PortfolioEntry } from '@/types'
 import type { EditPortfolioData } from '@/components/edit-portfolio-modal'
 
-/* ── Animation variants (same as Dashboard) ── */
+/* -- Animation variants (same as Dashboard) -- */
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -75,12 +76,12 @@ const itemVariants = {
   },
 }
 
-/* ── Helpers ── */
+/* -- Helpers -- */
 
 function formatCurrency(value: number | string | null | undefined): string {
-  if (value === null || value === undefined) return '—'
+  if (value === null || value === undefined) return '\u2014'
   const num = typeof value === 'string' ? parseFloat(value) : value
-  if (isNaN(num)) return '—'
+  if (isNaN(num)) return '\u2014'
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num)
 }
 
@@ -104,7 +105,7 @@ function truncate(text: string, max: number): string {
   return text.length > max ? text.slice(0, max) + '...' : text
 }
 
-/* ── Strategy color map ── */
+/* -- Strategy color map -- */
 
 const STRATEGY_COLORS: Record<Strategy, string> = {
   wholesale: '#10B981',
@@ -114,7 +115,7 @@ const STRATEGY_COLORS: Record<Strategy, string> = {
   flip: '#EF4444',
 }
 
-/* ── Chart tooltip ── */
+/* -- Chart tooltip -- */
 
 interface ChartPayloadItem {
   value: number
@@ -129,9 +130,9 @@ function ChartTooltipContent({ active, payload, label }: {
 }) {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-[#0F0F1A] border border-[#1A1A2E] rounded-lg px-3 py-2 text-xs">
-      <p className="text-[#94A3B8] mb-1">{label}</p>
-      <p className="font-mono text-[#F1F5F9]">{formatCurrency(payload[0].value)}</p>
+    <div className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs shadow-md">
+      <p className="text-gray-500 mb-1">{label}</p>
+      <p className="tabular-nums text-gray-900 font-medium">{formatCurrency(payload[0].value)}</p>
     </div>
   )
 }
@@ -145,14 +146,14 @@ function DonutTooltipContent({ active, payload }: {
   const item = payload[0]
   const data = item.payload as Record<string, unknown> | undefined
   return (
-    <div className="bg-[#0F0F1A] border border-[#1A1A2E] rounded-lg px-3 py-2 text-xs">
-      <p className="text-[#F1F5F9] font-medium mb-1">{item.name}</p>
-      <p className="text-[#94A3B8]">
-        <span className="font-mono text-[#F1F5F9]">{item.value}</span> deal{item.value !== 1 ? 's' : ''}
+    <div className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs shadow-md">
+      <p className="text-gray-900 font-medium mb-1">{item.name}</p>
+      <p className="text-gray-500">
+        <span className="tabular-nums text-gray-900">{item.value}</span> deal{item.value !== 1 ? 's' : ''}
       </p>
       {data && typeof data.totalValue === 'number' && (
-        <p className="text-[#94A3B8]">
-          Total value: <span className="font-mono text-[#F1F5F9]">{formatCurrency(data.totalValue as number)}</span>
+        <p className="text-gray-500">
+          Total value: <span className="tabular-nums text-gray-900">{formatCurrency(data.totalValue as number)}</span>
         </p>
       )}
     </div>
@@ -168,9 +169,9 @@ function BarTooltipContent({ active, payload, label }: {
   if (!active || !payload?.length) return null
   const val = payload[0].value
   return (
-    <div className="bg-[#0F0F1A] border border-[#1A1A2E] rounded-lg px-3 py-2 text-xs">
-      <p className="text-[#94A3B8] mb-1">{label}</p>
-      <p className={`font-mono ${val >= 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
+    <div className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs shadow-md">
+      <p className="text-gray-500 mb-1">{label}</p>
+      <p className={`tabular-nums font-medium ${val >= 0 ? 'text-sky-600' : 'text-red-600'}`}>
         {formatCurrency(val)}
       </p>
     </div>
@@ -188,8 +189,8 @@ function DonutLegend({ payload }: { payload?: Array<{ value: string; color: stri
             className="inline-block w-2.5 h-2.5 rounded-full shrink-0"
             style={{ backgroundColor: entry.color }}
           />
-          <span className="text-[#94A3B8]">{entry.value}</span>
-          <span className="font-mono text-[#F1F5F9]">
+          <span className="text-gray-500">{entry.value}</span>
+          <span className="tabular-nums text-gray-900">
             {entry.payload?.percent !== undefined ? `${(entry.payload.percent * 100).toFixed(0)}%` : ''}
           </span>
         </div>
@@ -198,7 +199,7 @@ function DonutLegend({ payload }: { payload?: Array<{ value: string; color: stri
   )
 }
 
-/* ── Add Entry Form ── */
+/* -- Add Entry Form -- */
 
 interface AddEntryFormProps {
   onSubmit: (data: AddPortfolioEntryRequest) => void
@@ -232,14 +233,14 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5 mt-6">
       <div className="space-y-2">
-        <Label htmlFor="portfolio-deal" className="text-text-secondary text-xs">Deal</Label>
+        <Label htmlFor="portfolio-deal" className="text-gray-600 text-xs">Deal</Label>
         <Select value={dealId} onValueChange={setDealId}>
-          <SelectTrigger id="portfolio-deal" className="bg-[#08080F] border-[#1A1A2E] text-text-primary">
+          <SelectTrigger id="portfolio-deal" className="bg-white border-gray-300 text-gray-900">
             <SelectValue placeholder="Select a deal" />
           </SelectTrigger>
-          <SelectContent className="bg-[#0F0F1A] border-[#1A1A2E]">
+          <SelectContent className="bg-white border-gray-200">
             {deals?.map((d) => (
-              <SelectItem key={d.id} value={d.id} className="text-text-primary focus:bg-[#1A1A2E]">
+              <SelectItem key={d.id} value={d.id} className="text-gray-900 focus:bg-gray-50">
                 {d.address} ({strategyLabel(d.strategy)})
               </SelectItem>
             ))}
@@ -248,60 +249,60 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="portfolio-closed-date" className="text-text-secondary text-xs">Closed Date</Label>
+        <Label htmlFor="portfolio-closed-date" className="text-gray-600 text-xs">Closed Date</Label>
         <Input
           id="portfolio-closed-date"
           type="date"
           value={closedDate}
           onChange={(e) => setClosedDate(e.target.value)}
-          className="bg-[#08080F] border-[#1A1A2E] text-text-primary"
+          className="bg-white border-gray-300 text-gray-900"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="portfolio-closed-price" className="text-text-secondary text-xs">Closed Price ($)</Label>
+        <Label htmlFor="portfolio-closed-price" className="text-gray-600 text-xs">Closed Price ($)</Label>
         <Input
           id="portfolio-closed-price"
           type="number"
           value={closedPrice}
           onChange={(e) => setClosedPrice(e.target.value)}
           placeholder="0"
-          className="bg-[#08080F] border-[#1A1A2E] text-text-primary font-mono"
+          className="bg-white border-gray-300 text-gray-900 tabular-nums"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="portfolio-profit" className="text-text-secondary text-xs">Profit ($)</Label>
+        <Label htmlFor="portfolio-profit" className="text-gray-600 text-xs">Profit ($)</Label>
         <Input
           id="portfolio-profit"
           type="number"
           value={profit}
           onChange={(e) => setProfit(e.target.value)}
           placeholder="0"
-          className="bg-[#08080F] border-[#1A1A2E] text-text-primary font-mono"
+          className="bg-white border-gray-300 text-gray-900 tabular-nums"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="portfolio-cash-flow" className="text-text-secondary text-xs">Monthly Cash Flow ($)</Label>
+        <Label htmlFor="portfolio-cash-flow" className="text-gray-600 text-xs">Monthly Cash Flow ($)</Label>
         <Input
           id="portfolio-cash-flow"
           type="number"
           value={monthlyCashFlow}
           onChange={(e) => setMonthlyCashFlow(e.target.value)}
           placeholder="0"
-          className="bg-[#08080F] border-[#1A1A2E] text-text-primary font-mono"
+          className="bg-white border-gray-300 text-gray-900 tabular-nums"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="portfolio-notes" className="text-text-secondary text-xs">Notes (optional)</Label>
+        <Label htmlFor="portfolio-notes" className="text-gray-600 text-xs">Notes (optional)</Label>
         <textarea
           id="portfolio-notes"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={3}
-          className="flex w-full rounded-md border border-[#1A1A2E] bg-[#08080F] px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background resize-none"
+          className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background resize-none"
           placeholder="Optional notes about this deal"
         />
       </div>
@@ -309,7 +310,7 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
       <button
         type="submit"
         disabled={!canSubmit}
-        className="w-full h-10 rounded-lg bg-accent-primary text-white text-sm font-medium transition-colors hover:bg-accent-primary/90 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full h-10 rounded-lg bg-lime-700 text-white text-sm font-medium transition-colors hover:bg-lime-800 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {isSubmitting ? 'Adding...' : 'Add to Portfolio'}
       </button>
@@ -317,7 +318,7 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
   )
 }
 
-/* ── Main Page ── */
+/* -- Main Page -- */
 
 export default function PortfolioPage() {
   const { data, isLoading, isError } = usePortfolio()
@@ -412,22 +413,22 @@ export default function PortfolioPage() {
     return sorted.map(([month, cashFlow]) => ({ month, cashFlow }))
   }, [entries])
 
-  /* ── Error state ── */
+  /* -- Error state -- */
   if (isError) {
     return (
       <AppShell title="Portfolio">
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-          <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
-            <Inbox className="w-6 h-6 text-red-400" />
+          <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+            <Inbox className="w-6 h-6 text-red-500" />
           </div>
-          <p className="text-base font-medium text-text-primary">Failed to load portfolio</p>
-          <p className="text-sm text-text-secondary">Check your connection and try again.</p>
+          <p className="text-base font-medium text-gray-900">Failed to load portfolio</p>
+          <p className="text-sm text-gray-600">Check your connection and try again.</p>
         </div>
       </AppShell>
     )
   }
 
-  /* ── Loading state ── */
+  /* -- Loading state -- */
   if (isLoading) {
     return (
       <AppShell title="Portfolio">
@@ -446,6 +447,7 @@ export default function PortfolioPage() {
 
   return (
     <AppShell title="Portfolio">
+      <FeatureGate feature="portfolio">
       <motion.div
         className="space-y-8"
         variants={containerVariants}
@@ -458,15 +460,15 @@ export default function PortfolioPage() {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
         >
           <KPICard label="Total Deals Closed" value={summary?.total_deals_closed ?? 0} format="number" />
-          <KPICard label="Total Profit" value={summary?.total_profit ?? 0} format="currency" className="[&_.kpi-value]:text-accent-success" />
-          <KPICard label="Monthly Cash Flow" value={summary?.total_monthly_cash_flow ?? 0} format="currency" className="[&_.kpi-value]:text-accent-success" />
+          <KPICard label="Total Profit" value={summary?.total_profit ?? 0} format="currency" className="[&_.kpi-value]:text-sky-600" />
+          <KPICard label="Monthly Cash Flow" value={summary?.total_monthly_cash_flow ?? 0} format="currency" className="[&_.kpi-value]:text-sky-600" />
           <KPICard label="Total Equity" value={summary?.total_equity ?? 0} format="currency" />
         </motion.div>
 
         {/* Cash Flow Over Time Chart */}
         <motion.div variants={itemVariants}>
-          <div className="bg-[#0F0F1A] border border-[#1A1A2E] rounded-xl p-5">
-            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#94A3B8] mb-4">
+          <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-xs">
+            <p className="text-xs font-medium text-gray-500 tracking-wide mb-4">
               Cash Flow Over Time
             </p>
             {chartData.length >= 2 ? (
@@ -474,19 +476,19 @@ export default function PortfolioPage() {
                 <AreaChart data={chartData}>
                   <defs>
                     <linearGradient id="cfGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#6366F1" stopOpacity={0.2} />
-                      <stop offset="100%" stopColor="#6366F1" stopOpacity={0} />
+                      <stop offset="0%" stopColor="#84CC16" stopOpacity={0.08} />
+                      <stop offset="100%" stopColor="#84CC16" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1A1A2E" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#EAECF0" />
                   <XAxis
                     dataKey="date"
-                    tick={{ fill: '#94A3B8', fontSize: 11 }}
+                    tick={{ fill: '#667085', fontSize: 11 }}
                     axisLine={false}
                     tickLine={false}
                   />
                   <YAxis
-                    tick={{ fill: '#94A3B8', fontSize: 11 }}
+                    tick={{ fill: '#667085', fontSize: 11 }}
                     axisLine={false}
                     tickLine={false}
                     tickFormatter={(v: number) => formatCurrency(v)}
@@ -495,7 +497,7 @@ export default function PortfolioPage() {
                   <Area
                     type="monotone"
                     dataKey="cashFlow"
-                    stroke="#6366F1"
+                    stroke="#84CC16"
                     fill="url(#cfGradient)"
                     strokeWidth={2}
                   />
@@ -503,7 +505,7 @@ export default function PortfolioPage() {
               </ResponsiveContainer>
             ) : (
               <div className="flex items-center justify-center h-[200px]">
-                <p className="text-sm text-text-muted">
+                <p className="text-sm text-gray-400">
                   Add at least 2 closed deals to see your cash flow trend.
                 </p>
               </div>
@@ -515,8 +517,8 @@ export default function PortfolioPage() {
         {entries.length > 0 && (
           <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Strategy Breakdown Donut Chart */}
-            <div className="bg-[#0F0F1A] border border-white/10 rounded-xl p-6">
-              <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#94A3B8] mb-4">
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-xs">
+              <p className="text-xs font-medium text-gray-500 tracking-wide mb-4">
                 Portfolio by Strategy
               </p>
               {strategyBreakdownData.length > 0 ? (
@@ -529,15 +531,17 @@ export default function PortfolioPage() {
                         cy="50%"
                         innerRadius={55}
                         outerRadius={85}
-                        paddingAngle={2}
+                        paddingAngle={3}
                         dataKey="value"
                         nameKey="name"
+                        stroke="#FFFFFF"
+                        strokeWidth={2}
                         isAnimationActive={true}
-                        animationDuration={1200}
+                        animationDuration={800}
                         animationEasing="ease-out"
                       >
                         {strategyBreakdownData.map((entry) => (
-                          <Cell key={entry.name} fill={entry.color} stroke="transparent" />
+                          <Cell key={entry.name} fill={entry.color} />
                         ))}
                       </Pie>
                       <RechartsTooltip content={<DonutTooltipContent />} />
@@ -548,8 +552,8 @@ export default function PortfolioPage() {
                         y="46%"
                         textAnchor="middle"
                         dominantBaseline="central"
-                        className="fill-[#F1F5F9]"
-                        style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '28px', fontWeight: 600 }}
+                        className="fill-gray-900"
+                        style={{ fontSize: '28px', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}
                       >
                         {entries.length}
                       </text>
@@ -558,7 +562,7 @@ export default function PortfolioPage() {
                         y="57%"
                         textAnchor="middle"
                         dominantBaseline="central"
-                        className="fill-[#94A3B8]"
+                        className="fill-gray-500"
                         style={{ fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em' }}
                       >
                         deals
@@ -568,44 +572,44 @@ export default function PortfolioPage() {
                 </div>
               ) : (
                 <div className="flex items-center justify-center h-[220px]">
-                  <p className="text-sm text-text-muted">No strategy data yet.</p>
+                  <p className="text-sm text-gray-400">No strategy data yet.</p>
                 </div>
               )}
             </div>
 
             {/* Monthly Cash Flow Bar Chart */}
-            <div className="bg-[#0F0F1A] border border-white/10 rounded-xl p-6">
-              <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#94A3B8] mb-4">
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-xs">
+              <p className="text-xs font-medium text-gray-500 tracking-wide mb-4">
                 Monthly Cash Flow
               </p>
               {monthlyCashFlowData.length > 0 ? (
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={monthlyCashFlowData} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1A1A2E" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#EAECF0" vertical={false} />
                     <XAxis
                       dataKey="month"
-                      tick={{ fill: '#94A3B8', fontSize: 11 }}
+                      tick={{ fill: '#667085', fontSize: 11 }}
                       axisLine={false}
                       tickLine={false}
                     />
                     <YAxis
-                      tick={{ fill: '#94A3B8', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}
+                      tick={{ fill: '#667085', fontSize: 11 }}
                       axisLine={false}
                       tickLine={false}
                       tickFormatter={(v: number) => formatCurrency(v)}
                     />
-                    <RechartsTooltip content={<BarTooltipContent />} cursor={{ fill: '#1A1A2E' }} />
+                    <RechartsTooltip content={<BarTooltipContent />} cursor={{ fill: '#F2F4F7' }} />
                     <Bar
                       dataKey="cashFlow"
                       radius={[4, 4, 0, 0]}
                       isAnimationActive={true}
-                      animationDuration={1200}
+                      animationDuration={800}
                       animationEasing="ease-out"
                     >
                       {monthlyCashFlowData.map((entry, index) => (
                         <Cell
                           key={`bar-${index}`}
-                          fill={entry.cashFlow >= 0 ? '#10B981' : '#EF4444'}
+                          fill={entry.cashFlow >= 0 ? '#0EA5E9' : '#EF4444'}
                         />
                       ))}
                     </Bar>
@@ -613,7 +617,7 @@ export default function PortfolioPage() {
                 </ResponsiveContainer>
               ) : (
                 <div className="flex items-center justify-center h-[220px]">
-                  <p className="text-sm text-text-muted">No monthly cash flow data yet.</p>
+                  <p className="text-sm text-gray-400">No monthly cash flow data yet.</p>
                 </div>
               )}
             </div>
@@ -623,12 +627,12 @@ export default function PortfolioPage() {
         {/* Closed Deals Table */}
         <motion.div variants={itemVariants} className="space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#94A3B8]">
+            <h2 className="text-sm font-semibold text-gray-900">
               Closed Deals
-            </p>
+            </h2>
             <button
               onClick={() => setSheetOpen(true)}
-              className="flex items-center gap-1.5 text-xs font-medium text-accent-primary hover:text-accent-primary/80 transition-colors"
+              className="flex items-center gap-1.5 text-xs font-medium text-lime-700 hover:text-lime-600 transition-colors"
             >
               <Plus size={14} />
               Add closed deal
@@ -636,52 +640,52 @@ export default function PortfolioPage() {
           </div>
 
           {entries.length === 0 ? (
-            <div className="rounded-xl border border-[#1A1A2E] bg-[#0F0F1A] flex flex-col items-center justify-center py-16 gap-3">
-              <Inbox size={32} className="text-text-muted" />
-              <p className="text-sm text-text-muted">No closed deals yet</p>
+            <div className="rounded-lg border border-gray-200 bg-white flex flex-col items-center justify-center py-16 gap-3 shadow-xs">
+              <Inbox size={32} className="text-gray-300" />
+              <p className="text-sm text-gray-400">Close your first deal to get started</p>
             </div>
           ) : (
-            <div className="rounded-xl border border-[#1A1A2E] bg-[#0F0F1A] overflow-hidden">
+            <div className="rounded-lg border border-gray-200 bg-white overflow-hidden shadow-xs">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-[#1A1A2E]">
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Address</th>
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Strategy</th>
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Closed Date</th>
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Price</th>
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Profit</th>
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Monthly CF</th>
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3">Notes</th>
-                      <th className="text-left text-xs font-medium text-text-muted uppercase tracking-[0.08em] px-4 py-3 w-[60px]"></th>
+                    <tr className="border-b border-gray-200 bg-gray-50">
+                      <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-3">Address</th>
+                      <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-3">Strategy</th>
+                      <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-3">Closed Date</th>
+                      <th className="text-right text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-3">Price</th>
+                      <th className="text-right text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-3">Profit</th>
+                      <th className="text-right text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-3">Monthly CF</th>
+                      <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-3">Notes</th>
+                      <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-3 w-[60px]"></th>
                     </tr>
                   </thead>
                   <tbody>
                     {entries.map((entry: PortfolioEntry) => (
-                      <tr key={entry.id} className="group border-b border-[#1A1A2E] last:border-0 hover:bg-[#1A1A2E]/30 transition-colors">
-                        <td className="px-4 py-3 text-sm text-[#F1F5F9]">{entry.address}</td>
+                      <tr key={entry.id} className="group border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-3 text-sm text-gray-900">{entry.address}</td>
                         <td className="px-4 py-3">
                           <StrategyBadge strategy={entry.strategy} />
                         </td>
-                        <td className="px-4 py-3 text-sm text-text-secondary font-mono text-[13px]">
+                        <td className="px-4 py-3 text-sm text-gray-600 tabular-nums">
                           {formatMonthYear(entry.closed_date)}
                         </td>
-                        <td className="px-4 py-3 font-mono text-[13px] text-text-primary">
+                        <td className="px-4 py-3 text-right text-sm text-gray-900 tabular-nums">
                           {formatCurrency(entry.closed_price)}
                         </td>
-                        <td className={`px-4 py-3 font-mono text-[13px] ${parseFloat(String(entry.profit ?? 0)) >= 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
+                        <td className={`px-4 py-3 text-right text-sm tabular-nums ${parseFloat(String(entry.profit ?? 0)) >= 0 ? 'text-sky-600' : 'text-red-600'}`}>
                           {formatCurrency(entry.profit)}
                         </td>
-                        <td className="px-4 py-3 font-mono text-[13px] text-text-primary">
+                        <td className="px-4 py-3 text-right text-sm text-gray-900 tabular-nums">
                           {formatCurrency(entry.monthly_cash_flow)}
                         </td>
-                        <td className="px-4 py-3 text-sm text-[#94A3B8] italic max-w-[200px]">
+                        <td className="px-4 py-3 text-sm text-gray-500 italic max-w-[200px]">
                           <NoteCell notes={entry.notes} />
                         </td>
                         <td className="px-4 py-3">
                           <button
                             onClick={() => setEditingEntry(entry)}
-                            className="md:opacity-0 md:group-hover:opacity-100 p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-[#1A1A2E] transition-all"
+                            className="md:opacity-0 md:group-hover:opacity-100 p-1.5 rounded-md text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all"
                             aria-label="Edit entry"
                           >
                             <Pencil size={14} />
@@ -699,10 +703,10 @@ export default function PortfolioPage() {
 
       {/* Add Entry Sheet */}
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent className="bg-[#0F0F1A] border-[#1A1A2E] overflow-y-auto">
+        <SheetContent className="bg-white border-gray-200 overflow-y-auto">
           <SheetHeader>
-            <SheetTitle className="text-text-primary">Add Closed Deal</SheetTitle>
-            <SheetDescription className="text-text-muted">
+            <SheetTitle className="text-gray-900">Add Closed Deal</SheetTitle>
+            <SheetDescription className="text-gray-500">
               Record a deal you've closed to track in your portfolio.
             </SheetDescription>
           </SheetHeader>
@@ -721,14 +725,15 @@ export default function PortfolioPage() {
         onSave={(id, data) => editMutation.mutate({ id, data })}
         isSaving={editMutation.isPending}
       />
+      </FeatureGate>
     </AppShell>
   )
 }
 
-/* ── Notes cell with tooltip for long text ── */
+/* -- Notes cell with tooltip for long text -- */
 
 function NoteCell({ notes }: { notes: string | null }) {
-  if (!notes) return <span className="text-text-muted">-</span>
+  if (!notes) return <span className="text-gray-400">-</span>
 
   if (notes.length <= 40) return <>{notes}</>
 
@@ -738,7 +743,7 @@ function NoteCell({ notes }: { notes: string | null }) {
         <TooltipTrigger asChild>
           <span className="cursor-default">{truncate(notes, 40)}</span>
         </TooltipTrigger>
-        <TooltipContent className="max-w-xs bg-[#0F0F1A] border-[#1A1A2E] text-text-primary text-xs">
+        <TooltipContent className="max-w-xs bg-white border-gray-200 text-gray-900 text-xs shadow-lg">
           {notes}
         </TooltipContent>
       </Tooltip>

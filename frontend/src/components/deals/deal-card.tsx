@@ -32,8 +32,8 @@ export function DealCard({
         <div
           className={`absolute top-3 left-3 w-5 h-5 rounded border flex items-center justify-center transition-colors ${
             isSelected
-              ? 'bg-accent-primary border-accent-primary'
-              : 'border-border-subtle bg-transparent opacity-60 group-hover:opacity-100'
+              ? 'bg-lime-700 border-lime-700'
+              : 'border-gray-200 bg-transparent opacity-60 group-hover:opacity-100'
           }`}
         >
           {isSelected && (
@@ -49,7 +49,7 @@ export function DealCard({
         <button
           type="button"
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(deal.id) }}
-          className="absolute top-3 right-10 p-1 rounded text-red-400/70 hover:text-red-400 hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100"
+          className="absolute top-3 right-10 p-1 rounded text-red-400 hover:text-red-600 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
           aria-label="Delete deal"
         >
           <Trash2 size={14} />
@@ -63,8 +63,8 @@ export function DealCard({
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleCompare(deal.id) }}
           className={`absolute top-3 right-3 w-5 h-5 rounded border flex items-center justify-center transition-colors ${
             compareIds.has(deal.id)
-              ? 'bg-accent-primary border-accent-primary'
-              : 'border-border-subtle hover:border-text-muted bg-transparent'
+              ? 'bg-lime-700 border-lime-700'
+              : 'border-gray-200 hover:border-gray-400 bg-transparent'
           }`}
           aria-label={compareIds.has(deal.id) ? 'Remove from comparison' : 'Add to comparison'}
         >
@@ -79,25 +79,25 @@ export function DealCard({
       {/* Top row: strategy + status */}
       <div className={`flex items-center justify-between ${selectionMode ? 'pl-7' : 'pr-6'}`}>
         <StrategyBadge strategy={deal.strategy as Strategy} />
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-app-elevated text-text-secondary">
+        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
           {statusLabel(deal.status)}
         </span>
       </div>
 
       {/* Address */}
-      <p className="text-sm font-medium text-text-primary truncate">{deal.address}</p>
+      <p className="text-sm font-medium text-gray-900 truncate">{deal.address}</p>
 
       {/* Metrics row */}
       <div className="flex items-center justify-between">
         <div className="space-y-0.5">
-          <p className="text-xs text-text-muted">{deal.primary_metric_label ?? 'Primary Metric'}</p>
-          <p className="text-lg font-mono font-semibold text-text-primary">
+          <p className="text-xs text-gray-400">{deal.primary_metric_label ?? 'Primary Metric'}</p>
+          <p className="text-lg tabular-nums font-semibold text-gray-900">
             {formatMetricValue(deal.primary_metric_label, deal.primary_metric_value)}
           </p>
         </div>
         <div className="space-y-0.5 text-right">
-          <p className="text-xs text-text-muted">Risk Score</p>
-          <p className={`text-lg font-mono font-semibold ${riskColor(deal.risk_score)}`}>
+          <p className="text-xs text-gray-400">Risk Score</p>
+          <p className={`text-lg tabular-nums font-semibold ${riskColor(deal.risk_score)}`}>
             {deal.risk_score !== null ? deal.risk_score : '—'}
           </p>
         </div>
@@ -105,11 +105,11 @@ export function DealCard({
 
       {/* View link */}
       {!selectionMode ? (
-        <p className="text-xs font-medium text-accent-primary group-hover:text-accent-primary/80 transition-colors">
+        <p className="text-xs font-medium text-lime-700 group-hover:text-lime-600 transition-colors">
           View Analysis →
         </p>
       ) : (
-        <span className="text-xs font-medium text-text-muted">
+        <span className="text-xs font-medium text-gray-400">
           View Analysis →
         </span>
       )}
@@ -120,8 +120,8 @@ export function DealCard({
     return (
       <div
         onClick={() => onToggleSelection(deal.id)}
-        className={`relative p-5 rounded-xl border bg-app-surface transition-colors space-y-3 group cursor-pointer ${
-          isSelected ? 'border-accent-primary' : 'border-border-subtle hover:border-accent-primary/40'
+        className={`relative p-5 rounded-xl border bg-white shadow-xs transition-colors space-y-3 group cursor-pointer ${
+          isSelected ? 'border-lime-500' : 'border-gray-200 hover:border-lime-400'
         }`}
       >
         {cardContent}
@@ -132,7 +132,7 @@ export function DealCard({
   return (
     <Link
       to={`/analyze/results/${deal.id}`}
-      className="relative block p-5 rounded-xl border border-border-subtle bg-app-surface hover:border-accent-primary/40 transition-colors space-y-3 group"
+      className="relative block p-5 rounded-xl border border-gray-200 bg-white shadow-xs hover:border-lime-400 hover:shadow-sm transition-all space-y-3 group"
     >
       {cardContent}
     </Link>

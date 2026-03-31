@@ -58,8 +58,8 @@ export default function StrategySelectPage() {
     <AppShell title="Analyzer">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
-          <h2 className="text-xl font-semibold text-text-primary">Choose a Strategy</h2>
-          <p className="text-sm text-text-secondary mt-1">
+          <h2 className="text-xl font-semibold text-gray-900">Choose a Strategy</h2>
+          <p className="text-sm text-gray-600 mt-1">
             Select an investment strategy to analyze your deal.
           </p>
         </div>
@@ -74,14 +74,14 @@ export default function StrategySelectPage() {
             <motion.div key={s.strategy} variants={itemVariants}>
               <Link
                 to={`/analyze/${s.strategy}`}
-                className="group flex flex-col gap-3 rounded-xl border border-border-default bg-app-surface p-5 hover:border-accent-primary transition-colors duration-150"
+                className="group flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-5 hover:border-lime-500 shadow-xs hover:shadow-sm transition-all duration-150"
               >
                 <StrategyBadge strategy={s.strategy} />
-                <span className="font-semibold text-text-primary">{s.name}</span>
-                <span className="text-sm text-text-secondary leading-relaxed">{s.description}</span>
+                <span className="font-semibold text-gray-900">{s.name}</span>
+                <span className="text-sm text-gray-600 leading-relaxed">{s.description}</span>
                 <ArrowRight
                   size={16}
-                  className="text-text-muted group-hover:text-accent-primary transition-colors mt-auto"
+                  className="text-gray-400 group-hover:text-lime-700 transition-colors mt-auto"
                 />
               </Link>
             </motion.div>
