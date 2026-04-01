@@ -1,11 +1,11 @@
 /* ================================================================
-   PARCEL DESIGN SYSTEM -- CSS Variables + Tailwind Base
+   PARCEL DESIGN SYSTEM — Luxury Dark
    ================================================================
    Token architecture:
-   - :root         = light theme (new default)
-   - .dark         = dark theme (current look, preserved for rollback)
+   - :root         = dark theme (luxury default)
+   - .light        = light theme (opt-in via Settings toggle or prefers-color-scheme)
    - shadcn tokens = HSL components (no hsl() wrapper)
-   - app tokens    = hex values via var()
+   - app tokens    = hex/rgba values via var()
    ================================================================ */
 
 @tailwind base;
@@ -15,7 +15,7 @@
 /* ----------------------------------------------------------------
    FONT FACES
    Inter + JetBrains Mono loaded via Fontsource (see main.tsx)
-   Satoshi kept self-hosted for landing page brand headings
+   Satoshi self-hosted for display/KPI headings (licensing pending)
    ---------------------------------------------------------------- */
 @layer base {
   @font-face {
@@ -32,165 +32,210 @@
     font-display: swap;
     src: url('/fonts/Satoshi-VariableItalic.woff2') format('woff2-variations');
   }
+  @font-face {
+    font-family: 'Satoshi Fallback';
+    src: local('BlinkMacSystemFont'), local('Segoe UI'), local('system-ui');
+    ascent-override: 100%;
+    descent-override: 22%;
+    line-gap-override: 0%;
+    size-adjust: 104%;
+  }
 }
 
 /* ----------------------------------------------------------------
-   LIGHT THEME (default)
+   DARK THEME (default)
    ---------------------------------------------------------------- */
 @layer base {
   :root {
-    /* ---- App Backgrounds ---- */
-    --app-bg:       #F9FAFB;    /* gray-50: page background */
-    --app-surface:  #FFFFFF;    /* white: cards, panels */
-    --app-elevated: #FFFFFF;    /* white: modals, popovers (shadow distinguishes) */
-    --app-overlay:  #F2F4F7;    /* gray-100: secondary surfaces, sidebar */
+    /* ---- App Backgrounds (warm gray scale) ---- */
+    --app-bg:       #0C0B0A;   /* gray-0: page background */
+    --app-surface:  #1A1916;   /* gray-2: cards, panels */
+    --app-elevated: #22211D;   /* gray-3: modals, popovers, dropdowns */
+    --app-overlay:  #2A2924;   /* gray-4: command palette, full overlays */
 
-    /* ---- Borders ---- */
-    --border-subtle:  #EAECF0;  /* gray-200: card borders, dividers */
-    --border-default: #D0D5DD;  /* gray-300: input borders */
-    --border-strong:  #98A2B3;  /* gray-400: emphasized dividers */
+    /* ---- Borders (rgba white at 5 opacity levels) ---- */
+    --border-ghost:    rgba(255, 255, 255, 0.03);
+    --border-subtle:   rgba(255, 255, 255, 0.04);
+    --border-default:  rgba(255, 255, 255, 0.06);
+    --border-strong:   rgba(255, 255, 255, 0.08);
+    --border-emphasis: rgba(255, 255, 255, 0.12);
 
-    /* ---- Accent ---- */
-    --accent-primary:   #84CC16;  /* lime-500: brand primary */
-    --accent-hover:     #4D7C0F;  /* lime-700: buttons, pressed */
-    --accent-secondary: #65A30D;  /* lime-600: links, hover */
-    --accent-success:   #0EA5E9;  /* sky-500: success */
-    --accent-warning:   #F59E0B;  /* amber-500 */
-    --accent-danger:    #EF4444;  /* red-500 */
-    --accent-info:      #6366F1;  /* indigo-500 */
+    /* ---- Text (warm cream hierarchy) ---- */
+    --text-primary:   #F0EDE8;   /* 17.6:1 on base — AAA */
+    --text-secondary: #A09D98;   /* 7.5:1 on base — AAA */
+    --text-muted:     #7A7872;   /* 3.9:1 — AA-large only, 14px+ */
+    --text-disabled:  #5C5A56;   /* 3.0:1 — decorative + multi-cue */
 
-    /* ---- Text ---- */
-    --text-primary:   #1D2939;  /* gray-800: headings, primary text */
-    --text-secondary: #667085;  /* gray-500: body secondary */
-    --text-muted:     #98A2B3;  /* gray-400: placeholder, muted */
-    --text-disabled:  #D0D5DD;  /* gray-300: disabled state */
+    /* ---- Accent (warm violet) ---- */
+    --accent-primary:   #8B7AFF;
+    --accent-hover:     #7B6AEF;
+    --accent-secondary: #A89FFF;
+    --accent-active:    #6B5AD6;
+    --accent-success:   #6DBEA3;
+    --accent-warning:   #D4A867;
+    --accent-danger:    #D4766A;
+    --accent-info:      #7B9FCC;
 
-    /* ---- Strategy Badges (pastel bg, dark text for light theme) ---- */
-    --strategy-wholesale-bg:   #FEF3C7;  /* amber-100 */
-    --strategy-wholesale-text: #92400E;  /* amber-800 */
-    --strategy-creative-bg:    #EDE9FE;  /* violet-100 */
-    --strategy-creative-text:  #5B21B6;  /* violet-800 */
-    --strategy-brrrr-bg:       #DBEAFE;  /* blue-100 */
-    --strategy-brrrr-text:     #1E40AF;  /* blue-800 */
-    --strategy-buyhold-bg:     #D1FAE5;  /* emerald-100 */
-    --strategy-buyhold-text:   #065F46;  /* emerald-800 */
-    --strategy-flip-bg:        #FFE4E6;  /* rose-100 */
-    --strategy-flip-text:      #9F1239;  /* rose-800 */
+    /* ---- Accent Surfaces ---- */
+    --accent-surface:       rgba(139, 122, 255, 0.08);
+    --accent-surface-hover: rgba(139, 122, 255, 0.12);
+    --accent-border:        rgba(139, 122, 255, 0.20);
 
-    /* ---- shadcn/ui tokens (HSL components, light) ---- */
-    --background:           210 20% 98%;        /* #F9FAFB */
-    --foreground:           220 26% 14%;        /* #1D2939 */
+    /* ---- Financial ---- */
+    --color-profit:    #7CCBA5;
+    --color-profit-bg: rgba(124, 203, 165, 0.10);
+    --color-loss:      #D4766A;
+    --color-loss-bg:   rgba(212, 118, 106, 0.10);
 
-    --card:                 0 0% 100%;          /* #FFFFFF */
-    --card-foreground:      222 47% 11%;        /* #101828 */
+    /* ---- Strategy Badges (canonical — BLOCK-02 resolution) ---- */
+    --strategy-wholesale-bg:     rgba(229, 168, 75, 0.08);
+    --strategy-wholesale-text:   #E5A84B;
+    --strategy-wholesale-border: rgba(229, 168, 75, 0.20);
+    --strategy-creative-bg:      rgba(139, 122, 255, 0.08);
+    --strategy-creative-text:    #C4BEFF;
+    --strategy-creative-border:  rgba(196, 190, 255, 0.20);
+    --strategy-brrrr-bg:         rgba(123, 159, 204, 0.08);
+    --strategy-brrrr-text:       #7B9FCC;
+    --strategy-brrrr-border:     rgba(123, 159, 204, 0.20);
+    --strategy-buyhold-bg:       rgba(124, 203, 165, 0.08);
+    --strategy-buyhold-text:     #7CCBA5;
+    --strategy-buyhold-border:   rgba(124, 203, 165, 0.20);
+    --strategy-flip-bg:          rgba(212, 118, 106, 0.08);
+    --strategy-flip-text:        #D4766A;
+    --strategy-flip-border:      rgba(212, 118, 106, 0.20);
 
-    --popover:              0 0% 100%;          /* #FFFFFF */
-    --popover-foreground:   222 47% 11%;        /* #101828 */
+    /* ---- Easing (canonical — BLOCK-04 resolution) ---- */
+    --ease-luxury: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --ease-vercel: cubic-bezier(0.22, 1, 0.36, 1);
 
-    --primary:              80 82% 24%;         /* lime-700 #4D7C0F for buttons */
-    --primary-foreground:   0 0% 100%;          /* white text on lime */
+    /* ---- shadcn/ui HSL tokens (dark) ---- */
+    --background:           30 9% 4%;
+    --foreground:           30 6% 93%;
 
-    --secondary:            220 14% 96%;        /* #F2F4F7 */
-    --secondary-foreground: 220 9% 46%;         /* #667085 */
+    --card:                 36 8% 8%;
+    --card-foreground:      30 6% 93%;
 
-    --muted:                220 14% 96%;        /* #F2F4F7 */
-    --muted-foreground:     218 15% 65%;        /* #98A2B3 */
+    --popover:              36 8% 8%;
+    --popover-foreground:   30 6% 93%;
 
-    --accent:               87 100% 93%;        /* lime-50 tinted */
-    --accent-foreground:    80 82% 24%;         /* lime-700 */
+    /* Theme-aware: dark text on violet in dark mode */
+    --primary:              248 100% 74%;
+    --primary-foreground:   30 9% 4%;
 
-    --destructive:          0 84% 60%;          /* #EF4444 */
-    --destructive-foreground: 0 0% 100%;        /* white */
+    --secondary:            36 7% 12%;
+    --secondary-foreground: 30 6% 93%;
 
-    --border:               220 13% 91%;        /* #EAECF0 gray-200 */
-    --input:                218 11% 82%;        /* #D0D5DD gray-300 */
-    --ring:                 84 81% 44%;         /* lime-500 #84CC16 */
+    --muted:                36 7% 12%;
+    --muted-foreground:     36 5% 47%;
 
+    --accent:               248 100% 74%;
+    --accent-foreground:    30 6% 93%;
+
+    --destructive:          8 50% 62%;
+    --destructive-foreground: 30 6% 93%;
+
+    --border:               36 6% 14%;
+    --input:                36 7% 12%;
+    --ring:                 248 100% 74%;
     --radius: 0.5rem;
-
-    /* ---- Shadows (full values, not HSL) ---- */
-    --shadow-xs: 0 1px 2px rgba(16,24,40,0.05);
-    --shadow-sm: 0 1px 3px rgba(16,24,40,0.1), 0 1px 2px rgba(16,24,40,0.06);
-    --shadow-md: 0 4px 8px -2px rgba(16,24,40,0.1), 0 2px 4px -2px rgba(16,24,40,0.06);
   }
 
   /* ----------------------------------------------------------------
-     DARK THEME (preserves current look -- activated via .dark on <html>)
+     LIGHT THEME (opt-in via .light on <html>)
+     Respects prefers-color-scheme; toggle overrides in Settings.
      ---------------------------------------------------------------- */
-  .dark {
+  .light {
     /* ---- App Backgrounds ---- */
-    --app-bg:       #08080F;
-    --app-surface:  #0F0F1A;
-    --app-elevated: #16162A;
-    --app-overlay:  #1C1C30;
+    --app-bg:       #F9FAFB;
+    --app-surface:  #FFFFFF;
+    --app-elevated: #FFFFFF;
+    --app-overlay:  #F2F4F7;
 
     /* ---- Borders ---- */
-    --border-subtle:  #1A1A2E;
-    --border-default: #252540;
-    --border-strong:  #303055;
-
-    /* ---- Accent (olive/lime works in both themes) ---- */
-    --accent-primary:   #84CC16;
-    --accent-hover:     #4D7C0F;
-    --accent-secondary: #65A30D;
-    --accent-success:   #0EA5E9;
-    --accent-warning:   #F59E0B;
-    --accent-danger:    #EF4444;
-    --accent-info:      #6366F1;
+    --border-ghost:    #F2F4F7;
+    --border-subtle:   #EAECF0;
+    --border-default:  #D0D5DD;
+    --border-strong:   #98A2B3;
+    --border-emphasis: #667085;
 
     /* ---- Text ---- */
-    --text-primary:   #F1F5F9;
-    --text-secondary: #94A3B8;
-    --text-muted:     #475569;
-    --text-disabled:  #334155;
+    --text-primary:   #1D2939;
+    --text-secondary: #667085;
+    --text-muted:     #98A2B3;
+    --text-disabled:  #D0D5DD;
 
-    /* ---- Strategy Badges (dark bg, bright text -- current look) ---- */
-    --strategy-wholesale-bg:   #451A03;
-    --strategy-wholesale-text: #FCD34D;
-    --strategy-creative-bg:    #2E1065;
-    --strategy-creative-text:  #C4B5FD;
-    --strategy-brrrr-bg:       #0C1A4A;
-    --strategy-brrrr-text:     #93C5FD;
-    --strategy-buyhold-bg:     #064E3B;
-    --strategy-buyhold-text:   #6EE7B7;
-    --strategy-flip-bg:        #431407;
-    --strategy-flip-text:      #FCA5A1;
+    /* ---- Accent (violet in both themes) ---- */
+    --accent-primary:   #8B7AFF;
+    --accent-hover:     #7B6AEF;
+    --accent-secondary: #6B5AD6;
+    --accent-active:    #5A49BD;
+    --accent-success:   #059669;
+    --accent-warning:   #D97706;
+    --accent-danger:    #DC2626;
+    --accent-info:      #4F46E5;
 
-    /* ---- shadcn/ui tokens (dark) ---- */
-    --background:           240 50% 4%;
-    --foreground:           0 0% 98%;
+    /* ---- Accent Surfaces (light) ---- */
+    --accent-surface:       rgba(139, 122, 255, 0.06);
+    --accent-surface-hover: rgba(139, 122, 255, 0.10);
+    --accent-border:        rgba(139, 122, 255, 0.25);
 
-    --card:                 240 43% 8%;
-    --card-foreground:      0 0% 98%;
+    /* ---- Financial (light) ---- */
+    --color-profit:    #059669;
+    --color-profit-bg: rgba(5, 150, 105, 0.08);
+    --color-loss:      #DC2626;
+    --color-loss-bg:   rgba(220, 38, 38, 0.08);
 
-    --popover:              240 43% 8%;
-    --popover-foreground:   0 0% 98%;
+    /* ---- Strategy Badges (pastel bg, dark text for light) ---- */
+    --strategy-wholesale-bg:     #FEF3C7;
+    --strategy-wholesale-text:   #92400E;
+    --strategy-wholesale-border: rgba(146, 64, 14, 0.20);
+    --strategy-creative-bg:      #EDE9FE;
+    --strategy-creative-text:    #5B21B6;
+    --strategy-creative-border:  rgba(91, 33, 182, 0.20);
+    --strategy-brrrr-bg:         #DBEAFE;
+    --strategy-brrrr-text:       #1E40AF;
+    --strategy-brrrr-border:     rgba(30, 64, 175, 0.20);
+    --strategy-buyhold-bg:       #D1FAE5;
+    --strategy-buyhold-text:     #065F46;
+    --strategy-buyhold-border:   rgba(6, 95, 70, 0.20);
+    --strategy-flip-bg:          #FFE4E6;
+    --strategy-flip-text:        #9F1239;
+    --strategy-flip-border:      rgba(159, 18, 57, 0.20);
 
-    --primary:              84 81% 44%;         /* lime-500 for dark */
-    --primary-foreground:   240 50% 4%;
+    /* ---- Easing (same in both themes — included for completeness) ---- */
+    --ease-luxury: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --ease-vercel: cubic-bezier(0.22, 1, 0.36, 1);
 
-    --secondary:            240 30% 12%;
-    --secondary-foreground: 0 0% 98%;
+    /* ---- shadcn/ui HSL tokens (light) ---- */
+    --background:           210 20% 98%;
+    --foreground:           220 26% 14%;
 
-    --muted:                240 30% 12%;
-    --muted-foreground:     240 5% 60%;
+    --card:                 0 0% 100%;
+    --card-foreground:      222 47% 11%;
 
-    --accent:               240 30% 16%;
-    --accent-foreground:    0 0% 98%;
+    --popover:              0 0% 100%;
+    --popover-foreground:   222 47% 11%;
 
-    --destructive:          0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
+    /* Theme-aware: cream/white text on violet in light mode */
+    --primary:              248 100% 74%;
+    --primary-foreground:   0 0% 100%;
 
-    --border:               240 30% 14%;
-    --input:                240 30% 12%;
-    --ring:                 84 81% 44%;         /* lime-500 for dark */
+    --secondary:            220 14% 96%;
+    --secondary-foreground: 220 9% 46%;
 
+    --muted:                220 14% 96%;
+    --muted-foreground:     218 15% 65%;
+
+    --accent:               248 100% 93%;
+    --accent-foreground:    248 100% 74%;
+
+    --destructive:          0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border:               220 13% 91%;
+    --input:                218 11% 82%;
+    --ring:                 248 100% 74%;
     --radius: 0.5rem;
-
-    /* ---- Shadows (dark -- heavier opacity) ---- */
-    --shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
-    --shadow-md: 0 4px 8px -2px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.3);
   }
 }
 
@@ -210,30 +255,15 @@
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
-    /* cv02: alt a, cv03: alt g, cv04: alt i, cv11: single-story a --
-       these Inter OpenType features improve readability at small sizes */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Financial numbers: tabular-nums on body font (Inter), NOT mono
-     Keeps font-mono for JetBrains Mono on code/AI output only */
+  /* Financial numbers: tabular-nums on body font (Inter), NOT mono */
   [data-financial],
   .financial {
     font-variant-numeric: tabular-nums lining-nums;
-    font-weight: 500;
-  }
-
-  /* App shell density: 13px base, 500 weight for UI elements */
-  .app-shell {
-    font-size: 13px;
-    line-height: 20px;
-    font-weight: 500;
-  }
-
-  /* Long-form content: chat messages, descriptions, notes */
-  .prose-content {
-    font-size: 14px;
-    line-height: 22px;
-    font-weight: 400;
+    font-feature-settings: 'tnum' 1, 'lnum' 1, 'zero' 1;
   }
 }
 
@@ -246,33 +276,75 @@
     font-size: 11px;
     line-height: 16px;
     font-weight: 600;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 
-  /* KPI hero numbers (large financial display) */
+  /* KPI hero numbers — Satoshi 300, the core luxury signal */
   .text-kpi-display {
+    font-family: 'Satoshi', 'Satoshi Fallback', system-ui, sans-serif;
     font-variant-numeric: tabular-nums lining-nums;
-    font-weight: 700;
-    letter-spacing: -0.025em;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+  }
+
+  /* Card top-edge highlight (subtle light catch) */
+  .edge-highlight {
+    @apply relative overflow-hidden;
+  }
+  .edge-highlight::after {
+    content: '';
+    @apply absolute top-0 left-[10%] right-[10%] h-px pointer-events-none;
+    background: linear-gradient(90deg,
+      transparent, rgba(255,255,255,0.08) 30%,
+      rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.08) 70%, transparent);
+  }
+
+  /* Glass surface */
+  .glass {
+    background: rgba(12, 11, 10, 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* Focus ring — violet double ring */
+  .focus-ring {
+    @apply focus-visible:outline-none;
+    @apply focus-visible:ring-2 focus-visible:ring-[#0C0B0A];
+    @apply focus-visible:ring-offset-2;
+    ring-offset-color: rgba(139, 122, 255, 0.5);
+  }
+
+  /* Luxury dark scrollbar */
+  .scrollbar-luxury::-webkit-scrollbar { width: 4px; }
+  .scrollbar-luxury::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-luxury::-webkit-scrollbar-thumb {
+    background: rgba(240, 237, 232, 0.10);
+    border-radius: 9999px;
+  }
+  .scrollbar-luxury::-webkit-scrollbar-thumb:hover {
+    background: rgba(240, 237, 232, 0.18);
+  }
+  .scrollbar-luxury {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(240, 237, 232, 0.10) transparent;
   }
 }
 
 /* ----------------------------------------------------------------
-   GRADIENT BLOB DRIFT ANIMATIONS (landing page)
+   GRADIENT BLOB DRIFT ANIMATIONS (landing page — preserved)
    ---------------------------------------------------------------- */
 @keyframes drift1 {
   0%, 100% { transform: translate(0, 0) scale(1); }
   33%       { transform: translate(80px, -60px) scale(1.1); }
   66%       { transform: translate(-40px, 40px) scale(0.95); }
 }
-
 @keyframes drift2 {
   0%, 100% { transform: translate(0, 0) scale(1); }
   33%       { transform: translate(-60px, 80px) scale(1.05); }
   66%       { transform: translate(60px, -30px) scale(1.1); }
 }
-
 @keyframes drift3 {
   0%, 100% { transform: translate(0, 0) scale(1); }
   50%       { transform: translate(40px, 60px) scale(0.9); }
@@ -283,30 +355,27 @@
 .blob-3 { animation: drift3 18s ease-in-out infinite; }
 
 /* ----------------------------------------------------------------
-   LIVE DEAL TICKER
+   LIVE DEAL TICKER (landing page — preserved)
    ---------------------------------------------------------------- */
 @keyframes ticker {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
-
 .ticker-animate {
   animation: ticker 40s linear infinite;
   will-change: transform;
 }
-
 .ticker-animate:hover {
   animation-play-state: paused;
 }
 
 /* ----------------------------------------------------------------
-   SKELETON SHIMMER (theme-aware via CSS variables)
+   SKELETON SHIMMER (dark-aware)
    ---------------------------------------------------------------- */
 @keyframes skeleton-shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
-
 .skeleton-shimmer {
   position: relative;
   overflow: hidden;
@@ -329,10 +398,32 @@
 }
 
 /* ----------------------------------------------------------------
-   REDUCED MOTION
+   REDUCED MOTION (BLOCK-06 resolution — global)
    ---------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  .blob-1, .blob-2, .blob-3 { animation: none; }
-  .ticker-animate { animation: none; }
-  .skeleton-shimmer { animation: none; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ----------------------------------------------------------------
+   PRINT STYLESHEET (NB-08 resolution)
+   ---------------------------------------------------------------- */
+@media print {
+  body { visibility: hidden; }
+  body::after {
+    visibility: visible;
+    display: block;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 16px;
+    color: #333;
+    content: 'Use Export PDF for printable reports.';
+  }
 }

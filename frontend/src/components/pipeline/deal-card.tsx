@@ -9,7 +9,7 @@ import type { PipelineCard, Stage } from './constants'
 
 /** Strategy badge — color-coded pill by strategy key. */
 function StrategyBadge({ strategy }: { strategy: string }) {
-  const colors = STRATEGY_COLORS[strategy] ?? { bg: '#F2F4F7', text: '#667085' }
+  const colors = STRATEGY_COLORS[strategy] ?? { bg: 'rgba(122,120,114,0.12)', text: '#7A7872' }
   return (
     <span
       className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
@@ -24,7 +24,7 @@ function StrategyBadge({ strategy }: { strategy: string }) {
 function RiskDot({ days }: { days: number }) {
   if (days < 14) return null
   const isStale = days >= 30
-  const color = isStale ? '#DC2626' : '#D97706'
+  const color = isStale ? '#D4766A' : '#D4A867'
   const label = isStale ? `Stale — ${days}d in stage` : `Aging — ${days}d in stage`
   return (
     <span
@@ -68,25 +68,25 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
 
   // Days-in-stage text color
   const daysColor = card.days_in_stage >= 30
-    ? 'text-red-600'
+    ? 'text-[#D4766A]'
     : card.days_in_stage >= 14
-      ? 'text-amber-600'
-      : 'text-gray-400'
+      ? 'text-[#D4A867]'
+      : 'text-[#7A7872]'
 
   return (
     <div
       className={[
-        'group relative rounded-[10px] border bg-white py-3.5 px-4 space-y-2.5 transition-all duration-150 outline-none',
+        'group relative rounded-xl border bg-[#22211D] py-3.5 px-4 space-y-2.5 transition-all duration-150 outline-none',
         isDragging
-          ? 'opacity-35 border-dashed border-gray-300 bg-gray-50'
+          ? 'opacity-50 border-dashed border-white/[0.06] shadow-[0_0_24px_rgba(139,122,255,0.15)]'
           : isFocused
-            ? 'ring-2 ring-indigo-500/50 ring-offset-2 ring-offset-gray-50 border-indigo-400/40'
-            : 'border-gray-200 hover:border-gray-300 hover:shadow-sm',
+            ? 'ring-2 ring-[#8B7AFF]/50 ring-offset-2 ring-offset-[#0C0B0A] border-[#8B7AFF]/40'
+            : 'border-white/[0.06] hover:border-white/[0.12] hover:-translate-y-px',
       ].join(' ')}
     >
       {/* Address + Actions */}
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[13px] font-medium text-gray-900 leading-snug line-clamp-2">
+        <p className="text-[13px] font-medium text-[#F0EDE8] leading-snug line-clamp-2">
           {card.address}
         </p>
         <div className="flex items-center gap-1 flex-shrink-0 mt-0.5">
@@ -96,7 +96,7 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
               aria-label="Deal actions"
               aria-haspopup="true"
               aria-expanded={menuOpen}
-              className="opacity-100 md:opacity-0 md:group-hover:opacity-100 text-gray-400 hover:text-gray-600 transition-all min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 flex items-center justify-center"
+              className="opacity-100 md:opacity-0 md:group-hover:opacity-100 text-[#7A7872] hover:text-[#A09D98] transition-all min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 flex items-center justify-center"
               onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation()
@@ -108,7 +108,7 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
           )}
           <GripVertical
             size={14}
-            className="hidden md:block text-gray-300 hover:text-gray-400 cursor-grab active:cursor-grabbing transition-colors"
+            className="hidden md:block text-[#7A7872]/50 hover:text-[#7A7872] cursor-grab active:cursor-grabbing transition-colors"
           />
         </div>
       </div>
@@ -117,8 +117,8 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
       {menuOpen && (onRemove || onCloseDeal) && (
         <div
           ref={menuRef}
-          className="absolute top-10 right-3 z-40 rounded-lg border border-gray-200 bg-white shadow-lg py-1"
-          style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06)' }}
+          className="absolute top-10 right-3 z-40 rounded-lg border border-white/[0.06] bg-[#1A1916] shadow-lg py-1"
+          style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.30), 0 1px 3px rgba(0,0,0,0.20)' }}
           onPointerDown={(e) => e.stopPropagation()}
           onKeyDown={(e) => {
             if (e.key === 'Escape') {
@@ -130,7 +130,7 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
           {onCloseDeal && card.stage !== 'dead' && (
             <button
               type="button"
-              className="flex items-center gap-2 px-3 py-2 text-[13px] text-gray-600 hover:bg-gray-50 hover:text-emerald-600 w-full transition-colors min-h-[44px]"
+              className="flex items-center gap-2 px-3 py-2 text-[13px] text-[#A09D98] hover:bg-white/[0.04] hover:text-[#7CCBA5] w-full transition-colors min-h-[44px]"
               onClick={() => {
                 onCloseDeal(card)
                 setMenuOpen(false)
@@ -144,7 +144,7 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
             <>
               <button
                 type="button"
-                className="flex items-center justify-between gap-2 px-3 py-2 text-[13px] text-gray-600 hover:bg-gray-50 hover:text-indigo-600 w-full transition-colors min-h-[44px]"
+                className="flex items-center justify-between gap-2 px-3 py-2 text-[13px] text-[#A09D98] hover:bg-white/[0.04] hover:text-[#8B7AFF] w-full transition-colors min-h-[44px]"
                 onClick={() => setShowMoveMenu((v) => !v)}
               >
                 <span className="flex items-center gap-2">
@@ -153,12 +153,12 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
                 </span>
               </button>
               {showMoveMenu && (
-                <div className="border-t border-gray-100 py-1">
+                <div className="border-t border-white/[0.06] py-1">
                   {STAGES.filter((s) => s.key !== card.stage).map((stage) => (
                     <button
                       key={stage.key}
                       type="button"
-                      className="flex items-center gap-2 px-3 py-2 text-[13px] text-gray-600 hover:bg-gray-50 w-full transition-colors min-h-[44px]"
+                      className="flex items-center gap-2 px-3 py-2 text-[13px] text-[#A09D98] hover:bg-white/[0.04] w-full transition-colors min-h-[44px]"
                       onClick={() => {
                         onMoveStage(card.pipeline_id, card.stage, stage.key)
                         setMenuOpen(false)
@@ -178,10 +178,10 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
           )}
           {onRemove && (
             <>
-              {(onCloseDeal || onMoveStage) && <div className="border-t border-gray-100" />}
+              {(onCloseDeal || onMoveStage) && <div className="border-t border-white/[0.06]" />}
               <button
                 type="button"
-                className="flex items-center gap-2 px-3 py-2 text-[13px] text-gray-600 hover:bg-gray-50 hover:text-red-600 w-full transition-colors min-h-[44px]"
+                className="flex items-center gap-2 px-3 py-2 text-[13px] text-[#A09D98] hover:bg-white/[0.04] hover:text-[#D4766A] w-full transition-colors min-h-[44px]"
                 onClick={() => {
                   onRemove(card.pipeline_id, card.stage)
                   setMenuOpen(false)
@@ -203,7 +203,7 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
       {/* Key metric + days-in-stage + risk dot */}
       <div className="flex items-center justify-between">
         {card.asking_price != null && card.asking_price > 0 && (
-          <span className="text-[12px] tabular-nums font-medium text-gray-700">
+          <span className="text-[12px] tabular-nums font-medium text-[#A09D98]">
             ${card.asking_price.toLocaleString()}
           </span>
         )}

@@ -35,7 +35,6 @@ function formatValue(value: number, format: Format): string {
  */
 export function KPICard({ label, value, format, delta, loading, className, sparklineData }: KPICardProps) {
   const animated = useCountUp(value)
-  const isPositive = delta === undefined || delta >= 0
 
   const chartData = useMemo(() => {
     if (!sparklineData || sparklineData.length === 0) return null
@@ -50,26 +49,24 @@ export function KPICard({ label, value, format, delta, loading, className, spark
     return <SkeletonCard className={className} lines={2} />
   }
 
-  const strokeColor = isPositive ? '#65A30D' : '#DC2626'
-  const fillOpacity = 0.08
+  const strokeColor = '#8B7AFF'
 
   return (
     <div
       className={cn(
-        'rounded-xl border border-gray-200 bg-white p-5 space-y-1 overflow-hidden',
-        'shadow-[0_1px_2px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)]',
+        'bg-[#1A1916] border border-white/[0.04] rounded-xl shadow-xs edge-highlight p-5 space-y-1 overflow-hidden bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(139,122,255,0.02),transparent)]',
         className
       )}
     >
-      <p className="text-xs font-medium text-gray-500 tracking-wide">{label}</p>
-      <p className="text-3xl font-semibold text-gray-900 tabular-nums">
+      <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#A09D98]">{label}</p>
+      <p className="text-kpi-display text-3xl text-[#F0EDE8] tabular-nums">
         {formatValue(animated, format)}
       </p>
       {delta !== undefined && (
         <p
           className={cn(
             'text-xs font-medium tabular-nums',
-            delta >= 0 ? 'text-sky-600' : 'text-red-600'
+            delta >= 0 ? 'text-[#6DBEA3]' : 'text-[#D4766A]'
           )}
         >
           {delta >= 0 ? '\u2191' : '\u2193'} {Math.abs(delta).toFixed(1)}
@@ -82,7 +79,8 @@ export function KPICard({ label, value, format, delta, loading, className, spark
             <AreaChart data={chartData} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
               <defs>
                 <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={strokeColor} stopOpacity={fillOpacity} />
+                  <stop offset="0%" stopColor={strokeColor} stopOpacity={0.20} />
+                  <stop offset="50%" stopColor={strokeColor} stopOpacity={0.06} />
                   <stop offset="100%" stopColor={strokeColor} stopOpacity={0} />
                 </linearGradient>
               </defs>
@@ -93,7 +91,7 @@ export function KPICard({ label, value, format, delta, loading, className, spark
                 strokeWidth={1.5}
                 fill={`url(#${gradientId})`}
                 isAnimationActive={true}
-                animationDuration={1200}
+                animationDuration={500}
                 animationEasing="ease-out"
               />
             </AreaChart>

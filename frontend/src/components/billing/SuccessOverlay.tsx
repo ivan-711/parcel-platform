@@ -49,7 +49,7 @@ export function SuccessOverlay() {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
 
-    const colors = ['#4D7C0F', '#84CC16', '#A3E635', '#65A30D', '#EAB308', '#0EA5E9']
+    const colors = ['#8B7AFF', '#A89FFF', '#7CCBA5', '#D4A867', '#F0EDE8', '#6B5AD6', '#D4766A']
     const particles: { x: number; y: number; vx: number; vy: number; color: string; size: number; rotation: number; rv: number }[] = []
 
     for (let i = 0; i < 80; i++) {
@@ -103,7 +103,7 @@ export function SuccessOverlay() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#0C0B0A]/80 backdrop-blur-xl backdrop-saturate-150"
           onClick={dismiss}
         >
           <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
@@ -113,24 +113,24 @@ export function SuccessOverlay() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative z-10 w-full max-w-md bg-white rounded-xl border border-gray-200 shadow-2xl p-8 mx-4"
+            className="relative z-10 w-full max-w-md bg-[#1A1916] rounded-xl border border-white/[0.06] shadow-2xl p-8 mx-4"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Animated checkmark */}
-            <div className="mx-auto w-16 h-16 rounded-full bg-lime-100 flex items-center justify-center mb-6">
+            <div className="mx-auto w-16 h-16 rounded-full bg-[#6DBEA3]/15 flex items-center justify-center mb-6">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
               >
-                <Check size={32} className="text-lime-700" strokeWidth={3} />
+                <Check size={32} className="text-[#6DBEA3]" strokeWidth={3} />
               </motion.div>
             </div>
 
-            <h2 className="text-2xl font-bold text-gray-900 text-center">
+            <h2 className="text-2xl font-bold text-[#F0EDE8] text-center">
               Welcome to Pro!
             </h2>
-            <p className="text-base text-gray-500 text-center mt-2 mb-6">
+            <p className="text-base text-[#A09D98] text-center mt-2 mb-6">
               You now have full access to all Parcel features.
             </p>
 
@@ -138,10 +138,10 @@ export function SuccessOverlay() {
             <ul className="space-y-3 mb-8">
               {FEATURES.map(({ label }) => (
                 <li key={label} className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-lime-100 flex items-center justify-center shrink-0">
-                    <Check size={12} className="text-lime-700" />
+                  <div className="w-5 h-5 rounded-full bg-[#8B7AFF]/15 flex items-center justify-center shrink-0">
+                    <Check size={12} className="text-[#8B7AFF]" />
                   </div>
-                  <span className="text-sm text-gray-700">{label}</span>
+                  <span className="text-sm text-[#A09D98]">{label}</span>
                 </li>
               ))}
             </ul>
@@ -151,7 +151,7 @@ export function SuccessOverlay() {
                 dismiss()
                 navigate('/analyze')
               }}
-              className="w-full h-11 rounded-lg bg-lime-700 hover:bg-lime-800 text-white text-sm font-medium transition-colors cursor-pointer"
+              className="w-full h-11 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-[#0C0B0A] text-sm font-medium transition-all cursor-pointer"
             >
               Start Analyzing Deals
             </button>

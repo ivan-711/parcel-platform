@@ -21,21 +21,22 @@ export interface PipelineCard {
 }
 
 export const STAGES: { key: Stage; label: string; color: string }[] = [
-  { key: 'lead',           label: 'Lead',           color: '#64748B' },
-  { key: 'analyzing',      label: 'Analyzing',      color: '#4D7C0F' },
-  { key: 'offer_sent',     label: 'Offer Sent',     color: '#D97706' },
-  { key: 'under_contract', label: 'Under Contract', color: '#3B82F6' },
-  { key: 'due_diligence',  label: 'Due Diligence',  color: '#7C3AED' },
-  { key: 'closed',         label: 'Closed',         color: '#059669' },
-  { key: 'dead',           label: 'Dead',            color: '#DC2626' },
+  { key: 'lead',           label: 'Lead',           color: '#7A7872' },
+  { key: 'analyzing',      label: 'Analyzing',      color: '#8B7AFF' },
+  { key: 'offer_sent',     label: 'Offer Sent',     color: '#D4A867' },
+  { key: 'under_contract', label: 'Under Contract', color: '#7B9FCC' },
+  { key: 'due_diligence',  label: 'Due Diligence',  color: '#A89FFF' },
+  { key: 'closed',         label: 'Closed',         color: '#7CCBA5' },
+  { key: 'dead',           label: 'Dead',            color: '#D4766A' },
 ]
 
+/* Canonical strategy badge colors — Section 1.8 of LUXURY-DESIGN-SYSTEM.md */
 export const STRATEGY_COLORS: Record<string, { bg: string; text: string }> = {
-  wholesale:        { bg: '#FEF3C7', text: '#92400E' },
-  creative_finance: { bg: '#EDE9FE', text: '#5B21B6' },
-  brrrr:            { bg: '#DBEAFE', text: '#1E40AF' },
-  buy_and_hold:     { bg: '#D1FAE5', text: '#065F46' },
-  flip:             { bg: '#FEE2E2', text: '#991B1B' },
+  wholesale:        { bg: 'rgba(229,168,75,0.08)',  text: '#E5A84B' },
+  creative_finance: { bg: 'rgba(139,122,255,0.08)', text: '#C4BEFF' },
+  brrrr:            { bg: 'rgba(123,159,204,0.08)', text: '#7B9FCC' },
+  buy_and_hold:     { bg: 'rgba(124,203,165,0.08)', text: '#7CCBA5' },
+  flip:             { bg: 'rgba(212,118,106,0.08)', text: '#D4766A' },
 }
 
 export const STRATEGY_LABELS: Record<string, string> = {

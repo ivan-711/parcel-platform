@@ -22,9 +22,14 @@ export function FeatureGate({ feature, children, fallback }: FeatureGateProps) {
 
   if (hasAccess(effectiveTier, required)) return <>{children}</>
 
+  const isBlocked = true
+
   return (
     <div className="relative min-h-[200px]">
-      {children}
+      {/* Content behind overlay — inert prevents focus/interaction */}
+      <div aria-hidden={isBlocked} {...(isBlocked ? { inert: '' } : {})}>
+        {children}
+      </div>
       {fallback ?? <PaywallOverlay feature={feature} />}
     </div>
   )

@@ -9,7 +9,7 @@ interface PlanBadgeProps {
 export function PlanBadge({ planTier, trialActive }: PlanBadgeProps) {
   if (trialActive && planTier === 'free') {
     return (
-      <span className="bg-lime-100 text-lime-700 px-2 py-0.5 rounded-md text-[11px] font-semibold uppercase">
+      <span className="bg-[#8B7AFF]/[0.06] text-[#8B7AFF]/70 ring-1 ring-[#8B7AFF]/10 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide">
         Trial
       </span>
     )
@@ -19,8 +19,8 @@ export function PlanBadge({ planTier, trialActive }: PlanBadgeProps) {
     return (
       <span
         className={cn(
-          'px-2 py-0.5 rounded-md text-[11px] font-semibold uppercase',
-          'bg-lime-700 text-white'
+          'px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide',
+          'bg-[#8B7AFF]/15 text-[#A89FFF] ring-1 ring-[#8B7AFF]/20'
         )}
       >
         {planTier === 'team' ? 'Team' : planTier === 'starter' ? 'Starter' : 'Pro'}
@@ -31,12 +31,12 @@ export function PlanBadge({ planTier, trialActive }: PlanBadgeProps) {
   // Free tier
   return (
     <span className="inline-flex items-center gap-1.5">
-      <span className="bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md text-[11px] font-semibold uppercase">
+      <span className="bg-white/[0.04] text-[#F0EDE8]/40 ring-1 ring-white/[0.06] px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide">
         Free
       </span>
       <Link
         to="/settings"
-        className="text-[11px] text-lime-700 hover:text-lime-800 font-medium transition-colors"
+        className="text-[10px] text-[#8B7AFF] hover:text-[#A89FFF] font-medium transition-colors"
       >
         Upgrade
       </Link>

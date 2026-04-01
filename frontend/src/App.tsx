@@ -1,16 +1,14 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
-import { AnimatePresence, motion } from 'framer-motion'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { Toaster } from '@/components/ui/sonner'
 import { ErrorBoundary, PageErrorBoundary } from '@/components/error-boundary'
 import { useAuthStore } from '@/stores/authStore'
 import { api } from '@/lib/api'
-import { pageTransition } from '@/lib/motion'
 
 // Lazy-loaded pages
-const Landing = lazy(() => import('@/pages/Landing'))
+const Landing = lazy(() => import('@/components/landing/LandingPage'))
 const Login = lazy(() => import('@/pages/Login'))
 const Register = lazy(() => import('@/pages/Register'))
 const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'))
@@ -44,7 +42,7 @@ const queryClient = new QueryClient({
 
 function PageFallback() {
   return (
-    <div className="min-h-screen bg-gray-50 p-8 space-y-4">
+    <div className="min-h-screen bg-[#0C0B0A] p-8 space-y-4">
       <SkeletonCard lines={2} />
       <SkeletonCard lines={4} />
     </div>
@@ -99,44 +97,34 @@ function AnimatedRoutes() {
   useSessionValidation()
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={location.pathname}
-        variants={pageTransition}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-      >
-        <Suspense fallback={<PageFallback />}>
-          <Routes location={location}>
-            {/* Public routes — no auth guard */}
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
-            <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
-            <Route path="/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
-            <Route path="/reset-password" element={<GuestRoute><ResetPassword /></GuestRoute>} />
-            <Route path="/share/:dealId" element={<ShareDeal />} />
+    <Suspense fallback={<PageFallback />}>
+      <Routes location={location}>
+        {/* Public routes — no auth guard */}
+        <Route path="/" element={<GuestRoute><Landing /></GuestRoute>} />
+        <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
+        <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
+        <Route path="/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
+        <Route path="/reset-password" element={<GuestRoute><ResetPassword /></GuestRoute>} />
+        <Route path="/share/:dealId" element={<ShareDeal />} />
 
-            {/* Protected app routes — AppShell is rendered inside each page */}
-            <Route path="/dashboard" element={<ProtectedRoute><PageErrorBoundary><Dashboard /></PageErrorBoundary></ProtectedRoute>} />
-            <Route path="/analyze" element={<ProtectedRoute><PageErrorBoundary><StrategySelectPage /></PageErrorBoundary></ProtectedRoute>} />
-            <Route path="/analyze/results/:dealId" element={<ProtectedRoute><PageErrorBoundary><ResultsPage /></PageErrorBoundary></ProtectedRoute>} />
-            <Route path="/analyze/:strategy" element={<ProtectedRoute><PageErrorBoundary><AnalyzerFormPage /></PageErrorBoundary></ProtectedRoute>} />
-            <Route path="/deals" element={<ProtectedRoute><PageErrorBoundary><MyDeals /></PageErrorBoundary></ProtectedRoute>} />
-            <Route path="/compare" element={<ProtectedRoute><PageErrorBoundary><ComparePage /></PageErrorBoundary></ProtectedRoute>} />
-            <Route path="/pipeline" element={<ProtectedRoute><PageErrorBoundary><Pipeline /></PageErrorBoundary></ProtectedRoute>} />
-            <Route path="/portfolio" element={<ProtectedRoute><PageErrorBoundary><Portfolio /></PageErrorBoundary></ProtectedRoute>} />
-            <Route path="/documents" element={<ProtectedRoute><PageErrorBoundary><Documents /></PageErrorBoundary></ProtectedRoute>} />
-            <Route path="/chat" element={<ProtectedRoute><PageErrorBoundary><Chat /></PageErrorBoundary></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><PageErrorBoundary><Settings /></PageErrorBoundary></ProtectedRoute>} />
-            <Route path="/pricing" element={<ProtectedRoute><PageErrorBoundary><PricingPage /></PageErrorBoundary></ProtectedRoute>} />
+        {/* Protected app routes — AppShell handles page transitions via AnimatePresence */}
+        <Route path="/dashboard" element={<ProtectedRoute><PageErrorBoundary><Dashboard /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/analyze" element={<ProtectedRoute><PageErrorBoundary><StrategySelectPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/analyze/results/:dealId" element={<ProtectedRoute><PageErrorBoundary><ResultsPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/analyze/:strategy" element={<ProtectedRoute><PageErrorBoundary><AnalyzerFormPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/deals" element={<ProtectedRoute><PageErrorBoundary><MyDeals /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/compare" element={<ProtectedRoute><PageErrorBoundary><ComparePage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/pipeline" element={<ProtectedRoute><PageErrorBoundary><Pipeline /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/portfolio" element={<ProtectedRoute><PageErrorBoundary><Portfolio /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/documents" element={<ProtectedRoute><PageErrorBoundary><Documents /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/chat" element={<ProtectedRoute><PageErrorBoundary><Chat /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/settings" element={<ProtectedRoute><PageErrorBoundary><Settings /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/pricing" element={<ProtectedRoute><PageErrorBoundary><PricingPage /></PageErrorBoundary></ProtectedRoute>} />
 
-            {/* Catch-all 404 */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-      </motion.div>
-    </AnimatePresence>
+        {/* Catch-all 404 */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Suspense>
   )
 }
 
@@ -147,7 +135,7 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <AnimatedRoutes />
-          <Toaster position="bottom-right" theme="dark" />
+          <Toaster />
         </BrowserRouter>
       </QueryClientProvider>
     </ErrorBoundary>

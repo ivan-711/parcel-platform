@@ -1,15 +1,23 @@
-/** Navbar — fixed top navigation with scroll-triggered backdrop blur. */
+/**
+ * Navbar — floating pill navigation for the landing page.
+ * Shrinks and increases background opacity on scroll past 80px.
+ */
 
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { scrollToSection } from './landing-utils'
 
-export function Navbar() {
+const NAV_LINKS = [
+  { label: 'Features', target: 'features' },
+  { label: 'Pricing', target: 'pricing' },
+]
+
+export function LandingNavbar({ onNavClick }: { onNavClick?: () => void }) {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60)
+    const onScroll = () => setScrolled(window.scrollY > 80)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
@@ -17,55 +25,49 @@ export function Navbar() {
   return (
     <nav
       className={cn(
-        'fixed top-0 w-full z-50 transition-all duration-300',
+        'fixed top-6 left-1/2 -translate-x-1/2 z-50',
+        'flex items-center gap-6',
+        'border border-white/[0.06] rounded-full',
+        'shadow-[0_4px_24px_rgba(0,0,0,0.3)]',
+        'transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]',
         scrolled
-          ? 'backdrop-blur-xl bg-white/85 border-b border-gray-200'
-          : 'bg-transparent',
+          ? 'bg-[#0C0B0A]/80 backdrop-blur-xl px-5 py-2'
+          : 'bg-[#0C0B0A]/60 backdrop-blur-xl px-6 py-3',
       )}
     >
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-lime-700 flex items-center justify-center">
-            <span className="text-[10px] font-bold text-white font-mono">P</span>
-          </div>
-          <span className="text-sm font-semibold text-gray-900 tracking-tight">Parcel</span>
-        </div>
+      {/* Logo */}
+      <Link to="/" className="font-brand text-lg font-light tracking-[-0.02em] text-[#F0EDE8]">
+        Parcel
+      </Link>
 
-        {/* Center nav */}
-        <div className="hidden md:flex items-center gap-7 text-sm text-gray-500">
-          {[
-            { label: 'Features', href: '#features' },
-            { label: 'How it works', href: '#how-it-works' },
-            { label: 'Pricing', href: '#pricing' },
-          ].map(({ label, href }) => (
-            <a
-              key={label}
-              href={href}
-              className="hover:text-gray-900 transition-colors duration-150 cursor-pointer rounded focus-visible:ring-2 focus-visible:ring-lime-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white focus-visible:outline-none"
-            >
-              {label}
-            </a>
-          ))}
-        </div>
-
-        {/* CTAs */}
-        <div className="flex items-center gap-3">
-          <Link
-            to="/login"
-            className="text-sm text-gray-500 hover:text-gray-900 transition-colors duration-150 cursor-pointer rounded focus-visible:ring-2 focus-visible:ring-lime-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white focus-visible:outline-none"
+      {/* Nav links — desktop only */}
+      <div className="hidden md:flex items-center gap-5">
+        {NAV_LINKS.map(({ label, target }) => (
+          <button
+            key={label}
+            onClick={() => { onNavClick?.(); scrollToSection(target) }}
+            className="text-sm text-[#A09D98] hover:text-[#F0EDE8] transition-colors duration-200 cursor-pointer"
           >
-            Sign in
-          </Link>
-          <Link to="/register" className="rounded focus-visible:ring-2 focus-visible:ring-lime-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white focus-visible:outline-none">
-            <Button
-              size="sm"
-              className="bg-lime-700 hover:bg-lime-800 text-white text-sm h-8 px-4 cursor-pointer transition-colors duration-150"
-            >
-              Get started
-            </Button>
-          </Link>
-        </div>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Right side */}
+      <div className="flex items-center gap-4">
+        <Link
+          to="/login"
+          className="hidden md:inline text-sm text-[#A09D98] hover:text-[#F0EDE8] transition-colors duration-200"
+        >
+          Log in
+        </Link>
+        <Link
+          to="/register"
+          className="inline-block rounded-full px-5 py-2 text-sm font-medium text-[#0C0B0A] hover:opacity-90 transition-opacity duration-200"
+          style={{ background: 'linear-gradient(to right, #8B7AFF, #6C5CE7)' }}
+        >
+          Get Started
+        </Link>
       </div>
     </nav>
   )

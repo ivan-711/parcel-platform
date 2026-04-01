@@ -49,7 +49,7 @@ import { FeatureGate } from '@/components/billing/FeatureGate'
 
 /** Strategy badge used inside the drag overlay. */
 function OverlayStrategyBadge({ strategy }: { strategy: string }) {
-  const colors = STRATEGY_COLORS[strategy] ?? { bg: '#F2F4F7', text: '#667085' }
+  const colors = STRATEGY_COLORS[strategy] ?? { bg: 'rgba(122,120,114,0.12)', text: '#7A7872' }
   return (
     <span
       className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
@@ -290,7 +290,7 @@ export default function PipelinePage() {
         action={
           <Link
             to="/analyze"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-lime-700 hover:bg-lime-800 text-white text-xs font-medium transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#8B7AFF] hover:bg-[#7B6AEF] text-[#0C0B0A] text-xs font-medium transition-colors"
           >
             <Plus size={14} />
             Add Deal
@@ -351,21 +351,21 @@ export default function PipelinePage() {
             }}>
               {activeCard ? (
                 <div
-                  className="rounded-[10px] border border-gray-300 bg-white space-y-2.5"
+                  className="rounded-xl border border-white/[0.06] bg-[#22211D] space-y-2.5"
                   style={{
                     width: 280,
                     padding: '14px 16px',
                     cursor: 'grabbing',
-                    boxShadow: '0 12px 24px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06)',
+                    boxShadow: '0 12px 24px rgba(0,0,0,0.30), 0 4px 8px rgba(0,0,0,0.20), 0 0 24px rgba(139,122,255,0.15)',
                     transform: 'rotate(1.5deg) scale(1.02)',
                   }}
                 >
-                  <p className="text-[13px] font-medium text-gray-900 leading-tight line-clamp-2">
+                  <p className="text-[13px] font-medium text-[#F0EDE8] leading-tight line-clamp-2">
                     {activeCard.address}
                   </p>
                   <OverlayStrategyBadge strategy={activeCard.strategy} />
                   {activeCard.asking_price != null && activeCard.asking_price > 0 && (
-                    <span className="block text-[12px] tabular-nums font-medium text-gray-700">
+                    <span className="block text-[12px] tabular-nums font-medium text-[#A09D98]">
                       ${activeCard.asking_price.toLocaleString()}
                     </span>
                   )}
@@ -390,18 +390,18 @@ export default function PipelinePage() {
 
       {/* Remove from pipeline confirmation dialog */}
       <AlertDialog open={removeTarget !== null} onOpenChange={(open) => { if (!open) setRemoveTarget(null) }}>
-        <AlertDialogContent className="bg-white border-gray-200">
+        <AlertDialogContent className="bg-[#1A1916] border-white/[0.06]">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-gray-900">Remove from pipeline?</AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-500">
+            <AlertDialogTitle className="text-[#F0EDE8]">Remove from pipeline?</AlertDialogTitle>
+            <AlertDialogDescription className="text-[#A09D98]">
               This deal will be removed from your pipeline. You can always re-add it later from your deals list.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="bg-white/[0.04] border-white/[0.06] text-[#A09D98] hover:bg-white/[0.06] hover:text-[#F0EDE8]">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmRemoveCard}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-[#D4766A] hover:bg-[#C45E52] text-[#F0EDE8]"
             >
               {removeMutation.isPending ? 'Removing...' : 'Remove'}
             </AlertDialogAction>
@@ -415,26 +415,26 @@ export default function PipelinePage() {
         .pipeline-board::-webkit-scrollbar { height: 6px; }
         .pipeline-board::-webkit-scrollbar-track { background: transparent; }
         .pipeline-board::-webkit-scrollbar-thumb {
-          background: #D0D5DD;
+          background: rgba(255,255,255,0.06);
           border-radius: 3px;
         }
-        .pipeline-board::-webkit-scrollbar-thumb:hover { background: #98A2B3; }
+        .pipeline-board::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.10); }
         .pipeline-board {
           scrollbar-width: thin;
-          scrollbar-color: #D0D5DD transparent;
+          scrollbar-color: rgba(255,255,255,0.06) transparent;
         }
 
         /* Column vertical scrollbar */
         .column-scroll::-webkit-scrollbar { width: 4px; }
         .column-scroll::-webkit-scrollbar-track { background: transparent; }
         .column-scroll::-webkit-scrollbar-thumb {
-          background: #D0D5DD;
+          background: rgba(255,255,255,0.06);
           border-radius: 9999px;
         }
-        .column-scroll::-webkit-scrollbar-thumb:hover { background: #98A2B3; }
+        .column-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.10); }
         .column-scroll {
           scrollbar-width: thin;
-          scrollbar-color: #D0D5DD transparent;
+          scrollbar-color: rgba(255,255,255,0.06) transparent;
         }
 
         /* Column scroll gradient fade masks */
@@ -448,22 +448,22 @@ export default function PipelinePage() {
           );
         }
 
-        /* Light shimmer for skeleton loading */
-        @keyframes shimmer-light {
+        /* Dark shimmer for skeleton loading */
+        @keyframes shimmer-dark {
           0%   { transform: translateX(-100%); }
           100% { transform: translateX(100%); }
         }
-        .shimmer-light {
+        .shimmer-dark {
           background: linear-gradient(
             90deg,
             transparent 0%,
-            rgba(0,0,0,0.04) 50%,
+            rgba(255,255,255,0.04) 50%,
             transparent 100%
           );
-          animation: shimmer-light 1.5s infinite;
+          animation: shimmer-dark 1.5s infinite;
         }
         @media (prefers-reduced-motion: reduce) {
-          .shimmer-light { animation: none; }
+          .shimmer-dark { animation: none; }
         }
       `}</style>
       </FeatureGate>

@@ -1,4 +1,4 @@
-/** MobilePipeline — tabbed/stacked stage view for small screens (light theme). */
+/** MobilePipeline — tabbed/stacked stage view for small screens (dark theme). */
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -73,24 +73,24 @@ export function MobilePipeline({ board, isLoading, onRemove, onCloseDeal, onMove
                 transition-all duration-200
                 min-h-[44px]
                 cursor-pointer
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-50
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B7AFF]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0B0A]
                 ${isActive
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-[#8B7AFF] text-[#0C0B0A] shadow-sm'
+                  : 'bg-white/[0.04] text-[#A09D98] hover:bg-white/[0.06]'
                 }
               `}
             >
               <span
                 className="w-2 h-2 rounded-full flex-shrink-0"
-                style={{ backgroundColor: isActive ? '#fff' : stage.color }}
+                style={{ backgroundColor: isActive ? '#0C0B0A' : stage.color }}
               />
               {stage.label}
               <span
                 className={`
                   text-[11px] tabular-nums px-1.5 py-0.5 rounded-full min-w-[22px] text-center
                   ${isActive
-                    ? 'bg-white/20 text-white'
-                    : 'bg-gray-200 text-gray-500'
+                    ? 'bg-[#0C0B0A]/20 text-[#0C0B0A]'
+                    : 'bg-white/[0.06] text-[#7A7872]'
                   }
                 `}
               >
@@ -112,8 +112,8 @@ export function MobilePipeline({ board, isLoading, onRemove, onCloseDeal, onMove
           <ColumnSkeleton />
         ) : cards.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
-            <Inbox size={28} className="text-gray-300" />
-            <p className="text-sm text-gray-400">
+            <Inbox size={28} className="text-[#7A7872]/40" />
+            <p className="text-sm text-[#7A7872]">
               No deals in {STAGES.find((s) => s.key === activeStage)?.label ?? activeStage}
             </p>
           </div>

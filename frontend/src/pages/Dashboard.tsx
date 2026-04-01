@@ -60,10 +60,10 @@ const itemVariants = {
 }
 
 function riskColor(score: number | null): string {
-  if (score === null) return 'text-gray-400'
-  if (score <= 30) return 'text-emerald-600'
-  if (score <= 60) return 'text-amber-500'
-  return 'text-red-600'
+  if (score === null) return 'text-[#7A7872]'
+  if (score <= 30) return 'text-[#7CCBA5]'
+  if (score <= 60) return 'text-[#D4A867]'
+  return 'text-[#D4766A]'
 }
 
 function statusLabel(status: string): string {
@@ -71,10 +71,10 @@ function statusLabel(status: string): string {
 }
 
 const ACTIVITY_ICONS: Record<ActivityItem['activity_type'], { icon: React.ElementType; color: string }> = {
-  deal_analyzed: { icon: Calculator, color: '#4D7C0F' },
-  pipeline_moved: { icon: ArrowRight, color: '#F59E0B' },
-  document_analyzed: { icon: FileText, color: '#0EA5E9' },
-  deal_closed: { icon: CheckCircle2, color: '#059669' },
+  deal_analyzed: { icon: Calculator, color: '#8B7AFF' },
+  pipeline_moved: { icon: ArrowRight, color: '#D4A867' },
+  document_analyzed: { icon: FileText, color: '#7CCBA5' },
+  deal_closed: { icon: CheckCircle2, color: '#7CCBA5' },
 }
 
 const STAGE_LABELS: Record<string, string> = {
@@ -136,10 +136,10 @@ export default function Dashboard() {
   }), [stats?.total_deals, stats?.active_pipeline_deals, closedDeals])
 
   const demoBanner = isDemoUser && !bannerDismissed ? (
-    <div className="bg-indigo-50 border border-indigo-100 rounded-lg px-4 py-3 text-sm text-indigo-800 flex items-center justify-between mb-4">
+    <div className="bg-violet-400/10 border border-violet-400/20 rounded-lg px-4 py-3 text-sm text-[#F0EDE8] flex items-center justify-between mb-4">
       <p>
         You&apos;re viewing a demo account. Create your free account to analyze your own deals.{' '}
-        <Link to="/register" className="font-semibold text-indigo-900 underline underline-offset-2 hover:text-indigo-700">
+        <Link to="/register" className="font-semibold text-violet-400 underline underline-offset-2 hover:text-violet-300">
           Get Started &rarr;
         </Link>
       </p>
@@ -172,16 +172,16 @@ export default function Dashboard() {
     return (
       <AppShell title="Dashboard">
         {demoBanner}
-        <div className="rounded-xl border border-red-200 bg-red-50 p-6 flex items-start gap-3 max-w-lg">
-          <AlertCircle size={20} className="text-red-600 shrink-0 mt-0.5" />
+        <div className="rounded-xl border border-[#D4766A]/20 bg-[#D4766A]/10 p-6 flex items-start gap-3 max-w-lg">
+          <AlertCircle size={20} className="text-[#D4766A] shrink-0 mt-0.5" />
           <div className="space-y-2">
-            <p className="text-sm font-medium text-gray-900">Failed to load dashboard</p>
-            <p className="text-xs text-gray-600">
+            <p className="text-sm font-medium text-[#F0EDE8]">Failed to load dashboard</p>
+            <p className="text-xs text-[#A09D98]">
               {error instanceof Error ? error.message : 'Something went wrong. Please try again.'}
             </p>
             <button
               onClick={() => queryClient.invalidateQueries({ queryKey: ['dashboard'] })}
-              className="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+              className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
             >
               Try again
             </button>
@@ -204,7 +204,7 @@ export default function Dashboard() {
         >
           <motion.h1
             variants={itemVariants}
-            className="text-3xl font-semibold tracking-tight text-gray-900"
+            className="text-3xl font-semibold tracking-tight text-[#F0EDE8]"
           >
             Let&apos;s analyze your first deal.
           </motion.h1>
@@ -214,20 +214,20 @@ export default function Dashboard() {
               onClick={() => navigate('/analyze')}
               whileHover={{ y: -2 }}
               transition={{ duration: 0.15 }}
-              className="w-full text-left p-6 rounded-xl border border-indigo-200 bg-indigo-50/50 hover:border-indigo-300 transition-colors group shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+              className="w-full text-left p-6 rounded-xl border border-[#8B7AFF]/20 bg-[#8B7AFF]/[0.08] hover:border-[#8B7AFF]/30 transition-colors group shadow-xs edge-highlight"
             >
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-base font-semibold text-gray-900">
+                  <p className="text-base font-semibold text-[#F0EDE8]">
                     Analyze Your First Deal
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-[#A09D98]">
                     Run numbers on any strategy — wholesale, BRRRR, flip, or buy &amp; hold.
                   </p>
                 </div>
                 <ArrowRight
                   size={20}
-                  className="text-indigo-600 shrink-0 ml-4 group-hover:translate-x-0.5 transition-transform"
+                  className="text-violet-400 shrink-0 ml-4 group-hover:translate-x-0.5 transition-transform"
                 />
               </div>
             </motion.button>
@@ -237,13 +237,13 @@ export default function Dashboard() {
             {HINT_CARDS.map(({ icon: Icon, title, description }) => (
               <div
                 key={title}
-                className="p-5 rounded-xl border border-gray-200 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-3 cursor-default"
+                className="p-5 rounded-xl border border-white/[0.04] bg-[#1A1916] shadow-xs edge-highlight space-y-3 cursor-default"
               >
-                <div className="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center">
-                  <Icon size={18} className="text-indigo-600" />
+                <div className="w-9 h-9 rounded-lg bg-violet-400/10 flex items-center justify-center">
+                  <Icon size={18} className="text-violet-400" />
                 </div>
-                <p className="text-sm font-medium text-gray-900">{title}</p>
-                <p className="text-xs text-gray-500 leading-relaxed">{description}</p>
+                <p className="text-sm font-medium text-[#F0EDE8]">{title}</p>
+                <p className="text-xs text-[#A09D98] leading-relaxed">{description}</p>
               </div>
             ))}
           </motion.div>
@@ -294,29 +294,29 @@ export default function Dashboard() {
         {(stats.recent_deals ?? []).length > 0 && (
           <motion.div variants={itemVariants} className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-gray-900">Recent Deals</h2>
+              <h2 className="text-sm font-semibold text-[#F0EDE8]">Recent Deals</h2>
               <Link
                 to="/deals"
-                className="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+                className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
               >
                 View all &rarr;
               </Link>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-white overflow-x-auto shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="rounded-xl border border-white/[0.04] bg-[#1A1916] overflow-x-auto shadow-xs edge-highlight">
               <table className="w-full min-w-[600px]">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-4 py-3">Address</th>
-                    <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-4 py-3">Strategy</th>
-                    <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-4 py-3">Risk</th>
-                    <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wider px-4 py-3">Status</th>
+                  <tr className="border-b border-white/[0.06]">
+                    <th className="text-left text-xs font-medium text-[#A09D98] uppercase tracking-wider px-4 py-3">Address</th>
+                    <th className="text-left text-xs font-medium text-[#A09D98] uppercase tracking-wider px-4 py-3">Strategy</th>
+                    <th className="text-left text-xs font-medium text-[#A09D98] uppercase tracking-wider px-4 py-3">Risk</th>
+                    <th className="text-left text-xs font-medium text-[#A09D98] uppercase tracking-wider px-4 py-3">Status</th>
                     <th className="px-4 py-3" />
                   </tr>
                 </thead>
                 <tbody>
                   {(stats.recent_deals ?? []).map((deal) => (
-                    <tr key={deal.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3 text-sm text-gray-900">{deal.address}</td>
+                    <tr key={deal.id} className="border-b border-white/[0.03] last:border-0 hover:bg-white/[0.04] transition-colors">
+                      <td className="px-4 py-3 text-sm text-[#F0EDE8]">{deal.address}</td>
                       <td className="px-4 py-3">
                         <StrategyBadge strategy={deal.strategy} />
                       </td>
@@ -326,14 +326,14 @@ export default function Dashboard() {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-white/[0.06] text-[#A09D98]">
                           {statusLabel(deal.status)}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
                         <Link
                           to={`/analyze/results/${deal.id}`}
-                          className="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+                          className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
                         >
                           View
                         </Link>
@@ -349,15 +349,15 @@ export default function Dashboard() {
         {/* Pipeline Summary */}
         {pipelineEntries.length > 0 && (
           <motion.div variants={itemVariants} className="space-y-3">
-            <h2 className="text-sm font-semibold text-gray-900">Pipeline Summary</h2>
-            <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h2 className="text-sm font-semibold text-[#F0EDE8]">Pipeline Summary</h2>
+            <div className="rounded-xl border border-white/[0.04] bg-[#1A1916] p-4 shadow-xs edge-highlight">
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {pipelineEntries.map(([stage, count]) => (
-                  <div key={stage} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                    <span className="text-sm text-gray-600">
+                  <div key={stage} className="flex items-center justify-between p-3 rounded-lg bg-white/[0.04]">
+                    <span className="text-sm text-[#A09D98]">
                       {STAGE_LABELS[stage] ?? statusLabel(stage)}
                     </span>
-                    <span className="text-lg font-semibold text-gray-900 tabular-nums">{count}</span>
+                    <span className="text-lg font-semibold text-[#F0EDE8] tabular-nums">{count}</span>
                   </div>
                 ))}
               </div>
@@ -368,8 +368,8 @@ export default function Dashboard() {
         {/* Recent Activity */}
         <motion.div variants={itemVariants} className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-gray-900">Recent Activity</h2>
-            <Link to="/deals" className="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors">View all</Link>
+            <h2 className="text-sm font-semibold text-[#F0EDE8]">Recent Activity</h2>
+            <Link to="/deals" className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors">View all</Link>
           </div>
 
           {activityLoading && (
@@ -381,12 +381,12 @@ export default function Dashboard() {
           )}
 
           {!activityLoading && activityError && (
-            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-4 flex items-center gap-3">
-              <AlertCircle size={16} className="text-red-600 shrink-0" />
-              <p className="text-sm text-gray-600 flex-1">Failed to load activity</p>
+            <div className="rounded-xl border border-[#D4766A]/20 bg-[#D4766A]/10 px-4 py-4 flex items-center gap-3">
+              <AlertCircle size={16} className="text-[#D4766A] shrink-0" />
+              <p className="text-sm text-[#A09D98] flex-1">Failed to load activity</p>
               <button
                 onClick={() => queryClient.invalidateQueries({ queryKey: ['activity'] })}
-                className="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+                className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
               >
                 Retry
               </button>
@@ -394,13 +394,13 @@ export default function Dashboard() {
           )}
 
           {!activityLoading && !activityError && (!activityData?.activities || activityData.activities.length === 0) && (
-            <div className="rounded-xl border border-gray-200 bg-white px-4 py-8 text-center shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-              <p className="text-sm text-gray-400">No recent activity. Analyze your first deal to get started.</p>
+            <div className="rounded-xl border border-white/[0.04] bg-[#1A1916] px-4 py-8 text-center shadow-xs edge-highlight">
+              <p className="text-sm text-[#7A7872]">No recent activity. Analyze your first deal to get started.</p>
             </div>
           )}
 
           {!activityLoading && activityData?.activities && activityData.activities.length > 0 && (
-            <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="rounded-xl border border-white/[0.04] bg-[#1A1916] p-5 shadow-xs edge-highlight">
               <div className="space-y-1">
                 {activityData.activities.map((item, index) => {
                   const config = ACTIVITY_ICONS[item.activity_type] ?? ACTIVITY_ICONS.deal_analyzed
@@ -411,16 +411,16 @@ export default function Dashboard() {
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.18, ease: 'easeOut', delay: 0.05 * index }}
-                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-gray-50 transition-colors"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-white/[0.04] transition-colors"
                     >
                       <div
                         className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                        style={{ backgroundColor: `${config.color}10` }}
+                        style={{ backgroundColor: `${config.color}15` }}
                       >
                         <Icon size={16} style={{ color: config.color }} />
                       </div>
-                      <p className="text-sm text-gray-700 flex-1 truncate">{item.text}</p>
-                      <span className="text-xs text-gray-400 tabular-nums shrink-0">{timeAgo(item.timestamp)}</span>
+                      <p className="text-sm text-[#A09D98] flex-1 truncate">{item.text}</p>
+                      <span className="text-xs text-[#7A7872] tabular-nums shrink-0">{timeAgo(item.timestamp)}</span>
                     </motion.div>
                   )
                 })}

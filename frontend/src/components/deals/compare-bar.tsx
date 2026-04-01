@@ -26,7 +26,7 @@ export function CompareBar({ compareIds }: CompareBarProps) {
           const ids = Array.from(compareIds)
           navigate(`/compare?a=${ids[0]}&b=${ids[1]}`)
         }}
-        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-lime-700 hover:bg-lime-800 text-white text-sm font-medium shadow-lg shadow-lime-700/20 transition-colors"
+        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-violet-400 hover:bg-[#6B5AD6] text-[#0C0B0A] text-sm font-medium shadow-lg shadow-violet-400/20 transition-colors"
       >
         <Columns size={16} />
         Compare Selected

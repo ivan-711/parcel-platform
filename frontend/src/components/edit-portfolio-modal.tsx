@@ -69,73 +69,73 @@ export function EditPortfolioModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="bg-white border-gray-200 sm:max-w-[425px]">
+      <DialogContent className="bg-[#22211D] border border-white/[0.06] rounded-xl sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-gray-900">Edit Portfolio Entry</DialogTitle>
+          <DialogTitle className="text-[#F0EDE8]">Edit Portfolio Entry</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
           {entry && (
-            <div className="text-sm text-gray-600 mb-4">
-              <span className="text-gray-400">Editing:</span>{' '}
-              <span className="text-gray-900">{entry.address}</span>
+            <div className="text-sm text-[#A09D98] mb-4">
+              <span className="text-[#7A7872]">Editing:</span>{' '}
+              <span className="text-[#F0EDE8]">{entry.address}</span>
             </div>
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="edit-closed-date" className="text-gray-600 text-xs">Closed Date</Label>
+            <Label htmlFor="edit-closed-date" className="text-[#A09D98] text-xs">Closed Date</Label>
             <Input
               id="edit-closed-date"
               type="date"
               value={closedDate}
               onChange={(e) => setClosedDate(e.target.value)}
-              className="bg-white border-gray-300 text-gray-900"
+              className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8]"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-closed-price" className="text-gray-600 text-xs">Closed Price ($)</Label>
+            <Label htmlFor="edit-closed-price" className="text-[#A09D98] text-xs">Closed Price ($)</Label>
             <Input
               id="edit-closed-price"
               type="number"
               value={closedPrice}
               onChange={(e) => setClosedPrice(e.target.value)}
               placeholder="0"
-              className="bg-white border-gray-300 text-gray-900 tabular-nums"
+              className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] tabular-nums placeholder:text-[#5C5A56]"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-profit" className="text-gray-600 text-xs">Profit ($)</Label>
+            <Label htmlFor="edit-profit" className="text-[#A09D98] text-xs">Profit ($)</Label>
             <Input
               id="edit-profit"
               type="number"
               value={profit}
               onChange={(e) => setProfit(e.target.value)}
               placeholder="0"
-              className="bg-white border-gray-300 text-gray-900 tabular-nums"
+              className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] tabular-nums placeholder:text-[#5C5A56]"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-cash-flow" className="text-gray-600 text-xs">Monthly Cash Flow ($)</Label>
+            <Label htmlFor="edit-cash-flow" className="text-[#A09D98] text-xs">Monthly Cash Flow ($)</Label>
             <Input
               id="edit-cash-flow"
               type="number"
               value={monthlyCashFlow}
               onChange={(e) => setMonthlyCashFlow(e.target.value)}
               placeholder="0"
-              className="bg-white border-gray-300 text-gray-900 tabular-nums"
+              className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] tabular-nums placeholder:text-[#5C5A56]"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-notes" className="text-gray-600 text-xs">Notes (optional)</Label>
+            <Label htmlFor="edit-notes" className="text-[#A09D98] text-xs">Notes (optional)</Label>
             <textarea
               id="edit-notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
-              className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background resize-none"
+              className="flex w-full rounded-md border border-white/[0.06] bg-[#131210] px-3 py-2 text-sm text-[#F0EDE8] placeholder:text-[#5C5A56] focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/30 focus:border-[#8B7AFF]/40 resize-none"
               placeholder="Optional notes about this deal"
             />
           </div>
@@ -146,14 +146,14 @@ export function EditPortfolioModal({
               variant="outline"
               onClick={onClose}
               disabled={isSaving}
-              className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              className="border-white/[0.06] text-[#A09D98] hover:bg-white/[0.04] hover:text-[#F0EDE8]"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={!canSubmit}
-              className="bg-lime-700 text-white hover:bg-lime-800"
+              className="bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] hover:brightness-110"
             >
               {isSaving ? 'Saving...' : 'Save Changes'}
             </Button>

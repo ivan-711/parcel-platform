@@ -80,17 +80,17 @@ export function KanbanColumn({
       {/* Column header */}
       <div className="flex items-center gap-2 h-9 px-1 mb-3">
         <div
-          className="w-2 h-2 rounded-full flex-shrink-0"
+          className="w-2 h-2 rounded-full flex-shrink-0 opacity-80"
           style={{ backgroundColor: stage.color }}
         />
-        <span className="text-[13px] font-semibold text-gray-900 tracking-[-0.01em]">
+        <span className="text-[13px] font-semibold text-[#F0EDE8] tracking-[-0.01em]">
           {stage.label}
         </span>
-        <span className="text-[12px] tabular-nums text-gray-500 bg-gray-100 rounded-md px-1.5 py-0.5">
+        <span className="text-[12px] tabular-nums text-[#A09D98] bg-white/[0.06] rounded-full px-1.5 py-0.5">
           {cards.length}
         </span>
         {totalValue > 0 && (
-          <span className="text-[12px] tabular-nums text-gray-400 ml-auto">
+          <span className="text-[12px] tabular-nums text-[#7A7872] ml-auto">
             {formatCompactValue(totalValue)}
           </span>
         )}
@@ -105,16 +105,16 @@ export function KanbanColumn({
           isScrollable ? 'column-scroll-mask' : '',
         ].join(' ')}
         style={{
-          backgroundColor: isOver ? `${stage.color}0F` : 'transparent',
-          border: isOver ? `1px dashed ${stage.color}4D` : '1px dashed transparent',
+          backgroundColor: isOver ? 'rgba(139,122,255,0.02)' : 'transparent',
+          border: isOver ? '1px dashed rgba(139,122,255,0.30)' : '1px dashed transparent',
         }}
       >
         {isLoading ? (
           <ColumnSkeleton />
         ) : cards.length === 0 ? (
-          <div className="flex flex-col items-center justify-center min-h-[100px] py-8 border border-dashed border-gray-200 rounded-xl">
-            <Inbox size={16} className="text-gray-300 mb-1.5" />
-            <p className="text-[12px] text-gray-400">No deals</p>
+          <div className="flex flex-col items-center justify-center min-h-[100px] py-8 border border-dashed border-white/[0.06] rounded-xl">
+            <Inbox size={16} className="text-[#7A7872]/40 mb-1.5" />
+            <p className="text-[12px] text-[#7A7872]/50">No deals</p>
           </div>
         ) : (
           <SortableContext

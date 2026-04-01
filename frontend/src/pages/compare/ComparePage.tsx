@@ -1,9 +1,12 @@
-/** Deal comparison page — side-by-side analysis of two deals with winner highlighting. */
+/**
+ * ComparePage — side-by-side deal comparison with glass KPI cards,
+ * radar chart visualization, and automated summary verdict.
+ */
 
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, Scale, X } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
@@ -20,23 +23,78 @@ import { formatLabel, formatOutputValue } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import type { Strategy, DealResponse } from '@/types'
 
-/** Output keys where a higher numeric value is better. */
-const HIGHER_IS_BETTER = new Set([
-  'mao', 'profit_at_ask', 'estimated_profit', 'arv', 'spread',
-  'monthly_cash_flow', 'coc_return', 'cap_rate',
-  'annual_cash_flow', 'equity_day_one',
-  'gross_profit', 'net_profit', 'roi', 'annualized_roi',
-  'refinance_proceeds', 'arv_post_rehab',
-  'annual_noi', 'effective_yield', 'dscr', 'equity_captured',
-])
+// ── Winner Logic ────────────────────────────────────────────────────────────
 
-/** Output keys where a lower numeric value is better. */
-const LOWER_IS_BETTER = new Set([
-  'risk_score', 'money_left_in', 'total_cost', 'total_invested',
-  'repair_costs', 'holding_months', 'break_even_price',
-])
+type MetricDirection = 'higher-is-better' | 'lower-is-better'
 
-/** Strategy-specific output keys to display in the comparison table. */
+const METRIC_DIRECTIONS: Record<string, MetricDirection> = {
+  // Higher is better
+  mao: 'higher-is-better',
+  profit_at_ask: 'higher-is-better',
+  estimated_profit: 'higher-is-better',
+  arv: 'higher-is-better',
+  spread: 'higher-is-better',
+  monthly_cash_flow: 'higher-is-better',
+  coc_return: 'higher-is-better',
+  cap_rate: 'higher-is-better',
+  annual_cash_flow: 'higher-is-better',
+  equity_day_one: 'higher-is-better',
+  gross_profit: 'higher-is-better',
+  net_profit: 'higher-is-better',
+  roi: 'higher-is-better',
+  annualized_roi: 'higher-is-better',
+  refinance_proceeds: 'higher-is-better',
+  arv_post_rehab: 'higher-is-better',
+  annual_noi: 'higher-is-better',
+  effective_yield: 'higher-is-better',
+  dscr: 'higher-is-better',
+  equity_captured: 'higher-is-better',
+  // Lower is better
+  risk_score: 'lower-is-better',
+  money_left_in: 'lower-is-better',
+  total_cost: 'lower-is-better',
+  total_invested: 'lower-is-better',
+  repair_costs: 'lower-is-better',
+  holding_months: 'lower-is-better',
+  break_even_price: 'lower-is-better',
+  purchase_price: 'lower-is-better',
+  break_even_rent: 'lower-is-better',
+  cash_needed: 'lower-is-better',
+}
+
+/** Returns index of winner, or -1 if too close to call. */
+function findWinner(values: (number | null)[], key: string, threshold = 0.05): number {
+  const direction = METRIC_DIRECTIONS[key]
+  if (!direction) return -1
+
+  const nums = values.map((v) => (v !== null && !isNaN(v) ? v : null))
+  const valid = nums.filter((v): v is number => v !== null)
+  if (valid.length < 2) return -1
+
+  const best = direction === 'higher-is-better' ? Math.max(...valid) : Math.min(...valid)
+  const bestIdx = nums.indexOf(best)
+
+  // All values identical → no winner
+  if (valid.every((v) => v === best)) return -1
+
+  const rest = valid.filter((v) => v !== best)
+  if (rest.length === 0) return -1
+  const secondBest = direction === 'higher-is-better' ? Math.max(...rest) : Math.min(...rest)
+  const ratio = Math.abs(best - secondBest) / Math.max(Math.abs(best), 1)
+  if (ratio < threshold) return -1
+  return bestIdx
+}
+
+function getNumericValue(deal: DealResponse, key: string): number | null {
+  if (key === 'risk_score') return deal.risk_score
+  const val = deal.outputs?.[key]
+  if (typeof val === 'number') return isNaN(val) ? null : val
+  if (typeof val === 'string') { const n = parseFloat(val); return isNaN(n) ? null : n }
+  return null
+}
+
+// ── Strategy Row Keys ───────────────────────────────────────────────────────
+
 const STRATEGY_ROWS: Record<string, string[]> = {
   wholesale: ['mao', 'profit_at_ask', 'estimated_profit', 'arv', 'repair_costs', 'spread', 'break_even_price'],
   buy_and_hold: ['monthly_cash_flow', 'coc_return', 'cap_rate', 'purchase_price', 'annual_noi', 'dscr'],
@@ -45,26 +103,157 @@ const STRATEGY_ROWS: Record<string, string[]> = {
   creative_finance: ['monthly_cash_flow', 'annual_cash_flow', 'equity_day_one', 'finance_type', 'dscr', 'effective_yield'],
 }
 
-function getNumericValue(deal: DealResponse, key: string): number | null {
-  if (key === 'risk_score') return deal.risk_score
-  const val = deal.outputs?.[key]
-  return typeof val === 'number' ? val : null
+// ── Helpers ─────────────────────────────────────────────────────────────────
+
+function truncateAddr(addr: string, max = 28): string {
+  return addr.length > max ? addr.slice(0, max) + '...' : addr
 }
 
 function riskScoreColor(score: number | null): string {
-  if (score === null) return 'text-gray-400'
-  if (score <= 30) return 'text-sky-600'
-  if (score <= 60) return 'text-amber-600'
-  return 'text-red-600'
+  if (score === null) return 'text-[#7A7872]'
+  if (score <= 30) return 'text-[#6DBEA3]'
+  if (score <= 60) return 'text-[#D4A867]'
+  return 'text-[#D4766A]'
 }
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+// ── KPI Comparison Card ─────────────────────────────────────────────────────
+
+function KPICompareCard({
+  metricKey,
+  label,
+  deals,
+}: {
+  metricKey: string
+  label: string
+  deals: DealResponse[]
+}) {
+  const values = deals.map((d) => getNumericValue(d, metricKey))
+  const winnerIdx = findWinner(values, metricKey)
+
+  return (
+    <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-5 shadow-xs edge-highlight">
+      <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-[#7A7872] mb-4">
+        {label}
+      </p>
+      <div className="flex gap-6">
+        {deals.map((deal, i) => {
+          const raw = metricKey === 'risk_score' ? deal.risk_score : deal.outputs?.[metricKey]
+          const numericRaw = typeof raw === 'string' ? parseFloat(raw as string) : raw
+          const isNullish = raw === null || raw === undefined || (typeof numericRaw === 'number' && isNaN(numericRaw))
+          const isWinner = winnerIdx === i
+
+          const displayValue = isNullish
+            ? 'N/A'
+            : metricKey === 'risk_score'
+              ? String(deal.risk_score)
+              : formatOutputValue(metricKey, raw as number | string)
+
+          return (
+            <div key={deal.id} className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                {isWinner && (
+                  <>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#8B7AFF] shrink-0" aria-hidden="true" />
+                    <span className="sr-only">(Best value)</span>
+                  </>
+                )}
+                <p
+                  className={cn(
+                    'font-brand text-2xl md:text-3xl font-light tabular-nums truncate',
+                    isNullish
+                      ? 'text-[#7A7872]'
+                      : metricKey === 'risk_score'
+                        ? riskScoreColor(deal.risk_score)
+                        : isWinner ? 'text-[#F0EDE8]' : 'text-[#A09D98]'
+                  )}
+                >
+                  {displayValue}
+                </p>
+              </div>
+              <p className="text-[11px] text-[#A09D98] mt-1 truncate">
+                {truncateAddr(deal.address)}
+              </p>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
 }
 
-function statusLabel(status: string): string {
-  return status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+// ── Summary Verdict ─────────────────────────────────────────────────────────
+
+function SummaryVerdict({
+  deals,
+  metricKeys,
+}: {
+  deals: DealResponse[]
+  metricKeys: string[]
+}) {
+  const results = useMemo(() => {
+    const wins: number[] = deals.map(() => 0)
+    const perMetric: Array<{ label: string; winnerIdx: number }> = []
+
+    for (const key of metricKeys) {
+      if (key === 'finance_type') continue
+      const values = deals.map((d) => getNumericValue(d, key))
+      const w = findWinner(values, key)
+      if (w >= 0) {
+        wins[w]++
+        perMetric.push({ label: formatLabel(key), winnerIdx: w })
+      }
+    }
+
+    // Also count risk_score
+    const riskValues = deals.map((d) => d.risk_score)
+    const riskWinner = findWinner(riskValues, 'risk_score')
+    if (riskWinner >= 0) {
+      wins[riskWinner]++
+      perMetric.push({ label: 'Risk Score', winnerIdx: riskWinner })
+    }
+
+    const maxWins = Math.max(...wins)
+    const overallWinner = wins.filter((w) => w === maxWins).length === 1
+      ? wins.indexOf(maxWins)
+      : -1
+
+    return { wins, perMetric, overallWinner }
+  }, [deals, metricKeys])
+
+  if (results.perMetric.length === 0) {
+    return (
+      <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-6 shadow-xs edge-highlight">
+        <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-[#7A7872] mb-3">Summary</p>
+        <p className="text-sm text-[#A09D98]">These deals are closely matched across all metrics.</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-6 shadow-xs edge-highlight">
+      <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-[#7A7872] mb-4">Summary</p>
+      <div className="space-y-2">
+        {results.perMetric.map(({ label, winnerIdx }) => (
+          <p key={label} className="text-sm text-[#A09D98]">
+            <span className="text-[#F0EDE8]">{truncateAddr(deals[winnerIdx].address)}</span>
+            {' '}wins on {label}
+          </p>
+        ))}
+      </div>
+      {results.overallWinner >= 0 && (
+        <div className="mt-4 pt-4 border-t border-white/[0.04]">
+          <div className="border-l-2 border-[#8B7AFF] pl-3">
+            <p className="text-sm text-[#F0EDE8]">
+              {truncateAddr(deals[results.overallWinner].address)} leads overall with {results.wins[results.overallWinner]} metric wins
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  )
 }
+
+// ── Main Page ───────────────────────────────────────────────────────────────
 
 export default function ComparePage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -77,7 +266,6 @@ export default function ComparePage() {
 
   const dealOptions = useMemo(() => allDeals ?? [], [allDeals])
 
-  /** Filter Deal B options to same strategy as Deal A (if Deal A is selected). */
   const dealBOptions = useMemo(() => {
     if (!dealA) return dealOptions
     return dealOptions.filter((d) => d.strategy === dealA.strategy && d.id !== dealA.id)
@@ -86,7 +274,6 @@ export default function ComparePage() {
   const handleSelectA = (id: string) => {
     const params = new URLSearchParams(searchParams)
     params.set('a', id)
-    // Clear B if its strategy no longer matches
     if (dealBId) {
       const selectedA = dealOptions.find((d) => d.id === id)
       const currentB = dealOptions.find((d) => d.id === dealBId)
@@ -103,14 +290,25 @@ export default function ComparePage() {
     setSearchParams(params)
   }
 
-  /** Determine which rows to show based on strategies. */
+  const handleClearA = () => {
+    const params = new URLSearchParams(searchParams)
+    params.delete('a')
+    params.delete('b')
+    setSearchParams(params)
+  }
+
+  const handleClearB = () => {
+    const params = new URLSearchParams(searchParams)
+    params.delete('b')
+    setSearchParams(params)
+  }
+
   const strategyRows = useMemo(() => {
     if (!dealA && !dealB) return []
     const stratA = dealA?.strategy
     const stratB = dealB?.strategy
     const keysA = stratA ? (STRATEGY_ROWS[stratA] ?? []) : []
     const keysB = stratB ? (STRATEGY_ROWS[stratB] ?? []) : []
-    // Union of both strategy rows, preserving order from A first
     const seen = new Set<string>()
     const combined: string[] = []
     for (const k of [...keysA, ...keysB]) {
@@ -123,7 +321,8 @@ export default function ComparePage() {
   }, [dealA, dealB])
 
   const crossStrategy = dealA && dealB && dealA.strategy !== dealB.strategy
-
+  const bothLoaded = dealA && dealB
+  const deals = bothLoaded ? [dealA, dealB] : []
   const isLoading = loadingList || (!!dealAId && loadingA) || (!!dealBId && loadingB)
 
   return (
@@ -132,107 +331,191 @@ export default function ComparePage() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease: 'easeOut' }}
-        className="max-w-5xl mx-auto space-y-6"
+        className="max-w-5xl mx-auto space-y-8"
       >
-        <h1 className="text-2xl font-semibold text-gray-900">Compare Deals</h1>
+        {/* Header */}
+        <div>
+          <h1 className="font-brand text-3xl font-light tracking-[-0.02em] text-[#F0EDE8]">
+            Compare Deals
+          </h1>
+          <p className="text-sm text-[#A09D98] mt-1">
+            Select deals to compare side by side
+          </p>
+        </div>
 
         {/* Deal selectors */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Deal A */}
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-400 uppercase tracking-[0.08em]">Deal A</label>
-            <Select value={dealAId || undefined} onValueChange={handleSelectA}>
-              <SelectTrigger className="bg-white border-gray-200 text-gray-900 text-sm">
-                <SelectValue placeholder="Select a deal..." />
-              </SelectTrigger>
-              <SelectContent className="bg-white border-gray-200 max-h-[300px]">
-                {loadingList ? (
-                  <div className="px-3 py-2 text-sm text-gray-400">Loading deals...</div>
-                ) : isError ? (
-                  <div className="px-3 py-2 text-sm text-red-600">Failed to load deals</div>
-                ) : dealOptions.length === 0 ? (
-                  <div className="px-3 py-2 text-sm text-gray-400">No deals found</div>
-                ) : (
-                  dealOptions.map((d) => (
-                    <SelectItem
-                      key={d.id}
-                      value={d.id}
-                      className="text-gray-900 text-sm focus:bg-gray-50 focus:text-gray-900"
-                    >
-                      <span className="flex items-center gap-2">
-                        {d.address}
-                        <StrategyBadge strategy={d.strategy as Strategy} />
-                      </span>
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
+            <label className="text-[11px] font-medium text-[#7A7872] uppercase tracking-[0.08em]">Deal A</label>
+            <div className="flex gap-2">
+              <Select value={dealAId || undefined} onValueChange={handleSelectA}>
+                <SelectTrigger className="bg-[#1A1916] border-white/[0.06] text-[#F0EDE8] text-sm flex-1">
+                  <SelectValue placeholder="Select a deal..." />
+                </SelectTrigger>
+                <SelectContent className="bg-[#22211D] border-white/[0.06] max-h-[300px]">
+                  {loadingList ? (
+                    <div className="px-3 py-2 text-sm text-[#7A7872]">Loading deals...</div>
+                  ) : isError ? (
+                    <div className="px-3 py-2 text-sm text-[#D4766A]">Failed to load deals</div>
+                  ) : dealOptions.length === 0 ? (
+                    <div className="px-3 py-2 text-sm text-[#7A7872]">No deals found</div>
+                  ) : (
+                    dealOptions.map((d) => (
+                      <SelectItem
+                        key={d.id}
+                        value={d.id}
+                        className="text-[#F0EDE8] text-sm focus:bg-white/[0.04] focus:text-[#F0EDE8]"
+                      >
+                        <span className="flex items-center gap-2">
+                          {d.address}
+                          <StrategyBadge strategy={d.strategy as Strategy} />
+                        </span>
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+              {dealAId && (
+                <button
+                  onClick={handleClearA}
+                  className="p-2 rounded-lg border border-white/[0.06] text-[#A09D98] hover:text-[#F0EDE8] hover:bg-white/[0.04] transition-colors shrink-0"
+                  aria-label="Clear Deal A"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+            {dealA && (
+              <div className="flex items-center gap-2 mt-1">
+                <StrategyBadge strategy={dealA.strategy as Strategy} />
+                <span className="text-xs text-[#A09D98]">{truncateAddr(dealA.address, 40)}</span>
+              </div>
+            )}
           </div>
 
+          {/* Deal B */}
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-400 uppercase tracking-[0.08em]">Deal B</label>
-            <Select value={dealBId || undefined} onValueChange={handleSelectB} disabled={!dealAId}>
-              <SelectTrigger className="bg-white border-gray-200 text-gray-900 text-sm">
-                <SelectValue placeholder={dealAId ? 'Select a deal...' : 'Select Deal A first'} />
-              </SelectTrigger>
-              <SelectContent className="bg-white border-gray-200 max-h-[300px]">
-                {dealBOptions.length === 0 ? (
-                  <div className="px-3 py-2 text-sm text-gray-400">No other deals with this strategy</div>
-                ) : (
-                  dealBOptions.map((d) => (
-                    <SelectItem
-                      key={d.id}
-                      value={d.id}
-                      className="text-gray-900 text-sm focus:bg-gray-50 focus:text-gray-900"
-                    >
-                      <span className="flex items-center gap-2">
-                        {d.address}
-                        <StrategyBadge strategy={d.strategy as Strategy} />
-                      </span>
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
+            <label className="text-[11px] font-medium text-[#7A7872] uppercase tracking-[0.08em]">Deal B</label>
+            <div className="flex gap-2">
+              <Select value={dealBId || undefined} onValueChange={handleSelectB} disabled={!dealAId}>
+                <SelectTrigger className="bg-[#1A1916] border-white/[0.06] text-[#F0EDE8] text-sm flex-1">
+                  <SelectValue placeholder={dealAId ? 'Select a deal...' : 'Select Deal A first'} />
+                </SelectTrigger>
+                <SelectContent className="bg-[#22211D] border-white/[0.06] max-h-[300px]">
+                  {dealBOptions.length === 0 ? (
+                    <div className="px-3 py-2 text-sm text-[#7A7872]">No other deals with this strategy</div>
+                  ) : (
+                    dealBOptions.map((d) => (
+                      <SelectItem
+                        key={d.id}
+                        value={d.id}
+                        className="text-[#F0EDE8] text-sm focus:bg-white/[0.04] focus:text-[#F0EDE8]"
+                      >
+                        <span className="flex items-center gap-2">
+                          {d.address}
+                          <StrategyBadge strategy={d.strategy as Strategy} />
+                        </span>
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+              {dealBId && (
+                <button
+                  onClick={handleClearB}
+                  className="p-2 rounded-lg border border-white/[0.06] text-[#A09D98] hover:text-[#F0EDE8] hover:bg-white/[0.04] transition-colors shrink-0"
+                  aria-label="Clear Deal B"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+            {dealB && (
+              <div className="flex items-center gap-2 mt-1">
+                <StrategyBadge strategy={dealB.strategy as Strategy} />
+                <span className="text-xs text-[#A09D98]">{truncateAddr(dealB.address, 40)}</span>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Loading skeleton */}
+        {/* Loading */}
         {isLoading && (
-          <div className="space-y-4">
-            <SkeletonCard lines={8} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonCard key={i} lines={2} />
+            ))}
           </div>
         )}
 
-        {/* Deal fetch error */}
+        {/* Error */}
         {(errorA || errorB) && (
-          <div className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-            <AlertTriangle size={16} className="text-red-600 shrink-0" />
-            <p className="text-sm text-gray-600">
-              Failed to load {errorA && errorB ? 'both deals' : errorA ? 'Deal A' : 'Deal B'}. Check the selection and try again.
+          <div className="flex items-center gap-3 rounded-xl border border-[#D4766A]/20 bg-[#D4766A]/10 px-4 py-3">
+            <AlertTriangle size={16} className="text-[#D4766A] shrink-0" />
+            <p className="text-sm text-[#A09D98]">
+              Failed to load {errorA && errorB ? 'both deals' : errorA ? 'Deal A' : 'Deal B'}.
             </p>
           </div>
         )}
 
         {/* Cross-strategy warning */}
         {crossStrategy && (
-          <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-            <AlertTriangle size={16} className="text-amber-500 shrink-0" />
-            <p className="text-sm text-amber-700">
+          <div className="flex items-center gap-3 rounded-xl border border-[#D4A867]/20 bg-[#D4A867]/10 px-4 py-3">
+            <AlertTriangle size={16} className="text-[#D4A867] shrink-0" />
+            <p className="text-sm text-[#D4A867]">
               These deals use different strategies — comparison may not be meaningful
             </p>
           </div>
         )}
 
-        {/* Radar chart — shown when both deals are loaded */}
-        {!isLoading && dealA && dealB && (
+        {/* KPI Comparison Cards */}
+        {!isLoading && bothLoaded && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+          >
+            {/* Risk Score card — always shown */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <KPICompareCard metricKey="risk_score" label="Risk Score" deals={deals} />
+            </div>
+
+            {/* Strategy-specific metric cards */}
+            {strategyRows.length > 0 && (
+              <>
+                <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-[#7A7872] mb-3">
+                  Strategy Outputs
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {strategyRows
+                    .filter((key) => key !== 'finance_type')
+                    .map((key) => (
+                      <KPICompareCard
+                        key={key}
+                        metricKey={key}
+                        label={formatLabel(key)}
+                        deals={deals}
+                      />
+                    ))}
+                </div>
+              </>
+            )}
+          </motion.div>
+        )}
+
+        {/* Radar Chart */}
+        {!isLoading && bothLoaded && (
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut', delay: 0.1 }}
           >
+            <p className="font-brand text-xl font-light text-[#F0EDE8] mb-4">
+              Performance Overview
+            </p>
             <ComparisonRadar
-              deals={[dealA, dealB].map((d) => ({
+              deals={deals.map((d) => ({
                 id: d.id,
                 address: d.address,
                 strategy: d.strategy as Strategy,
@@ -243,132 +526,38 @@ export default function ComparePage() {
           </motion.div>
         )}
 
-        {/* Comparison table */}
-        {!isLoading && (dealA || dealB) && (
-          <div className="rounded-xl border border-gray-200 bg-white overflow-x-auto shadow-xs">
-            {/* Common rows */}
-            <ComparisonRow label="Address" valueA={dealA?.address ?? '—'} valueB={dealB?.address} />
-            <ComparisonRow
-              label="Strategy"
-              valueA={dealA ? <StrategyBadge strategy={dealA.strategy as Strategy} /> : '—'}
-              valueB={dealB ? <StrategyBadge strategy={dealB.strategy as Strategy} /> : undefined}
-            />
-            <ComparisonRow
-              label="Risk Score"
-              valueA={
-                dealA ? (
-                  <span className={cn('tabular-nums font-semibold', riskScoreColor(dealA.risk_score))}>
-                    {dealA.risk_score ?? '—'}
-                  </span>
-                ) : '—'
-              }
-              valueB={
-                dealB ? (
-                  <span className={cn('tabular-nums font-semibold', riskScoreColor(dealB.risk_score))}>
-                    {dealB.risk_score ?? '—'}
-                  </span>
-                ) : undefined
-              }
-              winnerSide={getWinnerSide(dealA?.risk_score ?? null, dealB?.risk_score ?? null, 'risk_score')}
-            />
-            <ComparisonRow
-              label="Status"
-              valueA={dealA ? statusLabel(dealA.status) : '—'}
-              valueB={dealB ? statusLabel(dealB.status) : undefined}
-            />
-            <ComparisonRow
-              label="Created"
-              valueA={dealA ? formatDate(dealA.created_at) : '—'}
-              valueB={dealB ? formatDate(dealB.created_at) : undefined}
-            />
-
-            {/* Divider */}
-            {strategyRows.length > 0 && (
-              <div className="px-4 py-2.5 bg-gray-50 border-y border-gray-200">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-[0.08em]">Strategy Outputs</p>
-              </div>
-            )}
-
-            {/* Strategy-specific rows */}
-            {strategyRows.map((key) => {
-              const valA = dealA ? dealA.outputs?.[key] : undefined
-              const valB = dealB ? dealB.outputs?.[key] : undefined
-              const numA = dealA ? getNumericValue(dealA, key) : null
-              const numB = dealB ? getNumericValue(dealB, key) : null
-
-              return (
-                <ComparisonRow
-                  key={key}
-                  label={formatLabel(key)}
-                  valueA={
-                    dealA ? (
-                      <span className="tabular-nums">{formatOutputValue(key, valA as number | string | null | undefined)}</span>
-                    ) : '—'
-                  }
-                  valueB={
-                    dealB ? (
-                      <span className="tabular-nums">{formatOutputValue(key, valB as number | string | null | undefined)}</span>
-                    ) : undefined
-                  }
-                  winnerSide={getWinnerSide(numA, numB, key)}
-                />
-              )
-            })}
-          </div>
+        {/* Summary Verdict */}
+        {!isLoading && bothLoaded && strategyRows.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut', delay: 0.15 }}
+          >
+            <SummaryVerdict deals={deals} metricKeys={strategyRows} />
+          </motion.div>
         )}
 
         {/* Empty state */}
         {!isLoading && !dealA && !dealB && (
-          <div className="flex flex-col items-center justify-center py-16 space-y-3">
-            <p className="text-sm text-gray-400">Select two deals above to compare their analysis results side by side.</p>
+          <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-12 shadow-xs edge-highlight flex flex-col items-center justify-center text-center">
+            <div className="w-12 h-12 rounded-full bg-white/[0.04] flex items-center justify-center mb-4">
+              <Scale size={24} className="text-[#7A7872]" />
+            </div>
+            <p className="text-sm text-[#A09D98]">
+              Select at least two deals to compare their analysis results side by side.
+            </p>
+          </div>
+        )}
+
+        {/* One deal selected */}
+        {!isLoading && dealA && !dealB && !dealBId && (
+          <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-8 shadow-xs edge-highlight text-center">
+            <p className="text-sm text-[#A09D98]">
+              Add another deal to compare
+            </p>
           </div>
         )}
       </motion.div>
     </AppShell>
-  )
-}
-
-/** Determine which side "wins" for a given metric. */
-function getWinnerSide(a: number | null, b: number | null, key: string): 'a' | 'b' | null {
-  if (a === null || b === null || a === b) return null
-  if (HIGHER_IS_BETTER.has(key)) return a > b ? 'a' : 'b'
-  if (LOWER_IS_BETTER.has(key)) return a < b ? 'a' : 'b'
-  return null
-}
-
-/** Single comparison row with optional winner highlighting. */
-function ComparisonRow({
-  label,
-  valueA,
-  valueB,
-  winnerSide,
-}: {
-  label: string
-  valueA: React.ReactNode
-  valueB?: React.ReactNode
-  winnerSide?: 'a' | 'b' | null
-}) {
-  return (
-    <div className="grid grid-cols-[120px_1fr_1fr] sm:grid-cols-[180px_1fr_1fr] border-b border-gray-200 last:border-0 min-w-[400px]">
-      <div className="px-4 py-3 text-sm text-gray-600 bg-gray-50/30">
-        {label}
-      </div>
-      <div
-        className={cn(
-          'px-4 py-3 text-sm text-gray-900 transition-colors duration-300',
-          winnerSide === 'a' && 'border-l-2 border-sky-500 bg-sky-50'
-        )}
-      >
-        {valueA}
-      </div>
-      <div
-        className={cn(
-          'px-4 py-3 text-sm text-gray-900 border-l border-gray-200 transition-colors duration-300',
-          winnerSide === 'b' && 'border-l-2 border-sky-500 bg-sky-50'
-        )}
-      >
-        {valueB ?? <span className="text-gray-400">Select a deal to compare</span>}
-      </div>
-    </div>
   )
 }

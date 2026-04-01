@@ -1,39 +1,53 @@
-import {
-  CircleCheck,
-  Info,
-  LoaderCircle,
-  OctagonX,
-  TriangleAlert,
-} from "lucide-react"
-import { Toaster as Sonner } from "sonner"
+import { useEffect, useState } from 'react'
+import { Toaster as Sonner } from 'sonner'
+import { CircleCheck, Info, TriangleAlert, OctagonX, LoaderCircle } from 'lucide-react'
 
-type ToasterProps = React.ComponentProps<typeof Sonner>
+function useTheme(): 'dark' | 'light' {
+  const [theme, setTheme] = useState<'dark' | 'light'>(() =>
+    document.documentElement.classList.contains('light') ? 'light' : 'dark'
+  )
 
-/** Light-themed toast notification container. Place once at the app root. */
-const Toaster = ({ ...props }: ToasterProps) => {
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setTheme(document.documentElement.classList.contains('light') ? 'light' : 'dark')
+    })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => observer.disconnect()
+  }, [])
+
+  return theme
+}
+
+function Toaster() {
+  const theme = useTheme()
+
   return (
     <Sonner
-      theme="light"
+      theme={theme}
+      position="bottom-right"
       className="toaster group"
       icons={{
-        success: <CircleCheck className="h-4 w-4" />,
-        info: <Info className="h-4 w-4" />,
-        warning: <TriangleAlert className="h-4 w-4" />,
-        error: <OctagonX className="h-4 w-4" />,
-        loading: <LoaderCircle className="h-4 w-4 animate-spin" />,
+        success: <CircleCheck size={18} />,
+        info: <Info size={18} />,
+        warning: <TriangleAlert size={18} />,
+        error: <OctagonX size={18} />,
+        loading: <LoaderCircle size={18} className="animate-spin" />,
       }}
       toastOptions={{
         classNames: {
           toast:
-            "group toast group-[.toaster]:bg-white group-[.toaster]:text-gray-900 group-[.toaster]:border-gray-200 group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-gray-500",
+            'group toast group-[.toaster]:bg-app-elevated group-[.toaster]:text-text-primary group-[.toaster]:border-border-default group-[.toaster]:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.5)] group-[.toaster]:rounded-lg',
+          description: 'group-[.toast]:text-text-secondary',
           actionButton:
-            "group-[.toast]:bg-lime-600 group-[.toast]:text-white",
+            'group-[.toast]:bg-[#8B7AFF] group-[.toast]:text-[#0C0B0A] group-[.toast]:rounded-md group-[.toast]:text-xs group-[.toast]:font-medium',
           cancelButton:
-            "group-[.toast]:bg-gray-100 group-[.toast]:text-gray-500",
+            'group-[.toast]:bg-black/[0.04] dark:group-[.toast]:bg-white/[0.06] group-[.toast]:text-text-secondary group-[.toast]:rounded-md group-[.toast]:text-xs',
+          success: 'group-[.toaster]:border-l-[3px] group-[.toaster]:border-l-[#6DBEA3]',
+          error: 'group-[.toaster]:border-l-[3px] group-[.toaster]:border-l-[#D4766A]',
+          warning: 'group-[.toaster]:border-l-[3px] group-[.toaster]:border-l-[#D4A867]',
+          info: 'group-[.toaster]:border-l-[3px] group-[.toaster]:border-l-[#8B7AFF]',
         },
       }}
-      {...props}
     />
   )
 }

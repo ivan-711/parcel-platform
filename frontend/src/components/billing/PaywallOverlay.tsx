@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Lock } from 'lucide-react'
@@ -16,6 +16,8 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
   const [visible, setVisible] = useState(!dismissed.has(feature))
   const { label, description } = FEATURE_LABELS[feature]
   const checkout = useCheckout()
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const previousFocus = useRef<HTMLElement | null>(null)
 
   const handleDismiss = useCallback(() => {
     dismissed.add(feature)
@@ -23,36 +25,89 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
     onDismiss?.()
   }, [feature, onDismiss])
 
+  // Focus trap: save previous focus, move into overlay on mount, trap Tab, restore on unmount
+  useEffect(() => {
+    if (!visible) return
+
+    // Save the previously focused element for restoration
+    previousFocus.current = document.activeElement as HTMLElement
+
+    const overlay = overlayRef.current
+    if (!overlay) return
+
+    // Focus the first focusable element
+    const focusables = overlay.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )
+    if (focusables.length > 0) focusables[0].focus()
+
+    // Trap tab within overlay
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key !== 'Tab' || !overlay) return
+      const focusableEls = overlay.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+      if (focusableEls.length === 0) return
+      const first = focusableEls[0]
+      const last = focusableEls[focusableEls.length - 1]
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      // Restore focus to the previously focused element
+      previousFocus.current?.focus()
+    }
+  }, [visible])
+
   if (!visible) return null
 
   return (
-    <div className="absolute inset-0 z-20 flex items-center justify-center">
+    <div
+      ref={overlayRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Upgrade required: ${label}`}
+      className="absolute inset-0 z-20 flex items-center justify-center"
+    >
       {/* Gradient mask */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/60 to-white/95 backdrop-blur-[6px]" />
+      <div className="absolute inset-0 bg-[#0C0B0A]/80 backdrop-blur-xl backdrop-saturate-150" aria-hidden="true" />
 
       {/* Card */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-        className="relative z-10 w-full max-w-md bg-white rounded-lg border border-gray-200 shadow-xl p-8 mx-4"
+        className="relative z-10 w-full max-w-md bg-[#1A1916] rounded-xl border border-white/[0.06] shadow-2xl p-8 mx-4"
       >
         {/* Lock icon */}
-        <div className="mx-auto w-12 h-12 rounded-xl bg-lime-50 flex items-center justify-center mb-5">
-          <Lock size={24} className="text-lime-700" />
+        <div className="mx-auto w-12 h-12 rounded-xl bg-[#8B7AFF]/10 ring-1 ring-[#8B7AFF]/20 flex items-center justify-center mb-5">
+          <Lock size={24} className="text-[#8B7AFF]" />
         </div>
 
-        <h3 className="text-lg font-semibold text-gray-900 text-center">
+        <h3 className="text-lg font-semibold text-[#F0EDE8] text-center">
           {label}
         </h3>
-        <p className="text-sm text-gray-500 text-center mt-2 mb-6">
+        <p className="text-sm text-[#A09D98] text-center mt-2 mb-6">
           {description}
         </p>
 
         <button
           onClick={() => checkout.mutate({ plan: 'pro', interval: 'annual' })}
           disabled={checkout.isPending}
-          className="w-full h-11 rounded-lg bg-lime-700 hover:bg-lime-800 text-white text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer"
+          className="w-full h-11 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-[#0C0B0A] text-sm font-medium transition-all disabled:opacity-50 cursor-pointer"
         >
           {checkout.isPending ? 'Redirecting...' : 'Upgrade to Pro'}
         </button>
@@ -60,14 +115,14 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
         <div className="flex items-center justify-center gap-4 mt-4">
           <Link
             to="/settings"
-            className="text-sm text-lime-700 hover:text-lime-800 transition-colors"
+            className="text-sm text-[#8B7AFF] hover:text-[#A89FFF] transition-colors"
           >
             Compare plans &rarr;
           </Link>
           {onDismiss && (
             <button
               onClick={handleDismiss}
-              className="text-sm text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+              className="text-sm text-[#7A7872] hover:text-[#A09D98] transition-colors cursor-pointer"
             >
               Dismiss
             </button>

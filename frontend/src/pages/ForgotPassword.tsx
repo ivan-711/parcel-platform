@@ -39,21 +39,25 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#0C0B0A] flex items-center justify-center px-4">
+      {/* Ambient glow */}
+      <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
+        <div className="w-[480px] h-[480px] rounded-full bg-[#8B7AFF]/[0.06] blur-[120px]" />
+      </div>
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-        className="w-full max-w-[480px] bg-white border border-gray-200 rounded-xl p-8 space-y-6 shadow-xs"
+        className="relative w-full max-w-[400px] bg-[#1A1916] border border-white/[0.08] rounded-xl p-8 space-y-6"
       >
         {/* Header */}
         <div className="space-y-1 text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="w-7 h-7 rounded bg-lime-700 flex items-center justify-center">
-              <span className="text-[11px] font-bold text-white font-mono">P</span>
+            <div className="w-7 h-7 rounded bg-[#8B7AFF] flex items-center justify-center">
+              <span className="text-[11px] font-bold text-[#F0EDE8] font-mono">P</span>
             </div>
           </div>
-          <p className="text-2xl font-semibold text-gray-900 tracking-tight">Parcel</p>
+          <p className="text-2xl font-semibold text-[#F0EDE8] tracking-tight">Parcel</p>
           <AnimatePresence mode="wait">
             {isSuccess ? (
               <motion.p
@@ -61,7 +65,7 @@ export default function ForgotPassword() {
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className="text-sm text-gray-500"
+                className="text-sm text-[#A09D98]"
               >
                 Check your inbox
               </motion.p>
@@ -71,7 +75,7 @@ export default function ForgotPassword() {
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className="text-sm text-gray-500"
+                className="text-sm text-[#A09D98]"
               >
                 Reset your password
               </motion.p>
@@ -91,16 +95,16 @@ export default function ForgotPassword() {
               className="space-y-4"
             >
               <div className="flex flex-col items-center gap-3 py-4">
-                <div className="w-12 h-12 rounded-full bg-sky-50 flex items-center justify-center">
-                  <Mail size={22} className="text-sky-600" />
+                <div className="w-12 h-12 rounded-full bg-[#6DBEA3]/15 flex items-center justify-center">
+                  <Mail size={22} className="text-[#6DBEA3]" />
                 </div>
                 <div className="text-center space-y-1.5">
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-[#F0EDE8]">
                     Check your email for a reset link
                   </p>
-                  <p className="text-xs text-gray-400 max-w-[280px]">
+                  <p className="text-xs text-[#7A7872] max-w-[280px]">
                     We sent a password reset link to{' '}
-                    <span className="text-gray-600 font-medium">{email}</span>.
+                    <span className="text-[#A09D98] font-medium">{email}</span>.
                     If you don&apos;t see it, check your spam folder.
                   </p>
                 </div>
@@ -110,7 +114,7 @@ export default function ForgotPassword() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full border-gray-300 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  className="w-full border-white/[0.06] text-[#A09D98] hover:text-[#F0EDE8] hover:bg-white/[0.04]"
                 >
                   <ArrowLeft size={14} className="mr-2" />
                   Back to sign in
@@ -126,13 +130,13 @@ export default function ForgotPassword() {
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             >
-              <p className="text-xs text-gray-400 text-center mb-4">
+              <p className="text-xs text-[#7A7872] text-center mb-4">
                 Enter your email and we&apos;ll send you a reset link
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="forgot-email" className="text-gray-700 text-xs">
+                  <Label htmlFor="forgot-email" className="text-[#A09D98] text-xs">
                     Email
                   </Label>
                   <Input
@@ -143,29 +147,29 @@ export default function ForgotPassword() {
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setError(null) }}
-                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-lime-500 focus:ring-lime-500/20"
+                    className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] focus:border-[#8B7AFF]/50 focus:ring-[#8B7AFF]/20"
                   />
                 </div>
 
                 {/* Inline error */}
                 {error && (
-                  <p className="text-red-500 text-xs">{error}</p>
+                  <p className="text-[#D4766A] text-xs">{error}</p>
                 )}
 
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-lime-700 hover:bg-lime-800 text-white font-medium"
+                  className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] font-medium hover:opacity-90"
                 >
                   {isSubmitting ? 'Sending...' : 'Send Reset Link'}
                 </Button>
               </form>
 
               {/* Footer link */}
-              <p className="text-center text-xs text-gray-400 mt-6">
+              <p className="text-center text-xs text-[#7A7872] mt-6">
                 <Link
                   to="/login"
-                  className="inline-flex items-center gap-1 text-lime-700 hover:text-lime-800 transition-colors"
+                  className="inline-flex items-center gap-1 text-[#8B7AFF] hover:text-[#A89FFF] transition-colors"
                 >
                   <ArrowLeft size={12} />
                   Back to sign in

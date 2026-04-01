@@ -34,15 +34,15 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
   // Expired state
   if (daysLeft === 0 || (!trialActive && trialEndsAt)) {
     return (
-      <div className="mx-3 mb-3 rounded-lg border border-red-200 bg-red-50 p-3">
+      <div className="mx-3 mb-3 rounded-lg border border-error/10 bg-error/[0.05] p-3">
         <div className="flex items-start gap-2">
-          <XCircle size={16} className="text-red-500 mt-0.5 shrink-0" />
+          <XCircle size={16} className="text-error mt-0.5 shrink-0" />
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-red-800">Trial expired</p>
+            <p className="text-sm font-medium text-error">Trial expired</p>
             <button
               onClick={() => checkout.mutate({ plan: 'pro', interval: 'annual' })}
               disabled={checkout.isPending}
-              className="mt-2 w-full h-8 rounded-md bg-red-600 hover:bg-red-700 text-white text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer"
+              className="mt-2 w-full h-8 rounded-md bg-error hover:brightness-110 text-[#F0EDE8] text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer"
             >
               Upgrade to continue
             </button>
@@ -63,8 +63,8 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
       className={cn(
         'mx-3 mb-3 rounded-lg border p-3',
         isUrgent
-          ? 'border-amber-200 bg-amber-50'
-          : 'border-lime-200 bg-lime-50'
+          ? 'border-warning/10 bg-warning/[0.06]'
+          : 'border-[#8B7AFF]/10 bg-[#8B7AFF]/[0.06]'
       )}
     >
       <div className="flex items-start gap-2">
@@ -72,14 +72,14 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
           size={16}
           className={cn(
             'mt-0.5 shrink-0',
-            isUrgent ? 'text-amber-500' : 'text-lime-600'
+            isUrgent ? 'text-warning' : 'text-[#8B7AFF]'
           )}
         />
         <div className="min-w-0 flex-1">
           <p
             className={cn(
               'text-sm font-medium',
-              isUrgent ? 'text-amber-800' : 'text-lime-800'
+              isUrgent ? 'text-warning' : 'text-[#A89FFF]'
             )}
           >
             {isUrgent
@@ -91,14 +91,14 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
             <button
               onClick={() => checkout.mutate({ plan: 'pro', interval: 'annual' })}
               disabled={checkout.isPending}
-              className="mt-2 w-full h-8 rounded-md bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer"
+              className="mt-2 w-full h-8 rounded-md bg-warning hover:brightness-110 text-gray-0 text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer"
             >
               Upgrade now
             </button>
           ) : (
             <Link
               to="/settings"
-              className="text-xs text-lime-700 hover:text-lime-800 mt-1 inline-block transition-colors"
+              className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] mt-1 inline-block transition-colors"
             >
               Upgrade
             </Link>
@@ -112,7 +112,7 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
             setSnoozed(true)
           }}
           aria-label="Dismiss for 24 hours"
-          className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer shrink-0"
+          className="text-[#7A7872] hover:text-[#A09D98] transition-colors cursor-pointer shrink-0"
         >
           <X size={14} />
         </button>

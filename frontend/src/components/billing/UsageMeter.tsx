@@ -12,8 +12,8 @@ export function UsageMeter({ metric }: UsageMeterProps) {
   if (limit === null) {
     return (
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-700">{display_name}</span>
-        <span className="text-sm text-gray-500">Unlimited</span>
+        <span className="text-sm font-medium text-[#A09D98]">{display_name}</span>
+        <span className="text-sm text-[#7A7872]">Unlimited</span>
       </div>
     )
   }
@@ -25,16 +25,16 @@ export function UsageMeter({ metric }: UsageMeterProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-sm font-medium text-gray-700">{display_name}</span>
-        <span className="text-sm text-gray-500 tabular-nums">
+        <span className="text-sm font-medium text-[#A09D98]">{display_name}</span>
+        <span className="text-sm text-[#F0EDE8] tabular-nums">
           {current} of {limit} used
         </span>
       </div>
-      <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+      <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
         <motion.div
           className={cn(
             'h-full rounded-full',
-            exceeded ? 'bg-red-500' : warning ? 'bg-amber-500' : 'bg-lime-500'
+            exceeded ? 'bg-[#D4766A]' : warning ? 'bg-[#D4A867]' : 'bg-[#8B7AFF]'
           )}
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}

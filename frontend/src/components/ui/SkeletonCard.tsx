@@ -10,19 +10,19 @@ export function SkeletonCard({ className, lines = 3 }: SkeletonCardProps) {
   return (
     <div
       className={cn(
-        'rounded-xl border border-gray-200 bg-white p-5 space-y-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]',
+        'bg-[#1A1916] border border-white/[0.04] rounded-xl shadow-xs p-5 space-y-3',
         className
       )}
     >
-      <div className="h-4 w-2/5 rounded-md bg-gray-100 animate-pulse" />
+      <div className="h-4 w-2/5 rounded-md bg-gradient-to-r from-white/[0.03] via-white/[0.06] to-white/[0.03] bg-[length:200%_100%] animate-shimmer" />
       {Array.from({ length: lines }).map((_, i) => (
         <div
           key={i}
           className={cn(
-            'h-3 rounded-md bg-gray-100 animate-pulse',
+            'h-3 rounded-md bg-gradient-to-r from-white/[0.03] via-white/[0.06] to-white/[0.03] bg-[length:200%_100%] animate-shimmer',
             i === lines - 1 ? 'w-3/4' : 'w-full'
           )}
-          style={{ animationDelay: `${i * 100}ms` }}
+          style={{ animationDelay: `${i * 80}ms` }}
         />
       ))}
     </div>

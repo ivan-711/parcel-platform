@@ -73,29 +73,33 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#0C0B0A] flex items-center justify-center px-4 py-12">
+      {/* Ambient glow */}
+      <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
+        <div className="w-[480px] h-[480px] rounded-full bg-[#8B7AFF]/[0.06] blur-[120px]" />
+      </div>
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-        className="w-full max-w-[480px] bg-white border border-gray-200 rounded-xl p-8 space-y-6 shadow-xs"
+        className="relative w-full max-w-[400px] bg-[#1A1916] border border-white/[0.08] rounded-xl p-8 space-y-6"
       >
         {/* Header */}
         <div className="space-y-1 text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="w-7 h-7 rounded bg-lime-700 flex items-center justify-center">
-              <span className="text-[11px] font-bold text-white font-mono">P</span>
+            <div className="w-7 h-7 rounded bg-[#8B7AFF] flex items-center justify-center">
+              <span className="text-[11px] font-bold text-[#F0EDE8] font-mono">P</span>
             </div>
           </div>
-          <p className="text-2xl font-semibold text-gray-900 tracking-tight">Parcel</p>
-          <p className="text-sm text-gray-500">Create your account</p>
-          <p className="text-xs text-lime-700 font-medium">Start your 7-day free Pro trial</p>
+          <p className="text-2xl font-semibold text-[#F0EDE8] tracking-tight">Parcel</p>
+          <p className="text-sm text-[#A09D98]">Create your account</p>
+          <p className="text-xs text-[#8B7AFF] font-medium">Start your 7-day free Pro trial</p>
         </div>
 
         <motion.div {...shakeProps}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="name" className="text-gray-700 text-xs">
+            <Label htmlFor="name" className="text-[#A09D98] text-xs">
               Full Name
             </Label>
             <Input
@@ -106,12 +110,12 @@ export default function Register() {
               placeholder="Jane Smith"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-lime-500 focus:ring-lime-500/20"
+              className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] focus:border-[#8B7AFF]/50 focus:ring-[#8B7AFF]/20"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="email" className="text-gray-700 text-xs">
+            <Label htmlFor="email" className="text-[#A09D98] text-xs">
               Email
             </Label>
             <Input
@@ -122,12 +126,12 @@ export default function Register() {
               placeholder="you@example.com"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-lime-500 focus:ring-lime-500/20"
+              className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] focus:border-[#8B7AFF]/50 focus:ring-[#8B7AFF]/20"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="password" className="text-gray-700 text-xs">
+            <Label htmlFor="password" className="text-[#A09D98] text-xs">
               Password
             </Label>
             <Input
@@ -139,14 +143,14 @@ export default function Register() {
               placeholder="••••••••"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-lime-500 focus:ring-lime-500/20"
+              className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] focus:border-[#8B7AFF]/50 focus:ring-[#8B7AFF]/20"
             />
-            <p className="text-[11px] text-gray-400">Must be at least 8 characters</p>
+            <p className="text-[11px] text-[#7A7872]">Must be at least 8 characters</p>
           </div>
 
           {/* Role selection */}
           <div className="space-y-2">
-            <Label className="text-gray-700 text-xs">I am a...</Label>
+            <Label className="text-[#A09D98] text-xs">I am a...</Label>
             <div className="grid grid-cols-3 gap-2">
               {ROLE_OPTIONS.map((option) => {
                 const selected = form.role === option.value
@@ -158,40 +162,40 @@ export default function Register() {
                     className={cn(
                       'flex flex-col items-center gap-1.5 p-3 rounded-lg border text-center transition-colors',
                       selected
-                        ? 'border-lime-500 bg-lime-50 text-gray-900'
-                        : 'border-gray-200 hover:border-gray-300 text-gray-600'
+                        ? 'border-[#8B7AFF]/40 bg-[#8B7AFF]/10 text-[#F0EDE8]'
+                        : 'border-white/[0.06] hover:border-white/[0.08] text-[#A09D98]'
                     )}
                   >
                     <span className="text-xl">{option.icon}</span>
                     <span className="text-xs font-medium">{option.label}</span>
-                    <span className="text-[10px] text-gray-400 leading-tight">
+                    <span className="text-[10px] text-[#7A7872] leading-tight">
                       {option.description}
                     </span>
                   </button>
                 )
               })}
             </div>
-            {roleError && <p className="text-red-500 text-xs">{roleError}</p>}
+            {roleError && <p className="text-[#D4766A] text-xs">{roleError}</p>}
           </div>
 
           {/* Inline API error */}
           {register.error && (
-            <p className="text-red-500 text-xs">{register.error.message}</p>
+            <p className="text-[#D4766A] text-xs">{register.error.message}</p>
           )}
 
           <Button
             type="submit"
             disabled={register.isPending}
-            className="w-full bg-lime-700 hover:bg-lime-800 text-white font-medium"
+            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] font-medium hover:opacity-90"
           >
             {register.isPending ? 'Creating account...' : 'Create account'}
           </Button>
         </form>
         </motion.div>
 
-        <p className="text-center text-xs text-gray-400">
+        <p className="text-center text-xs text-[#7A7872]">
           Already have an account?{' '}
-          <Link to="/login" className="text-lime-700 hover:text-lime-800 transition-colors">
+          <Link to="/login" className="text-[#8B7AFF] hover:text-[#A89FFF] transition-colors">
             Sign in
           </Link>
         </p>

@@ -176,14 +176,14 @@ export default function SettingsPage() {
   if (profileError) {
     return (
       <AppShell title="Settings">
-        <div className="rounded-lg border border-red-200 bg-red-50 p-6 flex items-start gap-3 max-w-lg">
-          <AlertCircle size={20} className="text-red-500 shrink-0 mt-0.5" />
+        <div className="rounded-xl border border-[#D4766A]/20 bg-[#D4766A]/5 p-6 flex items-start gap-3 max-w-lg">
+          <AlertCircle size={20} className="text-[#D4766A] shrink-0 mt-0.5" />
           <div className="space-y-2">
-            <p className="text-sm font-medium text-gray-900">Failed to load settings</p>
-            <p className="text-xs text-gray-600">Something went wrong. Please try again.</p>
+            <p className="text-sm font-medium text-[#F0EDE8]">Failed to load settings</p>
+            <p className="text-xs text-[#A09D98]">Something went wrong. Please try again.</p>
             <button
               onClick={() => queryClient.invalidateQueries({ queryKey: ['me'] })}
-              className="text-xs font-medium text-lime-700 hover:text-lime-600 transition-colors"
+              className="text-xs font-medium text-[#8B7AFF] hover:text-[#A89FFF] transition-colors"
             >
               Try again
             </button>
@@ -206,27 +206,20 @@ export default function SettingsPage() {
 
   return (
     <AppShell title="Settings">
-      {/* Desktop underline tabs — hidden below md */}
-      <div className="hidden md:flex gap-1 border-b border-gray-200 mb-8">
+      {/* Desktop pill tabs — hidden below md */}
+      <div className="hidden md:inline-flex gap-1 p-1 bg-white/[0.03] rounded-lg border border-white/[0.04] mb-8">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              'px-4 py-2.5 text-sm font-medium transition-colors relative',
-              'hover:text-gray-900',
+              'relative px-4 py-2 text-sm font-medium rounded-md transition-all duration-200',
               activeTab === tab.id
-                ? 'text-gray-900'
-                : 'text-gray-600'
+                ? 'text-[#F0EDE8] bg-white/[0.08] shadow-sm'
+                : 'text-[#A09D98] hover:text-[#F0EDE8] hover:bg-white/[0.04]'
             )}
           >
             {tab.label}
-            {activeTab === tab.id && (
-              <motion.div
-                layoutId="settings-tab-indicator"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-lime-700 rounded-full"
-              />
-            )}
           </button>
         ))}
       </div>
@@ -240,8 +233,8 @@ export default function SettingsPage() {
             className={cn(
               'shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors',
               activeTab === tab.id
-                ? 'bg-lime-50 text-lime-700 ring-1 ring-lime-200'
-                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                ? 'bg-white/[0.08] text-[#F0EDE8]'
+                : 'text-[#A09D98] hover:text-[#F0EDE8] hover:bg-white/[0.04]'
             )}
           >
             {tab.label}
@@ -260,42 +253,51 @@ export default function SettingsPage() {
           <>
             {/* Profile Section */}
             <motion.div variants={itemVariants}>
-              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-xs">
-                <h2 className="text-sm font-semibold text-gray-900 mb-4">Profile</h2>
+              <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-6 shadow-xs">
+                <h2 className="text-sm font-semibold text-[#F0EDE8] mb-4">Profile</h2>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-16 h-16 rounded-full bg-[#22211D] border border-white/[0.08] flex items-center justify-center text-[#8B7AFF] text-lg font-semibold">
+                    {user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-[#F0EDE8]">{user?.name ?? 'User'}</p>
+                    <p className="text-xs text-[#A09D98]">{user?.email ?? ''}</p>
+                  </div>
+                </div>
                 <form onSubmit={handleProfileSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="text-sm font-medium text-gray-700">Name</Label>
+                    <Label htmlFor="name" className="text-sm font-medium text-[#A09D98]">Name</Label>
                     <Input
                       id="name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Your name"
-                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20"
+                      className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
+                    <Label htmlFor="email" className="text-sm font-medium text-[#A09D98]">Email</Label>
                     <Input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
-                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20"
+                      className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="role" className="text-sm font-medium text-gray-700">Role</Label>
+                    <Label htmlFor="role" className="text-sm font-medium text-[#A09D98]">Role</Label>
                     <Input
                       id="role"
                       value={user?.role ?? ''}
                       readOnly
-                      className="bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed"
+                      className="bg-[#131210] border border-white/[0.04] text-[#5C5A56] cursor-not-allowed"
                     />
                   </div>
 
                   {profileMsg && (
-                    <p className={profileMsg.type === 'success' ? 'text-sky-600 text-sm' : 'text-red-600 text-sm'}>
+                    <p className={profileMsg.type === 'success' ? 'text-[#6DBEA3] text-sm' : 'text-[#D4766A] text-sm'}>
                       {profileMsg.text}
                     </p>
                   )}
@@ -303,7 +305,7 @@ export default function SettingsPage() {
                   <button
                     type="submit"
                     disabled={profileMutation.isPending}
-                    className="px-4 py-2 rounded-lg bg-lime-700 text-white text-sm font-medium hover:bg-lime-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {profileMutation.isPending ? 'Saving...' : 'Save changes'}
                   </button>
@@ -313,33 +315,33 @@ export default function SettingsPage() {
 
             {/* Change Password Section */}
             <motion.div variants={itemVariants}>
-              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-xs">
-                <h2 className="text-sm font-semibold text-gray-900 mb-4">Change Password</h2>
+              <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-6 shadow-xs">
+                <h2 className="text-sm font-semibold text-[#F0EDE8] mb-4">Change Password</h2>
                 <form onSubmit={handlePasswordSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="current-password" className="text-sm font-medium text-gray-700">Current Password</Label>
+                    <Label htmlFor="current-password" className="text-sm font-medium text-[#A09D98]">Current Password</Label>
                     <Input
                       id="current-password"
                       type="password"
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       required
-                      className="bg-white border-gray-300 text-gray-900 focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20"
+                      className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="new-password" className="text-sm font-medium text-gray-700">New Password</Label>
+                    <Label htmlFor="new-password" className="text-sm font-medium text-[#A09D98]">New Password</Label>
                     <Input
                       id="new-password"
                       type="password"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       required
-                      className="bg-white border-gray-300 text-gray-900 focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20"
+                      className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="confirm-password" className="text-sm font-medium text-gray-700">Confirm Password</Label>
+                    <Label htmlFor="confirm-password" className="text-sm font-medium text-[#A09D98]">Confirm Password</Label>
                     <Input
                       id="confirm-password"
                       type="password"
@@ -349,15 +351,15 @@ export default function SettingsPage() {
                         if (confirmError) setConfirmError('')
                       }}
                       required
-                      className="bg-white border-gray-300 text-gray-900 focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20"
+                      className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
                     />
                     {confirmError && (
-                      <p className="text-red-600 text-sm">{confirmError}</p>
+                      <p className="text-[#D4766A] text-sm">{confirmError}</p>
                     )}
                   </div>
 
                   {passwordMsg && (
-                    <p className={passwordMsg.type === 'success' ? 'text-sky-600 text-sm' : 'text-red-600 text-sm'}>
+                    <p className={passwordMsg.type === 'success' ? 'text-[#6DBEA3] text-sm' : 'text-[#D4766A] text-sm'}>
                       {passwordMsg.text}
                     </p>
                   )}
@@ -365,7 +367,7 @@ export default function SettingsPage() {
                   <button
                     type="submit"
                     disabled={passwordMutation.isPending}
-                    className="px-4 py-2 rounded-lg bg-lime-700 text-white text-sm font-medium hover:bg-lime-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {passwordMutation.isPending ? 'Updating...' : 'Update password'}
                   </button>
@@ -377,13 +379,13 @@ export default function SettingsPage() {
 
         {activeTab === 'notifications' && (
           <motion.div variants={itemVariants}>
-            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-xs">
-              <h2 className="text-sm font-semibold text-gray-900 mb-4">Notifications</h2>
+            <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-6 shadow-xs">
+              <h2 className="text-sm font-semibold text-[#F0EDE8] mb-4">Notifications</h2>
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Email Notifications</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Get notified when your document analysis is complete</p>
-                  <p className="text-xs text-gray-500 mt-1">We&apos;ll send you an email when AI finishes analyzing your uploaded documents.</p>
+                  <p className="text-sm font-medium text-[#F0EDE8]">Email Notifications</p>
+                  <p className="text-xs text-[#A09D98] mt-0.5">Get notified when your document analysis is complete</p>
+                  <p className="text-xs text-[#A09D98] mt-1">We&apos;ll send you an email when AI finishes analyzing your uploaded documents.</p>
                 </div>
                 <Switch
                   checked={notifPrefs?.email_notifications ?? false}
@@ -392,13 +394,13 @@ export default function SettingsPage() {
                 />
               </div>
               {notifSaved && (
-                <p className="flex items-center gap-1 text-sky-600 text-sm mt-3">
+                <p className="flex items-center gap-1 text-[#6DBEA3] text-sm mt-3">
                   <Check size={14} />
                   Saved
                 </p>
               )}
               {notifError && (
-                <p className="text-red-600 text-sm mt-3">Failed to save</p>
+                <p className="text-[#D4766A] text-sm mt-3">Failed to save</p>
               )}
             </div>
           </motion.div>

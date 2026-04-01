@@ -13,10 +13,10 @@ const STROKE_WIDTH = 12
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 
 function getColor(score: number): string {
-  if (score <= 30) return '#0EA5E9'  // sky-500 (success)
-  if (score <= 60) return '#F59E0B'  // amber-500
-  if (score <= 80) return '#EF4444'  // red-500
-  return '#B91C1C'                   // red-700
+  if (score <= 30) return '#6DBEA3'  // success green
+  if (score <= 60) return '#D4A867'  // warm amber
+  if (score <= 80) return '#D4766A'  // terracotta
+  return '#C45E52'                   // error strong
 }
 
 function getLabel(score: number): string {
@@ -26,18 +26,11 @@ function getLabel(score: number): string {
   return 'Very High Risk'
 }
 
-function getLabelColor(score: number): string {
-  if (score <= 30) return 'text-sky-700'
-  if (score <= 60) return 'text-amber-700'
-  if (score <= 80) return 'text-red-600'
-  return 'text-red-800'
-}
-
-function getLabelBg(score: number): string {
-  if (score <= 30) return 'bg-sky-50'
-  if (score <= 60) return 'bg-amber-50'
-  if (score <= 80) return 'bg-red-50'
-  return 'bg-red-100'
+function getLabelClasses(score: number): string {
+  if (score <= 30) return 'bg-[#6DBEA3]/10 text-[#6DBEA3] border border-[#6DBEA3]/20'
+  if (score <= 60) return 'bg-[#D4A867]/10 text-[#D4A867] border border-[#D4A867]/20'
+  if (score <= 80) return 'bg-[#D4766A]/10 text-[#D4766A] border border-[#D4766A]/20'
+  return 'bg-[#C45E52]/10 text-[#C45E52] border border-[#C45E52]/20'
 }
 
 export function RiskGauge({ score, className }: RiskGaugeProps) {
@@ -46,22 +39,30 @@ export function RiskGauge({ score, className }: RiskGaugeProps) {
   const offset = CIRCUMFERENCE - (normalizedScore / 100) * CIRCUMFERENCE
   const color = getColor(score)
   const label = getLabel(score)
-  const labelColor = getLabelColor(score)
-  const labelBg = getLabelBg(score)
+  const labelClasses = getLabelClasses(score)
 
   return (
     <div className={cn('flex flex-col items-center gap-3', className)}>
       <svg width={180} height={180} viewBox="0 0 180 180">
-        {/* Background circle — light gray track */}
+        <defs>
+          <filter id="gauge-glow">
+            <feGaussianBlur stdDeviation={4} result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        {/* Background circle — dark track */}
         <circle
           cx={90}
           cy={90}
           r={RADIUS}
           fill="none"
-          stroke="#EAECF0"
+          stroke="rgba(255,255,255,0.06)"
           strokeWidth={STROKE_WIDTH}
         />
-        {/* Animated foreground arc */}
+        {/* Animated foreground arc with glow */}
         <circle
           cx={90}
           cy={90}
@@ -72,6 +73,7 @@ export function RiskGauge({ score, className }: RiskGaugeProps) {
           strokeLinecap="round"
           strokeDasharray={CIRCUMFERENCE}
           strokeDashoffset={offset}
+          filter="url(#gauge-glow)"
           style={{
             transition: 'stroke-dashoffset 1.2s ease-out',
             transform: 'rotate(-90deg)',
@@ -81,25 +83,39 @@ export function RiskGauge({ score, className }: RiskGaugeProps) {
         {/* Center score text */}
         <text
           x={90}
-          y={90}
+          y={85}
           textAnchor="middle"
           dominantBaseline="central"
           style={{
             fontSize: '36px',
-            fontWeight: 600,
-            fill: '#101828',
-            fontFamily: 'Inter, sans-serif',
+            fontWeight: 300,
+            fill: '#F0EDE8',
+            fontFamily: "'Satoshi', 'Satoshi Fallback', system-ui, sans-serif",
             fontFeatureSettings: '"tnum"',
           }}
         >
           {Math.round(animated)}
         </text>
+        {/* Center label text */}
+        <text
+          x={90}
+          y={110}
+          textAnchor="middle"
+          dominantBaseline="central"
+          style={{
+            fontSize: '11px',
+            fontWeight: 500,
+            fill: '#A09D98',
+            fontFamily: 'Inter, sans-serif',
+          }}
+        >
+          / 100
+        </text>
       </svg>
       <span
         className={cn(
           'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold',
-          labelColor,
-          labelBg
+          labelClasses
         )}
       >
         {label}

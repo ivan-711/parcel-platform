@@ -15,16 +15,16 @@ export function ConceptTooltip({ term, definition, children }: ConceptTooltipPro
     <TooltipProvider delayDuration={200}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="border-b border-dashed border-text-muted cursor-help">
+          <span className="border-b border-dashed border-[#5C5A56] cursor-help">
             {children}
           </span>
         </TooltipTrigger>
         <TooltipContent
-          className="max-w-[280px] bg-gray-900 border border-gray-800 text-white p-3"
+          className="max-w-[280px] bg-[#2A2924] border border-white/[0.08] p-3 rounded-lg shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)]"
           sideOffset={4}
         >
-          <p className="font-semibold text-sm mb-1 text-white">{term}</p>
-          <p className="text-xs text-gray-300 leading-relaxed">{definition}</p>
+          <p className="text-sm font-semibold text-[#F0EDE8] mb-1">{term}</p>
+          <p className="text-xs text-[#A09D98] leading-relaxed">{definition}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

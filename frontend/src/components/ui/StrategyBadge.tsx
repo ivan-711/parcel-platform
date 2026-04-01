@@ -6,12 +6,12 @@ interface StrategyBadgeProps {
   strategy: Strategy
 }
 
-const STRATEGY_CONFIG: Record<Strategy, { bg: string; text: string; label: string }> = {
-  wholesale:        { bg: '#FEF3C7', text: '#92400E', label: 'Wholesale' },
-  creative_finance: { bg: '#EDE9FE', text: '#5B21B6', label: 'Creative Finance' },
-  brrrr:            { bg: '#DBEAFE', text: '#1E40AF', label: 'BRRRR' },
-  buy_and_hold:     { bg: '#D1FAE5', text: '#065F46', label: 'Buy & Hold' },
-  flip:             { bg: '#FFE4E6', text: '#9F1239', label: 'Flip' },
+const STRATEGY_CONFIG: Record<Strategy, { bgVar: string; textVar: string; borderVar: string; label: string }> = {
+  wholesale:        { bgVar: 'var(--strategy-wholesale-bg)', textVar: 'var(--strategy-wholesale-text)', borderVar: 'var(--strategy-wholesale-border)', label: 'Wholesale' },
+  creative_finance: { bgVar: 'var(--strategy-creative-bg)',  textVar: 'var(--strategy-creative-text)',  borderVar: 'var(--strategy-creative-border)',  label: 'Creative Finance' },
+  brrrr:            { bgVar: 'var(--strategy-brrrr-bg)',     textVar: 'var(--strategy-brrrr-text)',     borderVar: 'var(--strategy-brrrr-border)',     label: 'BRRRR' },
+  buy_and_hold:     { bgVar: 'var(--strategy-buyhold-bg)',   textVar: 'var(--strategy-buyhold-text)',   borderVar: 'var(--strategy-buyhold-border)',   label: 'Buy & Hold' },
+  flip:             { bgVar: 'var(--strategy-flip-bg)',      textVar: 'var(--strategy-flip-text)',      borderVar: 'var(--strategy-flip-border)',      label: 'Flip' },
 }
 
 /** Renders a color-coded pill badge for a given investment strategy. */
@@ -19,8 +19,12 @@ export function StrategyBadge({ strategy }: StrategyBadgeProps) {
   const config = STRATEGY_CONFIG[strategy]
   return (
     <span
-      style={{ backgroundColor: config.bg, color: config.text }}
-      className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+      style={{
+        backgroundColor: config.bgVar,
+        color: config.textVar,
+        borderColor: config.borderVar,
+      }}
+      className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium border"
     >
       {config.label}
     </span>

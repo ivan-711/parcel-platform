@@ -92,18 +92,18 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="border-b border-gray-200 last:border-b-0">
+    <div className="border-b border-border-default last:border-b-0">
       <button
         type="button"
         onClick={() => setOpen(!open)}
         className="flex w-full items-center justify-between py-4 text-left cursor-pointer group"
       >
-        <span className="text-sm font-medium text-gray-900 pr-4">{q}</span>
+        <span className="text-sm font-medium text-text-primary pr-4">{q}</span>
         <ChevronDown
           size={16}
           className={cn(
-            'shrink-0 text-gray-400 transition-transform duration-200',
-            open && 'rotate-180',
+            'shrink-0 transition-transform duration-200',
+            open ? 'text-[#8B7AFF] rotate-180' : 'text-text-muted',
           )}
         />
       </button>
@@ -116,7 +116,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
             transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
             className="overflow-hidden"
           >
-            <p className="pb-4 text-sm text-gray-500 leading-relaxed">{a}</p>
+            <p className="pb-4 text-sm text-text-secondary leading-relaxed">{a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -135,15 +135,15 @@ function BillingToggle({
 }) {
   return (
     <div className="flex justify-center">
-      <div className="inline-flex bg-gray-100 rounded-lg p-1 relative">
+      <div className="inline-flex bg-white/[0.06] rounded-lg p-1 relative">
         <button
           type="button"
           onClick={() => onChange('monthly')}
           className={cn(
             'relative z-10 px-4 py-1.5 rounded-md text-sm font-medium transition-colors duration-150',
             interval === 'monthly'
-              ? 'text-gray-900'
-              : 'text-gray-500',
+              ? 'text-text-primary'
+              : 'text-text-secondary',
           )}
         >
           Monthly
@@ -154,12 +154,12 @@ function BillingToggle({
           className={cn(
             'relative z-10 px-4 py-1.5 rounded-md text-sm font-medium transition-colors duration-150 inline-flex items-center gap-2',
             interval === 'annual'
-              ? 'text-gray-900'
-              : 'text-gray-500',
+              ? 'text-text-primary'
+              : 'text-text-secondary',
           )}
         >
           Annual
-          <span className="bg-lime-100 text-lime-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+          <span className="bg-[#8B7AFF]/15 text-[#8B7AFF] text-xs font-semibold px-2 py-0.5 rounded-full">
             Save 20%
           </span>
         </button>
@@ -167,7 +167,7 @@ function BillingToggle({
         {/* Animated active pill */}
         <motion.div
           layoutId="billing-toggle-pill"
-          className="absolute top-1 bottom-1 rounded-md bg-white shadow-xs"
+          className="absolute top-1 bottom-1 rounded-md bg-[#8B7AFF]/15 border border-[#8B7AFF]/20"
           style={{
             left: interval === 'monthly' ? '4px' : undefined,
             right: interval === 'annual' ? '4px' : undefined,
@@ -228,10 +228,10 @@ export default function PricingPage() {
 
         {/* ── Header ── */}
         <div className="text-center space-y-4">
-          <h1 className="text-2xl font-semibold text-gray-900">
+          <h1 className="text-2xl font-semibold text-text-primary">
             Choose Your Plan
           </h1>
-          <p className="text-base text-gray-500">
+          <p className="text-base text-text-secondary">
             Start with a 7-day Pro trial. No credit card required.
           </p>
           <BillingToggle interval={interval} onChange={setInterval} />
@@ -247,22 +247,22 @@ export default function PricingPage() {
           {/* Free Card */}
           <motion.div
             variants={staggerItem}
-            className="bg-white rounded-lg border border-gray-200 shadow-xs p-6 flex flex-col order-2 md:order-1"
+            className="bg-white/[0.03] rounded-lg border border-border-default p-6 flex flex-col order-2 md:order-1"
           >
             <div className="space-y-4 flex-1">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Free</h3>
+                <h3 className="text-lg font-semibold text-text-primary">Free</h3>
                 <div className="mt-2 flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-gray-900 tabular-nums">$0</span>
-                  <span className="text-gray-500 text-sm">/month</span>
+                  <span className="text-4xl font-bold text-text-primary tabular-nums">$0</span>
+                  <span className="text-text-secondary text-sm">/month</span>
                 </div>
-                <p className="mt-1 text-sm text-gray-500">Explore deal analysis basics</p>
+                <p className="mt-1 text-sm text-text-secondary">Explore deal analysis basics</p>
               </div>
 
               <ul className="space-y-3">
                 {FREE_FEATURES.map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-gray-600">
-                    <Check size={16} className="text-gray-400 mt-0.5 shrink-0" />
+                  <li key={f} className="flex items-start gap-2.5 text-sm text-text-secondary">
+                    <Check size={16} className="text-text-disabled mt-0.5 shrink-0" />
                     {f}
                   </li>
                 ))}
@@ -273,14 +273,14 @@ export default function PricingPage() {
               {currentPlan === 'free' ? (
                 <button
                   disabled
-                  className="w-full h-11 rounded-lg text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed"
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-white/[0.04] text-text-muted cursor-not-allowed"
                 >
                   Current Plan
                 </button>
               ) : (
                 <button
                   disabled
-                  className="w-full h-11 rounded-lg text-sm font-medium bg-white border border-gray-300 text-gray-700 cursor-not-allowed opacity-60"
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-white/[0.12] text-text-secondary cursor-not-allowed opacity-60"
                 >
                   Downgrade
                 </button>
@@ -291,11 +291,14 @@ export default function PricingPage() {
           {/* Pro Card (emphasized) */}
           <motion.div
             variants={staggerItem}
-            className="bg-white rounded-lg border-2 border-lime-500 shadow-[0_0_24px_rgba(77,124,15,0.08)] p-6 flex flex-col relative order-1 md:order-2 lg:py-8"
+            className="bg-white/[0.05] rounded-lg border border-[#8B7AFF]/20 shadow-[0_0_24px_rgba(139,122,255,0.08)] p-6 flex flex-col relative order-1 md:order-2 lg:py-8"
           >
+            {/* Crown gradient line at top */}
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#8B7AFF] to-transparent" />
+
             {/* Most Popular badge */}
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-              <span className="bg-lime-700 text-white text-xs font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1">
+              <span className="bg-[#8B7AFF] text-[#0C0B0A] text-xs font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1 shadow-[0_0_12px_rgba(139,122,255,0.3)]">
                 <Sparkles size={12} />
                 Most Popular
               </span>
@@ -303,7 +306,7 @@ export default function PricingPage() {
 
             <div className="space-y-4 flex-1">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Pro</h3>
+                <h3 className="text-lg font-semibold text-text-primary">Pro</h3>
                 <div className="mt-2 flex items-baseline gap-1">
                   <AnimatePresence mode="wait">
                     <motion.span
@@ -312,25 +315,25 @@ export default function PricingPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 8 }}
                       transition={{ duration: 0.2 }}
-                      className="text-4xl font-bold text-gray-900 tabular-nums"
+                      className="text-4xl font-bold text-text-primary tabular-nums"
                     >
                       {proPrice}
                     </motion.span>
                   </AnimatePresence>
-                  <span className="text-gray-500 text-sm">/month</span>
+                  <span className="text-text-secondary text-sm">/month</span>
                 </div>
                 {interval === 'annual' && (
-                  <p className="mt-0.5 text-xs text-gray-400">billed annually</p>
+                  <p className="mt-0.5 text-xs text-text-muted">billed annually</p>
                 )}
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-text-secondary">
                   Everything you need to analyze deals with confidence
                 </p>
               </div>
 
               <ul className="space-y-3">
                 {PRO_FEATURES.map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-gray-600">
-                    <Check size={16} className="text-lime-600 mt-0.5 shrink-0" />
+                  <li key={f} className="flex items-start gap-2.5 text-sm text-text-secondary">
+                    <Check size={16} className="text-[#8B7AFF] mt-0.5 shrink-0" />
                     {f}
                   </li>
                 ))}
@@ -344,7 +347,7 @@ export default function PricingPage() {
                   whileTap={{ scale: 0.99 }}
                   onClick={handleProCta}
                   disabled={isCheckoutLoading}
-                  className="w-full h-11 rounded-lg text-sm font-medium bg-lime-700 hover:bg-lime-800 text-white transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:from-[#7B6AEF] hover:to-[#6B5AD6] text-[#0C0B0A] transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                 >
                   {portal.isPending ? (
                     <>
@@ -361,7 +364,7 @@ export default function PricingPage() {
                   whileTap={{ scale: 0.99 }}
                   onClick={handleProCta}
                   disabled={isCheckoutLoading}
-                  className="w-full h-11 rounded-lg text-sm font-medium bg-lime-700 hover:bg-lime-800 text-white transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:from-[#7B6AEF] hover:to-[#6B5AD6] text-[#0C0B0A] transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                 >
                   {checkout.isPending ? (
                     <>
@@ -379,29 +382,29 @@ export default function PricingPage() {
           {/* Team Card (Coming Soon) */}
           <motion.div
             variants={staggerItem}
-            className="bg-white rounded-lg border border-gray-200 shadow-xs p-6 flex flex-col opacity-75 order-3"
+            className="bg-white/[0.02] rounded-lg border border-white/[0.04] p-6 flex flex-col opacity-60 order-3"
           >
             {/* Coming Soon badge */}
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 relative mb-0">
-              <span className="bg-gray-100 text-gray-500 text-xs font-semibold px-3 py-1 rounded-full">
+              <span className="bg-white/[0.06] text-text-secondary text-xs font-semibold px-3 py-1 rounded-full">
                 Coming Soon
               </span>
             </div>
 
             <div className="space-y-4 flex-1 mt-2">
               <div>
-                <h3 className="text-lg font-semibold text-gray-500">Team</h3>
+                <h3 className="text-lg font-semibold text-text-secondary">Team</h3>
                 <div className="mt-2 flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-gray-400 tabular-nums">$149</span>
-                  <span className="text-gray-400 text-sm">/month</span>
+                  <span className="text-4xl font-bold text-text-muted tabular-nums">$149</span>
+                  <span className="text-text-muted text-sm">/month</span>
                 </div>
-                <p className="mt-1 text-sm text-gray-400">Collaborate with your entire team</p>
+                <p className="mt-1 text-sm text-text-muted">Collaborate with your entire team</p>
               </div>
 
               <ul className="space-y-3">
                 {TEAM_FEATURES.map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-gray-400">
-                    <Check size={16} className="text-gray-300 mt-0.5 shrink-0" />
+                  <li key={f} className="flex items-start gap-2.5 text-sm text-text-muted">
+                    <Check size={16} className="text-[#3A3835] mt-0.5 shrink-0" />
                     {f}
                   </li>
                 ))}
@@ -411,7 +414,7 @@ export default function PricingPage() {
             <div className="mt-6">
               <button
                 disabled
-                className="w-full h-11 rounded-lg text-sm font-medium bg-white border border-gray-200 text-gray-400 cursor-not-allowed"
+                className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-white/[0.06] text-text-muted cursor-not-allowed"
               >
                 Notify Me
               </button>
@@ -421,10 +424,10 @@ export default function PricingPage() {
 
         {/* ── FAQ Section ── */}
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-lg font-semibold text-text-primary mb-4">
             Frequently Asked Questions
           </h2>
-          <div className="bg-white rounded-lg border border-gray-200 shadow-xs divide-y-0 px-6">
+          <div className="bg-white/[0.03] rounded-lg border border-border-default divide-y-0 px-6">
             {FAQ_ITEMS.map((item) => (
               <FaqItem key={item.q} q={item.q} a={item.a} />
             ))}
@@ -432,12 +435,12 @@ export default function PricingPage() {
         </div>
 
         {/* ── Bottom CTA Banner ── */}
-        <div className="bg-lime-50 border border-lime-200 rounded-lg p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="bg-[#8B7AFF]/[0.04] border border-[#8B7AFF]/10 rounded-lg p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-text-primary">
               Ready to analyze deals faster?
             </h3>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-text-secondary mt-1">
               Join investors who save hours on every deal.
             </p>
           </div>
@@ -447,7 +450,7 @@ export default function PricingPage() {
               whileTap={{ scale: 0.99 }}
               onClick={handleProCta}
               disabled={isCheckoutLoading}
-              className="shrink-0 h-11 px-6 rounded-lg text-sm font-medium bg-lime-700 hover:bg-lime-800 text-white transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+              className="shrink-0 h-11 px-6 rounded-lg text-sm font-medium bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:from-[#7B6AEF] hover:to-[#6B5AD6] text-[#0C0B0A] transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
             >
               {checkout.isPending ? (
                 <>

@@ -15,6 +15,7 @@ import {
   Menu,
   Search,
   ChevronRight,
+  ChevronsLeft,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/authStore'
@@ -24,6 +25,7 @@ import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { CommandPalette } from '@/components/command-palette'
 import { PlanBadge } from '@/components/billing/PlanBadge'
 import { TrialBanner } from '@/components/billing/TrialBanner'
+import { duration, ease } from '@/lib/motion'
 
 /* ─── Types ─── */
 
@@ -67,39 +69,128 @@ const NAV_ACCOUNT: NavItem[] = [
 
 /* ─── Sidebar Primitives ─── */
 
-function SidebarLogo() {
+function SidebarLogo({
+  collapsed,
+  onToggle,
+}: {
+  collapsed: boolean
+  onToggle: () => void
+}) {
   const user = useAuthStore((s) => s.user)
   const to = user?.email === 'demo@parcel.app' ? '/' : '/dashboard'
 
   return (
-    <div className="h-14 flex items-center justify-between px-4 border-b border-gray-100">
-      <Link to={to} className="flex items-center gap-2 group">
-        <div className="w-7 h-7 rounded-lg bg-lime-700 flex items-center justify-center group-hover:bg-lime-800 transition-colors">
-          <span className="text-white text-xs font-bold">P</span>
+    <div className="h-14 flex items-center justify-between px-4 border-b border-white/[0.06]">
+      <Link to={to} className="flex items-center gap-2.5 group min-w-0">
+        {/* P mark with violet ambient glow */}
+        <div className="relative shrink-0">
+          <div className="w-7 h-7 rounded-lg bg-[#8B7AFF] flex items-center justify-center">
+            <span className="text-[#F0EDE8] text-xs font-bold tracking-tight">P</span>
+          </div>
+          {/* Ambient glow — subtle radial behind logo mark */}
+          <div
+            className="absolute inset-0 rounded-lg opacity-40 blur-md -z-10"
+            style={{ background: 'radial-gradient(circle, #8B7AFF 0%, transparent 70%)' }}
+          />
         </div>
-        <span className="text-[15px] font-semibold text-gray-900 tracking-tight">
-          Parcel
-        </span>
+
+        {/* Wordmark — hidden when collapsed */}
+        {!collapsed && (
+          <span className="text-[15px] font-semibold text-[#F0EDE8] tracking-tight">
+            Parcel
+          </span>
+        )}
       </Link>
-      {user && (
-        <PlanBadge
-          planTier={user.plan_tier}
-          trialActive={user.trial_active ?? false}
-        />
-      )}
+
+      {/* Right side: plan badge (expanded) / collapse toggle */}
+      <div className="flex items-center gap-2">
+        {!collapsed && user && (
+          <PlanBadge
+            planTier={user.plan_tier}
+            trialActive={user.trial_active ?? false}
+          />
+        )}
+        <button
+          onClick={onToggle}
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          className={cn(
+            'w-6 h-6 rounded-md flex items-center justify-center',
+            'text-[#F0EDE8]/20 hover:text-[#F0EDE8]/50 hover:bg-white/[0.04]',
+            'transition-colors duration-150 cursor-pointer',
+            collapsed && 'mx-auto'
+          )}
+        >
+          <ChevronsLeft
+            size={14}
+            className={cn(
+              'transition-transform duration-200',
+              collapsed && 'rotate-180'
+            )}
+          />
+        </button>
+      </div>
     </div>
   )
 }
 
 function SidebarDivider() {
-  return <hr className="border-t border-gray-100 mx-1" />
+  return <hr className="border-t border-white/[0.06] mx-1" />
 }
+
+/* ─── Search Trigger Pill ─── */
+
+function SearchTrigger({
+  collapsed,
+  onClick,
+}: {
+  collapsed: boolean
+  onClick: () => void
+}) {
+  if (collapsed) {
+    return (
+      <button
+        onClick={onClick}
+        aria-label="Search (Cmd+K)"
+        className={cn(
+          'w-10 h-10 mx-auto rounded-lg flex items-center justify-center',
+          'text-[#8A8580] hover:text-[#C4C0BA] hover:bg-white/[0.04]',
+          'transition-colors duration-150 cursor-pointer'
+        )}
+      >
+        <Search size={18} strokeWidth={1.5} />
+      </button>
+    )
+  }
+
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        'flex items-center gap-2 w-full h-9 px-3 rounded-lg',
+        'border border-white/[0.06] bg-white/[0.03]',
+        'text-[#F0EDE8]/25 text-xs',
+        'hover:border-white/[0.10] hover:bg-white/[0.05]',
+        'transition-colors duration-150 cursor-pointer'
+      )}
+    >
+      <Search size={14} strokeWidth={1.5} className="shrink-0 text-[#8A8580]" />
+      <span className="flex-1 text-left">Search...</span>
+      <kbd className="text-[10px] font-mono bg-white/[0.06] border border-white/[0.06] px-1.5 py-0.5 rounded text-[#F0EDE8]/20">
+        &#8984;K
+      </kbd>
+    </button>
+  )
+}
+
+/* ─── Nav Section ─── */
 
 function NavSection({
   items,
+  collapsed,
   onNavigate,
 }: {
   items: NavItem[]
+  collapsed?: boolean
   onNavigate?: () => void
 }) {
   const { pathname } = useLocation()
@@ -119,21 +210,25 @@ function NavSection({
             to={item.path}
             onClick={onNavigate}
             className={cn(
-              'flex items-center gap-3 px-3 py-2 rounded-lg text-sm',
+              'flex items-center rounded-lg',
               'transition-colors duration-150',
+              collapsed
+                ? 'w-10 h-10 justify-center mx-auto'
+                : 'gap-3 px-3 h-9 text-sm',
               active
-                ? 'bg-lime-50 text-gray-900 font-medium'
-                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                ? 'bg-[#8B7AFF]/[0.08] border border-[#8B7AFF]/25 text-[#F0EDE8] font-medium'
+                : 'text-[#A09D98] hover:bg-white/[0.04] hover:text-[#F0EDE8]'
             )}
           >
             <Icon
               size={18}
+              strokeWidth={1.5}
               className={cn(
                 'shrink-0 transition-colors duration-150',
-                active ? 'text-lime-700' : 'text-gray-400'
+                active ? 'text-[#8B7AFF]' : 'text-current'
               )}
             />
-            <span>{item.label}</span>
+            {!collapsed && <span>{item.label}</span>}
           </Link>
         )
       })}
@@ -143,9 +238,9 @@ function NavSection({
 
 /* ─── Desktop Sidebar ─── */
 
-function SidebarTrialBanner() {
+function SidebarTrialBanner({ collapsed }: { collapsed: boolean }) {
   const user = useAuthStore((s) => s.user)
-  if (!user) return null
+  if (!user || collapsed) return null
   return (
     <TrialBanner
       trialEndsAt={user.trial_ends_at}
@@ -155,25 +250,51 @@ function SidebarTrialBanner() {
   )
 }
 
-function Sidebar() {
+function Sidebar({
+  collapsed,
+  onToggle,
+  onSearchClick,
+}: {
+  collapsed: boolean
+  onToggle: () => void
+  onSearchClick: () => void
+}) {
   return (
-    <aside className="hidden md:flex w-60 shrink-0 flex-col bg-white border-r border-gray-200 h-screen sticky top-0">
-      <SidebarLogo />
+    <aside
+      className={cn(
+        'hidden md:flex shrink-0 flex-col h-screen sticky top-0',
+        'bg-[#131210] border-r border-white/[0.06]',
+        'transition-[width] duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)]',
+        collapsed ? 'w-16' : 'w-60'
+      )}
+    >
+      {/* 1 — Logo area: 56px */}
+      <SidebarLogo collapsed={collapsed} onToggle={onToggle} />
 
+      {/* 2 — Search trigger pill */}
+      <div className={cn('px-3', collapsed ? 'px-2 mt-3' : 'mt-3')}>
+        <SearchTrigger collapsed={collapsed} onClick={onSearchClick} />
+      </div>
+
+      {/* 3 — Scrollable nav */}
       <nav
-        className="flex-1 overflow-y-auto px-3 pt-4 space-y-6"
+        className={cn(
+          'flex-1 overflow-y-auto px-3 pt-4 space-y-5 scrollbar-luxury',
+          collapsed && 'px-2 space-y-3'
+        )}
         aria-label="Main navigation"
       >
-        <NavSection items={NAV_ANALYZE} />
+        <NavSection items={NAV_ANALYZE} collapsed={collapsed} />
         <SidebarDivider />
-        <NavSection items={NAV_MANAGE} />
+        <NavSection items={NAV_MANAGE} collapsed={collapsed} />
         <SidebarDivider />
-        <NavSection items={NAV_AI} />
+        <NavSection items={NAV_AI} collapsed={collapsed} />
         <SidebarDivider />
-        <NavSection items={NAV_ACCOUNT} />
+        <NavSection items={NAV_ACCOUNT} collapsed={collapsed} />
       </nav>
 
-      <SidebarTrialBanner />
+      {/* 4 — Trial banner (above footer) */}
+      <SidebarTrialBanner collapsed={collapsed} />
     </aside>
   )
 }
@@ -183,24 +304,69 @@ function Sidebar() {
 function MobileSidebar({
   open,
   onOpenChange,
+  onSearchClick,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onSearchClick: () => void
 }) {
   const closeDrawer = () => onOpenChange(false)
+  const user = useAuthStore((s) => s.user)
+  const to = user?.email === 'demo@parcel.app' ? '/' : '/dashboard'
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="left"
-        className="w-[280px] p-0 bg-white border-r border-gray-200"
+        className="w-[280px] p-0 bg-[#131210] border-r border-white/[0.06]"
       >
         <SheetTitle className="sr-only">Navigation</SheetTitle>
 
-        <SidebarLogo />
+        {/* Logo row */}
+        <div className="h-14 flex items-center px-4 border-b border-white/[0.06]">
+          <Link
+            to={to}
+            onClick={closeDrawer}
+            className="flex items-center gap-2.5"
+          >
+            <div className="relative shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-[#8B7AFF] flex items-center justify-center">
+                <span className="text-[#F0EDE8] text-xs font-bold tracking-tight">P</span>
+              </div>
+              <div
+                className="absolute inset-0 rounded-lg opacity-40 blur-md -z-10"
+                style={{ background: 'radial-gradient(circle, #8B7AFF 0%, transparent 70%)' }}
+              />
+            </div>
+            <span className="text-[15px] font-semibold text-[#F0EDE8] tracking-tight">
+              Parcel
+            </span>
+          </Link>
+          {user && (
+            <div className="ml-auto">
+              <PlanBadge
+                planTier={user.plan_tier}
+                trialActive={user.trial_active ?? false}
+              />
+            </div>
+          )}
+        </div>
 
+        {/* Search trigger */}
+        <div className="px-3 mt-3">
+          <SearchTrigger
+            collapsed={false}
+            onClick={() => {
+              closeDrawer()
+              // Slight delay so drawer closes before palette opens
+              setTimeout(onSearchClick, 150)
+            }}
+          />
+        </div>
+
+        {/* Nav */}
         <nav
-          className="flex-1 overflow-y-auto px-3 pt-4 space-y-6"
+          className="flex-1 overflow-y-auto px-3 pt-4 space-y-5 scrollbar-luxury"
           aria-label="Main navigation"
         >
           <NavSection items={NAV_ANALYZE} onNavigate={closeDrawer} />
@@ -212,7 +378,14 @@ function MobileSidebar({
           <NavSection items={NAV_ACCOUNT} onNavigate={closeDrawer} />
         </nav>
 
-        <SidebarTrialBanner />
+        {/* Trial banner */}
+        {user && (
+          <TrialBanner
+            trialEndsAt={user.trial_ends_at}
+            planTier={user.plan_tier}
+            trialActive={user.trial_active ?? false}
+          />
+        )}
       </SheetContent>
     </Sheet>
   )
@@ -238,9 +411,9 @@ function UserMenu() {
       <PopoverTrigger asChild>
         <button
           aria-label="User menu"
-          className="w-8 h-8 rounded-full bg-lime-100 border border-lime-200 flex items-center justify-center hover:bg-lime-200 transition-colors cursor-pointer"
+          className="w-8 h-8 rounded-full bg-[#8B7AFF]/15 border border-[#8B7AFF]/20 flex items-center justify-center hover:bg-[#8B7AFF]/25 transition-colors cursor-pointer"
         >
-          <span className="text-xs font-semibold text-lime-700">
+          <span className="text-xs font-semibold text-[#8B7AFF]">
             {initials}
           </span>
         </button>
@@ -248,27 +421,27 @@ function UserMenu() {
       <PopoverContent
         align="end"
         sideOffset={8}
-        className="w-56 p-1.5 bg-white border border-gray-200 shadow-lg rounded-xl"
+        className="w-56 p-1.5 bg-[#22211D] border border-white/[0.08] shadow-lg rounded-xl"
       >
-        <div className="px-2.5 py-2 border-b border-gray-100 mb-1">
-          <p className="text-sm font-medium text-gray-900 truncate">
+        <div className="px-2.5 py-2 border-b border-white/[0.06] mb-1">
+          <p className="text-sm font-medium text-[#F0EDE8] truncate">
             {user?.name ?? 'User'}
           </p>
-          <p className="text-xs text-gray-500 truncate">
+          <p className="text-xs text-[#A09D98] truncate">
             {user?.email ?? ''}
           </p>
         </div>
         <Link
           to="/settings"
-          className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-sm text-[#A09D98] hover:bg-white/[0.04] hover:text-[#F0EDE8] transition-colors"
         >
-          <Settings size={14} className="text-gray-400" />
+          <Settings size={14} className="text-[#7A7872]" />
           Settings
         </Link>
         <button
           onClick={() => logout()}
           disabled={isPending}
-          className="flex w-full items-center gap-2 px-2.5 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50"
+          className="flex w-full items-center gap-2 px-2.5 py-2 rounded-lg text-sm text-[#D4766A] hover:bg-[#D4766A]/10 transition-colors cursor-pointer disabled:opacity-50"
         >
           <LogOut size={14} />
           {isPending ? 'Logging out...' : 'Log out'}
@@ -296,14 +469,14 @@ function Topbar({
   const user = useAuthStore((s) => s.user)
 
   return (
-    <header className="h-14 shrink-0 flex items-center justify-between px-4 md:px-6 lg:px-8 bg-white border-b border-gray-200">
+    <header className="h-14 shrink-0 flex items-center justify-between px-4 md:px-6 lg:px-8 bg-[#0C0B0A] border-b border-white/[0.06]">
       {/* Left */}
       <div className="flex items-center gap-3 min-w-0">
         {/* Hamburger -- mobile only */}
         <button
           onClick={onMenuToggle}
           aria-label="Open navigation"
-          className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+          className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-[#8A8580] hover:text-[#C4C0BA] hover:bg-white/[0.04] transition-colors cursor-pointer"
         >
           <Menu size={20} />
         </button>
@@ -313,8 +486,8 @@ function Topbar({
           to={user?.email === 'demo@parcel.app' ? '/' : '/dashboard'}
           className="md:hidden flex items-center gap-1.5"
         >
-          <div className="w-6 h-6 rounded-md bg-lime-700 flex items-center justify-center">
-            <span className="text-white text-[10px] font-bold">P</span>
+          <div className="w-6 h-6 rounded-md bg-[#8B7AFF] flex items-center justify-center">
+            <span className="text-[#F0EDE8] text-[10px] font-bold">P</span>
           </div>
         </Link>
 
@@ -332,12 +505,12 @@ function Topbar({
                     {i > 0 && (
                       <ChevronRight
                         size={14}
-                        className="text-gray-300 shrink-0"
+                        className="text-[#F0EDE8]/20 shrink-0"
                       />
                     )}
                     {isLast || !crumb.href ? (
                       <span
-                        className="text-gray-900 font-medium truncate"
+                        className="text-[#F0EDE8] font-medium truncate"
                         aria-current={isLast ? 'page' : undefined}
                       >
                         {crumb.label}
@@ -345,7 +518,7 @@ function Topbar({
                     ) : (
                       <Link
                         to={crumb.href}
-                        className="text-gray-500 hover:text-gray-700 transition-colors truncate"
+                        className="text-[#A09D98] hover:text-[#F0EDE8] transition-colors truncate"
                       >
                         {crumb.label}
                       </Link>
@@ -355,7 +528,7 @@ function Topbar({
               })}
             </nav>
           ) : (
-            <h1 className="text-sm font-semibold text-gray-900 truncate">
+            <h1 className="text-sm font-semibold text-[#F0EDE8] truncate">
               {title ?? 'Parcel'}
             </h1>
           )}
@@ -369,17 +542,13 @@ function Topbar({
           <div className="hidden sm:flex items-center gap-2">{actions}</div>
         )}
 
-        {/* Search pill */}
+        {/* Search pill -- desktop topbar (hidden on md+ since sidebar has it) */}
         <button
           onClick={onSearchClick}
           aria-label="Open command palette"
-          className="flex items-center gap-2 h-8 px-2.5 md:px-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-400 text-xs hover:border-gray-300 hover:bg-gray-100 transition-colors cursor-pointer"
+          className="md:hidden flex items-center gap-2 h-8 px-2.5 rounded-lg border border-white/[0.06] bg-white/[0.03] text-[#8A8580] text-xs hover:border-white/[0.10] hover:bg-white/[0.05] transition-colors cursor-pointer"
         >
           <Search size={14} className="shrink-0" />
-          <span className="hidden md:inline text-gray-500">Search...</span>
-          <kbd className="hidden md:inline text-[10px] font-mono bg-white border border-gray-200 px-1.5 py-0.5 rounded text-gray-400">
-            &#8984;K
-          </kbd>
         </button>
 
         {/* User avatar + dropdown */}
@@ -391,17 +560,17 @@ function Topbar({
 
 /* ─── Page Transition ─── */
 
-const pageVariants = {
-  initial: { opacity: 0, y: 8 },
+const pageAnimationVariants = {
+  initial: { opacity: 0, y: 6 },
   animate: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] },
+    transition: { duration: duration.normal, ease: ease.luxury },
   },
   exit: {
     opacity: 0,
     y: -4,
-    transition: { duration: 0.15, ease: [0.25, 0.1, 0.25, 1] },
+    transition: { duration: 0.12, ease: [0.4, 0, 1, 1] },
   },
 }
 
@@ -423,8 +592,33 @@ export function AppShell({
 }: AppShellProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return localStorage.getItem('parcel-sidebar-collapsed') === 'true'
+  })
   const mainRef = useRef<HTMLElement>(null)
   const { pathname } = useLocation()
+
+  /* Persist sidebar collapse state */
+  const toggleSidebar = () => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev
+      localStorage.setItem('parcel-sidebar-collapsed', String(next))
+      return next
+    })
+  }
+
+  /* Keyboard shortcut: Cmd+\ to toggle sidebar */
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.metaKey && e.key === '\\') {
+        e.preventDefault()
+        toggleSidebar()
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
 
   /* Focus management for screen readers on route change */
   useEffect(() => {
@@ -440,22 +634,27 @@ export function AppShell({
   }, [pathname])
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-[#0C0B0A] overflow-hidden">
       {/* Skip nav */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-lime-700 focus:text-white focus:text-sm focus:font-medium focus:shadow-lg focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[#8B7AFF] focus:text-[#F0EDE8] focus:text-sm focus:font-medium focus:shadow-lg focus:outline-none"
       >
         Skip to main content
       </a>
 
       {/* Desktop sidebar */}
-      <Sidebar />
+      <Sidebar
+        collapsed={sidebarCollapsed}
+        onToggle={toggleSidebar}
+        onSearchClick={() => setCommandPaletteOpen(true)}
+      />
 
       {/* Mobile drawer */}
       <MobileSidebar
         open={mobileNavOpen}
         onOpenChange={setMobileNavOpen}
+        onSearchClick={() => setCommandPaletteOpen(true)}
       />
 
       {/* Main column */}
@@ -474,13 +673,13 @@ export function AppShell({
           tabIndex={-1}
           className={cn(
             'flex-1 outline-none',
-            noPadding ? 'overflow-hidden' : 'overflow-y-auto'
+            noPadding ? 'overflow-hidden' : 'overflow-y-auto scrollbar-luxury'
           )}
         >
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={pathname}
-              variants={pageVariants}
+              variants={pageAnimationVariants}
               initial="initial"
               animate="animate"
               exit="exit"
