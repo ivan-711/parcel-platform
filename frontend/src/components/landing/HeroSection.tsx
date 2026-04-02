@@ -219,7 +219,7 @@ export function HeroSection({ onSkipHijack }: { onSkipHijack?: (cb: () => void) 
         className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-none"
         style={{ opacity: headlineOpacity }}
       >
-        <h1 className="font-brand text-4xl md:text-5xl lg:text-[56px] font-light tracking-[-0.03em] text-text-primary leading-[1.1] text-center">
+        <h1 className="font-brand text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-light tracking-[-0.03em] text-text-primary leading-[1.1] text-center">
           <span
             className="block"
             style={{ transform: `translateX(-${scrollProgress * 150}vw)` }}
@@ -262,7 +262,7 @@ export function HeroSection({ onSkipHijack }: { onSkipHijack?: (cb: () => void) 
           style={{
             width: mediaW,
             height: mediaH,
-            maxWidth: '95vw',
+            maxWidth: '90vw',
             maxHeight: '85vh',
             borderRadius: mediaBR,
             boxShadow: '0px 0px 50px rgba(0, 0, 0, 0.3)',

@@ -29,7 +29,7 @@ export function FeatureSection({
     <div ref={ref} className="py-16 md:py-24">
       <div
         className={cn(
-          'max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-20 items-center',
+          'max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center',
           reversed && 'md:[direction:rtl]',
         )}
       >

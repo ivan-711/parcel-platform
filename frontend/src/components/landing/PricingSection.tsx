@@ -38,7 +38,7 @@ export function PricingSection() {
   const proPeriod = interval === 'annual' ? '/mo, billed annually' : '/month'
 
   return (
-    <section id="pricing" className="py-24 md:py-32" ref={ref}>
+    <section id="pricing" className="py-16 md:py-32" ref={ref}>
       <div className="max-w-7xl mx-auto px-6">
         {/* Section header */}
         <div className="text-center mb-12">
@@ -66,7 +66,7 @@ export function PricingSection() {
                 key={opt}
                 onClick={() => setInterval(opt)}
                 className={`
-                  relative rounded-full px-5 py-2 text-sm transition-colors duration-200 cursor-pointer
+                  relative rounded-full px-5 py-2 min-h-[44px] md:min-h-0 text-sm transition-colors duration-200 cursor-pointer
                   ${interval === opt
                     ? 'bg-border-strong text-text-primary'
                     : 'text-text-secondary hover:text-text-primary'

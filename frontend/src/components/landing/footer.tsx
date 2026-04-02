@@ -32,10 +32,10 @@ const COLUMNS = [
 
 export function Footer() {
   return (
-    <footer className="bg-app-recessed border-t border-border-subtle py-16">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
+    <footer className="bg-app-recessed border-t border-border-subtle py-10 md:py-16">
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
         {/* Logo column */}
-        <div>
+        <div className="col-span-2 md:col-span-1">
           <Link
             to="/"
             className="font-brand text-lg font-light text-text-primary tracking-[-0.02em]"

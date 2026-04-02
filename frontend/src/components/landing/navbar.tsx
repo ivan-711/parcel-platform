@@ -26,13 +26,13 @@ export function LandingNavbar({ onNavClick }: { onNavClick?: () => void }) {
     <nav
       className={cn(
         'fixed top-6 left-1/2 -translate-x-1/2 z-50',
-        'flex items-center gap-6',
+        'flex items-center gap-3 md:gap-6',
         'border border-border-default rounded-full',
         'shadow-[0_4px_24px_rgba(0,0,0,0.3)]',
         'transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]',
         scrolled
-          ? 'bg-[#0C0B0A]/80 backdrop-blur-xl px-5 py-2 [.light_&]:bg-[#F5F3EF]/80'
-          : 'bg-[#0C0B0A]/60 backdrop-blur-xl px-6 py-3 [.light_&]:bg-[#F5F3EF]/80',
+          ? 'bg-[#0C0B0A]/80 backdrop-blur-xl px-4 md:px-5 py-2 [.light_&]:bg-[#F5F3EF]/80'
+          : 'bg-[#0C0B0A]/60 backdrop-blur-xl px-4 md:px-6 py-3 [.light_&]:bg-[#F5F3EF]/80',
       )}
     >
       {/* Logo */}
@@ -54,7 +54,7 @@ export function LandingNavbar({ onNavClick }: { onNavClick?: () => void }) {
       </div>
 
       {/* Right side */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 md:gap-4">
         <Link
           to="/login"
           className="hidden md:inline text-sm text-text-secondary hover:text-text-primary transition-colors duration-200"
