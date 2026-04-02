@@ -80,12 +80,12 @@ function SidebarLogo({
   const to = user?.email === 'demo@parcel.app' ? '/' : '/dashboard'
 
   return (
-    <div className="h-14 flex items-center justify-between px-4 border-b border-white/[0.06]">
+    <div className="h-14 flex items-center justify-between px-4 border-b border-border-default">
       <Link to={to} className="flex items-center gap-2.5 group min-w-0">
         {/* P mark with violet ambient glow */}
         <div className="relative shrink-0">
           <div className="w-7 h-7 rounded-lg bg-[#8B7AFF] flex items-center justify-center">
-            <span className="text-[#F0EDE8] text-xs font-bold tracking-tight">P</span>
+            <span className="text-text-primary text-xs font-bold tracking-tight">P</span>
           </div>
           {/* Ambient glow — subtle radial behind logo mark */}
           <div
@@ -96,7 +96,7 @@ function SidebarLogo({
 
         {/* Wordmark — hidden when collapsed */}
         {!collapsed && (
-          <span className="text-[15px] font-semibold text-[#F0EDE8] tracking-tight">
+          <span className="text-[15px] font-semibold text-text-primary tracking-tight">
             Parcel
           </span>
         )}
@@ -115,7 +115,7 @@ function SidebarLogo({
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           className={cn(
             'w-6 h-6 rounded-md flex items-center justify-center',
-            'text-[#F0EDE8]/20 hover:text-[#F0EDE8]/50 hover:bg-white/[0.04]',
+            'text-text-primary/20 hover:text-text-primary/50 hover:bg-layer-2',
             'transition-colors duration-150 cursor-pointer',
             collapsed && 'mx-auto'
           )}
@@ -134,7 +134,7 @@ function SidebarLogo({
 }
 
 function SidebarDivider() {
-  return <hr className="border-t border-white/[0.06] mx-1" />
+  return <hr className="border-t border-border-default mx-1" />
 }
 
 /* ─── Search Trigger Pill ─── */
@@ -153,7 +153,7 @@ function SearchTrigger({
         aria-label="Search (Cmd+K)"
         className={cn(
           'w-10 h-10 mx-auto rounded-lg flex items-center justify-center',
-          'text-[#8A8580] hover:text-[#C4C0BA] hover:bg-white/[0.04]',
+          'text-[#8A8580] hover:text-[#C4C0BA] hover:bg-layer-2',
           'transition-colors duration-150 cursor-pointer'
         )}
       >
@@ -167,15 +167,15 @@ function SearchTrigger({
       onClick={onClick}
       className={cn(
         'flex items-center gap-2 w-full h-9 px-3 rounded-lg',
-        'border border-white/[0.06] bg-white/[0.03]',
-        'text-[#F0EDE8]/25 text-xs',
+        'border border-border-default bg-white/[0.03]',
+        'text-text-primary/25 text-xs',
         'hover:border-white/[0.10] hover:bg-white/[0.05]',
         'transition-colors duration-150 cursor-pointer'
       )}
     >
       <Search size={14} strokeWidth={1.5} className="shrink-0 text-[#8A8580]" />
       <span className="flex-1 text-left">Search...</span>
-      <kbd className="text-[10px] font-mono bg-white/[0.06] border border-white/[0.06] px-1.5 py-0.5 rounded text-[#F0EDE8]/20">
+      <kbd className="text-[10px] font-mono bg-layer-3 border border-border-default px-1.5 py-0.5 rounded text-text-primary/20">
         &#8984;K
       </kbd>
     </button>
@@ -216,8 +216,8 @@ function NavSection({
                 ? 'w-10 h-10 justify-center mx-auto'
                 : 'gap-3 px-3 h-9 text-sm',
               active
-                ? 'bg-[#8B7AFF]/[0.08] border border-[#8B7AFF]/25 text-[#F0EDE8] font-medium'
-                : 'text-[#A09D98] hover:bg-white/[0.04] hover:text-[#F0EDE8]'
+                ? 'bg-[#8B7AFF]/[0.08] border border-[#8B7AFF]/25 text-text-primary font-medium'
+                : 'text-text-secondary hover:bg-layer-2 hover:text-text-primary'
             )}
           >
             <Icon
@@ -263,7 +263,7 @@ function Sidebar({
     <aside
       className={cn(
         'hidden md:flex shrink-0 flex-col h-screen sticky top-0',
-        'bg-[#131210] border-r border-white/[0.06]',
+        'bg-app-recessed border-r border-border-default',
         'transition-[width] duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)]',
         collapsed ? 'w-16' : 'w-60'
       )}
@@ -318,12 +318,12 @@ function MobileSidebar({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="left"
-        className="w-[280px] p-0 bg-[#131210] border-r border-white/[0.06]"
+        className="w-[280px] p-0 bg-app-recessed border-r border-border-default"
       >
         <SheetTitle className="sr-only">Navigation</SheetTitle>
 
         {/* Logo row */}
-        <div className="h-14 flex items-center px-4 border-b border-white/[0.06]">
+        <div className="h-14 flex items-center px-4 border-b border-border-default">
           <Link
             to={to}
             onClick={closeDrawer}
@@ -331,14 +331,14 @@ function MobileSidebar({
           >
             <div className="relative shrink-0">
               <div className="w-7 h-7 rounded-lg bg-[#8B7AFF] flex items-center justify-center">
-                <span className="text-[#F0EDE8] text-xs font-bold tracking-tight">P</span>
+                <span className="text-text-primary text-xs font-bold tracking-tight">P</span>
               </div>
               <div
                 className="absolute inset-0 rounded-lg opacity-40 blur-md -z-10"
                 style={{ background: 'radial-gradient(circle, #8B7AFF 0%, transparent 70%)' }}
               />
             </div>
-            <span className="text-[15px] font-semibold text-[#F0EDE8] tracking-tight">
+            <span className="text-[15px] font-semibold text-text-primary tracking-tight">
               Parcel
             </span>
           </Link>
@@ -421,21 +421,21 @@ function UserMenu() {
       <PopoverContent
         align="end"
         sideOffset={8}
-        className="w-56 p-1.5 bg-[#22211D] border border-white/[0.08] shadow-lg rounded-xl"
+        className="w-56 p-1.5 bg-app-elevated border border-border-strong shadow-lg rounded-xl"
       >
-        <div className="px-2.5 py-2 border-b border-white/[0.06] mb-1">
-          <p className="text-sm font-medium text-[#F0EDE8] truncate">
+        <div className="px-2.5 py-2 border-b border-border-default mb-1">
+          <p className="text-sm font-medium text-text-primary truncate">
             {user?.name ?? 'User'}
           </p>
-          <p className="text-xs text-[#A09D98] truncate">
+          <p className="text-xs text-text-secondary truncate">
             {user?.email ?? ''}
           </p>
         </div>
         <Link
           to="/settings"
-          className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-sm text-[#A09D98] hover:bg-white/[0.04] hover:text-[#F0EDE8] transition-colors"
+          className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-sm text-text-secondary hover:bg-layer-2 hover:text-text-primary transition-colors"
         >
-          <Settings size={14} className="text-[#7A7872]" />
+          <Settings size={14} className="text-text-muted" />
           Settings
         </Link>
         <button
@@ -469,14 +469,14 @@ function Topbar({
   const user = useAuthStore((s) => s.user)
 
   return (
-    <header className="h-14 shrink-0 flex items-center justify-between px-4 md:px-6 lg:px-8 bg-[#0C0B0A] border-b border-white/[0.06]">
+    <header className="h-14 shrink-0 flex items-center justify-between px-4 md:px-6 lg:px-8 bg-app-bg border-b border-border-default">
       {/* Left */}
       <div className="flex items-center gap-3 min-w-0">
         {/* Hamburger -- mobile only */}
         <button
           onClick={onMenuToggle}
           aria-label="Open navigation"
-          className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-[#8A8580] hover:text-[#C4C0BA] hover:bg-white/[0.04] transition-colors cursor-pointer"
+          className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-[#8A8580] hover:text-[#C4C0BA] hover:bg-layer-2 transition-colors cursor-pointer"
         >
           <Menu size={20} />
         </button>
@@ -487,7 +487,7 @@ function Topbar({
           className="md:hidden flex items-center gap-1.5"
         >
           <div className="w-6 h-6 rounded-md bg-[#8B7AFF] flex items-center justify-center">
-            <span className="text-[#F0EDE8] text-[10px] font-bold">P</span>
+            <span className="text-text-primary text-[10px] font-bold">P</span>
           </div>
         </Link>
 
@@ -505,12 +505,12 @@ function Topbar({
                     {i > 0 && (
                       <ChevronRight
                         size={14}
-                        className="text-[#F0EDE8]/20 shrink-0"
+                        className="text-text-primary/20 shrink-0"
                       />
                     )}
                     {isLast || !crumb.href ? (
                       <span
-                        className="text-[#F0EDE8] font-medium truncate"
+                        className="text-text-primary font-medium truncate"
                         aria-current={isLast ? 'page' : undefined}
                       >
                         {crumb.label}
@@ -518,7 +518,7 @@ function Topbar({
                     ) : (
                       <Link
                         to={crumb.href}
-                        className="text-[#A09D98] hover:text-[#F0EDE8] transition-colors truncate"
+                        className="text-text-secondary hover:text-text-primary transition-colors truncate"
                       >
                         {crumb.label}
                       </Link>
@@ -528,7 +528,7 @@ function Topbar({
               })}
             </nav>
           ) : (
-            <h1 className="text-sm font-semibold text-[#F0EDE8] truncate">
+            <h1 className="text-sm font-semibold text-text-primary truncate">
               {title ?? 'Parcel'}
             </h1>
           )}
@@ -546,7 +546,7 @@ function Topbar({
         <button
           onClick={onSearchClick}
           aria-label="Open command palette"
-          className="md:hidden flex items-center gap-2 h-8 px-2.5 rounded-lg border border-white/[0.06] bg-white/[0.03] text-[#8A8580] text-xs hover:border-white/[0.10] hover:bg-white/[0.05] transition-colors cursor-pointer"
+          className="md:hidden flex items-center gap-2 h-8 px-2.5 rounded-lg border border-border-default bg-white/[0.03] text-[#8A8580] text-xs hover:border-white/[0.10] hover:bg-white/[0.05] transition-colors cursor-pointer"
         >
           <Search size={14} className="shrink-0" />
         </button>
@@ -634,11 +634,11 @@ export function AppShell({
   }, [pathname])
 
   return (
-    <div className="flex h-screen bg-[#0C0B0A] overflow-hidden">
+    <div className="flex h-screen bg-app-bg overflow-hidden">
       {/* Skip nav */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[#8B7AFF] focus:text-[#F0EDE8] focus:text-sm focus:font-medium focus:shadow-lg focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[#8B7AFF] focus:text-text-primary focus:text-sm focus:font-medium focus:shadow-lg focus:outline-none"
       >
         Skip to main content
       </a>

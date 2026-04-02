@@ -125,9 +125,9 @@ function ChartTooltipContent({ active, payload, label }: {
 }) {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-[#22211D] border border-white/[0.06] rounded-lg px-3 py-2 text-xs shadow-md">
-      <p className="text-[#A09D98] mb-1">{label}</p>
-      <p className="tabular-nums text-[#F0EDE8] font-medium">{formatCurrency(payload[0].value)}</p>
+    <div className="bg-app-elevated border border-border-default rounded-lg px-3 py-2 text-xs shadow-md">
+      <p className="text-text-secondary mb-1">{label}</p>
+      <p className="tabular-nums text-text-primary font-medium">{formatCurrency(payload[0].value)}</p>
     </div>
   )
 }
@@ -141,14 +141,14 @@ function DonutTooltipContent({ active, payload }: {
   const item = payload[0]
   const data = item.payload as Record<string, unknown> | undefined
   return (
-    <div className="bg-[#22211D] border border-white/[0.06] rounded-lg px-3 py-2 text-xs shadow-md">
-      <p className="text-[#F0EDE8] font-medium mb-1">{item.name}</p>
-      <p className="text-[#A09D98]">
-        <span className="tabular-nums text-[#F0EDE8]">{item.value}</span> deal{item.value !== 1 ? 's' : ''}
+    <div className="bg-app-elevated border border-border-default rounded-lg px-3 py-2 text-xs shadow-md">
+      <p className="text-text-primary font-medium mb-1">{item.name}</p>
+      <p className="text-text-secondary">
+        <span className="tabular-nums text-text-primary">{item.value}</span> deal{item.value !== 1 ? 's' : ''}
       </p>
       {data && typeof data.totalValue === 'number' && (
-        <p className="text-[#A09D98]">
-          Total value: <span className="tabular-nums text-[#F0EDE8]">{formatCurrency(data.totalValue as number)}</span>
+        <p className="text-text-secondary">
+          Total value: <span className="tabular-nums text-text-primary">{formatCurrency(data.totalValue as number)}</span>
         </p>
       )}
     </div>
@@ -164,8 +164,8 @@ function BarTooltipContent({ active, payload, label }: {
   if (!active || !payload?.length) return null
   const val = payload[0].value
   return (
-    <div className="bg-[#22211D] border border-white/[0.06] rounded-lg px-3 py-2 text-xs shadow-md">
-      <p className="text-[#A09D98] mb-1">{label}</p>
+    <div className="bg-app-elevated border border-border-default rounded-lg px-3 py-2 text-xs shadow-md">
+      <p className="text-text-secondary mb-1">{label}</p>
       <p className={`tabular-nums font-medium ${val >= 0 ? 'text-[#6DBEA3]' : 'text-[#D4766A]'}`}>
         {formatCurrency(val)}
       </p>
@@ -184,8 +184,8 @@ function DonutLegend({ payload }: { payload?: Array<{ value: string; color: stri
             className="inline-block w-2.5 h-2.5 rounded-full shrink-0"
             style={{ backgroundColor: entry.color }}
           />
-          <span className="text-[#A09D98]">{entry.value}</span>
-          <span className="tabular-nums text-[#F0EDE8]">
+          <span className="text-text-secondary">{entry.value}</span>
+          <span className="tabular-nums text-text-primary">
             {entry.payload?.percent !== undefined ? `${(entry.payload.percent * 100).toFixed(0)}%` : ''}
           </span>
         </div>
@@ -228,14 +228,14 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5 mt-6">
       <div className="space-y-2">
-        <Label htmlFor="portfolio-deal" className="text-[#A09D98] text-xs">Deal</Label>
+        <Label htmlFor="portfolio-deal" className="text-text-secondary text-xs">Deal</Label>
         <Select value={dealId} onValueChange={setDealId}>
-          <SelectTrigger id="portfolio-deal" className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8]">
+          <SelectTrigger id="portfolio-deal" className="bg-app-recessed border border-border-default text-text-primary">
             <SelectValue placeholder="Select a deal" />
           </SelectTrigger>
-          <SelectContent className="bg-[#22211D] border-white/[0.06]">
+          <SelectContent className="bg-app-elevated border-border-default">
             {deals?.map((d) => (
-              <SelectItem key={d.id} value={d.id} className="text-[#F0EDE8] focus:bg-white/[0.04]">
+              <SelectItem key={d.id} value={d.id} className="text-text-primary focus:bg-layer-2">
                 {d.address} ({strategyLabel(d.strategy)})
               </SelectItem>
             ))}
@@ -244,60 +244,60 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="portfolio-closed-date" className="text-[#A09D98] text-xs">Closed Date</Label>
+        <Label htmlFor="portfolio-closed-date" className="text-text-secondary text-xs">Closed Date</Label>
         <Input
           id="portfolio-closed-date"
           type="date"
           value={closedDate}
           onChange={(e) => setClosedDate(e.target.value)}
-          className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8]"
+          className="bg-app-recessed border border-border-default text-text-primary"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="portfolio-closed-price" className="text-[#A09D98] text-xs">Closed Price ($)</Label>
+        <Label htmlFor="portfolio-closed-price" className="text-text-secondary text-xs">Closed Price ($)</Label>
         <Input
           id="portfolio-closed-price"
           type="number"
           value={closedPrice}
           onChange={(e) => setClosedPrice(e.target.value)}
           placeholder="0"
-          className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] tabular-nums placeholder:text-[#5C5A56]"
+          className="bg-app-recessed border border-border-default text-text-primary tabular-nums placeholder:text-text-disabled"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="portfolio-profit" className="text-[#A09D98] text-xs">Profit ($)</Label>
+        <Label htmlFor="portfolio-profit" className="text-text-secondary text-xs">Profit ($)</Label>
         <Input
           id="portfolio-profit"
           type="number"
           value={profit}
           onChange={(e) => setProfit(e.target.value)}
           placeholder="0"
-          className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] tabular-nums placeholder:text-[#5C5A56]"
+          className="bg-app-recessed border border-border-default text-text-primary tabular-nums placeholder:text-text-disabled"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="portfolio-cash-flow" className="text-[#A09D98] text-xs">Monthly Cash Flow ($)</Label>
+        <Label htmlFor="portfolio-cash-flow" className="text-text-secondary text-xs">Monthly Cash Flow ($)</Label>
         <Input
           id="portfolio-cash-flow"
           type="number"
           value={monthlyCashFlow}
           onChange={(e) => setMonthlyCashFlow(e.target.value)}
           placeholder="0"
-          className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] tabular-nums placeholder:text-[#5C5A56]"
+          className="bg-app-recessed border border-border-default text-text-primary tabular-nums placeholder:text-text-disabled"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="portfolio-notes" className="text-[#A09D98] text-xs">Notes (optional)</Label>
+        <Label htmlFor="portfolio-notes" className="text-text-secondary text-xs">Notes (optional)</Label>
         <textarea
           id="portfolio-notes"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={3}
-          className="flex w-full rounded-md border border-white/[0.06] bg-[#131210] px-3 py-2 text-sm text-[#F0EDE8] placeholder:text-[#5C5A56] focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/30 focus:border-[#8B7AFF]/40 resize-none"
+          className="flex w-full rounded-md border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/30 focus:border-[#8B7AFF]/40 resize-none"
           placeholder="Optional notes about this deal"
         />
       </div>
@@ -305,7 +305,7 @@ function AddEntryForm({ onSubmit, isSubmitting }: AddEntryFormProps) {
       <button
         type="submit"
         disabled={!canSubmit}
-        className="w-full h-10 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] text-sm font-medium transition-all hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full h-10 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent text-sm font-medium transition-all hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {isSubmitting ? 'Adding...' : 'Add to Portfolio'}
       </button>
@@ -416,8 +416,8 @@ export default function PortfolioPage() {
           <div className="w-12 h-12 rounded-full bg-[#D4766A]/10 flex items-center justify-center">
             <Inbox className="w-6 h-6 text-[#D4766A]" />
           </div>
-          <p className="text-base font-medium text-[#F0EDE8]">Failed to load portfolio</p>
-          <p className="text-sm text-[#A09D98]">Check your connection and try again.</p>
+          <p className="text-base font-medium text-text-primary">Failed to load portfolio</p>
+          <p className="text-sm text-text-secondary">Check your connection and try again.</p>
         </div>
       </AppShell>
     )
@@ -462,8 +462,8 @@ export default function PortfolioPage() {
 
         {/* Cash Flow Over Time Chart */}
         <motion.div variants={itemVariants}>
-          <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-5 shadow-xs edge-highlight">
-            <p className="text-xs font-medium text-[#A09D98] tracking-wide mb-4">
+          <div className="bg-app-surface border border-border-strong rounded-xl p-5 shadow-xs edge-highlight">
+            <p className="text-xs font-medium text-text-secondary tracking-wide mb-4">
               Cash Flow Over Time
             </p>
             {chartData.length >= 2 ? (
@@ -500,7 +500,7 @@ export default function PortfolioPage() {
               </ResponsiveContainer>
             ) : (
               <div className="flex items-center justify-center h-[200px]">
-                <p className="text-sm text-[#7A7872]">
+                <p className="text-sm text-text-secondary">
                   Add at least 2 closed deals to see your cash flow trend.
                 </p>
               </div>
@@ -512,8 +512,8 @@ export default function PortfolioPage() {
         {entries.length > 0 && (
           <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Strategy Breakdown Donut Chart */}
-            <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-6 shadow-xs edge-highlight">
-              <p className="text-xs font-medium text-[#A09D98] tracking-wide mb-4">
+            <div className="bg-app-surface border border-border-strong rounded-xl p-6 shadow-xs edge-highlight">
+              <p className="text-xs font-medium text-text-secondary tracking-wide mb-4">
                 Portfolio by Strategy
               </p>
               {strategyBreakdownData.length > 0 ? (
@@ -545,7 +545,7 @@ export default function PortfolioPage() {
                         y="46%"
                         textAnchor="middle"
                         dominantBaseline="central"
-                        className="fill-[#F0EDE8]"
+                        className="fill-text-primary"
                         style={{ fontSize: '28px', fontFamily: 'Satoshi, system-ui, sans-serif', fontWeight: 300, fontVariantNumeric: 'tabular-nums' }}
                       >
                         {entries.length}
@@ -555,7 +555,7 @@ export default function PortfolioPage() {
                         y="57%"
                         textAnchor="middle"
                         dominantBaseline="central"
-                        className="fill-[#A09D98]"
+                        className="fill-text-secondary"
                         style={{ fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em' }}
                       >
                         deals
@@ -565,14 +565,14 @@ export default function PortfolioPage() {
                 </div>
               ) : (
                 <div className="flex items-center justify-center h-[220px]">
-                  <p className="text-sm text-[#7A7872]">No strategy data yet.</p>
+                  <p className="text-sm text-text-secondary">No strategy data yet.</p>
                 </div>
               )}
             </div>
 
             {/* Monthly Cash Flow Bar Chart */}
-            <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-6 shadow-xs edge-highlight">
-              <p className="text-xs font-medium text-[#A09D98] tracking-wide mb-4">
+            <div className="bg-app-surface border border-border-strong rounded-xl p-6 shadow-xs edge-highlight">
+              <p className="text-xs font-medium text-text-secondary tracking-wide mb-4">
                 Monthly Cash Flow
               </p>
               {monthlyCashFlowData.length > 0 ? (
@@ -609,7 +609,7 @@ export default function PortfolioPage() {
                 </ResponsiveContainer>
               ) : (
                 <div className="flex items-center justify-center h-[220px]">
-                  <p className="text-sm text-[#7A7872]">No monthly cash flow data yet.</p>
+                  <p className="text-sm text-text-secondary">No monthly cash flow data yet.</p>
                 </div>
               )}
             </div>
@@ -619,7 +619,7 @@ export default function PortfolioPage() {
         {/* Closed Deals Table */}
         <motion.div variants={itemVariants} className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-[#F0EDE8]">
+            <h2 className="text-sm font-semibold text-text-primary">
               Closed Deals
             </h2>
             <button
@@ -632,52 +632,52 @@ export default function PortfolioPage() {
           </div>
 
           {entries.length === 0 ? (
-            <div className="rounded-xl border border-white/[0.08] bg-[#1A1916] flex flex-col items-center justify-center py-16 gap-3 shadow-xs edge-highlight">
-              <Inbox size={32} className="text-[#5C5A56]" />
-              <p className="text-sm text-[#7A7872]">Close your first deal to get started</p>
+            <div className="rounded-xl border border-border-strong bg-app-surface flex flex-col items-center justify-center py-16 gap-3 shadow-xs edge-highlight">
+              <Inbox size={32} className="text-text-disabled" />
+              <p className="text-sm text-text-secondary">Close your first deal to get started</p>
             </div>
           ) : (
-            <div className="rounded-xl border border-white/[0.08] bg-[#1A1916] overflow-hidden shadow-xs edge-highlight">
+            <div className="rounded-xl border border-border-strong bg-app-surface overflow-hidden shadow-xs edge-highlight">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-white/[0.06] bg-white/[0.02]">
-                      <th className="text-left text-xs font-medium text-[#7A7872] uppercase tracking-wider px-4 py-3">Address</th>
-                      <th className="text-left text-xs font-medium text-[#7A7872] uppercase tracking-wider px-4 py-3">Strategy</th>
-                      <th className="text-left text-xs font-medium text-[#7A7872] uppercase tracking-wider px-4 py-3">Closed Date</th>
-                      <th className="text-right text-xs font-medium text-[#7A7872] uppercase tracking-wider px-4 py-3">Price</th>
-                      <th className="text-right text-xs font-medium text-[#7A7872] uppercase tracking-wider px-4 py-3">Profit</th>
-                      <th className="text-right text-xs font-medium text-[#7A7872] uppercase tracking-wider px-4 py-3">Monthly CF</th>
-                      <th className="text-left text-xs font-medium text-[#7A7872] uppercase tracking-wider px-4 py-3">Notes</th>
-                      <th className="text-left text-xs font-medium text-[#7A7872] uppercase tracking-wider px-4 py-3 w-[60px]"></th>
+                    <tr className="border-b border-border-default bg-layer-1">
+                      <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3">Address</th>
+                      <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3">Strategy</th>
+                      <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3">Closed Date</th>
+                      <th className="text-right text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3">Price</th>
+                      <th className="text-right text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3">Profit</th>
+                      <th className="text-right text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3">Monthly CF</th>
+                      <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3">Notes</th>
+                      <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3 w-[60px]"></th>
                     </tr>
                   </thead>
                   <tbody>
                     {entries.map((entry: PortfolioEntry) => (
-                      <tr key={entry.id} className="group border-b border-white/[0.03] last:border-0 hover:bg-white/[0.04] transition-colors">
-                        <td className="px-4 py-3 text-sm text-[#F0EDE8]">{entry.address}</td>
+                      <tr key={entry.id} className="group border-b border-border-subtle last:border-0 hover:bg-layer-2 transition-colors">
+                        <td className="px-4 py-3 text-sm text-text-primary">{entry.address}</td>
                         <td className="px-4 py-3">
                           <StrategyBadge strategy={entry.strategy} />
                         </td>
-                        <td className="px-4 py-3 text-sm text-[#A09D98] tabular-nums">
+                        <td className="px-4 py-3 text-sm text-text-secondary tabular-nums">
                           {formatMonthYear(entry.closed_date)}
                         </td>
-                        <td className="px-4 py-3 text-right text-sm text-[#F0EDE8] tabular-nums">
+                        <td className="px-4 py-3 text-right text-sm text-text-primary tabular-nums">
                           {formatCurrency(entry.closed_price)}
                         </td>
                         <td className={`px-4 py-3 text-right text-sm tabular-nums ${parseFloat(String(entry.profit ?? 0)) >= 0 ? 'text-[#6DBEA3]' : 'text-[#D4766A]'}`}>
                           {formatCurrency(entry.profit)}
                         </td>
-                        <td className="px-4 py-3 text-right text-sm text-[#F0EDE8] tabular-nums">
+                        <td className="px-4 py-3 text-right text-sm text-text-primary tabular-nums">
                           {formatCurrency(entry.monthly_cash_flow)}
                         </td>
-                        <td className="px-4 py-3 text-sm text-[#7A7872] italic max-w-[200px]">
+                        <td className="px-4 py-3 text-sm text-text-secondary italic max-w-[200px]">
                           <NoteCell notes={entry.notes} />
                         </td>
                         <td className="px-4 py-3">
                           <button
                             onClick={() => setEditingEntry(entry)}
-                            className="md:opacity-0 md:group-hover:opacity-100 p-1.5 rounded-md text-[#7A7872] hover:text-[#F0EDE8] hover:bg-white/[0.06] transition-all"
+                            className="md:opacity-0 md:group-hover:opacity-100 p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-layer-3 transition-all"
                             aria-label="Edit entry"
                           >
                             <Pencil size={14} />
@@ -695,10 +695,10 @@ export default function PortfolioPage() {
 
       {/* Add Entry Sheet */}
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent className="bg-[#1A1916] border-white/[0.06] overflow-y-auto">
+        <SheetContent className="bg-app-surface border-border-default overflow-y-auto">
           <SheetHeader>
-            <SheetTitle className="text-[#F0EDE8]">Add Closed Deal</SheetTitle>
-            <SheetDescription className="text-[#A09D98]">
+            <SheetTitle className="text-text-primary">Add Closed Deal</SheetTitle>
+            <SheetDescription className="text-text-secondary">
               Record a deal you've closed to track in your portfolio.
             </SheetDescription>
           </SheetHeader>
@@ -725,7 +725,7 @@ export default function PortfolioPage() {
 /* -- Notes cell with tooltip for long text -- */
 
 function NoteCell({ notes }: { notes: string | null }) {
-  if (!notes) return <span className="text-[#5C5A56]">-</span>
+  if (!notes) return <span className="text-text-disabled">-</span>
 
   if (notes.length <= 40) return <>{notes}</>
 
@@ -735,7 +735,7 @@ function NoteCell({ notes }: { notes: string | null }) {
         <TooltipTrigger asChild>
           <span className="cursor-default">{truncate(notes, 40)}</span>
         </TooltipTrigger>
-        <TooltipContent className="max-w-xs bg-[#22211D] border-white/[0.06] text-[#F0EDE8] text-xs shadow-lg">
+        <TooltipContent className="max-w-xs bg-app-elevated border-border-default text-text-primary text-xs shadow-lg">
           {notes}
         </TooltipContent>
       </Tooltip>

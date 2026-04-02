@@ -30,8 +30,8 @@ export function PresetChips({ presets, onApply, onDelete, isPresetActive }: Pres
               onClick={() => onApply(preset)}
               className={`inline-flex items-center gap-1.5 rounded-l-full px-3 py-1 text-sm border-y border-l transition-colors ${
                 isPresetActive(preset)
-                  ? 'border-[#8B7AFF]/20 text-[#F0EDE8] bg-[#8B7AFF]/[0.08]'
-                  : 'bg-white/[0.04] border-white/[0.06] text-[#A09D98] hover:border-white/[0.08]'
+                  ? 'border-[#8B7AFF]/20 text-text-primary bg-[#8B7AFF]/[0.08]'
+                  : 'bg-layer-2 border-border-default text-text-secondary hover:border-border-strong'
               }`}
             >
               {preset.name}
@@ -39,10 +39,10 @@ export function PresetChips({ presets, onApply, onDelete, isPresetActive }: Pres
             <button
               onClick={() => onDelete(preset.id)}
               aria-label={`Delete preset ${preset.name}`}
-              className={`inline-flex items-center rounded-r-full px-1.5 py-1 border-y border-r transition-colors hover:bg-white/[0.06] ${
+              className={`inline-flex items-center rounded-r-full px-1.5 py-1 border-y border-r transition-colors hover:bg-layer-3 ${
                 isPresetActive(preset)
-                  ? 'border-[#8B7AFF]/20 text-[#F0EDE8] bg-[#8B7AFF]/[0.08]'
-                  : 'bg-white/[0.04] border-white/[0.06] text-[#A09D98]'
+                  ? 'border-[#8B7AFF]/20 text-text-primary bg-[#8B7AFF]/[0.08]'
+                  : 'bg-layer-2 border-border-default text-text-secondary'
               }`}
             >
               <X size={12} />

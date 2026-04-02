@@ -60,22 +60,22 @@ export function DealGrid({
 
       {/* Pagination */}
       <div className="flex items-center justify-between pt-2">
-        <p className="text-xs text-[#7A7872]">
+        <p className="text-xs text-text-secondary">
           Showing {showingFrom}–{showingTo} deals
         </p>
         <div className="flex items-center gap-2">
           <button
             onClick={() => onPageChange(Math.max(1, page - 1))}
             disabled={page === 1}
-            className="px-3 py-1.5 rounded-lg border border-white/[0.06] bg-white/[0.04] text-xs font-medium text-[#A09D98] hover:bg-white/[0.06] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 rounded-lg border border-border-default bg-layer-2 text-xs font-medium text-text-secondary hover:bg-layer-3 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Previous
           </button>
-          <span className="text-xs text-[#7A7872] tabular-nums">Page {page}</span>
+          <span className="text-xs text-text-secondary tabular-nums">Page {page}</span>
           <button
             onClick={() => onPageChange(page + 1)}
             disabled={!hasMore}
-            className="px-3 py-1.5 rounded-lg border border-white/[0.06] bg-white/[0.04] text-xs font-medium text-[#A09D98] hover:bg-white/[0.06] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 rounded-lg border border-border-default bg-layer-2 text-xs font-medium text-text-secondary hover:bg-layer-3 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Next
           </button>

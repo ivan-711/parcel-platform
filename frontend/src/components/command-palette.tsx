@@ -213,30 +213,30 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               }}
             >
               {/* Search input */}
-              <div className="flex items-center gap-3 border-b border-white/[0.06] px-4">
+              <div className="flex items-center gap-3 border-b border-border-default px-4">
                 <Search size={16} className="shrink-0 text-[#8B7AFF]" />
                 <CommandPrimitive.Input
                   ref={inputRef}
                   value={search}
                   onValueChange={setSearch}
                   placeholder="Search deals, pages, actions..."
-                  className="flex-1 h-12 bg-transparent text-sm text-[#F0EDE8] placeholder:text-[#5C5A56] outline-none"
+                  className="flex-1 h-12 bg-transparent text-sm text-text-primary placeholder:text-text-disabled outline-none"
                 />
-                <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-white/[0.06] bg-white/[0.06] px-1.5 py-0.5 text-[10px] font-mono text-[#F0EDE8]/20">
+                <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-border-default bg-layer-3 px-1.5 py-0.5 text-[10px] font-mono text-[#F0EDE8]/20">
                   ESC
                 </kbd>
               </div>
 
               {/* Results list */}
               <CommandPrimitive.List className="max-h-[320px] overflow-y-auto p-2 scroll-smooth [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/10">
-                <CommandPrimitive.Empty className="py-8 text-center text-sm text-[#7A7872]">
+                <CommandPrimitive.Empty className="py-8 text-center text-sm text-text-secondary">
                   No results found.
                 </CommandPrimitive.Empty>
 
                 {/* Pages group */}
                 <CommandPrimitive.Group
                   heading="Pages"
-                  className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em] [&_[cmdk-group-heading]]:text-[#7A7872]"
+                  className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em] [&_[cmdk-group-heading]]:text-text-secondary"
                 >
                   {PAGES.map((page) => {
                     const Icon = page.icon
@@ -246,9 +246,9 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                         value={page.label}
                         keywords={page.keywords}
                         onSelect={() => handleSelect(page.path)}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#A09D98] cursor-pointer transition-colors data-[selected=true]:bg-[#8B7AFF]/[0.08] data-[selected=true]:border-l-2 data-[selected=true]:border-l-[#8B7AFF] data-[selected=true]:pl-[calc(0.75rem-2px)] data-[selected=true]:text-[#F0EDE8]"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-text-secondary cursor-pointer transition-colors data-[selected=true]:bg-[#8B7AFF]/[0.08] data-[selected=true]:border-l-2 data-[selected=true]:border-l-[#8B7AFF] data-[selected=true]:pl-[calc(0.75rem-2px)] data-[selected=true]:text-text-primary"
                       >
-                        <Icon size={16} className="shrink-0 text-[#A09D98] group-data-[selected=true]:text-[#8B7AFF]" />
+                        <Icon size={16} className="shrink-0 text-text-secondary group-data-[selected=true]:text-[#8B7AFF]" />
                         <span>{page.label}</span>
                       </CommandPrimitive.Item>
                     )
@@ -258,7 +258,7 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 {/* Quick Actions group */}
                 <CommandPrimitive.Group
                   heading="Quick Actions"
-                  className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em] [&_[cmdk-group-heading]]:text-[#7A7872]"
+                  className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em] [&_[cmdk-group-heading]]:text-text-secondary"
                 >
                   {QUICK_ACTIONS.map((action) => {
                     const ActionIcon = action.icon
@@ -268,12 +268,12 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                         value={`action ${action.label}`}
                         keywords={action.keywords}
                         onSelect={() => handleSelect(action.path)}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#A09D98] cursor-pointer transition-colors data-[selected=true]:bg-[#8B7AFF]/[0.08] data-[selected=true]:border-l-2 data-[selected=true]:border-l-[#8B7AFF] data-[selected=true]:pl-[calc(0.75rem-2px)] data-[selected=true]:text-[#F0EDE8]"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-text-secondary cursor-pointer transition-colors data-[selected=true]:bg-[#8B7AFF]/[0.08] data-[selected=true]:border-l-2 data-[selected=true]:border-l-[#8B7AFF] data-[selected=true]:pl-[calc(0.75rem-2px)] data-[selected=true]:text-text-primary"
                       >
-                        <ActionIcon size={16} className="shrink-0 text-[#A09D98]" />
+                        <ActionIcon size={16} className="shrink-0 text-text-secondary" />
                         <div className="flex flex-col">
-                          <span className="text-[#F0EDE8]">{action.label}</span>
-                          <span className="text-xs text-[#7A7872]">{action.description}</span>
+                          <span className="text-text-primary">{action.label}</span>
+                          <span className="text-xs text-text-secondary">{action.description}</span>
                         </div>
                       </CommandPrimitive.Item>
                     )
@@ -285,13 +285,13 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                   <CommandPrimitive.Group
                     heading="Deals"
                     forceMount
-                    className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em] [&_[cmdk-group-heading]]:text-[#7A7872]"
+                    className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em] [&_[cmdk-group-heading]]:text-text-secondary"
                   >
                     {isLoadingDeals && (
-                      <div className="px-3 py-4 text-xs text-[#7A7872]">Searching deals...</div>
+                      <div className="px-3 py-4 text-xs text-text-secondary">Searching deals...</div>
                     )}
                     {!isLoadingDeals && filteredDeals.length === 0 && (
-                      <div className="px-3 py-4 text-xs text-[#7A7872]">No deals match your search.</div>
+                      <div className="px-3 py-4 text-xs text-text-secondary">No deals match your search.</div>
                     )}
                     {filteredDeals.map((deal) => (
                       <CommandPrimitive.Item
@@ -300,12 +300,12 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                         keywords={[deal.strategy, deal.address, deal.zip_code]}
                         onSelect={() => handleSelect(`/analyze/results/${deal.id}`)}
                         forceMount
-                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#A09D98] cursor-pointer transition-colors data-[selected=true]:bg-[#8B7AFF]/[0.08] data-[selected=true]:border-l-2 data-[selected=true]:border-l-[#8B7AFF] data-[selected=true]:pl-[calc(0.75rem-2px)] data-[selected=true]:text-[#F0EDE8]"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-text-secondary cursor-pointer transition-colors data-[selected=true]:bg-[#8B7AFF]/[0.08] data-[selected=true]:border-l-2 data-[selected=true]:border-l-[#8B7AFF] data-[selected=true]:pl-[calc(0.75rem-2px)] data-[selected=true]:text-text-primary"
                       >
-                        <MapPin size={16} className="shrink-0 text-[#A09D98]" />
+                        <MapPin size={16} className="shrink-0 text-text-secondary" />
                         <div className="flex flex-col min-w-0">
-                          <span className="text-[#F0EDE8] truncate">{deal.address}</span>
-                          <span className="text-xs text-[#7A7872]">
+                          <span className="text-text-primary truncate">{deal.address}</span>
+                          <span className="text-xs text-text-secondary">
                             {deal.strategy.replace('_', ' ')} &middot; {deal.zip_code}
                           </span>
                         </div>
@@ -316,18 +316,18 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               </CommandPrimitive.List>
 
               {/* Footer with keyboard hints */}
-              <div className="flex items-center gap-4 border-t border-white/[0.06] bg-white/[0.02] px-4 py-2">
-                <div className="flex items-center gap-1.5 text-[10px] text-[#7A7872]">
-                  <kbd className="rounded border border-white/[0.06] bg-white/[0.06] px-1 py-0.5 font-mono text-[#F0EDE8]/20">&uarr;</kbd>
-                  <kbd className="rounded border border-white/[0.06] bg-white/[0.06] px-1 py-0.5 font-mono text-[#F0EDE8]/20">&darr;</kbd>
+              <div className="flex items-center gap-4 border-t border-border-default bg-layer-1 px-4 py-2">
+                <div className="flex items-center gap-1.5 text-[10px] text-text-secondary">
+                  <kbd className="rounded border border-border-default bg-layer-3 px-1 py-0.5 font-mono text-[#F0EDE8]/20">&uarr;</kbd>
+                  <kbd className="rounded border border-border-default bg-layer-3 px-1 py-0.5 font-mono text-[#F0EDE8]/20">&darr;</kbd>
                   <span>navigate</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[10px] text-[#7A7872]">
-                  <kbd className="rounded border border-white/[0.06] bg-white/[0.06] px-1 py-0.5 font-mono text-[#F0EDE8]/20">&crarr;</kbd>
+                <div className="flex items-center gap-1.5 text-[10px] text-text-secondary">
+                  <kbd className="rounded border border-border-default bg-layer-3 px-1 py-0.5 font-mono text-[#F0EDE8]/20">&crarr;</kbd>
                   <span>select</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[10px] text-[#7A7872]">
-                  <kbd className="rounded border border-white/[0.06] bg-white/[0.06] px-1 py-0.5 font-mono text-[#F0EDE8]/20">esc</kbd>
+                <div className="flex items-center gap-1.5 text-[10px] text-text-secondary">
+                  <kbd className="rounded border border-border-default bg-layer-3 px-1 py-0.5 font-mono text-[#F0EDE8]/20">esc</kbd>
                   <span>close</span>
                 </div>
               </div>

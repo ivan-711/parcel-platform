@@ -25,21 +25,21 @@ export function CTASection() {
         transition={{ duration: 0.6, ease: ease.vercel }}
         className="max-w-7xl mx-auto px-6 text-center"
       >
-        <h2 className="font-brand text-3xl md:text-4xl font-light tracking-[-0.02em] text-[#F0EDE8]">
+        <h2 className="font-brand text-3xl md:text-4xl font-light tracking-[-0.02em] text-text-primary">
           Ready to Analyze Your Next Deal?
         </h2>
-        <p className="text-lg text-[#A09D98] mt-4 max-w-xl mx-auto">
+        <p className="text-lg text-text-secondary mt-4 max-w-xl mx-auto">
           Join investors who are making data-driven decisions. Start your free 7-day
           trial today.
         </p>
         <Link
           to="/register"
-          className="inline-block mt-8 rounded-full px-8 py-3 text-base font-medium text-[#0C0B0A] hover:opacity-90 transition-opacity duration-200"
+          className="inline-block mt-8 rounded-full px-8 py-3 text-base font-medium text-accent-text-on-accent hover:opacity-90 transition-opacity duration-200"
           style={{ background: 'linear-gradient(to right, #8B7AFF, #6C5CE7)' }}
         >
           Start Free Trial
         </Link>
-        <p className="text-[11px] text-[#7A7872] mt-4">No credit card required</p>
+        <p className="text-[11px] text-text-secondary mt-4">No credit card required</p>
       </motion.div>
     </section>
   )

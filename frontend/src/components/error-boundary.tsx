@@ -39,21 +39,21 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       }
 
       return (
-        <div className="min-h-screen bg-[#0C0B0A] flex items-center justify-center p-6">
-          <div className="max-w-md w-full bg-[#1A1916] border border-white/[0.04] rounded-xl p-8 text-center space-y-6">
+        <div className="min-h-screen bg-app-bg flex items-center justify-center p-6">
+          <div className="max-w-md w-full bg-app-surface border border-border-subtle rounded-xl p-8 text-center space-y-6">
             <div className="mx-auto w-14 h-14 rounded-full bg-[#D4766A]/10 flex items-center justify-center">
               <AlertTriangle className="w-7 h-7 text-[#D4766A]" />
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-xl font-semibold text-[#F0EDE8]">Something went wrong</h1>
-              <p className="text-sm text-[#A09D98]">
+              <h1 className="text-xl font-semibold text-text-primary">Something went wrong</h1>
+              <p className="text-sm text-text-secondary">
                 An unexpected error occurred. Try refreshing, or go back to the dashboard.
               </p>
             </div>
 
             {this.state.error && import.meta.env.DEV && (
-              <pre className="text-left text-xs text-[#D4766A] bg-[#0C0B0A] border border-white/[0.04] rounded-lg p-3 overflow-auto max-h-32">
+              <pre className="text-left text-xs text-[#D4766A] bg-app-bg border border-border-subtle rounded-lg p-3 overflow-auto max-h-32">
                 {this.state.error.message}
               </pre>
             )}
@@ -62,14 +62,14 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               <Button
                 variant="outline"
                 onClick={this.handleGoHome}
-                className="gap-2 border-white/[0.06] text-[#A09D98] hover:text-[#F0EDE8] hover:bg-white/[0.04]"
+                className="gap-2 border-border-default text-text-secondary hover:text-text-primary hover:bg-layer-2"
               >
                 <Home size={14} />
                 Dashboard
               </Button>
               <Button
                 onClick={this.handleReset}
-                className="gap-2 bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] hover:opacity-90"
+                className="gap-2 bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
               >
                 <RefreshCw size={14} />
                 Try Again
@@ -110,12 +110,12 @@ export class PageErrorBoundary extends Component<
             <AlertTriangle className="w-6 h-6 text-[#D4766A]" />
           </div>
           <div className="space-y-1">
-            <p className="text-base font-medium text-[#F0EDE8]">This section encountered an error</p>
-            <p className="text-sm text-[#A09D98]">
+            <p className="text-base font-medium text-text-primary">This section encountered an error</p>
+            <p className="text-sm text-text-secondary">
               The rest of the app is still working.
             </p>
           </div>
-          <Button variant="outline" onClick={this.handleRetry} className="gap-2 border-white/[0.06] text-[#A09D98] hover:text-[#F0EDE8] hover:bg-white/[0.04]">
+          <Button variant="outline" onClick={this.handleRetry} className="gap-2 border-border-default text-text-secondary hover:text-text-primary hover:bg-layer-2">
             <RefreshCw size={14} />
             Retry
           </Button>

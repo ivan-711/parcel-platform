@@ -75,8 +75,8 @@ export function MobilePipeline({ board, isLoading, onRemove, onCloseDeal, onMove
                 cursor-pointer
                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B7AFF]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0B0A]
                 ${isActive
-                  ? 'bg-[#8B7AFF] text-[#0C0B0A] shadow-sm'
-                  : 'bg-white/[0.04] text-[#A09D98] hover:bg-white/[0.06]'
+                  ? 'bg-[#8B7AFF] text-accent-text-on-accent shadow-sm'
+                  : 'bg-layer-2 text-text-secondary hover:bg-layer-3'
                 }
               `}
             >
@@ -89,8 +89,8 @@ export function MobilePipeline({ board, isLoading, onRemove, onCloseDeal, onMove
                 className={`
                   text-[11px] tabular-nums px-1.5 py-0.5 rounded-full min-w-[22px] text-center
                   ${isActive
-                    ? 'bg-[#0C0B0A]/20 text-[#0C0B0A]'
-                    : 'bg-white/[0.06] text-[#7A7872]'
+                    ? 'bg-[#0C0B0A]/20 text-accent-text-on-accent'
+                    : 'bg-layer-3 text-text-muted'
                   }
                 `}
               >
@@ -113,7 +113,7 @@ export function MobilePipeline({ board, isLoading, onRemove, onCloseDeal, onMove
         ) : cards.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
             <Inbox size={28} className="text-[#7A7872]/40" />
-            <p className="text-sm text-[#7A7872]">
+            <p className="text-sm text-text-secondary">
               No deals in {STAGES.find((s) => s.key === activeStage)?.label ?? activeStage}
             </p>
           </div>

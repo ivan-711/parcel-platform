@@ -26,25 +26,25 @@ function PaginationControls({
   if (pages <= 1) return null
 
   return (
-    <div className="flex items-center justify-between px-3 py-2 border-t border-white/[0.04]">
+    <div className="flex items-center justify-between px-3 py-2 border-t border-border-subtle">
       <button
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
         aria-label="Previous page"
         className={cn(
           'flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs transition-colors',
-          'border border-white/[0.06] bg-[#1A1916] hover:bg-[#22211D]',
-          'text-[#A09D98]',
-          page <= 1 && 'opacity-50 cursor-not-allowed hover:bg-[#1A1916]',
+          'border border-border-default bg-app-surface hover:bg-app-elevated',
+          'text-text-secondary',
+          page <= 1 && 'opacity-50 cursor-not-allowed hover:bg-app-surface',
         )}
       >
         <ChevronLeft size={14} />
         Previous
       </button>
 
-      <span className="text-xs text-[#A09D98]">
-        Page <span className="tabular-nums text-[#F0EDE8]">{page}</span> of{' '}
-        <span className="tabular-nums text-[#F0EDE8]">{pages}</span>
+      <span className="text-xs text-text-secondary">
+        Page <span className="tabular-nums text-text-primary">{page}</span> of{' '}
+        <span className="tabular-nums text-text-primary">{pages}</span>
       </span>
 
       <button
@@ -53,9 +53,9 @@ function PaginationControls({
         aria-label="Next page"
         className={cn(
           'flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs transition-colors',
-          'border border-white/[0.06] bg-[#1A1916] hover:bg-[#22211D]',
-          'text-[#A09D98]',
-          page >= pages && 'opacity-50 cursor-not-allowed hover:bg-[#1A1916]',
+          'border border-border-default bg-app-surface hover:bg-app-elevated',
+          'text-text-secondary',
+          page >= pages && 'opacity-50 cursor-not-allowed hover:bg-app-surface',
         )}
       >
         Next
@@ -100,8 +100,8 @@ export default function DocumentsPage() {
           <div className="w-12 h-12 rounded-full bg-[#D4766A]/10 flex items-center justify-center">
             <AlertTriangle className="w-6 h-6 text-[#D4766A]" />
           </div>
-          <p className="text-base font-medium text-[#F0EDE8]">Failed to load documents</p>
-          <p className="text-sm text-[#A09D98]">Check your connection and try again.</p>
+          <p className="text-base font-medium text-text-primary">Failed to load documents</p>
+          <p className="text-sm text-text-secondary">Check your connection and try again.</p>
         </div>
       </AppShell>
     )
@@ -114,7 +114,7 @@ export default function DocumentsPage() {
         {/* Left Panel */}
         <div
           className={cn(
-            'w-full md:w-[320px] md:shrink-0 border-r border-white/[0.04] flex flex-col bg-[#1A1916]',
+            'w-full md:w-[320px] md:shrink-0 border-r border-border-subtle flex flex-col bg-app-surface',
             showMobileDetail && 'hidden md:flex',
           )}
         >
@@ -137,7 +137,7 @@ export default function DocumentsPage() {
         {/* Right Panel */}
         <div
           className={cn(
-            'flex-1 overflow-y-auto p-4 bg-[#0C0B0A]',
+            'flex-1 overflow-y-auto p-4 bg-app-bg',
             !showMobileDetail && 'hidden md:block',
           )}
         >

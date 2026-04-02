@@ -113,7 +113,7 @@ export function SuccessOverlay() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative z-10 w-full max-w-md bg-[#1A1916] rounded-xl border border-white/[0.06] shadow-2xl p-8 mx-4"
+            className="relative z-10 w-full max-w-md bg-app-surface rounded-xl border border-border-default shadow-2xl p-8 mx-4"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Animated checkmark */}
@@ -127,10 +127,10 @@ export function SuccessOverlay() {
               </motion.div>
             </div>
 
-            <h2 className="text-2xl font-bold text-[#F0EDE8] text-center">
+            <h2 className="text-2xl font-bold text-text-primary text-center">
               Welcome to Pro!
             </h2>
-            <p className="text-base text-[#A09D98] text-center mt-2 mb-6">
+            <p className="text-base text-text-secondary text-center mt-2 mb-6">
               You now have full access to all Parcel features.
             </p>
 
@@ -141,7 +141,7 @@ export function SuccessOverlay() {
                   <div className="w-5 h-5 rounded-full bg-[#8B7AFF]/15 flex items-center justify-center shrink-0">
                     <Check size={12} className="text-[#8B7AFF]" />
                   </div>
-                  <span className="text-sm text-[#A09D98]">{label}</span>
+                  <span className="text-sm text-text-secondary">{label}</span>
                 </li>
               ))}
             </ul>
@@ -151,7 +151,7 @@ export function SuccessOverlay() {
                 dismiss()
                 navigate('/analyze')
               }}
-              className="w-full h-11 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-[#0C0B0A] text-sm font-medium transition-all cursor-pointer"
+              className="w-full h-11 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-accent-text-on-accent text-sm font-medium transition-all cursor-pointer"
             >
               Start Analyzing Deals
             </button>

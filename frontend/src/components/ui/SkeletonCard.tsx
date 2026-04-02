@@ -10,7 +10,7 @@ export function SkeletonCard({ className, lines = 3 }: SkeletonCardProps) {
   return (
     <div
       className={cn(
-        'bg-[#1A1916] border border-white/[0.04] rounded-xl shadow-xs p-5 space-y-3',
+        'bg-app-surface border border-border-subtle rounded-xl shadow-xs p-5 space-y-3',
         className
       )}
     >

@@ -24,6 +24,7 @@ import {
 } from 'recharts'
 import { TrendingUp } from 'lucide-react'
 import { slideUp } from '@/lib/motion'
+import { CHART_COLORS, CHART_AXIS, CHART_GRID, CHART_ANIMATION } from '@/lib/chart-theme'
 import type { Strategy } from '@/types'
 
 interface CashFlowProjectionProps {
@@ -245,20 +246,20 @@ function ChartTooltip({
   if (!active || !payload || payload.length === 0) return null
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-lg">
-      <p className="text-xs font-medium text-gray-500 mb-2">{label}</p>
+    <div className="rounded-lg border border-border-default bg-[#22211D]/95 px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.55)]">
+      <p className="text-xs font-medium text-text-secondary mb-2">{label}</p>
       {payload.map((entry) => (
         <div key={entry.dataKey} className="flex items-center gap-2 mb-1 last:mb-0">
           <span
             className="inline-block h-2 w-2 rounded-full"
             style={{ backgroundColor: entry.color }}
           />
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-text-secondary">
             {entry.dataKey === 'monthlyCashFlow' ? 'Monthly' : 'Cumulative'}:
           </span>
           <span
             className={`text-sm font-medium tabular-nums ${
-              entry.value >= 0 ? 'text-gray-900' : 'text-red-600'
+              entry.value >= 0 ? 'text-text-primary' : 'text-[#D4766A]'
             }`}
           >
             {formatTooltipCurrency(entry.value)}
@@ -282,19 +283,19 @@ export function CashFlowProjection({ outputs, strategy, dealId }: CashFlowProjec
         variants={slideUp}
         initial="hidden"
         animate="visible"
-        className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs"
+        className="rounded-xl border border-border-subtle bg-app-surface p-6 shadow-xs"
       >
-        <h3 className="text-sm font-semibold text-gray-900 mb-4">
+        <h3 className="text-sm font-semibold text-text-primary mb-4">
           12-Month Cash Flow Projection
         </h3>
         <div className="flex flex-col items-center justify-center py-12 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 mb-3">
-            <TrendingUp size={20} className="text-gray-400" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-layer-3 mb-3">
+            <TrendingUp size={20} className="text-text-muted" />
           </div>
-          <p className="text-sm text-gray-600 mb-1">
+          <p className="text-sm text-text-secondary mb-1">
             Projection unavailable
           </p>
-          <p className="text-xs text-gray-400 max-w-xs">
+          <p className="text-xs text-text-secondary max-w-xs">
             Cash flow projection requires monthly income or profit data in the analysis outputs.
           </p>
         </div>
@@ -307,20 +308,20 @@ export function CashFlowProjection({ outputs, strategy, dealId }: CashFlowProjec
       variants={slideUp}
       initial="hidden"
       animate="visible"
-      className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs"
+      className="rounded-xl border border-border-subtle bg-app-surface p-6 shadow-xs"
     >
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-sm font-semibold text-gray-900">
+        <h3 className="text-sm font-semibold text-text-primary">
           12-Month Cash Flow Projection
         </h3>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
-            <span className="inline-block h-2 w-2 rounded-full bg-lime-600" />
-            <span className="text-xs text-gray-500">Monthly</span>
+            <span className="inline-block h-2 w-2 rounded-full bg-[#8B7AFF]" />
+            <span className="text-xs text-text-secondary">Monthly</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="inline-block h-2 w-2 rounded-full bg-sky-500" />
-            <span className="text-xs text-gray-500">Cumulative</span>
+            <span className="inline-block h-2 w-2 rounded-full bg-[#6DBEA3]" />
+            <span className="text-xs text-text-secondary">Cumulative</span>
           </div>
         </div>
       </div>
@@ -333,53 +334,51 @@ export function CashFlowProjection({ outputs, strategy, dealId }: CashFlowProjec
           >
             <defs>
               <linearGradient id="cashFlowGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#65A30D" stopOpacity={0.15} />
-                <stop offset="100%" stopColor="#65A30D" stopOpacity={0} />
+                <stop offset="0%" stopColor="#8B7AFF" stopOpacity={0.30} />
+                <stop offset="50%" stopColor="#8B7AFF" stopOpacity={0.05} />
+                <stop offset="100%" stopColor="#8B7AFF" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="#E5E7EB"
-              vertical={false}
+              stroke={CHART_GRID.stroke}
+              strokeDasharray={CHART_GRID.strokeDasharray}
+              strokeOpacity={CHART_GRID.strokeOpacity}
+              vertical={CHART_GRID.vertical}
             />
             <XAxis
               dataKey="month"
-              tick={{ fontSize: 11, fill: '#64748B' }}
-              tickLine={false}
-              axisLine={{ stroke: '#EAECF0' }}
+              tick={CHART_AXIS.tick}
+              tickLine={CHART_AXIS.tickLine}
+              axisLine={CHART_AXIS.axisLine}
               tickFormatter={(value: string) => value.replace('Month ', 'M')}
             />
             <YAxis
-              tick={{ fontSize: 11, fill: '#64748B' }}
-              tickLine={false}
-              axisLine={false}
+              tick={CHART_AXIS.tick}
+              tickLine={CHART_AXIS.tickLine}
+              axisLine={CHART_AXIS.axisLine}
               tickFormatter={formatDollar}
               width={60}
             />
             <Tooltip
               content={<ChartTooltip />}
-              cursor={{ stroke: '#84CC16', strokeOpacity: 0.3 }}
+              cursor={{ stroke: '#8B7AFF', strokeOpacity: 0.3 }}
             />
             <Area
               type="monotone"
               dataKey="monthlyCashFlow"
-              stroke="#65A30D"
+              stroke={CHART_COLORS.violet}
               strokeWidth={2}
               fill="url(#cashFlowGradient)"
-              isAnimationActive={true}
-              animationDuration={1200}
-              animationEasing="ease-out"
+              {...CHART_ANIMATION}
             />
             <Area
               type="monotone"
               dataKey="cumulativeCashFlow"
-              stroke="#0EA5E9"
+              stroke={CHART_COLORS.green}
               strokeWidth={2}
               fill="none"
-              isAnimationActive={true}
-              animationDuration={1200}
-              animationEasing="ease-out"
-              animationBegin={300}
+              {...CHART_ANIMATION}
+              animationBegin={150}
             />
           </AreaChart>
         </ResponsiveContainer>

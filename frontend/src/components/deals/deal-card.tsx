@@ -33,11 +33,11 @@ export function DealCard({
           className={`absolute top-3 left-3 w-5 h-5 rounded border flex items-center justify-center transition-colors ${
             isSelected
               ? 'bg-violet-400 border-violet-400'
-              : 'border-white/[0.06] bg-transparent opacity-60 group-hover:opacity-100'
+              : 'border-border-default bg-transparent opacity-60 group-hover:opacity-100'
           }`}
         >
           {isSelected && (
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-[#0C0B0A]">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-accent-text-on-accent">
               <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           )}
@@ -64,12 +64,12 @@ export function DealCard({
           className={`absolute top-3 right-3 w-5 h-5 rounded border flex items-center justify-center transition-colors ${
             compareIds.has(deal.id)
               ? 'bg-violet-400 border-violet-400'
-              : 'border-white/[0.06] hover:border-white/[0.08] bg-transparent'
+              : 'border-border-default hover:border-border-strong bg-transparent'
           }`}
           aria-label={compareIds.has(deal.id) ? 'Remove from comparison' : 'Add to comparison'}
         >
           {compareIds.has(deal.id) && (
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-[#0C0B0A]">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-accent-text-on-accent">
               <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           )}
@@ -79,24 +79,24 @@ export function DealCard({
       {/* Top row: strategy + status */}
       <div className={`flex items-center justify-between ${selectionMode ? 'pl-7' : 'pr-6'}`}>
         <StrategyBadge strategy={deal.strategy as Strategy} />
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-white/[0.06] text-[#A09D98]">
+        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-layer-3 text-text-secondary">
           {statusLabel(deal.status)}
         </span>
       </div>
 
       {/* Address */}
-      <p className="text-sm font-medium text-[#F0EDE8] truncate">{deal.address}</p>
+      <p className="text-sm font-medium text-text-primary truncate">{deal.address}</p>
 
       {/* Metrics row */}
       <div className="flex items-center justify-between">
         <div className="space-y-0.5">
-          <p className="text-xs text-[#7A7872]">{deal.primary_metric_label ?? 'Primary Metric'}</p>
-          <p className="text-lg tabular-nums font-semibold text-[#F0EDE8]">
+          <p className="text-xs text-text-secondary">{deal.primary_metric_label ?? 'Primary Metric'}</p>
+          <p className="text-lg tabular-nums font-semibold text-text-primary">
             {formatMetricValue(deal.primary_metric_label, deal.primary_metric_value)}
           </p>
         </div>
         <div className="space-y-0.5 text-right">
-          <p className="text-xs text-[#7A7872]">Risk Score</p>
+          <p className="text-xs text-text-secondary">Risk Score</p>
           <p className={`text-lg tabular-nums font-semibold ${riskColor(deal.risk_score)}`}>
             {deal.risk_score !== null ? deal.risk_score : '—'}
           </p>
@@ -109,7 +109,7 @@ export function DealCard({
           View Analysis →
         </p>
       ) : (
-        <span className="text-xs font-medium text-[#7A7872]">
+        <span className="text-xs font-medium text-text-secondary">
           View Analysis →
         </span>
       )}
@@ -120,8 +120,8 @@ export function DealCard({
     return (
       <div
         onClick={() => onToggleSelection(deal.id)}
-        className={`relative p-5 rounded-xl border bg-[#1A1916] shadow-xs transition-colors space-y-3 group cursor-pointer edge-highlight ${
-          isSelected ? 'border-violet-400/40' : 'border-white/[0.04] hover:border-violet-400/30'
+        className={`relative p-5 rounded-xl border bg-app-surface shadow-xs transition-colors space-y-3 group cursor-pointer edge-highlight ${
+          isSelected ? 'border-violet-400/40' : 'border-border-subtle hover:border-violet-400/30'
         }`}
       >
         {cardContent}
@@ -132,7 +132,7 @@ export function DealCard({
   return (
     <Link
       to={`/analyze/results/${deal.id}`}
-      className="relative block p-5 rounded-xl border border-white/[0.04] bg-[#1A1916] shadow-xs hover:border-white/[0.06] hover:shadow-card-hover transition-all space-y-3 group edge-highlight"
+      className="relative block p-5 rounded-xl border border-border-subtle bg-app-surface shadow-xs hover:border-border-default hover:shadow-card-hover transition-all space-y-3 group edge-highlight"
     >
       {cardContent}
     </Link>

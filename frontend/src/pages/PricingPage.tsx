@@ -135,7 +135,7 @@ function BillingToggle({
 }) {
   return (
     <div className="flex justify-center">
-      <div className="inline-flex bg-white/[0.06] rounded-lg p-1 relative">
+      <div className="inline-flex bg-layer-3 rounded-lg p-1 relative">
         <button
           type="button"
           onClick={() => onChange('monthly')}
@@ -273,14 +273,14 @@ export default function PricingPage() {
               {currentPlan === 'free' ? (
                 <button
                   disabled
-                  className="w-full h-11 rounded-lg text-sm font-medium bg-white/[0.04] text-text-muted cursor-not-allowed"
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-layer-2 text-text-muted cursor-not-allowed"
                 >
                   Current Plan
                 </button>
               ) : (
                 <button
                   disabled
-                  className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-white/[0.12] text-text-secondary cursor-not-allowed opacity-60"
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-border-emphasis text-text-secondary cursor-not-allowed opacity-60"
                 >
                   Downgrade
                 </button>
@@ -298,7 +298,7 @@ export default function PricingPage() {
 
             {/* Most Popular badge */}
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-              <span className="bg-[#8B7AFF] text-[#0C0B0A] text-xs font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1 shadow-[0_0_12px_rgba(139,122,255,0.3)]">
+              <span className="bg-[#8B7AFF] text-accent-text-on-accent text-xs font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1 shadow-[0_0_12px_rgba(139,122,255,0.3)]">
                 <Sparkles size={12} />
                 Most Popular
               </span>
@@ -323,7 +323,7 @@ export default function PricingPage() {
                   <span className="text-text-secondary text-sm">/month</span>
                 </div>
                 {interval === 'annual' && (
-                  <p className="mt-0.5 text-xs text-text-muted">billed annually</p>
+                  <p className="mt-0.5 text-xs text-text-secondary">billed annually</p>
                 )}
                 <p className="mt-1 text-sm text-text-secondary">
                   Everything you need to analyze deals with confidence
@@ -347,7 +347,7 @@ export default function PricingPage() {
                   whileTap={{ scale: 0.99 }}
                   onClick={handleProCta}
                   disabled={isCheckoutLoading}
-                  className="w-full h-11 rounded-lg text-sm font-medium bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:from-[#7B6AEF] hover:to-[#6B5AD6] text-[#0C0B0A] transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:from-[#7B6AEF] hover:to-[#6B5AD6] text-accent-text-on-accent transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                 >
                   {portal.isPending ? (
                     <>
@@ -364,7 +364,7 @@ export default function PricingPage() {
                   whileTap={{ scale: 0.99 }}
                   onClick={handleProCta}
                   disabled={isCheckoutLoading}
-                  className="w-full h-11 rounded-lg text-sm font-medium bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:from-[#7B6AEF] hover:to-[#6B5AD6] text-[#0C0B0A] transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:from-[#7B6AEF] hover:to-[#6B5AD6] text-accent-text-on-accent transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                 >
                   {checkout.isPending ? (
                     <>
@@ -382,11 +382,11 @@ export default function PricingPage() {
           {/* Team Card (Coming Soon) */}
           <motion.div
             variants={staggerItem}
-            className="bg-white/[0.02] rounded-lg border border-white/[0.04] p-6 flex flex-col opacity-60 order-3"
+            className="bg-layer-1 rounded-lg border border-border-subtle p-6 flex flex-col opacity-60 order-3"
           >
             {/* Coming Soon badge */}
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 relative mb-0">
-              <span className="bg-white/[0.06] text-text-secondary text-xs font-semibold px-3 py-1 rounded-full">
+              <span className="bg-layer-3 text-text-secondary text-xs font-semibold px-3 py-1 rounded-full">
                 Coming Soon
               </span>
             </div>
@@ -398,12 +398,12 @@ export default function PricingPage() {
                   <span className="text-4xl font-bold text-text-muted tabular-nums">$149</span>
                   <span className="text-text-muted text-sm">/month</span>
                 </div>
-                <p className="mt-1 text-sm text-text-muted">Collaborate with your entire team</p>
+                <p className="mt-1 text-sm text-text-secondary">Collaborate with your entire team</p>
               </div>
 
               <ul className="space-y-3">
                 {TEAM_FEATURES.map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-text-muted">
+                  <li key={f} className="flex items-start gap-2.5 text-sm text-text-secondary">
                     <Check size={16} className="text-[#3A3835] mt-0.5 shrink-0" />
                     {f}
                   </li>
@@ -414,7 +414,7 @@ export default function PricingPage() {
             <div className="mt-6">
               <button
                 disabled
-                className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-white/[0.06] text-text-muted cursor-not-allowed"
+                className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-border-default text-text-muted cursor-not-allowed"
               >
                 Notify Me
               </button>
@@ -450,7 +450,7 @@ export default function PricingPage() {
               whileTap={{ scale: 0.99 }}
               onClick={handleProCta}
               disabled={isCheckoutLoading}
-              className="shrink-0 h-11 px-6 rounded-lg text-sm font-medium bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:from-[#7B6AEF] hover:to-[#6B5AD6] text-[#0C0B0A] transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+              className="shrink-0 h-11 px-6 rounded-lg text-sm font-medium bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:from-[#7B6AEF] hover:to-[#6B5AD6] text-accent-text-on-accent transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
             >
               {checkout.isPending ? (
                 <>

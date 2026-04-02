@@ -35,14 +35,14 @@ export function HowItWorks() {
   const { ref, isVisible } = useFadeInOnScroll({ threshold: 0.15 })
 
   return (
-    <section id="how-it-works" className="py-24 md:py-32" ref={ref}>
+    <section id="how-it-works" className="py-16 md:py-24" ref={ref}>
       <div className="max-w-7xl mx-auto px-6">
         {/* Section header */}
         <div className="text-center mb-16">
-          <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-[#A09D98]">
+          <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-text-secondary">
             HOW IT WORKS
           </p>
-          <h2 className="font-brand text-3xl md:text-4xl font-light tracking-[-0.02em] text-[#F0EDE8] mt-4">
+          <h2 className="font-brand text-3xl md:text-4xl font-light tracking-[-0.02em] text-text-primary mt-4">
             From Address to Analysis in Seconds
           </h2>
         </div>
@@ -50,7 +50,7 @@ export function HowItWorks() {
         {/* Steps grid */}
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 relative">
           {/* Connecting dashed line on desktop */}
-          <div className="hidden md:block absolute top-[88px] left-0 right-0 border-t border-dashed border-white/[0.06] mx-8" />
+          <div className="hidden md:block absolute top-[88px] left-0 right-0 border-t border-dashed border-border-default mx-8" />
 
           {STEPS.map((step, i) => {
             const Icon = step.icon
@@ -64,16 +64,16 @@ export function HowItWorks() {
                   delay: i * 0.15,
                   ease: ease.vercel,
                 }}
-                className="relative bg-[#1A1916] border border-white/[0.06] rounded-xl p-8"
+                className="relative bg-app-surface border border-border-default rounded-xl p-8"
               >
-                <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-[#7A7872]">
+                <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-text-secondary">
                   {step.number}
                 </p>
-                <Icon className="w-10 h-10 text-[#A09D98] mt-4" strokeWidth={1.5} />
-                <h3 className="font-brand text-xl font-light text-[#F0EDE8] mt-4">
+                <Icon className="w-10 h-10 text-text-secondary mt-4" strokeWidth={1.5} />
+                <h3 className="font-brand text-xl font-light text-text-primary mt-4">
                   {step.title}
                 </h3>
-                <p className="text-sm text-[#A09D98] mt-2 leading-relaxed">
+                <p className="text-sm text-text-secondary mt-2 leading-relaxed">
                   {step.description}
                 </p>
               </motion.div>

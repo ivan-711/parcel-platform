@@ -42,7 +42,7 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
             <button
               onClick={() => checkout.mutate({ plan: 'pro', interval: 'annual' })}
               disabled={checkout.isPending}
-              className="mt-2 w-full h-8 rounded-md bg-error hover:brightness-110 text-[#F0EDE8] text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer"
+              className="mt-2 w-full h-8 rounded-md bg-error hover:brightness-110 text-text-primary text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer"
             >
               Upgrade to continue
             </button>
@@ -112,7 +112,7 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
             setSnoozed(true)
           }}
           aria-label="Dismiss for 24 hours"
-          className="text-[#7A7872] hover:text-[#A09D98] transition-colors cursor-pointer shrink-0"
+          className="text-text-muted hover:text-text-secondary transition-colors cursor-pointer shrink-0"
         >
           <X size={14} />
         </button>

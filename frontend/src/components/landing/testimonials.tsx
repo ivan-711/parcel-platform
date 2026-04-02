@@ -31,14 +31,14 @@ export function Testimonials() {
   const { ref, isVisible } = useFadeInOnScroll({ threshold: 0.15 })
 
   return (
-    <section className="py-24 md:py-32" ref={ref}>
+    <section className="py-16 md:py-24" ref={ref}>
       <div className="max-w-7xl mx-auto px-6">
         {/* Section header */}
         <div className="text-center mb-16">
-          <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-[#A09D98]">
+          <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-text-secondary">
             TESTIMONIALS
           </p>
-          <h2 className="font-brand text-3xl md:text-4xl font-light tracking-[-0.02em] text-[#F0EDE8] mt-4">
+          <h2 className="font-brand text-3xl md:text-4xl font-light tracking-[-0.02em] text-text-primary mt-4">
             Trusted by Investors
           </h2>
         </div>
@@ -55,16 +55,16 @@ export function Testimonials() {
                 delay: i * 0.15,
                 ease: ease.vercel,
               }}
-              className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-8 backdrop-blur-sm"
+              className="bg-app-surface border border-border-default rounded-xl p-8 backdrop-blur-sm"
             >
-              <p className="text-base text-[#D4D1CC] leading-relaxed italic">
+              <p className="text-base text-text-primary/80 leading-relaxed italic">
                 &ldquo;{t.quote}&rdquo;
               </p>
               <div className="flex items-center gap-3 mt-6">
-                <div className="w-10 h-10 rounded-full bg-[#22211D]" />
+                <div className="w-10 h-10 rounded-full bg-app-elevated" />
                 <div>
-                  <p className="text-sm font-medium text-[#F0EDE8]">{t.name}</p>
-                  <p className="text-[11px] text-[#A09D98]">{t.role}</p>
+                  <p className="text-sm font-medium text-text-primary">{t.name}</p>
+                  <p className="text-[11px] text-text-secondary">{t.role}</p>
                 </div>
               </div>
             </motion.div>

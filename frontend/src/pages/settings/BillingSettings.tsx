@@ -40,7 +40,7 @@ function StatusBadge({ status }: { status: string | null }) {
     trialing: 'bg-[#8B7AFF]/10 text-[#8B7AFF]',
     past_due: 'bg-[#D4A867]/10 text-[#D4A867]',
     canceled: 'bg-[#D4766A]/10 text-[#D4766A]',
-    incomplete: 'bg-white/[0.06] text-[#7A7872]',
+    incomplete: 'bg-layer-3 text-text-secondary',
     unpaid: 'bg-[#D4766A]/10 text-[#D4766A]',
   }
 
@@ -54,7 +54,7 @@ function StatusBadge({ status }: { status: string | null }) {
   }
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold ${styles[status] ?? 'bg-white/[0.06] text-[#7A7872]'}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold ${styles[status] ?? 'bg-layer-3 text-text-secondary'}`}>
       {labels[status] ?? status}
     </span>
   )
@@ -87,8 +87,8 @@ export function BillingSettings() {
 
   if (isError || !billing) {
     return (
-      <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-6 shadow-xs">
-        <p className="text-sm text-[#A09D98]">Unable to load billing information. Please try again later.</p>
+      <div className="bg-app-surface border border-border-strong rounded-xl p-6 shadow-xs">
+        <p className="text-sm text-text-secondary">Unable to load billing information. Please try again later.</p>
       </div>
     )
   }
@@ -101,7 +101,7 @@ export function BillingSettings() {
     <>
       {/* Current Plan Card */}
       <motion.div variants={itemVariants}>
-        <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-6 shadow-xs space-y-4">
+        <div className="bg-app-surface border border-border-strong rounded-xl p-6 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-[#8B7AFF]/10 flex items-center justify-center">
@@ -109,17 +109,17 @@ export function BillingSettings() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-sm font-semibold text-[#F0EDE8]">Current Plan</h2>
+                  <h2 className="text-sm font-semibold text-text-primary">Current Plan</h2>
                   <PlanBadge planTier={plan} trialActive={billing.trial_active} />
                   <StatusBadge status={billing.status} />
                 </div>
                 {billing.trial_active && billing.trial_ends_at && (
-                  <p className="text-sm text-[#A09D98] mt-1">
+                  <p className="text-sm text-text-secondary mt-1">
                     Your 7-day Pro trial ends on {formatDate(billing.trial_ends_at)}
                   </p>
                 )}
                 {isPaid && !isCanceled && billing.current_period_end && (
-                  <p className="text-sm text-[#A09D98] mt-1">
+                  <p className="text-sm text-text-secondary mt-1">
                     Renews on {formatDate(billing.current_period_end)}
                     {billing.interval && ` (${billing.interval})`}
                   </p>
@@ -142,7 +142,7 @@ export function BillingSettings() {
             {plan === 'free' && !billing.trial_active ? (
               <Link
                 to="/pricing"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-[#0C0B0A] text-sm font-medium transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-accent-text-on-accent text-sm font-medium transition-all"
               >
                 Upgrade to Pro
               </Link>
@@ -151,7 +151,7 @@ export function BillingSettings() {
                 <button
                   onClick={() => portal.mutate()}
                   disabled={portal.isPending}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/[0.06] bg-white/[0.04] hover:bg-white/[0.08] text-sm font-medium text-[#F0EDE8] transition-colors disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border-default bg-layer-2 hover:bg-layer-4 text-sm font-medium text-text-primary transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   <ExternalLink size={14} />
                   {portal.isPending ? 'Opening...' : 'Manage Subscription'}
@@ -159,7 +159,7 @@ export function BillingSettings() {
                 {!isCanceled && (
                   <button
                     onClick={() => setCancelOpen(true)}
-                    className="text-sm text-[#D4766A] hover:text-[#F0EDE8] transition-colors cursor-pointer"
+                    className="text-sm text-[#D4766A] hover:text-text-primary transition-colors cursor-pointer"
                   >
                     Cancel Subscription
                   </button>
@@ -173,15 +173,15 @@ export function BillingSettings() {
       {/* Usage Section */}
       {billing.usage.length > 0 && (
         <motion.div variants={itemVariants}>
-          <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-6 shadow-xs space-y-4">
-            <h2 className="text-sm font-semibold text-[#F0EDE8]">Usage This Period</h2>
+          <div className="bg-app-surface border border-border-strong rounded-xl p-6 shadow-xs space-y-4">
+            <h2 className="text-sm font-semibold text-text-primary">Usage This Period</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {billing.usage.map((metric) => (
                 <UsageMeter key={metric.metric} metric={metric} />
               ))}
             </div>
             {billing.usage[0]?.resets_at && (
-              <p className="text-xs text-[#A09D98]">
+              <p className="text-xs text-text-secondary">
                 Resets on {formatDate(billing.usage[0].resets_at)}
               </p>
             )}
@@ -191,24 +191,24 @@ export function BillingSettings() {
 
       {/* Cancel Modal */}
       <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
-        <DialogContent className="sm:max-w-md bg-[#22211D] border border-white/[0.06] rounded-xl">
+        <DialogContent className="sm:max-w-md bg-app-elevated border border-border-default rounded-xl">
           <DialogHeader>
-            <DialogTitle className="text-[#F0EDE8]">Cancel Subscription</DialogTitle>
-            <DialogDescription className="text-[#A09D98]">
+            <DialogTitle className="text-text-primary">Cancel Subscription</DialogTitle>
+            <DialogDescription className="text-text-secondary">
               Your plan will remain active until the end of your current billing period.
               After that, you'll be downgraded to the Free plan.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-2">
             <div className="space-y-2">
-              <label htmlFor="cancel-reason" className="text-sm font-medium text-[#A09D98]">
+              <label htmlFor="cancel-reason" className="text-sm font-medium text-text-secondary">
                 Help us improve — why are you canceling?
               </label>
               <select
                 id="cancel-reason"
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
-                className="w-full rounded-lg border border-white/[0.06] bg-[#131210] px-3 py-2 text-sm text-[#F0EDE8] focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/20 focus:border-[#8B7AFF]/40"
+                className="w-full rounded-lg border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/20 focus:border-[#8B7AFF]/40"
               >
                 <option value="">Select a reason</option>
                 {CANCEL_REASONS.map((r) => (
@@ -219,7 +219,7 @@ export function BillingSettings() {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setCancelOpen(false)}
-                className="px-4 py-2 rounded-lg border border-white/[0.06] bg-white/[0.04] hover:bg-white/[0.08] text-sm font-medium text-[#F0EDE8] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-lg border border-border-default bg-layer-2 hover:bg-layer-4 text-sm font-medium text-text-primary transition-colors cursor-pointer"
               >
                 Keep Subscription
               </button>
@@ -231,7 +231,7 @@ export function BillingSettings() {
                   )
                 }}
                 disabled={cancelSub.isPending}
-                className="px-4 py-2 rounded-lg bg-[#D4766A] hover:bg-[#D4766A]/90 text-[#F0EDE8] text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer"
+                className="px-4 py-2 rounded-lg bg-[#D4766A] hover:bg-[#D4766A]/90 text-text-primary text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {cancelSub.isPending ? 'Canceling...' : 'Cancel at End of Period'}
               </button>

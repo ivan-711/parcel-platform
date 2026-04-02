@@ -31,8 +31,8 @@ export function ProcessingSteps({ status }: ProcessingStepsProps) {
                 <Loader2 size={12} className="text-[#8B7AFF] animate-spin" />
               </div>
             ) : (
-              <div className="w-5 h-5 rounded-full bg-white/[0.04] flex items-center justify-center">
-                <Clock size={10} className="text-[#5C5A56]" />
+              <div className="w-5 h-5 rounded-full bg-layer-2 flex items-center justify-center">
+                <Clock size={10} className="text-text-disabled" />
               </div>
             )}
             <span
@@ -40,7 +40,7 @@ export function ProcessingSteps({ status }: ProcessingStepsProps) {
                 'text-sm',
                 step.done && !isActive && 'text-[#6DBEA3]',
                 isActive && 'text-[#8B7AFF]',
-                isWaiting && 'text-[#A09D98]',
+                isWaiting && 'text-text-secondary',
               )}
             >
               {step.label}

@@ -25,7 +25,7 @@ export const SORTS: { value: string; label: string }[] = [
 export const PER_PAGE = 12
 
 export function riskColor(score: number | null): string {
-  if (score === null) return 'text-[#7A7872]'
+  if (score === null) return 'text-text-muted'
   if (score <= 30) return 'text-[#7CCBA5]'
   if (score <= 60) return 'text-[#D4A867]'
   return 'text-[#D4766A]'

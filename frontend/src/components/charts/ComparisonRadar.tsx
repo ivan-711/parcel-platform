@@ -148,8 +148,8 @@ function RadarTooltipContent({
   if (!active || !payload || payload.length === 0) return null
 
   return (
-    <div className="rounded-lg border border-white/[0.06] bg-[#22211D]/95 px-3 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.55)]">
-      <p className="mb-1.5 text-xs font-medium text-[#A09D98]">{label}</p>
+    <div className="rounded-lg border border-border-default bg-[#22211D]/95 px-3 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.55)]">
+      <p className="mb-1.5 text-xs font-medium text-text-secondary">{label}</p>
       {payload.map((entry) => {
         const rawKey = `${entry.name}_raw`
         const unitKey = `${entry.name}_unit`
@@ -161,8 +161,8 @@ function RadarTooltipContent({
               className="inline-block h-2 w-2 rounded-full"
               style={{ backgroundColor: entry.color }}
             />
-            <span className="text-[#A09D98]">{entry.name}:</span>
-            <span className="font-medium text-[#F0EDE8] tabular-nums">
+            <span className="text-text-secondary">{entry.name}:</span>
+            <span className="font-medium text-text-primary tabular-nums">
               {typeof rawValue === 'number' && typeof unit === 'string'
                 ? formatOutputValue(unit, rawValue)
                 : `${entry.value}/100`}
@@ -193,7 +193,7 @@ function RadarLegendContent({
             className="inline-block h-2.5 w-2.5 rounded-full"
             style={{ backgroundColor: entry.color }}
           />
-          <span className="text-xs text-[#A09D98]">{entry.value}</span>
+          <span className="text-xs text-text-secondary">{entry.value}</span>
         </div>
       ))}
     </div>
@@ -263,8 +263,8 @@ export function ComparisonRadar({ deals }: ComparisonRadarProps) {
   // Not enough data for a chart
   if (deals.length < 2 || activeDimensions.length < 3) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-white/[0.04] bg-[#1A1916] py-12 shadow-xs">
-        <p className="text-sm text-[#7A7872]">
+      <div className="flex flex-col items-center justify-center rounded-xl border border-border-subtle bg-app-surface py-12 shadow-xs">
+        <p className="text-sm text-text-secondary">
           {deals.length < 2
             ? 'Select at least two deals to see the radar comparison.'
             : 'Not enough comparable metrics to render the radar chart.'}
@@ -274,8 +274,8 @@ export function ComparisonRadar({ deals }: ComparisonRadarProps) {
   }
 
   return (
-    <div className="rounded-xl border border-white/[0.04] bg-[#1A1916] p-5 shadow-xs" aria-label="Deal comparison radar chart">
-      <h2 className="mb-4 text-lg font-semibold text-[#F0EDE8]">Deal Comparison Overview</h2>
+    <div className="rounded-xl border border-border-subtle bg-app-surface p-5 shadow-xs" aria-label="Deal comparison radar chart">
+      <h2 className="mb-4 text-lg font-semibold text-text-primary">Deal Comparison Overview</h2>
       <ResponsiveContainer width="100%" height={380}>
         <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
           <PolarGrid

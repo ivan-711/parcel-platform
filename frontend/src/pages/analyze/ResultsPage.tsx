@@ -133,8 +133,8 @@ export default function ResultsPage() {
           <div className="rounded-xl border border-[#D4766A]/20 bg-[#D4766A]/10 p-6 flex items-start gap-3">
             <AlertTriangle size={20} className="text-[#D4766A] shrink-0 mt-0.5" />
             <div className="space-y-2">
-              <p className="text-sm font-medium text-[#F0EDE8]">Failed to load deal</p>
-              <p className="text-xs text-[#A09D98]">
+              <p className="text-sm font-medium text-text-primary">Failed to load deal</p>
+              <p className="text-xs text-text-secondary">
                 {error instanceof Error ? error.message : 'Something went wrong.'}
               </p>
               <Link to="/deals" className="text-xs text-[#8B7AFF] hover:underline">
@@ -290,8 +290,8 @@ export default function ResultsPage() {
     if (kpi.format === 'percent_or_infinite') {
       if (rawValue === null || rawValue === undefined) {
         return (
-          <div key={kpi.key} className="rounded-xl border border-white/[0.04] bg-[#1A1916] p-5 space-y-1 shadow-xs">
-            <p className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+          <div key={kpi.key} className="rounded-xl border border-border-subtle bg-app-surface p-5 space-y-1 shadow-xs">
+            <p className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
               {kpi.label}
             </p>
             <p className="text-kpi-display text-3xl text-[#7CCBA5]">&infin;</p>
@@ -314,8 +314,8 @@ export default function ResultsPage() {
     if (kpi.renderMode === 'badge') {
       const strValue = typeof rawValue === 'string' ? rawValue : 'N/A'
       return (
-        <div key={kpi.key} className="rounded-xl border border-white/[0.04] bg-[#1A1916] p-5 space-y-1 shadow-xs">
-          <p className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+        <div key={kpi.key} className="rounded-xl border border-border-subtle bg-app-surface p-5 space-y-1 shadow-xs">
+          <p className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
             {kpi.label}
           </p>
           <span
@@ -332,8 +332,8 @@ export default function ResultsPage() {
     if (kpi.renderMode === 'color_coded') {
       const formatted = kpi.format === 'percent' ? formatPercent(numValue) : formatCurrency(numValue)
       return (
-        <div key={kpi.key} className="rounded-xl border border-white/[0.04] bg-[#1A1916] p-5 space-y-1 shadow-xs">
-          <p className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+        <div key={kpi.key} className="rounded-xl border border-border-subtle bg-app-surface p-5 space-y-1 shadow-xs">
+          <p className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
             {kpi.label}
           </p>
           <p
@@ -364,27 +364,27 @@ export default function ResultsPage() {
         <motion.nav variants={staggerItem} aria-label="Breadcrumb">
           <ol className="flex items-center gap-1.5 text-xs">
             <li>
-              <Link to="/dashboard" className="text-[#7A7872] hover:text-[#8B7AFF] transition-colors">
+              <Link to="/dashboard" className="text-text-muted hover:text-[#8B7AFF] transition-colors">
                 Dashboard
               </Link>
             </li>
-            <li aria-hidden="true"><ChevronRight size={12} className="text-[#5C5A56]" /></li>
+            <li aria-hidden="true"><ChevronRight size={12} className="text-text-disabled" /></li>
             <li>
-              <Link to="/analyze" className="text-[#7A7872] hover:text-[#8B7AFF] transition-colors">
+              <Link to="/analyze" className="text-text-muted hover:text-[#8B7AFF] transition-colors">
                 Analyzer
               </Link>
             </li>
-            <li aria-hidden="true"><ChevronRight size={12} className="text-[#5C5A56]" /></li>
+            <li aria-hidden="true"><ChevronRight size={12} className="text-text-disabled" /></li>
             <li>
               <Link
                 to={`/analyze/${deal.strategy}`}
-                className="text-[#7A7872] hover:text-[#8B7AFF] transition-colors"
+                className="text-text-muted hover:text-[#8B7AFF] transition-colors"
               >
                 {STRATEGY_DISPLAY_NAMES[deal.strategy] ?? deal.strategy}
               </Link>
             </li>
-            <li aria-hidden="true"><ChevronRight size={12} className="text-[#5C5A56]" /></li>
-            <li aria-current="page" className="text-[#F0EDE8] font-medium">
+            <li aria-hidden="true"><ChevronRight size={12} className="text-text-disabled" /></li>
+            <li aria-current="page" className="text-text-primary font-medium">
               Results
             </li>
           </ol>
@@ -393,7 +393,7 @@ export default function ResultsPage() {
         {/* Header */}
         <motion.div variants={staggerItem} className="flex items-center gap-3">
           <StrategyBadge strategy={deal.strategy as Strategy} />
-          <h2 className="text-lg font-semibold text-[#F0EDE8]">{deal.address}</h2>
+          <h2 className="text-lg font-semibold text-text-primary">{deal.address}</h2>
         </motion.div>
 
         {/* Section 1: KPI Row */}
@@ -404,19 +404,19 @@ export default function ResultsPage() {
         {/* Section 2: Two Columns */}
         <motion.div variants={staggerItem} className="grid md:grid-cols-5 gap-6">
           {/* Left — Outputs Table */}
-          <div className="md:col-span-3 rounded-xl border border-white/[0.04] bg-[#1A1916] overflow-hidden shadow-xs">
-            <div className="px-4 py-3 border-b border-white/[0.04]">
-              <h3 className="text-sm font-semibold text-[#F0EDE8]">All Outputs</h3>
+          <div className="md:col-span-3 rounded-xl border border-border-subtle bg-app-surface overflow-hidden shadow-xs">
+            <div className="px-4 py-3 border-b border-border-subtle">
+              <h3 className="text-sm font-semibold text-text-primary">All Outputs</h3>
             </div>
             <div>
               {outputEntries.map(([key, value], i) => (
                 <div
                   key={key}
-                  className={`flex items-center justify-between py-2 px-3 border-b border-white/[0.04] last:border-0 ${
-                    i % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'
+                  className={`flex items-center justify-between py-2 px-3 border-b border-border-subtle last:border-0 ${
+                    i % 2 === 0 ? 'bg-transparent' : 'bg-layer-1'
                   }`}
                 >
-                  <span className="text-sm text-[#A09D98]">{formatLabel(key)}</span>
+                  <span className="text-sm text-text-secondary">{formatLabel(key)}</span>
                   {typeof value === 'string' && key === 'recommendation' ? (
                     <span
                       className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${getRecommendationColor(value)}`}
@@ -424,7 +424,7 @@ export default function ResultsPage() {
                       {value}
                     </span>
                   ) : (
-                    <span className="text-[13px] text-[#F0EDE8] tabular-nums">
+                    <span className="text-[13px] text-text-primary tabular-nums">
                       {formatOutputValue(key, value as number | string | null | undefined)}
                     </span>
                   )}
@@ -434,30 +434,30 @@ export default function ResultsPage() {
           </div>
 
           {/* Right — Risk Gauge */}
-          <div className="md:col-span-2 rounded-xl border border-white/[0.04] bg-[#1A1916] p-6 flex flex-col items-center justify-center shadow-xs">
+          <div className="md:col-span-2 rounded-xl border border-border-subtle bg-app-surface p-6 flex flex-col items-center justify-center shadow-xs">
             <div className="flex items-center gap-1.5 mb-4">
-              <h3 className="text-sm font-semibold text-[#F0EDE8]">Risk Score</h3>
+              <h3 className="text-sm font-semibold text-text-primary">Risk Score</h3>
               <Popover>
                 <PopoverTrigger asChild>
-                  <button type="button" aria-label="Risk score details" className="text-[#7A7872] hover:text-[#A09D98] transition-colors">
+                  <button type="button" aria-label="Risk score details" className="text-text-muted hover:text-text-secondary transition-colors">
                     <HelpCircle size={16} />
                   </button>
                 </PopoverTrigger>
-                <PopoverContent className="w-72 bg-[#22211D] border-white/[0.06] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.55)]" side="left">
-                  <p className="text-sm font-semibold text-[#F0EDE8] mb-2">Risk Score Breakdown</p>
+                <PopoverContent className="w-72 bg-app-elevated border-border-default p-4 shadow-[0_8px_32px_rgba(0,0,0,0.55)]" side="left">
+                  <p className="text-sm font-semibold text-text-primary mb-2">Risk Score Breakdown</p>
                   {deal.risk_factors && Object.keys(deal.risk_factors).length > 0 ? (
                     <div className="space-y-1.5">
                       {Object.entries(deal.risk_factors).map(([key, value]) => (
                         <div key={key} className="flex items-center justify-between text-sm">
-                          <span className="text-[#A09D98]">{formatLabel(key)}</span>
-                          <span className="text-[#F0EDE8] tabular-nums">
+                          <span className="text-text-secondary">{formatLabel(key)}</span>
+                          <span className="text-text-primary tabular-nums">
                             {formatOutputValue(key, value as number | string)}
                           </span>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-[#7A7872]">Breakdown not available for this deal.</p>
+                    <p className="text-sm text-text-secondary">Breakdown not available for this deal.</p>
                   )}
                 </PopoverContent>
               </Popover>
@@ -501,7 +501,7 @@ export default function ResultsPage() {
                 disabled={addToPipeline.isPending}
                 aria-haspopup="true"
                 aria-expanded={stageMenuOpen}
-                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] px-4 py-2 text-sm font-medium text-[#0C0B0A] hover:opacity-90 transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] px-4 py-2 text-sm font-medium text-accent-text-on-accent hover:opacity-90 transition-colors disabled:opacity-50"
               >
                 <PlusCircle size={14} />
                 {addToPipeline.isPending ? 'Adding...' : 'Add to Pipeline'}
@@ -512,7 +512,7 @@ export default function ResultsPage() {
               <div
                 role="menu"
                 onKeyDown={handleMenuKeyDown}
-                className="absolute bottom-full mb-1 right-0 z-50 min-w-[180px] rounded-lg border border-white/[0.06] bg-[#22211D] py-1 shadow-[0_8px_32px_rgba(0,0,0,0.55)]"
+                className="absolute bottom-full mb-1 right-0 z-50 min-w-[180px] rounded-lg border border-border-default bg-app-elevated py-1 shadow-[0_8px_32px_rgba(0,0,0,0.55)]"
               >
                 {PIPELINE_STAGES.map((s, i) => (
                   <button
@@ -521,7 +521,7 @@ export default function ResultsPage() {
                     type="button"
                     role="menuitem"
                     tabIndex={focusedStageIndex === i ? 0 : -1}
-                    className="flex w-full items-center px-3 py-2 text-sm text-[#A09D98] hover:bg-white/[0.06] hover:text-[#F0EDE8] transition-colors"
+                    className="flex w-full items-center px-3 py-2 text-sm text-text-secondary hover:bg-layer-3 hover:text-text-primary transition-colors"
                     onClick={() => handleAddToPipeline(s.key)}
                   >
                     {s.label}
@@ -530,17 +530,17 @@ export default function ResultsPage() {
               </div>
             )}
           </div>
-          <Button variant="outline" onClick={handleShare} disabled={sharing || copied} className="gap-2 bg-white/[0.06] border-white/[0.06] text-[#A09D98] hover:bg-white/[0.08]">
+          <Button variant="outline" onClick={handleShare} disabled={sharing || copied} className="gap-2 bg-layer-3 border-border-default text-text-secondary hover:bg-layer-4">
             <Share2 size={14} />
             {copied ? 'Link copied!' : sharing ? 'Sharing...' : deal.status === 'shared' ? 'Copy Share Link' : 'Share Deal'}
           </Button>
           {canAccessPro ? (
-            <Button variant="outline" onClick={handleDownloadReport} disabled={generatingPDF} className="gap-2 bg-white/[0.06] border-white/[0.06] text-[#A09D98] hover:bg-white/[0.08]">
+            <Button variant="outline" onClick={handleDownloadReport} disabled={generatingPDF} className="gap-2 bg-layer-3 border-border-default text-text-secondary hover:bg-layer-4">
               <FileDown size={14} />
               {generatingPDF ? 'Generating...' : 'Download Report'}
             </Button>
           ) : (
-            <Button variant="outline" onClick={() => navigate('/pricing')} className="gap-2 bg-white/[0.06] border-white/[0.06] text-[#5C5A56] hover:bg-white/[0.08]">
+            <Button variant="outline" onClick={() => navigate('/pricing')} className="gap-2 bg-layer-3 border-border-default text-text-disabled hover:bg-layer-4">
               <Lock size={14} />
               Export PDF (Pro)
             </Button>
@@ -552,15 +552,15 @@ export default function ResultsPage() {
                 Delete
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="bg-[#22211D] border-white/[0.06]">
+            <AlertDialogContent className="bg-app-elevated border-border-default">
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-[#F0EDE8]">Delete this deal?</AlertDialogTitle>
-                <AlertDialogDescription className="text-[#A09D98]">
+                <AlertDialogTitle className="text-text-primary">Delete this deal?</AlertDialogTitle>
+                <AlertDialogDescription className="text-text-secondary">
                   This will permanently delete {deal.address}. This cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel className="bg-white/[0.06] border-white/[0.06] text-[#A09D98] hover:bg-white/[0.08]">Cancel</AlertDialogCancel>
+                <AlertDialogCancel className="bg-layer-3 border-border-default text-text-secondary hover:bg-layer-4">Cancel</AlertDialogCancel>
                 <AlertDialogAction onClick={() => deleteDeal.mutate()} className="bg-[#D4766A] hover:bg-[#D4766A]/90 text-[#0C0B0A]">
                   {deleteDeal.isPending ? 'Deleting...' : 'Delete'}
                 </AlertDialogAction>
@@ -570,7 +570,7 @@ export default function ResultsPage() {
           <Button
             variant="outline"
             onClick={() => navigate(`/chat?dealId=${deal.id}`)}
-            className="gap-2 bg-white/[0.06] border-white/[0.06] text-[#A09D98] hover:bg-white/[0.08]"
+            className="gap-2 bg-layer-3 border-border-default text-text-secondary hover:bg-layer-4"
           >
             <MessageSquare size={14} />
             Chat about Deal
@@ -579,13 +579,13 @@ export default function ResultsPage() {
             <Button
               variant="outline"
               onClick={() => setOfferLetterOpen(true)}
-              className="gap-2 bg-white/[0.06] border-white/[0.06] text-[#A09D98] hover:bg-white/[0.08]"
+              className="gap-2 bg-layer-3 border-border-default text-text-secondary hover:bg-layer-4"
             >
               <FileText size={14} />
               Offer Letter
             </Button>
           ) : (
-            <Button variant="outline" onClick={() => navigate('/pricing')} className="gap-2 bg-white/[0.06] border-white/[0.06] text-[#5C5A56] hover:bg-white/[0.08]">
+            <Button variant="outline" onClick={() => navigate('/pricing')} className="gap-2 bg-layer-3 border-border-default text-text-disabled hover:bg-layer-4">
               <Lock size={14} />
               Offer Letter (Pro)
             </Button>
@@ -593,7 +593,7 @@ export default function ResultsPage() {
           <Button
             onClick={handleSave}
             disabled={saved || updateDeal.isPending}
-            className="gap-2 bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] hover:opacity-90"
+            className="gap-2 bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
           >
             {saved ? (
               <>
@@ -612,7 +612,7 @@ export default function ResultsPage() {
         {/* Disclaimer */}
         <motion.div variants={staggerItem} className="flex items-start gap-3 rounded-xl border border-[#D4A867]/20 bg-[#D4A867]/10 px-4 py-3">
           <AlertTriangle size={16} className="text-[#D4A867] shrink-0 mt-0.5" />
-          <p className="text-xs text-[#A09D98] leading-relaxed">
+          <p className="text-xs text-text-secondary leading-relaxed">
             This analysis is for informational purposes only. It does not constitute an appraisal, financial advice, or investment recommendation. AI-generated content may contain errors. Consult a qualified professional before making investment decisions.
           </p>
         </motion.div>

@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react'
+import { initTheme } from '@/lib/theme'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
@@ -42,7 +43,7 @@ const queryClient = new QueryClient({
 
 function PageFallback() {
   return (
-    <div className="min-h-screen bg-[#0C0B0A] p-8 space-y-4">
+    <div className="min-h-screen bg-app-bg p-8 space-y-4">
       <SkeletonCard lines={2} />
       <SkeletonCard lines={4} />
     </div>
@@ -130,6 +131,11 @@ function AnimatedRoutes() {
 
 /** Root application component — sets up routing, React Query, and lazy page loading. */
 export default function App() {
+  useEffect(() => {
+    const cleanup = initTheme()
+    return cleanup
+  }, [])
+
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>

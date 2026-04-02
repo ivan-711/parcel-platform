@@ -40,16 +40,16 @@ export function FeatureSection({
           transition={{ duration: 0.6, ease: ease.vercel }}
           className="md:[direction:ltr]"
         >
-          <p className="flex items-center gap-2 text-[11px] uppercase tracking-[0.08em] font-medium text-[#A09D98]">
+          <p className="flex items-center gap-2 text-[11px] uppercase tracking-[0.08em] font-medium text-text-secondary">
             {accentDot && (
               <span className="w-1.5 h-1.5 rounded-full bg-[#8B7AFF]" />
             )}
             {label}
           </p>
-          <h2 className="font-brand text-3xl md:text-4xl font-light tracking-[-0.02em] text-[#F0EDE8] mt-4">
+          <h2 className="font-brand text-3xl md:text-4xl font-light tracking-[-0.02em] text-text-primary mt-4">
             {title}
           </h2>
-          <p className="text-base md:text-lg text-[#A09D98] mt-4 leading-relaxed max-w-md">
+          <p className="text-base md:text-lg text-text-secondary mt-4 leading-relaxed max-w-md">
             {description}
           </p>
         </motion.div>
@@ -61,9 +61,9 @@ export function FeatureSection({
           transition={{ duration: 0.6, delay: 0.1, ease: ease.vercel }}
           className="md:[direction:ltr]"
         >
-          <div className="rounded-xl border border-white/[0.06] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
-            <div className="bg-[#1A1916] aspect-[16/10] flex items-center justify-center">
-              <p className="text-sm text-[#7A7872]">Screenshot coming soon</p>
+          <div className="rounded-xl border border-border-default overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+            <div className="bg-app-surface aspect-[16/10] flex items-center justify-center">
+              <p className="text-sm text-text-secondary">Screenshot coming soon</p>
             </div>
           </div>
         </motion.div>

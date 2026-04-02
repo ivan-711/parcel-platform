@@ -54,12 +54,12 @@ export function KPICard({ label, value, format, delta, loading, className, spark
   return (
     <div
       className={cn(
-        'bg-[#1A1916] border border-white/[0.04] rounded-xl shadow-xs edge-highlight p-5 space-y-1 overflow-hidden bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(139,122,255,0.02),transparent)]',
+        'bg-app-surface border border-border-subtle rounded-xl shadow-xs edge-highlight p-5 space-y-1 overflow-hidden bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(139,122,255,0.02),transparent)]',
         className
       )}
     >
-      <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#A09D98]">{label}</p>
-      <p className="text-kpi-display text-3xl text-[#F0EDE8] tabular-nums">
+      <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-text-secondary">{label}</p>
+      <p className="text-kpi-display text-3xl text-text-primary tabular-nums">
         {formatValue(animated, format)}
       </p>
       {delta !== undefined && (

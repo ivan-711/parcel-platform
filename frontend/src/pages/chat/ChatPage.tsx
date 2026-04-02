@@ -34,10 +34,10 @@ interface UIMessage {
 
 const MD_LIGHT: React.ComponentProps<typeof ReactMarkdown>['components'] = {
   p: ({ children }) => (
-    <p className="text-sm text-[#F0EDE8]/90 leading-relaxed mb-3 last:mb-0">{children}</p>
+    <p className="text-sm text-text-primary/90 leading-relaxed mb-3 last:mb-0">{children}</p>
   ),
   strong: ({ children }) => (
-    <strong className="font-semibold text-[#F0EDE8]">{children}</strong>
+    <strong className="font-semibold text-text-primary">{children}</strong>
   ),
   // @ts-expect-error react-markdown passes inline prop not in types
   code: ({ inline, children }) =>
@@ -46,8 +46,8 @@ const MD_LIGHT: React.ComponentProps<typeof ReactMarkdown>['components'] = {
         {children}
       </code>
     ) : (
-      <pre className="bg-[#0C0B0A] rounded-lg p-4 overflow-x-auto my-3 border border-white/[0.06]">
-        <code className="font-mono text-[13px] text-[#F0EDE8]/90 leading-relaxed">
+      <pre className="bg-app-bg rounded-lg p-4 overflow-x-auto my-3 border border-border-default">
+        <code className="font-mono text-[13px] text-text-primary/90 leading-relaxed">
           {children}
         </code>
       </pre>
@@ -59,31 +59,31 @@ const MD_LIGHT: React.ComponentProps<typeof ReactMarkdown>['components'] = {
     <ol className="space-y-1.5 my-2 pl-1 list-decimal list-inside">{children}</ol>
   ),
   li: ({ children }) => (
-    <li className="text-sm text-[#F0EDE8]/90 flex items-start gap-2">
+    <li className="text-sm text-text-primary/90 flex items-start gap-2">
       <span className="text-[#8B7AFF] mt-0.5 shrink-0">&#9656;</span>
       <span className="leading-relaxed">{children}</span>
     </li>
   ),
   table: ({ children }) => (
-    <div className="overflow-x-auto my-3 rounded-lg border border-white/[0.06]">
+    <div className="overflow-x-auto my-3 rounded-lg border border-border-default">
       <table className="w-full">{children}</table>
     </div>
   ),
   thead: ({ children }) => (
-    <thead className="bg-white/[0.04]">{children}</thead>
+    <thead className="bg-layer-2">{children}</thead>
   ),
   th: ({ children }) => (
-    <th className="px-3 py-2 text-[11px] uppercase tracking-wide text-[#A09D98] text-left font-medium border-b border-white/[0.06]">
+    <th className="px-3 py-2 text-[11px] uppercase tracking-wide text-text-secondary text-left font-medium border-b border-border-default">
       {children}
     </th>
   ),
   td: ({ children }) => (
-    <td className="px-3 py-2 font-mono text-[13px] text-[#A09D98] border-t border-white/[0.04]">
+    <td className="px-3 py-2 font-mono text-[13px] text-text-secondary border-t border-border-subtle">
       {children}
     </td>
   ),
   h3: ({ children }) => (
-    <h3 className="text-[15px] font-semibold text-[#F0EDE8] mt-4 mb-2">{children}</h3>
+    <h3 className="text-[15px] font-semibold text-text-primary mt-4 mb-2">{children}</h3>
   ),
   a: ({ children, href }) => (
     <a href={href} className="text-[#8B7AFF] hover:text-[#6C5CE7] underline underline-offset-2 transition-colors" target="_blank" rel="noopener noreferrer">
@@ -254,20 +254,20 @@ export default function ChatPage() {
   return (
     <AppShell title="AI Chat" noPadding>
       <FeatureGate feature="ai_chat">
-      <div className="flex flex-col h-[100dvh] md:h-full bg-[#0C0B0A]">
+      <div className="flex flex-col h-[100dvh] md:h-full bg-app-bg">
         {/* Header */}
-        <div className="shrink-0 px-6 py-4 border-b border-white/[0.06] bg-[#0C0B0A]">
+        <div className="shrink-0 px-6 py-4 border-b border-border-default bg-app-bg">
           <div className="max-w-3xl mx-auto flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-[#8B7AFF]/10 border border-[#8B7AFF]/15 flex items-center justify-center">
               <Sparkles size={15} className="text-[#8B7AFF]" />
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-[#F0EDE8]">AI Specialist</h2>
-              <p className="text-[11px] text-[#A09D98]">Real estate investment advisor</p>
+              <h2 className="text-sm font-semibold text-text-primary">AI Specialist</h2>
+              <p className="text-[11px] text-text-secondary">Real estate investment advisor</p>
             </div>
           </div>
           {contextType !== 'general' && contextId && (
-            <div className="max-w-3xl mx-auto mt-3 flex items-center gap-2 text-[12px] text-[#A09D98]">
+            <div className="max-w-3xl mx-auto mt-3 flex items-center gap-2 text-[12px] text-text-secondary">
               <span className="w-1.5 h-1.5 rounded-full bg-[#8B7AFF] shrink-0 animate-pulse" />
               {contextType === 'deal'
                 ? 'Deal context active — AI knows the details of this deal'
@@ -285,24 +285,24 @@ export default function ChatPage() {
           {historyLoading ? (
             <div className="space-y-0">
               {/* Skeleton rows */}
-              <div className="w-full py-5 px-6 bg-[#0C0B0A] border-b border-white/[0.04]">
+              <div className="w-full py-5 px-6 bg-app-bg border-b border-border-subtle">
                 <div className="max-w-3xl mx-auto flex justify-end">
-                  <div className="h-5 w-48 rounded bg-white/[0.06] animate-pulse" />
+                  <div className="h-5 w-48 rounded bg-layer-3 animate-pulse" />
                 </div>
               </div>
-              <div className="w-full py-5 px-6 bg-[#131210] border-b border-white/[0.04]">
+              <div className="w-full py-5 px-6 bg-app-recessed border-b border-border-subtle">
                 <div className="max-w-3xl mx-auto flex gap-4">
-                  <div className="w-8 h-8 rounded-lg bg-white/[0.06] animate-pulse shrink-0" />
+                  <div className="w-8 h-8 rounded-lg bg-layer-3 animate-pulse shrink-0" />
                   <div className="space-y-2 flex-1">
-                    <div className="h-4 w-24 rounded bg-white/[0.06] animate-pulse" />
-                    <div className="h-4 w-64 rounded bg-white/[0.06] animate-pulse" />
-                    <div className="h-4 w-40 rounded bg-white/[0.06] animate-pulse" />
+                    <div className="h-4 w-24 rounded bg-layer-3 animate-pulse" />
+                    <div className="h-4 w-64 rounded bg-layer-3 animate-pulse" />
+                    <div className="h-4 w-40 rounded bg-layer-3 animate-pulse" />
                   </div>
                 </div>
               </div>
-              <div className="w-full py-5 px-6 bg-[#0C0B0A] border-b border-white/[0.04]">
+              <div className="w-full py-5 px-6 bg-app-bg border-b border-border-subtle">
                 <div className="max-w-3xl mx-auto flex justify-end">
-                  <div className="h-5 w-40 rounded bg-white/[0.06] animate-pulse" />
+                  <div className="h-5 w-40 rounded bg-layer-3 animate-pulse" />
                 </div>
               </div>
             </div>
@@ -318,8 +318,8 @@ export default function ChatPage() {
                   <Sparkles size={24} className="text-[#8B7AFF]" />
                 </div>
                 <div className="text-center space-y-1">
-                  <h3 className="text-lg font-semibold text-[#F0EDE8]">Parcel AI</h3>
-                  <p className="text-sm text-[#A09D98] max-w-sm">
+                  <h3 className="text-lg font-semibold text-text-primary">Parcel AI</h3>
+                  <p className="text-sm text-text-secondary max-w-sm">
                     Ask about deal analysis, financing structures, market comps,
                     or any real estate investment question.
                   </p>
@@ -333,13 +333,13 @@ export default function ChatPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: index * 0.05 }}
                     onClick={() => void handleSend(q.question)}
-                    className="text-left p-3.5 rounded-xl border border-white/[0.06] bg-[#1A1916] hover:border-[#8B7AFF]/30 hover:bg-[#8B7AFF]/[0.04] transition-all group cursor-pointer"
+                    className="text-left p-3.5 rounded-xl border border-border-default bg-app-surface hover:border-[#8B7AFF]/30 hover:bg-[#8B7AFF]/[0.04] transition-all group cursor-pointer"
                     aria-label={q.question}
                   >
-                    <p className="text-[11px] uppercase tracking-wide text-[#A09D98] font-medium group-hover:text-[#8B7AFF] transition-colors">
+                    <p className="text-[11px] uppercase tracking-wide text-text-secondary font-medium group-hover:text-[#8B7AFF] transition-colors">
                       {q.category}
                     </p>
-                    <p className="text-[13px] text-[#A09D98] leading-snug mt-1">
+                    <p className="text-[13px] text-text-secondary leading-snug mt-1">
                       {q.question}
                     </p>
                   </motion.button>
@@ -357,8 +357,8 @@ export default function ChatPage() {
                     exit={{ opacity: 0, y: -4 }}
                     transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                     className={cn(
-                      'w-full py-5 px-6 border-b border-white/[0.04]',
-                      msg.role === 'user' ? 'bg-[#0C0B0A]' : 'bg-[#131210]'
+                      'w-full py-5 px-6 border-b border-border-subtle',
+                      msg.role === 'user' ? 'bg-app-bg' : 'bg-app-recessed'
                     )}
                   >
                     <div className="max-w-3xl mx-auto flex gap-4">
@@ -372,7 +372,7 @@ export default function ChatPage() {
                         /* User message — right-aligned */
                         <div className="flex-1 min-w-0 flex justify-end">
                           <div className="max-w-[85%]">
-                            <p className="text-sm text-[#F0EDE8] leading-relaxed whitespace-pre-wrap">
+                            <p className="text-sm text-text-primary leading-relaxed whitespace-pre-wrap">
                               {msg.content}
                             </p>
                           </div>
@@ -380,7 +380,7 @@ export default function ChatPage() {
                       ) : (
                         /* Assistant message — left-aligned with markdown */
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium text-[#A09D98] mb-1.5">Parcel AI</p>
+                          <p className="text-xs font-medium text-text-secondary mb-1.5">Parcel AI</p>
                           <ReactMarkdown components={MD_LIGHT}>{msg.content}</ReactMarkdown>
 
                           {/* State A: waiting — typing dots */}
@@ -410,18 +410,18 @@ export default function ChatPage() {
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
                               transition={{ delay: 0.2, duration: 0.3 }}
-                              className="flex items-center gap-3 mt-3 pt-2 border-t border-white/[0.04]"
+                              className="flex items-center gap-3 mt-3 pt-2 border-t border-border-subtle"
                             >
                               <button
                                 onClick={() => handleCopy(msg.id, msg.content)}
-                                className="flex items-center gap-1.5 text-xs text-[#A09D98] hover:text-[#F0EDE8] transition-colors cursor-pointer"
+                                className="flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
                               >
                                 <Copy size={12} />
                                 {copiedId === msg.id ? 'Copied!' : 'Copy'}
                               </button>
                               <button
                                 onClick={() => handleRegenerate(msg.id)}
-                                className="flex items-center gap-1.5 text-xs text-[#A09D98] hover:text-[#F0EDE8] transition-colors cursor-pointer"
+                                className="flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
                               >
                                 <RotateCcw size={12} />
                                 Regenerate
@@ -433,7 +433,7 @@ export default function ChatPage() {
 
                       {msg.role === 'user' && (
                         <div className="w-8 h-8 rounded-full bg-[#8B7AFF] flex items-center justify-center shrink-0 mt-0.5">
-                          <span className="text-xs font-semibold text-[#F0EDE8]">U</span>
+                          <span className="text-xs font-semibold text-text-primary">U</span>
                         </div>
                       )}
                     </div>
@@ -448,7 +448,7 @@ export default function ChatPage() {
         </div>
 
         {/* Input area */}
-        <div className="shrink-0 px-6 py-4 border-t border-white/[0.06] bg-[#0C0B0A]/95 backdrop-blur-md pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
+        <div className="shrink-0 px-6 py-4 border-t border-border-default bg-[#0C0B0A]/95 backdrop-blur-md pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
           <div className="max-w-3xl mx-auto">
             <div className="flex gap-3 items-end">
               <textarea
@@ -461,8 +461,8 @@ export default function ChatPage() {
                 disabled={isStreaming}
                 rows={1}
                 className={cn(
-                  'flex-1 resize-none rounded-xl border border-white/[0.06] bg-[#131210]',
-                  'px-4 py-3 text-sm text-[#F0EDE8] placeholder:text-[#5C5A56]',
+                  'flex-1 resize-none rounded-xl border border-border-default bg-app-recessed',
+                  'px-4 py-3 text-sm text-text-primary placeholder:text-text-disabled',
                   'focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/20',
                   'focus:border-[#8B7AFF]/40 transition-all',
                   'min-h-[48px] max-h-[140px] md:max-h-[140px] leading-relaxed',
@@ -485,8 +485,8 @@ export default function ChatPage() {
                   className={cn(
                     'w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors',
                     input.trim()
-                      ? 'bg-[#8B7AFF] hover:bg-[#6C5CE7] text-[#0C0B0A] shadow-[0_0_20px_rgba(139,122,255,0.3)] cursor-pointer'
-                      : 'bg-white/[0.04] border border-white/[0.06] text-[#5C5A56] cursor-not-allowed'
+                      ? 'bg-[#8B7AFF] hover:bg-[#6C5CE7] text-accent-text-on-accent shadow-[0_0_20px_rgba(139,122,255,0.3)] cursor-pointer'
+                      : 'bg-layer-2 border border-border-default text-text-disabled cursor-not-allowed'
                   )}
                   aria-label="Send message"
                 >
@@ -495,11 +495,11 @@ export default function ChatPage() {
               )}
             </div>
             <div className="flex justify-between items-center mt-2">
-              <p className="text-[11px] text-[#A09D98]">
+              <p className="text-[11px] text-text-secondary">
                 Enter to send &middot; Shift+Enter for new line
               </p>
             </div>
-            <p className="text-[11px] text-[#A09D98] mt-1 italic">
+            <p className="text-[11px] text-text-secondary mt-1 italic">
               AI responses are for informational purposes only and may contain errors. Not financial advice.
             </p>
           </div>

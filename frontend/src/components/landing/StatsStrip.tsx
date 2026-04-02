@@ -34,14 +34,14 @@ function StatItem({
   return (
     <div className="flex items-center">
       <div className="text-center px-4 md:px-8 py-2">
-        <p className="font-brand text-4xl md:text-5xl font-light tracking-[-0.02em] text-[#F0EDE8]">
+        <p className="font-brand text-4xl md:text-5xl font-light tracking-[-0.02em] text-text-primary">
           {display}
           {stat.suffix}
         </p>
-        <p className="text-sm text-[#A09D98] mt-2">{stat.label}</p>
+        <p className="text-sm text-text-secondary mt-2">{stat.label}</p>
       </div>
       {!isLast && (
-        <div className="hidden md:block border-r border-white/[0.06] h-16 self-center" />
+        <div className="hidden md:block border-r border-border-default h-16 self-center" />
       )}
     </div>
   )
@@ -53,7 +53,7 @@ export function StatsStrip() {
   return (
     <section
       ref={ref}
-      className="bg-[#131210] border-y border-white/[0.04] py-16"
+      className="bg-app-recessed border-y border-border-subtle py-16"
     >
       {/* Desktop: row, Mobile: 2x2 grid */}
       <div className="max-w-5xl mx-auto px-6">

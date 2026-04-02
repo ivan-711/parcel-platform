@@ -32,20 +32,20 @@ const COLUMNS = [
 
 export function Footer() {
   return (
-    <footer className="bg-[#131210] border-t border-white/[0.04] py-16">
+    <footer className="bg-app-recessed border-t border-border-subtle py-16">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
         {/* Logo column */}
         <div>
           <Link
             to="/"
-            className="font-brand text-lg font-light text-[#F0EDE8] tracking-[-0.02em]"
+            className="font-brand text-lg font-light text-text-primary tracking-[-0.02em]"
           >
             Parcel
           </Link>
-          <p className="text-sm text-[#A09D98] mt-2">
+          <p className="text-sm text-text-secondary mt-2">
             Real estate deal analysis for serious investors.
           </p>
-          <p className="text-[11px] text-[#7A7872] mt-4">
+          <p className="text-[11px] text-text-secondary mt-4">
             &copy; {new Date().getFullYear()} Parcel. All rights reserved.
           </p>
         </div>
@@ -53,7 +53,7 @@ export function Footer() {
         {/* Link columns */}
         {COLUMNS.map((col) => (
           <div key={col.title}>
-            <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-[#7A7872] mb-4">
+            <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-text-secondary mb-4">
               {col.title}
             </p>
             <ul className="space-y-3">
@@ -62,14 +62,14 @@ export function Footer() {
                   {'action' in link && link.action ? (
                     <button
                       onClick={link.action}
-                      className="text-sm text-[#A09D98] hover:text-[#F0EDE8] transition-colors duration-200 cursor-pointer"
+                      className="text-sm text-text-secondary hover:text-text-primary transition-colors duration-200 cursor-pointer"
                     >
                       {link.label}
                     </button>
                   ) : (
                     <a
                       href={'href' in link ? link.href : '#'}
-                      className="text-sm text-[#A09D98] hover:text-[#F0EDE8] transition-colors duration-200"
+                      className="text-sm text-text-secondary hover:text-text-primary transition-colors duration-200"
                     >
                       {link.label}
                     </a>

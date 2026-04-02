@@ -76,17 +76,17 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
   return (
     <div
       className={[
-        'group relative rounded-xl border bg-[#22211D] py-3.5 px-4 space-y-2.5 transition-all duration-150 outline-none',
+        'group relative rounded-xl border bg-app-elevated py-3.5 px-4 space-y-2.5 transition-all duration-150 outline-none',
         isDragging
-          ? 'opacity-50 border-dashed border-white/[0.06] shadow-[0_0_24px_rgba(139,122,255,0.15)]'
+          ? 'opacity-50 border-dashed border-border-default shadow-[0_0_24px_rgba(139,122,255,0.15)]'
           : isFocused
             ? 'ring-2 ring-[#8B7AFF]/50 ring-offset-2 ring-offset-[#0C0B0A] border-[#8B7AFF]/40'
-            : 'border-white/[0.06] hover:border-white/[0.12] hover:-translate-y-px',
+            : 'border-border-default hover:border-border-emphasis hover:-translate-y-px',
       ].join(' ')}
     >
       {/* Address + Actions */}
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[13px] font-medium text-[#F0EDE8] leading-snug line-clamp-2">
+        <p className="text-[13px] font-medium text-text-primary leading-snug line-clamp-2">
           {card.address}
         </p>
         <div className="flex items-center gap-1 flex-shrink-0 mt-0.5">
@@ -96,7 +96,7 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
               aria-label="Deal actions"
               aria-haspopup="true"
               aria-expanded={menuOpen}
-              className="opacity-100 md:opacity-0 md:group-hover:opacity-100 text-[#7A7872] hover:text-[#A09D98] transition-all min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 flex items-center justify-center"
+              className="opacity-100 md:opacity-0 md:group-hover:opacity-100 text-text-muted hover:text-text-secondary transition-all min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 flex items-center justify-center"
               onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation()
@@ -117,7 +117,7 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
       {menuOpen && (onRemove || onCloseDeal) && (
         <div
           ref={menuRef}
-          className="absolute top-10 right-3 z-40 rounded-lg border border-white/[0.06] bg-[#1A1916] shadow-lg py-1"
+          className="absolute top-10 right-3 z-40 rounded-lg border border-border-default bg-app-surface shadow-lg py-1"
           style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.30), 0 1px 3px rgba(0,0,0,0.20)' }}
           onPointerDown={(e) => e.stopPropagation()}
           onKeyDown={(e) => {
@@ -130,7 +130,7 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
           {onCloseDeal && card.stage !== 'dead' && (
             <button
               type="button"
-              className="flex items-center gap-2 px-3 py-2 text-[13px] text-[#A09D98] hover:bg-white/[0.04] hover:text-[#7CCBA5] w-full transition-colors min-h-[44px]"
+              className="flex items-center gap-2 px-3 py-2 text-[13px] text-text-secondary hover:bg-layer-2 hover:text-[#7CCBA5] w-full transition-colors min-h-[44px]"
               onClick={() => {
                 onCloseDeal(card)
                 setMenuOpen(false)
@@ -144,7 +144,7 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
             <>
               <button
                 type="button"
-                className="flex items-center justify-between gap-2 px-3 py-2 text-[13px] text-[#A09D98] hover:bg-white/[0.04] hover:text-[#8B7AFF] w-full transition-colors min-h-[44px]"
+                className="flex items-center justify-between gap-2 px-3 py-2 text-[13px] text-text-secondary hover:bg-layer-2 hover:text-[#8B7AFF] w-full transition-colors min-h-[44px]"
                 onClick={() => setShowMoveMenu((v) => !v)}
               >
                 <span className="flex items-center gap-2">
@@ -153,12 +153,12 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
                 </span>
               </button>
               {showMoveMenu && (
-                <div className="border-t border-white/[0.06] py-1">
+                <div className="border-t border-border-default py-1">
                   {STAGES.filter((s) => s.key !== card.stage).map((stage) => (
                     <button
                       key={stage.key}
                       type="button"
-                      className="flex items-center gap-2 px-3 py-2 text-[13px] text-[#A09D98] hover:bg-white/[0.04] w-full transition-colors min-h-[44px]"
+                      className="flex items-center gap-2 px-3 py-2 text-[13px] text-text-secondary hover:bg-layer-2 w-full transition-colors min-h-[44px]"
                       onClick={() => {
                         onMoveStage(card.pipeline_id, card.stage, stage.key)
                         setMenuOpen(false)
@@ -178,10 +178,10 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
           )}
           {onRemove && (
             <>
-              {(onCloseDeal || onMoveStage) && <div className="border-t border-white/[0.06]" />}
+              {(onCloseDeal || onMoveStage) && <div className="border-t border-border-default" />}
               <button
                 type="button"
-                className="flex items-center gap-2 px-3 py-2 text-[13px] text-[#A09D98] hover:bg-white/[0.04] hover:text-[#D4766A] w-full transition-colors min-h-[44px]"
+                className="flex items-center gap-2 px-3 py-2 text-[13px] text-text-secondary hover:bg-layer-2 hover:text-[#D4766A] w-full transition-colors min-h-[44px]"
                 onClick={() => {
                   onRemove(card.pipeline_id, card.stage)
                   setMenuOpen(false)
@@ -203,7 +203,7 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
       {/* Key metric + days-in-stage + risk dot */}
       <div className="flex items-center justify-between">
         {card.asking_price != null && card.asking_price > 0 && (
-          <span className="text-[12px] tabular-nums font-medium text-[#A09D98]">
+          <span className="text-[12px] tabular-nums font-medium text-text-secondary">
             ${card.asking_price.toLocaleString()}
           </span>
         )}

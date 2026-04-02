@@ -9,6 +9,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { scrollToSection } from './landing-utils'
+import { SpiralBackground } from './SpiralBackground'
 
 // ── Scroll Hijack Hook ──────────────────────────────────────────────────────
 
@@ -152,37 +153,6 @@ function useScrollHijack() {
   return { scrollProgress, mediaFullyExpanded, isMobile, skipHijack }
 }
 
-// ── Ghost Data Card ─────────────────────────────────────────────────────────
-
-function GhostCard({
-  label,
-  value,
-  progress,
-  className,
-}: {
-  label: string
-  value: string
-  progress: number
-  className?: string
-}) {
-  const opacity = 0.3 * Math.max(0, 1 - progress * 3)
-  if (opacity <= 0) return null
-
-  return (
-    <div
-      className={`hidden lg:block absolute bg-white/[0.02] border border-white/[0.04] rounded-xl p-3 md:p-4 backdrop-blur-sm pointer-events-none ${className}`}
-      style={{ opacity }}
-    >
-      <p className="text-[9px] md:text-[10px] uppercase tracking-[0.08em] text-[#A09D98]/60">
-        {label}
-      </p>
-      <p className="font-brand text-lg md:text-xl font-light text-[#F0EDE8]/70 mt-0.5">
-        {value}
-      </p>
-    </div>
-  )
-}
-
 // ── Main Hero ───────────────────────────────────────────────────────────────
 
 export function HeroSection({ onSkipHijack }: { onSkipHijack?: (cb: () => void) => void }) {
@@ -215,31 +185,33 @@ export function HeroSection({ onSkipHijack }: { onSkipHijack?: (cb: () => void) 
       <a
         href="#features"
         onClick={(e) => { e.preventDefault(); skipHijack(); scrollToSection('features') }}
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#8B7AFF] focus:text-white focus:rounded-lg focus:text-sm"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#8B7AFF] focus:text-accent-text-on-accent focus:rounded-lg focus:text-sm"
       >
         Skip to content
       </a>
 
-      {/* ── Layer 1: Atmospheric background ── */}
+      {/* ── Layer 0: Spiral particle background ── */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{ opacity: Math.max(0.5, 1 - scrollProgress * 0.5) }}
+      >
+        <SpiralBackground />
+      </div>
+
+      {/* ── Layer 1: Subtle violet glow (reduced — topo lines provide atmosphere) ── */}
       <div
         className="absolute inset-0 z-0"
         style={{ opacity: bgOpacity }}
       >
-        {/* Multi-gradient luxury atmosphere */}
         <div
           className="absolute inset-0"
           style={{
             background: `
-              radial-gradient(ellipse 80% 60% at 50% 40%, rgba(30,28,24,1), transparent),
-              radial-gradient(ellipse 40% 50% at 20% 70%, rgba(197,160,89,0.06), transparent),
-              radial-gradient(ellipse 35% 40% at 80% 30%, rgba(139,122,255,0.04), transparent),
-              radial-gradient(ellipse 60% 40% at 50% 0%, rgba(60,55,48,0.3), transparent),
-              #0C0B0A
+              radial-gradient(ellipse 35% 40% at 50% 50%, rgba(139,122,255,0.03), transparent),
+              radial-gradient(ellipse 60% 40% at 50% 0%, rgba(60,55,48,0.15), transparent)
             `,
           }}
         />
-        {/* Subtle dark overlay */}
-        <div className="absolute inset-0 bg-black/10" />
       </div>
 
       {/* ── Layer 2: Headline text (slides apart) — ABOVE frame ── */}
@@ -247,7 +219,7 @@ export function HeroSection({ onSkipHijack }: { onSkipHijack?: (cb: () => void) 
         className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-none"
         style={{ opacity: headlineOpacity }}
       >
-        <h1 className="font-brand text-4xl md:text-5xl lg:text-[56px] font-light tracking-[-0.03em] text-[#F0EDE8] leading-[1.1] text-center">
+        <h1 className="font-brand text-4xl md:text-5xl lg:text-[56px] font-light tracking-[-0.03em] text-text-primary leading-[1.1] text-center">
           <span
             className="block"
             style={{ transform: `translateX(-${scrollProgress * 150}vw)` }}
@@ -264,7 +236,7 @@ export function HeroSection({ onSkipHijack }: { onSkipHijack?: (cb: () => void) 
 
         {/* Scroll prompt */}
         <p
-          className="text-[11px] uppercase tracking-[0.08em] text-[#A09D98]/60 mt-8"
+          className="text-[11px] uppercase tracking-[0.08em] text-text-secondary/60 mt-8"
           style={{ opacity: promptOpacity }}
         >
           Scroll to explore
@@ -297,22 +269,22 @@ export function HeroSection({ onSkipHijack }: { onSkipHijack?: (cb: () => void) 
             overflow: 'hidden',
             position: 'relative',
           }}
-          className="border border-white/[0.06]"
+          className="border border-border-default"
         >
           {/* Browser chrome */}
-          <div className="bg-[#131210] h-8 md:h-10 flex items-center px-3 md:px-4 gap-1.5 md:gap-2 shrink-0">
-            <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-white/[0.08]" />
-            <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-white/[0.06]" />
-            <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-white/[0.06]" />
-            <div className="bg-white/[0.04] rounded-md h-4 md:h-5 w-32 md:w-48 mx-auto" />
+          <div className="bg-app-recessed h-8 md:h-10 flex items-center px-3 md:px-4 gap-1.5 md:gap-2 shrink-0">
+            <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-border-strong" />
+            <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-border-default" />
+            <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-border-default" />
+            <div className="bg-border-subtle rounded-md h-4 md:h-5 w-32 md:w-48 mx-auto" />
           </div>
 
           {/* Dashboard content placeholder */}
           <div
-            className="bg-gradient-to-br from-[#1A1916] to-[#131210] flex items-center justify-center"
+            className="bg-gradient-to-br from-app-surface to-app-recessed flex items-center justify-center"
             style={{ height: 'calc(100% - 2rem)' }}
           >
-            <p className="text-[#7A7872] text-xs md:text-sm">
+            <p className="text-text-secondary text-xs md:text-sm">
               Dashboard preview coming soon
             </p>
           </div>
@@ -325,21 +297,6 @@ export function HeroSection({ onSkipHijack }: { onSkipHijack?: (cb: () => void) 
         </div>
       </div>
 
-      {/* ── Layer 4: Ghost data cards ── */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-        <GhostCard
-          label="Cap Rate"
-          value="8.2%"
-          progress={scrollProgress}
-          className="-translate-x-[calc(50%+200px)] lg:-translate-x-[calc(50%+240px)] rotate-[-2deg]"
-        />
-        <GhostCard
-          label="After Repair Value"
-          value="$247K"
-          progress={scrollProgress}
-          className="translate-x-[calc(50%+200px)] lg:translate-x-[calc(50%+240px)] rotate-[2deg]"
-        />
-      </div>
     </section>
   )
 }

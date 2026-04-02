@@ -41,9 +41,9 @@ function SectionSkeleton() {
   return (
     <div className="py-20 flex justify-center">
       <div className="w-full max-w-5xl px-6 space-y-4 animate-pulse">
-        <div className="h-6 w-1/3 rounded bg-white/[0.04]" />
-        <div className="h-4 w-2/3 rounded bg-white/[0.03]" />
-        <div className="h-4 w-1/2 rounded bg-white/[0.02]" />
+        <div className="h-6 w-1/3 rounded bg-border-subtle" />
+        <div className="h-4 w-2/3 rounded bg-border-subtle" />
+        <div className="h-4 w-1/2 rounded bg-border-subtle" />
       </div>
     </div>
   )
@@ -56,7 +56,7 @@ export default function LandingPage() {
 
   return (
     <LazyMotion features={loadFeatures} strict={false}>
-      <div className="min-h-screen bg-[#0C0B0A] text-[#F0EDE8]">
+      <div className="min-h-screen bg-app-bg text-text-primary">
         <LandingNavbar onNavClick={onNavClick} />
         <main>
           {/* Above-fold — eagerly loaded */}

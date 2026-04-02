@@ -110,7 +110,7 @@ function truncateAddr(addr: string, max = 28): string {
 }
 
 function riskScoreColor(score: number | null): string {
-  if (score === null) return 'text-[#7A7872]'
+  if (score === null) return 'text-text-muted'
   if (score <= 30) return 'text-[#6DBEA3]'
   if (score <= 60) return 'text-[#D4A867]'
   return 'text-[#D4766A]'
@@ -131,8 +131,8 @@ function KPICompareCard({
   const winnerIdx = findWinner(values, metricKey)
 
   return (
-    <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-5 shadow-xs edge-highlight">
-      <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-[#7A7872] mb-4">
+    <div className="bg-app-surface border border-border-strong rounded-xl p-5 shadow-xs edge-highlight">
+      <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-text-secondary mb-4">
         {label}
       </p>
       <div className="flex gap-6">
@@ -161,16 +161,16 @@ function KPICompareCard({
                   className={cn(
                     'font-brand text-2xl md:text-3xl font-light tabular-nums truncate',
                     isNullish
-                      ? 'text-[#7A7872]'
+                      ? 'text-text-muted'
                       : metricKey === 'risk_score'
                         ? riskScoreColor(deal.risk_score)
-                        : isWinner ? 'text-[#F0EDE8]' : 'text-[#A09D98]'
+                        : isWinner ? 'text-text-primary' : 'text-text-secondary'
                   )}
                 >
                   {displayValue}
                 </p>
               </div>
-              <p className="text-[11px] text-[#A09D98] mt-1 truncate">
+              <p className="text-[11px] text-text-secondary mt-1 truncate">
                 {truncateAddr(deal.address)}
               </p>
             </div>
@@ -222,28 +222,28 @@ function SummaryVerdict({
 
   if (results.perMetric.length === 0) {
     return (
-      <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-6 shadow-xs edge-highlight">
-        <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-[#7A7872] mb-3">Summary</p>
-        <p className="text-sm text-[#A09D98]">These deals are closely matched across all metrics.</p>
+      <div className="bg-app-surface border border-border-strong rounded-xl p-6 shadow-xs edge-highlight">
+        <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-text-secondary mb-3">Summary</p>
+        <p className="text-sm text-text-secondary">These deals are closely matched across all metrics.</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-6 shadow-xs edge-highlight">
-      <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-[#7A7872] mb-4">Summary</p>
+    <div className="bg-app-surface border border-border-strong rounded-xl p-6 shadow-xs edge-highlight">
+      <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-text-secondary mb-4">Summary</p>
       <div className="space-y-2">
         {results.perMetric.map(({ label, winnerIdx }) => (
-          <p key={label} className="text-sm text-[#A09D98]">
-            <span className="text-[#F0EDE8]">{truncateAddr(deals[winnerIdx].address)}</span>
+          <p key={label} className="text-sm text-text-secondary">
+            <span className="text-text-primary">{truncateAddr(deals[winnerIdx].address)}</span>
             {' '}wins on {label}
           </p>
         ))}
       </div>
       {results.overallWinner >= 0 && (
-        <div className="mt-4 pt-4 border-t border-white/[0.04]">
+        <div className="mt-4 pt-4 border-t border-border-subtle">
           <div className="border-l-2 border-[#8B7AFF] pl-3">
-            <p className="text-sm text-[#F0EDE8]">
+            <p className="text-sm text-text-primary">
               {truncateAddr(deals[results.overallWinner].address)} leads overall with {results.wins[results.overallWinner]} metric wins
             </p>
           </div>
@@ -335,10 +335,10 @@ export default function ComparePage() {
       >
         {/* Header */}
         <div>
-          <h1 className="font-brand text-3xl font-light tracking-[-0.02em] text-[#F0EDE8]">
+          <h1 className="font-brand text-3xl font-light tracking-[-0.02em] text-text-primary">
             Compare Deals
           </h1>
-          <p className="text-sm text-[#A09D98] mt-1">
+          <p className="text-sm text-text-secondary mt-1">
             Select deals to compare side by side
           </p>
         </div>
@@ -347,25 +347,25 @@ export default function ComparePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Deal A */}
           <div className="space-y-1.5">
-            <label className="text-[11px] font-medium text-[#7A7872] uppercase tracking-[0.08em]">Deal A</label>
+            <label className="text-[11px] font-medium text-text-secondary uppercase tracking-[0.08em]">Deal A</label>
             <div className="flex gap-2">
               <Select value={dealAId || undefined} onValueChange={handleSelectA}>
-                <SelectTrigger className="bg-[#1A1916] border-white/[0.06] text-[#F0EDE8] text-sm flex-1">
+                <SelectTrigger className="bg-app-surface border-border-default text-text-primary text-sm flex-1">
                   <SelectValue placeholder="Select a deal..." />
                 </SelectTrigger>
-                <SelectContent className="bg-[#22211D] border-white/[0.06] max-h-[300px]">
+                <SelectContent className="bg-app-elevated border-border-default max-h-[300px]">
                   {loadingList ? (
-                    <div className="px-3 py-2 text-sm text-[#7A7872]">Loading deals...</div>
+                    <div className="px-3 py-2 text-sm text-text-secondary">Loading deals...</div>
                   ) : isError ? (
                     <div className="px-3 py-2 text-sm text-[#D4766A]">Failed to load deals</div>
                   ) : dealOptions.length === 0 ? (
-                    <div className="px-3 py-2 text-sm text-[#7A7872]">No deals found</div>
+                    <div className="px-3 py-2 text-sm text-text-secondary">No deals found</div>
                   ) : (
                     dealOptions.map((d) => (
                       <SelectItem
                         key={d.id}
                         value={d.id}
-                        className="text-[#F0EDE8] text-sm focus:bg-white/[0.04] focus:text-[#F0EDE8]"
+                        className="text-text-primary text-sm focus:bg-layer-2 focus:text-text-primary"
                       >
                         <span className="flex items-center gap-2">
                           {d.address}
@@ -379,7 +379,7 @@ export default function ComparePage() {
               {dealAId && (
                 <button
                   onClick={handleClearA}
-                  className="p-2 rounded-lg border border-white/[0.06] text-[#A09D98] hover:text-[#F0EDE8] hover:bg-white/[0.04] transition-colors shrink-0"
+                  className="p-2 rounded-lg border border-border-default text-text-secondary hover:text-text-primary hover:bg-layer-2 transition-colors shrink-0"
                   aria-label="Clear Deal A"
                 >
                   <X size={16} />
@@ -389,28 +389,28 @@ export default function ComparePage() {
             {dealA && (
               <div className="flex items-center gap-2 mt-1">
                 <StrategyBadge strategy={dealA.strategy as Strategy} />
-                <span className="text-xs text-[#A09D98]">{truncateAddr(dealA.address, 40)}</span>
+                <span className="text-xs text-text-secondary">{truncateAddr(dealA.address, 40)}</span>
               </div>
             )}
           </div>
 
           {/* Deal B */}
           <div className="space-y-1.5">
-            <label className="text-[11px] font-medium text-[#7A7872] uppercase tracking-[0.08em]">Deal B</label>
+            <label className="text-[11px] font-medium text-text-secondary uppercase tracking-[0.08em]">Deal B</label>
             <div className="flex gap-2">
               <Select value={dealBId || undefined} onValueChange={handleSelectB} disabled={!dealAId}>
-                <SelectTrigger className="bg-[#1A1916] border-white/[0.06] text-[#F0EDE8] text-sm flex-1">
+                <SelectTrigger className="bg-app-surface border-border-default text-text-primary text-sm flex-1">
                   <SelectValue placeholder={dealAId ? 'Select a deal...' : 'Select Deal A first'} />
                 </SelectTrigger>
-                <SelectContent className="bg-[#22211D] border-white/[0.06] max-h-[300px]">
+                <SelectContent className="bg-app-elevated border-border-default max-h-[300px]">
                   {dealBOptions.length === 0 ? (
-                    <div className="px-3 py-2 text-sm text-[#7A7872]">No other deals with this strategy</div>
+                    <div className="px-3 py-2 text-sm text-text-secondary">No other deals with this strategy</div>
                   ) : (
                     dealBOptions.map((d) => (
                       <SelectItem
                         key={d.id}
                         value={d.id}
-                        className="text-[#F0EDE8] text-sm focus:bg-white/[0.04] focus:text-[#F0EDE8]"
+                        className="text-text-primary text-sm focus:bg-layer-2 focus:text-text-primary"
                       >
                         <span className="flex items-center gap-2">
                           {d.address}
@@ -424,7 +424,7 @@ export default function ComparePage() {
               {dealBId && (
                 <button
                   onClick={handleClearB}
-                  className="p-2 rounded-lg border border-white/[0.06] text-[#A09D98] hover:text-[#F0EDE8] hover:bg-white/[0.04] transition-colors shrink-0"
+                  className="p-2 rounded-lg border border-border-default text-text-secondary hover:text-text-primary hover:bg-layer-2 transition-colors shrink-0"
                   aria-label="Clear Deal B"
                 >
                   <X size={16} />
@@ -434,7 +434,7 @@ export default function ComparePage() {
             {dealB && (
               <div className="flex items-center gap-2 mt-1">
                 <StrategyBadge strategy={dealB.strategy as Strategy} />
-                <span className="text-xs text-[#A09D98]">{truncateAddr(dealB.address, 40)}</span>
+                <span className="text-xs text-text-secondary">{truncateAddr(dealB.address, 40)}</span>
               </div>
             )}
           </div>
@@ -453,7 +453,7 @@ export default function ComparePage() {
         {(errorA || errorB) && (
           <div className="flex items-center gap-3 rounded-xl border border-[#D4766A]/20 bg-[#D4766A]/10 px-4 py-3">
             <AlertTriangle size={16} className="text-[#D4766A] shrink-0" />
-            <p className="text-sm text-[#A09D98]">
+            <p className="text-sm text-text-secondary">
               Failed to load {errorA && errorB ? 'both deals' : errorA ? 'Deal A' : 'Deal B'}.
             </p>
           </div>
@@ -484,7 +484,7 @@ export default function ComparePage() {
             {/* Strategy-specific metric cards */}
             {strategyRows.length > 0 && (
               <>
-                <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-[#7A7872] mb-3">
+                <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-text-secondary mb-3">
                   Strategy Outputs
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -511,7 +511,7 @@ export default function ComparePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut', delay: 0.1 }}
           >
-            <p className="font-brand text-xl font-light text-[#F0EDE8] mb-4">
+            <p className="font-brand text-xl font-light text-text-primary mb-4">
               Performance Overview
             </p>
             <ComparisonRadar
@@ -539,11 +539,11 @@ export default function ComparePage() {
 
         {/* Empty state */}
         {!isLoading && !dealA && !dealB && (
-          <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-12 shadow-xs edge-highlight flex flex-col items-center justify-center text-center">
-            <div className="w-12 h-12 rounded-full bg-white/[0.04] flex items-center justify-center mb-4">
-              <Scale size={24} className="text-[#7A7872]" />
+          <div className="bg-app-surface border border-border-strong rounded-xl p-12 shadow-xs edge-highlight flex flex-col items-center justify-center text-center">
+            <div className="w-12 h-12 rounded-full bg-layer-2 flex items-center justify-center mb-4">
+              <Scale size={24} className="text-text-muted" />
             </div>
-            <p className="text-sm text-[#A09D98]">
+            <p className="text-sm text-text-secondary">
               Select at least two deals to compare their analysis results side by side.
             </p>
           </div>
@@ -551,8 +551,8 @@ export default function ComparePage() {
 
         {/* One deal selected */}
         {!isLoading && dealA && !dealB && !dealBId && (
-          <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-8 shadow-xs edge-highlight text-center">
-            <p className="text-sm text-[#A09D98]">
+          <div className="bg-app-surface border border-border-strong rounded-xl p-8 shadow-xs edge-highlight text-center">
+            <p className="text-sm text-text-secondary">
               Add another deal to compare
             </p>
           </div>

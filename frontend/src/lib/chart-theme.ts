@@ -1,8 +1,12 @@
 /**
- * Shared Recharts theme constants — Luxury Dark Edition.
+ * Shared Recharts theme constants — Dual Theme Edition.
  *
  * All chart components import from here instead of hardcoding colors.
  * Aligned with LUXURY-DESIGN-SYSTEM.md Chart Theme section.
+ *
+ * Theme-aware values read CSS custom properties at call time via
+ * getChartTheme(). Static data colors (strategy, semantic) are
+ * theme-independent and exported as plain constants.
  */
 
 // ── Data Colors ─────────────────────────────────────────────────────────────
@@ -40,7 +44,96 @@ export const CHART_SERIES = [
   CHART_COLORS.amber,
 ] as const
 
-// ── Axis Theme ──────────────────────────────────────────────────────────────
+// ── Theme Detection ─────────────────────────────────────────────────────────
+
+function isLightTheme(): boolean {
+  return document.documentElement.classList.contains('light')
+}
+
+// ── Theme-Aware Getters ─────────────────────────────────────────────────────
+
+/** Returns chart axis config for the current theme. */
+export function getChartAxis() {
+  const light = isLightTheme()
+  return {
+    tick: { fill: light ? '#5C5A56' : '#A09D98', fontSize: 11 },
+    label: { fill: light ? '#98A2B3' : '#7A7872', fontSize: 11 },
+    axisLine: false as const,
+    tickLine: false as const,
+  }
+}
+
+/** Returns chart grid config for the current theme. */
+export function getChartGrid() {
+  const light = isLightTheme()
+  return {
+    stroke: light ? 'rgba(0,0,0,0.08)' : '#3A3835',
+    strokeDasharray: '3 3',
+    strokeOpacity: light ? 1 : 0.5,
+    vertical: false,
+  }
+}
+
+/** Returns chart tooltip styles for the current theme. */
+export function getChartTooltip() {
+  const light = isLightTheme()
+  return {
+    contentStyle: {
+      backgroundColor: light ? '#FFFFFF' : '#22211D',
+      border: light ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(255,255,255,0.08)',
+      borderRadius: '8px',
+      boxShadow: light
+        ? '0 4px 12px rgba(0,0,0,0.08)'
+        : '0 8px 32px rgba(0,0,0,0.3)',
+      padding: '12px 16px',
+    },
+    labelStyle: {
+      color: light ? '#667085' : '#A09D98',
+      fontSize: 11,
+      fontWeight: 500,
+      marginBottom: 4,
+      textTransform: 'uppercase' as const,
+      letterSpacing: '0.05em',
+    },
+    itemStyle: {
+      color: light ? '#1D2939' : '#F0EDE8',
+      fontSize: 13,
+      padding: '2px 0',
+    },
+    cursor: {
+      stroke: '#8B7AFF',
+      strokeOpacity: 0.3,
+      strokeDasharray: '4 4',
+    },
+  }
+}
+
+/** Returns chart legend styles for the current theme. */
+export function getChartLegend() {
+  const light = isLightTheme()
+  return {
+    wrapperStyle: {
+      paddingTop: 16,
+      fontSize: 12,
+      color: light ? '#667085' : '#A09D98',
+    },
+    iconSize: 8,
+    iconType: 'circle' as const,
+  }
+}
+
+/** Returns chart polar (radar) config for the current theme. */
+export function getChartPolar() {
+  const light = isLightTheme()
+  return {
+    grid: { stroke: light ? 'rgba(0,0,0,0.08)' : '#3A3835', strokeOpacity: light ? 1 : 0.3 },
+    angleAxis: { tick: { fill: light ? '#5C5A56' : '#A09D98', fontSize: 11 } },
+    radiusAxis: { tick: { fill: light ? '#98A2B3' : '#7A7872', fontSize: 10 }, axisLine: false as const },
+  }
+}
+
+// ── Static Defaults (backwards compat — dark theme) ─────────────────────────
+// These are kept for existing imports. New code should prefer the getter fns.
 
 export const CHART_AXIS = {
   tick: { fill: '#A09D98', fontSize: 11 },
@@ -49,16 +142,12 @@ export const CHART_AXIS = {
   tickLine: false as const,
 } as const
 
-// ── Grid Theme ──────────────────────────────────────────────────────────────
-
 export const CHART_GRID = {
   stroke: '#3A3835',
   strokeDasharray: '3 3',
   strokeOpacity: 0.5,
   vertical: false,
 } as const
-
-// ── Tooltip Theme ───────────────────────────────────────────────────────────
 
 export const CHART_TOOLTIP = {
   contentStyle: {
@@ -96,8 +185,6 @@ export const tooltipProps = {
   cursor: CHART_TOOLTIP.cursor,
 } as const
 
-// ── Legend Theme ─────────────────────────────────────────────────────────────
-
 export const CHART_LEGEND = {
   wrapperStyle: {
     paddingTop: 16,
@@ -107,8 +194,6 @@ export const CHART_LEGEND = {
   iconSize: 8,
   iconType: 'circle' as const,
 } as const
-
-// ── Polar (Radar) Theme ─────────────────────────────────────────────────────
 
 export const CHART_POLAR = {
   grid: { stroke: '#3A3835', strokeOpacity: 0.3 },

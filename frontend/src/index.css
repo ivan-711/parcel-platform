@@ -76,6 +76,12 @@
     --accent-danger:    #D4766A;
     --accent-info:      #7B9FCC;
 
+    /* ---- Recessed surface (section stripes, sidebar) ---- */
+    --app-recessed: #131210;
+
+    /* ---- CTA text on accent gradient ---- */
+    --accent-text-on-accent: #0C0B0A;
+
     /* ---- Accent Surfaces ---- */
     --accent-surface:       rgba(139, 122, 255, 0.08);
     --accent-surface-hover: rgba(139, 122, 255, 0.12);
@@ -173,6 +179,12 @@
     --accent-warning:   #D97706;
     --accent-danger:    #DC2626;
     --accent-info:      #4F46E5;
+
+    /* ---- Recessed surface (light) ---- */
+    --app-recessed: #F2F4F7;
+
+    /* ---- CTA text on accent gradient (light) ---- */
+    --accent-text-on-accent: #FFFFFF;
 
     /* ---- Accent Surfaces (light) ---- */
     --accent-surface:       rgba(139, 122, 255, 0.06);
@@ -314,6 +326,36 @@
     @apply focus-visible:ring-2 focus-visible:ring-[#0C0B0A];
     @apply focus-visible:ring-offset-2;
     ring-offset-color: rgba(139, 122, 255, 0.5);
+  }
+
+  /* Light-mode card/elevated shadows — added via .light parent */
+  .light .shadow-card-light {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+  .light .shadow-elevated-light {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  }
+
+  /* In light mode, edge-highlight should be invisible (no white catch on white bg) */
+  .light .edge-highlight::after {
+    opacity: 0;
+  }
+
+  /* Light-mode glass surfaces */
+  .light .glass {
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  /* Light-mode scrollbar */
+  .light .scrollbar-luxury::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.12);
+  }
+  .light .scrollbar-luxury::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.20);
+  }
+  .light .scrollbar-luxury {
+    scrollbar-color: rgba(0, 0, 0, 0.12) transparent;
   }
 
   /* Luxury dark scrollbar */

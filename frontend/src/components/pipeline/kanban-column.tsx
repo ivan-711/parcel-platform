@@ -83,14 +83,14 @@ export function KanbanColumn({
           className="w-2 h-2 rounded-full flex-shrink-0 opacity-80"
           style={{ backgroundColor: stage.color }}
         />
-        <span className="text-[13px] font-semibold text-[#F0EDE8] tracking-[-0.01em]">
+        <span className="text-[13px] font-semibold text-text-primary tracking-[-0.01em]">
           {stage.label}
         </span>
-        <span className="text-[12px] tabular-nums text-[#A09D98] bg-white/[0.06] rounded-full px-1.5 py-0.5">
+        <span className="text-[12px] tabular-nums text-text-secondary bg-layer-3 rounded-full px-1.5 py-0.5">
           {cards.length}
         </span>
         {totalValue > 0 && (
-          <span className="text-[12px] tabular-nums text-[#7A7872] ml-auto">
+          <span className="text-[12px] tabular-nums text-text-secondary ml-auto">
             {formatCompactValue(totalValue)}
           </span>
         )}
@@ -112,7 +112,7 @@ export function KanbanColumn({
         {isLoading ? (
           <ColumnSkeleton />
         ) : cards.length === 0 ? (
-          <div className="flex flex-col items-center justify-center min-h-[100px] py-8 border border-dashed border-white/[0.06] rounded-xl">
+          <div className="flex flex-col items-center justify-center min-h-[100px] py-8 border border-dashed border-border-default rounded-xl">
             <Inbox size={16} className="text-[#7A7872]/40 mb-1.5" />
             <p className="text-[12px] text-[#7A7872]/50">No deals</p>
           </div>

@@ -31,7 +31,7 @@ export function PlanBadge({ planTier, trialActive }: PlanBadgeProps) {
   // Free tier
   return (
     <span className="inline-flex items-center gap-1.5">
-      <span className="bg-white/[0.04] text-[#F0EDE8]/40 ring-1 ring-white/[0.06] px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide">
+      <span className="bg-layer-2 text-[#F0EDE8]/40 ring-1 ring-white/[0.06] px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide">
         Free
       </span>
       <Link

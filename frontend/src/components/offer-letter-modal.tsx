@@ -75,7 +75,7 @@ export function OfferLetterModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose() }}>
-      <DialogContent className="border-white/[0.06] bg-[#22211D] sm:max-w-2xl">
+      <DialogContent className="border-border-default bg-app-elevated sm:max-w-2xl">
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -83,10 +83,10 @@ export function OfferLetterModal({
         >
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <DialogTitle className="text-[#F0EDE8]">Offer Letter</DialogTitle>
+              <DialogTitle className="text-text-primary">Offer Letter</DialogTitle>
               <StrategyBadge strategy={strategy} />
             </div>
-            <DialogDescription className="text-[#A09D98]">
+            <DialogDescription className="text-text-secondary">
               {address}
             </DialogDescription>
           </DialogHeader>
@@ -99,12 +99,12 @@ export function OfferLetterModal({
                   {Array.from({ length: 8 }).map((_, i) => (
                     <div
                       key={i}
-                      className="h-4 rounded bg-white/[0.06] animate-pulse"
+                      className="h-4 rounded bg-layer-3 animate-pulse"
                       style={{ width: `${70 + ((i * 17) % 30)}%` }}
                     />
                   ))}
                 </div>
-                <p className="text-sm text-[#A09D98] text-center pt-2">
+                <p className="text-sm text-text-secondary text-center pt-2">
                   Generating your offer letter with AI...
                 </p>
               </div>
@@ -119,7 +119,7 @@ export function OfferLetterModal({
                 <Button
                   variant="outline"
                   onClick={() => refetch()}
-                  className="gap-2 border-white/[0.06] text-[#A09D98] hover:text-[#F0EDE8] hover:bg-white/[0.04]"
+                  className="gap-2 border-border-default text-text-secondary hover:text-text-primary hover:bg-layer-2"
                 >
                   <RefreshCw size={14} />
                   Retry
@@ -130,7 +130,7 @@ export function OfferLetterModal({
             {/* Generated State */}
             {data && !isLoading && !isError && (
               <div className="space-y-4">
-                <pre className="max-h-[400px] overflow-y-auto rounded-lg border border-white/[0.04] bg-[#0C0B0A] p-4 text-sm text-[#A09D98] whitespace-pre-wrap leading-relaxed">
+                <pre className="max-h-[400px] overflow-y-auto rounded-lg border border-border-subtle bg-app-bg p-4 text-sm text-text-secondary whitespace-pre-wrap leading-relaxed">
                   {cleanLetter(data.offer_letter)}
                 </pre>
 
@@ -138,14 +138,14 @@ export function OfferLetterModal({
                   <Button
                     variant="outline"
                     onClick={handleCopy}
-                    className="gap-2 border-white/[0.06] text-[#A09D98] hover:text-[#F0EDE8] hover:bg-white/[0.04]"
+                    className="gap-2 border-border-default text-text-secondary hover:text-text-primary hover:bg-layer-2"
                   >
                     {copied ? <Check size={14} /> : <Copy size={14} />}
                     {copied ? 'Copied' : 'Copy to Clipboard'}
                   </Button>
                   <Button
                     onClick={handleDownloadPDF}
-                    className="gap-2 bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] hover:opacity-90"
+                    className="gap-2 bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
                   >
                     <Download size={14} />
                     Download as PDF

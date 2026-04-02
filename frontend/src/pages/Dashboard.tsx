@@ -60,7 +60,7 @@ const itemVariants = {
 }
 
 function riskColor(score: number | null): string {
-  if (score === null) return 'text-[#7A7872]'
+  if (score === null) return 'text-text-muted'
   if (score <= 30) return 'text-[#7CCBA5]'
   if (score <= 60) return 'text-[#D4A867]'
   return 'text-[#D4766A]'
@@ -136,7 +136,7 @@ export default function Dashboard() {
   }), [stats?.total_deals, stats?.active_pipeline_deals, closedDeals])
 
   const demoBanner = isDemoUser && !bannerDismissed ? (
-    <div className="bg-violet-400/10 border border-violet-400/20 rounded-lg px-4 py-3 text-sm text-[#F0EDE8] flex items-center justify-between mb-4">
+    <div className="bg-violet-400/10 border border-violet-400/20 rounded-lg px-4 py-3 text-sm text-text-primary flex items-center justify-between mb-4">
       <p>
         You&apos;re viewing a demo account. Create your free account to analyze your own deals.{' '}
         <Link to="/register" className="font-semibold text-violet-400 underline underline-offset-2 hover:text-violet-300">
@@ -175,8 +175,8 @@ export default function Dashboard() {
         <div className="rounded-xl border border-[#D4766A]/20 bg-[#D4766A]/10 p-6 flex items-start gap-3 max-w-lg">
           <AlertCircle size={20} className="text-[#D4766A] shrink-0 mt-0.5" />
           <div className="space-y-2">
-            <p className="text-sm font-medium text-[#F0EDE8]">Failed to load dashboard</p>
-            <p className="text-xs text-[#A09D98]">
+            <p className="text-sm font-medium text-text-primary">Failed to load dashboard</p>
+            <p className="text-xs text-text-secondary">
               {error instanceof Error ? error.message : 'Something went wrong. Please try again.'}
             </p>
             <button
@@ -204,7 +204,7 @@ export default function Dashboard() {
         >
           <motion.h1
             variants={itemVariants}
-            className="text-3xl font-semibold tracking-tight text-[#F0EDE8]"
+            className="text-3xl font-semibold tracking-tight text-text-primary"
           >
             Let&apos;s analyze your first deal.
           </motion.h1>
@@ -218,10 +218,10 @@ export default function Dashboard() {
             >
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-base font-semibold text-[#F0EDE8]">
+                  <p className="text-base font-semibold text-text-primary">
                     Analyze Your First Deal
                   </p>
-                  <p className="text-sm text-[#A09D98]">
+                  <p className="text-sm text-text-secondary">
                     Run numbers on any strategy — wholesale, BRRRR, flip, or buy &amp; hold.
                   </p>
                 </div>
@@ -237,13 +237,13 @@ export default function Dashboard() {
             {HINT_CARDS.map(({ icon: Icon, title, description }) => (
               <div
                 key={title}
-                className="p-5 rounded-xl border border-white/[0.04] bg-[#1A1916] shadow-xs edge-highlight space-y-3 cursor-default"
+                className="p-5 rounded-xl border border-border-subtle bg-app-surface shadow-xs edge-highlight space-y-3 cursor-default"
               >
                 <div className="w-9 h-9 rounded-lg bg-violet-400/10 flex items-center justify-center">
                   <Icon size={18} className="text-violet-400" />
                 </div>
-                <p className="text-sm font-medium text-[#F0EDE8]">{title}</p>
-                <p className="text-xs text-[#A09D98] leading-relaxed">{description}</p>
+                <p className="text-sm font-medium text-text-primary">{title}</p>
+                <p className="text-xs text-text-secondary leading-relaxed">{description}</p>
               </div>
             ))}
           </motion.div>
@@ -294,7 +294,7 @@ export default function Dashboard() {
         {(stats.recent_deals ?? []).length > 0 && (
           <motion.div variants={itemVariants} className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-[#F0EDE8]">Recent Deals</h2>
+              <h2 className="text-sm font-semibold text-text-primary">Recent Deals</h2>
               <Link
                 to="/deals"
                 className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
@@ -302,21 +302,21 @@ export default function Dashboard() {
                 View all &rarr;
               </Link>
             </div>
-            <div className="rounded-xl border border-white/[0.04] bg-[#1A1916] overflow-x-auto shadow-xs edge-highlight">
+            <div className="rounded-xl border border-border-subtle bg-app-surface overflow-x-auto shadow-xs edge-highlight">
               <table className="w-full min-w-[600px]">
                 <thead>
-                  <tr className="border-b border-white/[0.06]">
-                    <th className="text-left text-xs font-medium text-[#A09D98] uppercase tracking-wider px-4 py-3">Address</th>
-                    <th className="text-left text-xs font-medium text-[#A09D98] uppercase tracking-wider px-4 py-3">Strategy</th>
-                    <th className="text-left text-xs font-medium text-[#A09D98] uppercase tracking-wider px-4 py-3">Risk</th>
-                    <th className="text-left text-xs font-medium text-[#A09D98] uppercase tracking-wider px-4 py-3">Status</th>
+                  <tr className="border-b border-border-default">
+                    <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3">Address</th>
+                    <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3">Strategy</th>
+                    <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3">Risk</th>
+                    <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3">Status</th>
                     <th className="px-4 py-3" />
                   </tr>
                 </thead>
                 <tbody>
                   {(stats.recent_deals ?? []).map((deal) => (
-                    <tr key={deal.id} className="border-b border-white/[0.03] last:border-0 hover:bg-white/[0.04] transition-colors">
-                      <td className="px-4 py-3 text-sm text-[#F0EDE8]">{deal.address}</td>
+                    <tr key={deal.id} className="border-b border-white/[0.03] last:border-0 hover:bg-layer-2 transition-colors">
+                      <td className="px-4 py-3 text-sm text-text-primary">{deal.address}</td>
                       <td className="px-4 py-3">
                         <StrategyBadge strategy={deal.strategy} />
                       </td>
@@ -326,7 +326,7 @@ export default function Dashboard() {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-white/[0.06] text-[#A09D98]">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-layer-3 text-text-secondary">
                           {statusLabel(deal.status)}
                         </span>
                       </td>
@@ -349,15 +349,15 @@ export default function Dashboard() {
         {/* Pipeline Summary */}
         {pipelineEntries.length > 0 && (
           <motion.div variants={itemVariants} className="space-y-3">
-            <h2 className="text-sm font-semibold text-[#F0EDE8]">Pipeline Summary</h2>
-            <div className="rounded-xl border border-white/[0.04] bg-[#1A1916] p-4 shadow-xs edge-highlight">
+            <h2 className="text-sm font-semibold text-text-primary">Pipeline Summary</h2>
+            <div className="rounded-xl border border-border-subtle bg-app-surface p-4 shadow-xs edge-highlight">
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {pipelineEntries.map(([stage, count]) => (
-                  <div key={stage} className="flex items-center justify-between p-3 rounded-lg bg-white/[0.04]">
-                    <span className="text-sm text-[#A09D98]">
+                  <div key={stage} className="flex items-center justify-between p-3 rounded-lg bg-layer-2">
+                    <span className="text-sm text-text-secondary">
                       {STAGE_LABELS[stage] ?? statusLabel(stage)}
                     </span>
-                    <span className="text-lg font-semibold text-[#F0EDE8] tabular-nums">{count}</span>
+                    <span className="text-lg font-semibold text-text-primary tabular-nums">{count}</span>
                   </div>
                 ))}
               </div>
@@ -368,7 +368,7 @@ export default function Dashboard() {
         {/* Recent Activity */}
         <motion.div variants={itemVariants} className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-[#F0EDE8]">Recent Activity</h2>
+            <h2 className="text-sm font-semibold text-text-primary">Recent Activity</h2>
             <Link to="/deals" className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors">View all</Link>
           </div>
 
@@ -383,7 +383,7 @@ export default function Dashboard() {
           {!activityLoading && activityError && (
             <div className="rounded-xl border border-[#D4766A]/20 bg-[#D4766A]/10 px-4 py-4 flex items-center gap-3">
               <AlertCircle size={16} className="text-[#D4766A] shrink-0" />
-              <p className="text-sm text-[#A09D98] flex-1">Failed to load activity</p>
+              <p className="text-sm text-text-secondary flex-1">Failed to load activity</p>
               <button
                 onClick={() => queryClient.invalidateQueries({ queryKey: ['activity'] })}
                 className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
@@ -394,13 +394,13 @@ export default function Dashboard() {
           )}
 
           {!activityLoading && !activityError && (!activityData?.activities || activityData.activities.length === 0) && (
-            <div className="rounded-xl border border-white/[0.04] bg-[#1A1916] px-4 py-8 text-center shadow-xs edge-highlight">
-              <p className="text-sm text-[#7A7872]">No recent activity. Analyze your first deal to get started.</p>
+            <div className="rounded-xl border border-border-subtle bg-app-surface px-4 py-8 text-center shadow-xs edge-highlight">
+              <p className="text-sm text-text-secondary">No recent activity. Analyze your first deal to get started.</p>
             </div>
           )}
 
           {!activityLoading && activityData?.activities && activityData.activities.length > 0 && (
-            <div className="rounded-xl border border-white/[0.04] bg-[#1A1916] p-5 shadow-xs edge-highlight">
+            <div className="rounded-xl border border-border-subtle bg-app-surface p-5 shadow-xs edge-highlight">
               <div className="space-y-1">
                 {activityData.activities.map((item, index) => {
                   const config = ACTIVITY_ICONS[item.activity_type] ?? ACTIVITY_ICONS.deal_analyzed
@@ -411,7 +411,7 @@ export default function Dashboard() {
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.18, ease: 'easeOut', delay: 0.05 * index }}
-                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-white/[0.04] transition-colors"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-layer-2 transition-colors"
                     >
                       <div
                         className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
@@ -419,8 +419,8 @@ export default function Dashboard() {
                       >
                         <Icon size={16} style={{ color: config.color }} />
                       </div>
-                      <p className="text-sm text-[#A09D98] flex-1 truncate">{item.text}</p>
-                      <span className="text-xs text-[#7A7872] tabular-nums shrink-0">{timeAgo(item.timestamp)}</span>
+                      <p className="text-sm text-text-secondary flex-1 truncate">{item.text}</p>
+                      <span className="text-xs text-text-secondary tabular-nums shrink-0">{timeAgo(item.timestamp)}</span>
                     </motion.div>
                   )
                 })}

@@ -39,7 +39,7 @@ function NumberValue({ keyName, value }: { keyName: string; value: number | stri
         ? formatCurrency(value)
         : value.toLocaleString('en-US', { maximumFractionDigits: 2 })
 
-  return <span className="tabular-nums text-sm text-[#F0EDE8]">{formatted}</span>
+  return <span className="tabular-nums text-sm text-text-primary">{formatted}</span>
 }
 
 /** DetailPanel — full analysis detail view for a completed document. */
@@ -70,7 +70,7 @@ function DetailPanel({
       {showBack && (
         <button
           onClick={onBack}
-          className="flex items-center gap-1 text-sm text-[#A09D98] hover:text-[#F0EDE8] transition-colors md:hidden"
+          className="flex items-center gap-1 text-sm text-text-secondary hover:text-text-primary transition-colors md:hidden"
         >
           <ChevronLeft size={16} />
           Back to list
@@ -78,20 +78,20 @@ function DetailPanel({
       )}
 
       {/* Header */}
-      <motion.div {...fadeUp} className="rounded-lg border border-white/[0.06] bg-[#1A1916] p-4">
+      <motion.div {...fadeUp} className="rounded-lg border border-border-default bg-app-surface p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h2 className="text-base font-semibold text-[#F0EDE8] truncate">
+            <h2 className="text-base font-semibold text-text-primary truncate">
               {doc.original_filename}
             </h2>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
               <Badge className="bg-[#8B7AFF]/10 text-[#8B7AFF] border-[#8B7AFF]/20 text-[10px]">
                 {formatDocumentType(doc.document_type)}
               </Badge>
-              <span className="text-xs text-[#A09D98] tabular-nums">
+              <span className="text-xs text-text-secondary tabular-nums">
                 {formatFileSize(doc.file_size_bytes)}
               </span>
-              <span className="text-xs text-[#A09D98]">
+              <span className="text-xs text-text-secondary">
                 {new Date(doc.created_at).toLocaleDateString()}
               </span>
             </div>
@@ -100,7 +100,7 @@ function DetailPanel({
         <div className="flex items-center gap-2 mt-3">
           {doc.presigned_url && (
             <a href={doc.presigned_url} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="sm" className="h-7 text-xs gap-1.5 border-white/[0.06] bg-transparent text-[#A09D98] hover:bg-white/[0.04] hover:text-[#F0EDE8]">
+              <Button variant="outline" size="sm" className="h-7 text-xs gap-1.5 border-border-default bg-transparent text-text-secondary hover:bg-layer-2 hover:text-text-primary">
                 <Download size={12} />
                 Download
               </Button>
@@ -109,7 +109,7 @@ function DetailPanel({
           <Button
             variant="outline"
             size="sm"
-            className="h-7 text-xs gap-1.5 border-white/[0.06] bg-transparent text-[#A09D98] hover:bg-white/[0.04] hover:text-[#F0EDE8]"
+            className="h-7 text-xs gap-1.5 border-border-default bg-transparent text-text-secondary hover:bg-layer-2 hover:text-text-primary"
             onClick={() => navigate(`/chat?context=document&id=${doc.id}`)}
           >
             <MessageSquare size={12} />
@@ -118,7 +118,7 @@ function DetailPanel({
           <Button
             variant="outline"
             size="sm"
-            className="h-7 text-xs gap-1.5 text-[#D4766A] hover:text-[#D4766A] border-white/[0.06] hover:border-[#D4766A]/30 bg-transparent hover:bg-[#D4766A]/10"
+            className="h-7 text-xs gap-1.5 text-[#D4766A] hover:text-[#D4766A] border-border-default hover:border-[#D4766A]/30 bg-transparent hover:bg-[#D4766A]/10"
             onClick={onDelete}
             disabled={isDeleting}
           >
@@ -133,21 +133,21 @@ function DetailPanel({
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.05 }}
-          className="rounded-lg border border-white/[0.08] bg-[#22211D] p-4"
+          className="rounded-lg border border-border-strong bg-app-elevated p-4"
         >
-          <h3 className="text-xs font-semibold text-[#A09D98] uppercase tracking-[0.08em] mb-2">
+          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-[0.08em] mb-2">
             AI Summary
           </h3>
-          <p className="text-sm text-[#F0EDE8]/90 leading-relaxed">{doc.ai_summary}</p>
+          <p className="text-sm text-text-primary/90 leading-relaxed">{doc.ai_summary}</p>
           {doc.parties.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mt-3">
               {doc.parties.map((party, i) => (
                 <span
                   key={i}
-                  className="inline-flex items-center gap-1 rounded-full bg-white/[0.04] border border-white/[0.06] px-2 py-0.5 text-[10px] text-[#A09D98]"
+                  className="inline-flex items-center gap-1 rounded-full bg-layer-2 border border-border-default px-2 py-0.5 text-[10px] text-text-secondary"
                 >
                   {party.name}
-                  <span className="text-[#A09D98]">({party.role})</span>
+                  <span className="text-text-secondary">({party.role})</span>
                 </span>
               ))}
             </div>
@@ -160,9 +160,9 @@ function DetailPanel({
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.1 }}
-          className="rounded-lg border border-white/[0.06] bg-[#1A1916] p-4"
+          className="rounded-lg border border-border-default bg-app-surface p-4"
         >
-          <h3 className="text-xs font-semibold text-[#A09D98] uppercase tracking-[0.08em] mb-2">
+          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-[0.08em] mb-2">
             Risk Flags
           </h3>
           <div className="space-y-3">
@@ -171,8 +171,8 @@ function DetailPanel({
               return (
                 <div key={i} className={cn('flex gap-2.5 border-l-2 pl-3', borderColor)}>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm text-[#F0EDE8]">{flag.description}</p>
-                    <p className="text-xs text-[#A09D98] mt-0.5 italic">"{flag.quote}"</p>
+                    <p className="text-sm text-text-primary">{flag.description}</p>
+                    <p className="text-xs text-text-secondary mt-0.5 italic">"{flag.quote}"</p>
                   </div>
                 </div>
               )
@@ -186,15 +186,15 @@ function DetailPanel({
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.15 }}
-          className="rounded-lg border border-white/[0.06] bg-[#1A1916] p-4"
+          className="rounded-lg border border-border-default bg-app-surface p-4"
         >
-          <h3 className="text-xs font-semibold text-[#A09D98] uppercase tracking-[0.08em] mb-2">
+          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-[0.08em] mb-2">
             Extracted Numbers
           </h3>
           <div className="grid grid-cols-2 gap-x-4 gap-y-2">
             {numbers.map(([key, value]) => (
               <div key={key} className="flex flex-col">
-                <span className="text-[10px] text-[#A09D98] uppercase tracking-[0.08em]">
+                <span className="text-[10px] text-text-secondary uppercase tracking-[0.08em]">
                   {formatLabel(key)}
                 </span>
                 <NumberValue keyName={key} value={value} />
@@ -209,15 +209,15 @@ function DetailPanel({
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.2 }}
-          className="rounded-lg border border-white/[0.06] bg-[#1A1916] p-4"
+          className="rounded-lg border border-border-default bg-app-surface p-4"
         >
-          <h3 className="text-xs font-semibold text-[#A09D98] uppercase tracking-[0.08em] mb-2">
+          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-[0.08em] mb-2">
             Key Terms
           </h3>
           <ul className="space-y-1">
             {visibleTerms.map((term, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-[#F0EDE8]">
-                <span className="text-[#5C5A56] mt-1">•</span>
+              <li key={i} className="flex items-start gap-2 text-sm text-text-primary">
+                <span className="text-text-disabled mt-1">•</span>
                 {term}
               </li>
             ))}
@@ -282,8 +282,8 @@ export function RightPanelContent({
   if (!selectedId) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center px-6">
-        <FileSearch size={40} className="text-[#5C5A56] mb-3" />
-        <p className="text-sm text-[#A09D98]">Select a document to view AI analysis</p>
+        <FileSearch size={40} className="text-text-disabled mb-3" />
+        <p className="text-sm text-text-secondary">Select a document to view AI analysis</p>
       </div>
     )
   }
@@ -291,14 +291,14 @@ export function RightPanelContent({
   if (isLoading) {
     return (
       <div className="space-y-3 p-1">
-        <div className="rounded-lg border border-white/[0.06] bg-[#1A1916] p-4 space-y-3">
-          <div className="h-4 w-3/5 rounded bg-white/[0.06] animate-pulse" />
-          <div className="h-3 w-2/5 rounded bg-white/[0.06] animate-pulse" />
+        <div className="rounded-lg border border-border-default bg-app-surface p-4 space-y-3">
+          <div className="h-4 w-3/5 rounded bg-layer-3 animate-pulse" />
+          <div className="h-3 w-2/5 rounded bg-layer-3 animate-pulse" />
         </div>
-        <div className="rounded-lg border border-white/[0.06] bg-[#1A1916] p-4 space-y-2">
-          <div className="h-3 w-full rounded bg-white/[0.06] animate-pulse" />
-          <div className="h-3 w-full rounded bg-white/[0.06] animate-pulse" />
-          <div className="h-3 w-3/4 rounded bg-white/[0.06] animate-pulse" />
+        <div className="rounded-lg border border-border-default bg-app-surface p-4 space-y-2">
+          <div className="h-3 w-full rounded bg-layer-3 animate-pulse" />
+          <div className="h-3 w-full rounded bg-layer-3 animate-pulse" />
+          <div className="h-3 w-3/4 rounded bg-layer-3 animate-pulse" />
         </div>
       </div>
     )
@@ -308,7 +308,7 @@ export function RightPanelContent({
     return (
       <div className="flex flex-col items-center justify-center h-full text-center px-6 gap-3">
         <AlertCircle size={32} className="text-[#D4766A]" />
-        <p className="text-sm text-[#A09D98]">Failed to load document</p>
+        <p className="text-sm text-text-secondary">Failed to load document</p>
         <button
           onClick={() => queryClient.invalidateQueries({ queryKey: ['document', selectedId] })}
           className="text-xs font-medium text-[#8B7AFF] hover:text-[#6C5CE7] transition-colors"
@@ -327,16 +327,16 @@ export function RightPanelContent({
         {isMobileDetail && (
           <button
             onClick={onClearSelection}
-            className="self-start flex items-center gap-1 mb-6 text-sm text-[#A09D98] hover:text-[#F0EDE8] transition-colors md:hidden"
+            className="self-start flex items-center gap-1 mb-6 text-sm text-text-secondary hover:text-text-primary transition-colors md:hidden"
           >
             <ChevronLeft size={16} />
             Back to list
           </button>
         )}
-        <div className="rounded-lg border border-white/[0.06] bg-[#1A1916] p-6 w-full max-w-sm">
-          <h3 className="text-sm font-semibold text-[#F0EDE8] mb-4">Analyzing document...</h3>
+        <div className="rounded-lg border border-border-default bg-app-surface p-6 w-full max-w-sm">
+          <h3 className="text-sm font-semibold text-text-primary mb-4">Analyzing document...</h3>
           <ProcessingSteps status={doc.status} />
-          <p className="text-[10px] text-[#A09D98] mt-4">This usually takes 15-30 seconds</p>
+          <p className="text-[10px] text-text-secondary mt-4">This usually takes 15-30 seconds</p>
         </div>
       </div>
     )
@@ -348,7 +348,7 @@ export function RightPanelContent({
         {isMobileDetail && (
           <button
             onClick={onClearSelection}
-            className="flex items-center gap-1 mb-4 text-sm text-[#A09D98] hover:text-[#F0EDE8] transition-colors md:hidden"
+            className="flex items-center gap-1 mb-4 text-sm text-text-secondary hover:text-text-primary transition-colors md:hidden"
           >
             <ChevronLeft size={16} />
             Back to list
@@ -359,7 +359,7 @@ export function RightPanelContent({
             <AlertCircle size={16} className="text-[#D4766A] mt-0.5 shrink-0" />
             <div>
               <h3 className="text-sm font-semibold text-[#D4766A]">Analysis failed</h3>
-              <p className="text-xs text-[#A09D98] mt-1">
+              <p className="text-xs text-text-secondary mt-1">
                 {doc.processing_error ?? 'An unexpected error occurred while processing this document.'}
               </p>
               <Button

@@ -12,8 +12,8 @@ export function UsageMeter({ metric }: UsageMeterProps) {
   if (limit === null) {
     return (
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-[#A09D98]">{display_name}</span>
-        <span className="text-sm text-[#7A7872]">Unlimited</span>
+        <span className="text-sm font-medium text-text-secondary">{display_name}</span>
+        <span className="text-sm text-text-secondary">Unlimited</span>
       </div>
     )
   }
@@ -25,12 +25,12 @@ export function UsageMeter({ metric }: UsageMeterProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-sm font-medium text-[#A09D98]">{display_name}</span>
-        <span className="text-sm text-[#F0EDE8] tabular-nums">
+        <span className="text-sm font-medium text-text-secondary">{display_name}</span>
+        <span className="text-sm text-text-primary tabular-nums">
           {current} of {limit} used
         </span>
       </div>
-      <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
+      <div className="h-2 rounded-full bg-layer-3 overflow-hidden">
         <motion.div
           className={cn(
             'h-full rounded-full',

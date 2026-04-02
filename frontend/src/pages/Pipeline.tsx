@@ -290,7 +290,7 @@ export default function PipelinePage() {
         action={
           <Link
             to="/analyze"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#8B7AFF] hover:bg-[#7B6AEF] text-[#0C0B0A] text-xs font-medium transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#8B7AFF] hover:bg-[#7B6AEF] text-accent-text-on-accent text-xs font-medium transition-colors"
           >
             <Plus size={14} />
             Add Deal
@@ -351,7 +351,7 @@ export default function PipelinePage() {
             }}>
               {activeCard ? (
                 <div
-                  className="rounded-xl border border-white/[0.06] bg-[#22211D] space-y-2.5"
+                  className="rounded-xl border border-border-default bg-app-elevated space-y-2.5"
                   style={{
                     width: 280,
                     padding: '14px 16px',
@@ -360,12 +360,12 @@ export default function PipelinePage() {
                     transform: 'rotate(1.5deg) scale(1.02)',
                   }}
                 >
-                  <p className="text-[13px] font-medium text-[#F0EDE8] leading-tight line-clamp-2">
+                  <p className="text-[13px] font-medium text-text-primary leading-tight line-clamp-2">
                     {activeCard.address}
                   </p>
                   <OverlayStrategyBadge strategy={activeCard.strategy} />
                   {activeCard.asking_price != null && activeCard.asking_price > 0 && (
-                    <span className="block text-[12px] tabular-nums font-medium text-[#A09D98]">
+                    <span className="block text-[12px] tabular-nums font-medium text-text-secondary">
                       ${activeCard.asking_price.toLocaleString()}
                     </span>
                   )}
@@ -390,18 +390,18 @@ export default function PipelinePage() {
 
       {/* Remove from pipeline confirmation dialog */}
       <AlertDialog open={removeTarget !== null} onOpenChange={(open) => { if (!open) setRemoveTarget(null) }}>
-        <AlertDialogContent className="bg-[#1A1916] border-white/[0.06]">
+        <AlertDialogContent className="bg-app-surface border-border-default">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-[#F0EDE8]">Remove from pipeline?</AlertDialogTitle>
-            <AlertDialogDescription className="text-[#A09D98]">
+            <AlertDialogTitle className="text-text-primary">Remove from pipeline?</AlertDialogTitle>
+            <AlertDialogDescription className="text-text-secondary">
               This deal will be removed from your pipeline. You can always re-add it later from your deals list.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-white/[0.04] border-white/[0.06] text-[#A09D98] hover:bg-white/[0.06] hover:text-[#F0EDE8]">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="bg-layer-2 border-border-default text-text-secondary hover:bg-layer-3 hover:text-text-primary">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmRemoveCard}
-              className="bg-[#D4766A] hover:bg-[#C45E52] text-[#F0EDE8]"
+              className="bg-[#D4766A] hover:bg-[#C45E52] text-text-primary"
             >
               {removeMutation.isPending ? 'Removing...' : 'Remove'}
             </AlertDialogAction>

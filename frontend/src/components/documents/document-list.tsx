@@ -48,15 +48,15 @@ function DocRow({
         'w-full text-left px-3 py-2.5 rounded-lg transition-colors',
         isSelected
           ? 'bg-[#8B7AFF]/[0.08] border border-[#8B7AFF]/25'
-          : 'hover:bg-white/[0.04] border border-transparent',
+          : 'hover:bg-layer-2 border border-transparent',
       )}
     >
       <div className="flex items-start gap-2.5">
-        <FileText size={14} className="text-[#5C5A56] mt-0.5 shrink-0" />
+        <FileText size={14} className="text-text-disabled mt-0.5 shrink-0" />
         <div className="min-w-0 flex-1">
-          <p className="text-sm text-[#F0EDE8] truncate">{doc.original_filename}</p>
+          <p className="text-sm text-text-primary truncate">{doc.original_filename}</p>
           <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-[10px] text-[#A09D98] tabular-nums">
+            <span className="text-[10px] text-text-secondary tabular-nums">
               {formatFileSize(doc.file_size_bytes)}
             </span>
             <StatusBadge status={doc.status} />
@@ -73,8 +73,8 @@ function SkeletonList() {
     <div className="space-y-2 px-1">
       {Array.from({ length: 3 }).map((_, i) => (
         <div key={i} className="px-3 py-2.5 rounded-lg space-y-2">
-          <div className="h-3.5 w-4/5 rounded bg-white/[0.06] animate-pulse" />
-          <div className="h-2.5 w-2/5 rounded bg-white/[0.06] animate-pulse" />
+          <div className="h-3.5 w-4/5 rounded bg-layer-3 animate-pulse" />
+          <div className="h-2.5 w-2/5 rounded bg-layer-3 animate-pulse" />
         </div>
       ))}
     </div>
@@ -96,9 +96,9 @@ export function DocumentList({ documents, isLoading, selectedId, onSelect }: Doc
   if (!documents || documents.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <FileText size={28} className="text-[#5C5A56] mb-2" />
-        <p className="text-sm text-[#A09D98]">No documents yet</p>
-        <p className="text-xs text-[#A09D98] mt-0.5">Upload a file to get started</p>
+        <FileText size={28} className="text-text-disabled mb-2" />
+        <p className="text-sm text-text-secondary">No documents yet</p>
+        <p className="text-xs text-text-secondary mt-0.5">Upload a file to get started</p>
       </div>
     )
   }

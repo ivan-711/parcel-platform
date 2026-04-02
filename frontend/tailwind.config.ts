@@ -86,6 +86,8 @@ const config: Config = {
       'app-surface':  'var(--app-surface)',
       'app-elevated': 'var(--app-elevated)',
       'app-overlay':  'var(--app-overlay)',
+      'app-recessed': 'var(--app-recessed)',
+      'accent-text-on-accent': 'var(--accent-text-on-accent)',
       'border-subtle':  'var(--border-subtle)',
       'border-default': 'var(--border-default)',
       'border-strong':  'var(--border-strong)',

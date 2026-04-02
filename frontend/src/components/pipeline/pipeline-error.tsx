@@ -21,14 +21,14 @@ export function PipelineError({ error, onRetry }: PipelineErrorProps) {
               <AlertTriangle size={24} className="text-[#D4766A]" />
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-medium text-[#F0EDE8]">Failed to load pipeline</p>
-              <p className="text-[13px] text-[#A09D98]">
+              <p className="text-sm font-medium text-text-primary">Failed to load pipeline</p>
+              <p className="text-[13px] text-text-secondary">
                 {error ? error.message : 'Something went wrong. Please try again.'}
               </p>
             </div>
             <button
               onClick={onRetry}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#8B7AFF] hover:bg-[#7B6AEF] text-[#0C0B0A] text-[13px] font-medium transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#8B7AFF] hover:bg-[#7B6AEF] text-accent-text-on-accent text-[13px] font-medium transition-colors"
             >
               Try again
             </button>

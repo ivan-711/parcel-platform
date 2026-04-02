@@ -90,24 +90,24 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-        className="relative z-10 w-full max-w-md bg-[#1A1916] rounded-xl border border-white/[0.06] shadow-2xl p-8 mx-4"
+        className="relative z-10 w-full max-w-md bg-app-surface rounded-xl border border-border-default shadow-2xl p-8 mx-4"
       >
         {/* Lock icon */}
         <div className="mx-auto w-12 h-12 rounded-xl bg-[#8B7AFF]/10 ring-1 ring-[#8B7AFF]/20 flex items-center justify-center mb-5">
           <Lock size={24} className="text-[#8B7AFF]" />
         </div>
 
-        <h3 className="text-lg font-semibold text-[#F0EDE8] text-center">
+        <h3 className="text-lg font-semibold text-text-primary text-center">
           {label}
         </h3>
-        <p className="text-sm text-[#A09D98] text-center mt-2 mb-6">
+        <p className="text-sm text-text-secondary text-center mt-2 mb-6">
           {description}
         </p>
 
         <button
           onClick={() => checkout.mutate({ plan: 'pro', interval: 'annual' })}
           disabled={checkout.isPending}
-          className="w-full h-11 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-[#0C0B0A] text-sm font-medium transition-all disabled:opacity-50 cursor-pointer"
+          className="w-full h-11 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-accent-text-on-accent text-sm font-medium transition-all disabled:opacity-50 cursor-pointer"
         >
           {checkout.isPending ? 'Redirecting...' : 'Upgrade to Pro'}
         </button>
@@ -122,7 +122,7 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
           {onDismiss && (
             <button
               onClick={handleDismiss}
-              className="text-sm text-[#7A7872] hover:text-[#A09D98] transition-colors cursor-pointer"
+              className="text-sm text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
             >
               Dismiss
             </button>

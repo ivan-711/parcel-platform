@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { Check, AlertCircle } from 'lucide-react'
+import { Check, AlertCircle, Monitor, Moon, Sun } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,6 +12,7 @@ import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { useAuthStore } from '@/stores/authStore'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
+import { getTheme, setTheme, type Theme } from '@/lib/theme'
 import { BillingSettings } from './BillingSettings'
 import { SuccessOverlay } from '@/components/billing/SuccessOverlay'
 
@@ -39,6 +40,45 @@ const tabs = [
 ] as const
 
 type TabId = (typeof tabs)[number]['id']
+
+const THEME_OPTIONS: { value: Theme; label: string; icon: React.ElementType }[] = [
+  { value: 'system', label: 'System', icon: Monitor },
+  { value: 'dark', label: 'Dark', icon: Moon },
+  { value: 'light', label: 'Light', icon: Sun },
+]
+
+function AppearanceSection() {
+  const [current, setCurrent] = useState<Theme>(getTheme)
+
+  function handleChange(theme: Theme) {
+    setCurrent(theme)
+    setTheme(theme)
+  }
+
+  return (
+    <div className="bg-app-surface border border-border-strong rounded-xl p-6 shadow-xs">
+      <h2 className="text-sm font-semibold text-text-primary mb-1">Appearance</h2>
+      <p className="text-sm text-text-secondary mb-4">Choose your preferred theme</p>
+      <div className="inline-flex gap-1 p-1 bg-layer-1 rounded-lg border border-border-subtle">
+        {THEME_OPTIONS.map(({ value, label, icon: Icon }) => (
+          <button
+            key={value}
+            onClick={() => handleChange(value)}
+            className={cn(
+              'inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 cursor-pointer',
+              current === value
+                ? 'text-text-primary bg-layer-4 shadow-sm'
+                : 'text-text-secondary hover:text-text-primary hover:bg-layer-2'
+            )}
+          >
+            <Icon size={14} />
+            {label}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 /** Settings page — profile editing, password change, and notification preferences with tabbed layout. */
 export default function SettingsPage() {
@@ -179,8 +219,8 @@ export default function SettingsPage() {
         <div className="rounded-xl border border-[#D4766A]/20 bg-[#D4766A]/5 p-6 flex items-start gap-3 max-w-lg">
           <AlertCircle size={20} className="text-[#D4766A] shrink-0 mt-0.5" />
           <div className="space-y-2">
-            <p className="text-sm font-medium text-[#F0EDE8]">Failed to load settings</p>
-            <p className="text-xs text-[#A09D98]">Something went wrong. Please try again.</p>
+            <p className="text-sm font-medium text-text-primary">Failed to load settings</p>
+            <p className="text-xs text-text-secondary">Something went wrong. Please try again.</p>
             <button
               onClick={() => queryClient.invalidateQueries({ queryKey: ['me'] })}
               className="text-xs font-medium text-[#8B7AFF] hover:text-[#A89FFF] transition-colors"
@@ -207,7 +247,7 @@ export default function SettingsPage() {
   return (
     <AppShell title="Settings">
       {/* Desktop pill tabs — hidden below md */}
-      <div className="hidden md:inline-flex gap-1 p-1 bg-white/[0.03] rounded-lg border border-white/[0.04] mb-8">
+      <div className="hidden md:inline-flex gap-1 p-1 bg-layer-1 rounded-lg border border-border-subtle mb-8">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -215,8 +255,8 @@ export default function SettingsPage() {
             className={cn(
               'relative px-4 py-2 text-sm font-medium rounded-md transition-all duration-200',
               activeTab === tab.id
-                ? 'text-[#F0EDE8] bg-white/[0.08] shadow-sm'
-                : 'text-[#A09D98] hover:text-[#F0EDE8] hover:bg-white/[0.04]'
+                ? 'text-text-primary bg-layer-4 shadow-sm'
+                : 'text-text-secondary hover:text-text-primary hover:bg-layer-2'
             )}
           >
             {tab.label}
@@ -233,8 +273,8 @@ export default function SettingsPage() {
             className={cn(
               'shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors',
               activeTab === tab.id
-                ? 'bg-white/[0.08] text-[#F0EDE8]'
-                : 'text-[#A09D98] hover:text-[#F0EDE8] hover:bg-white/[0.04]'
+                ? 'bg-layer-4 text-text-primary'
+                : 'text-text-secondary hover:text-text-primary hover:bg-layer-2'
             )}
           >
             {tab.label}
@@ -253,46 +293,46 @@ export default function SettingsPage() {
           <>
             {/* Profile Section */}
             <motion.div variants={itemVariants}>
-              <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-6 shadow-xs">
-                <h2 className="text-sm font-semibold text-[#F0EDE8] mb-4">Profile</h2>
+              <div className="bg-app-surface border border-border-strong rounded-xl p-6 shadow-xs">
+                <h2 className="text-sm font-semibold text-text-primary mb-4">Profile</h2>
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 rounded-full bg-[#22211D] border border-white/[0.08] flex items-center justify-center text-[#8B7AFF] text-lg font-semibold">
+                  <div className="w-16 h-16 rounded-full bg-app-elevated border border-border-strong flex items-center justify-center text-[#8B7AFF] text-lg font-semibold">
                     {user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-[#F0EDE8]">{user?.name ?? 'User'}</p>
-                    <p className="text-xs text-[#A09D98]">{user?.email ?? ''}</p>
+                    <p className="text-sm font-medium text-text-primary">{user?.name ?? 'User'}</p>
+                    <p className="text-xs text-text-secondary">{user?.email ?? ''}</p>
                   </div>
                 </div>
                 <form onSubmit={handleProfileSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="text-sm font-medium text-[#A09D98]">Name</Label>
+                    <Label htmlFor="name" className="text-sm font-medium text-text-secondary">Name</Label>
                     <Input
                       id="name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Your name"
-                      className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
+                      className="bg-app-recessed border border-border-default text-text-primary placeholder:text-text-disabled focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium text-[#A09D98]">Email</Label>
+                    <Label htmlFor="email" className="text-sm font-medium text-text-secondary">Email</Label>
                     <Input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
-                      className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
+                      className="bg-app-recessed border border-border-default text-text-primary placeholder:text-text-disabled focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="role" className="text-sm font-medium text-[#A09D98]">Role</Label>
+                    <Label htmlFor="role" className="text-sm font-medium text-text-secondary">Role</Label>
                     <Input
                       id="role"
                       value={user?.role ?? ''}
                       readOnly
-                      className="bg-[#131210] border border-white/[0.04] text-[#5C5A56] cursor-not-allowed"
+                      className="bg-app-recessed border border-border-subtle text-text-disabled cursor-not-allowed"
                     />
                   </div>
 
@@ -305,7 +345,7 @@ export default function SettingsPage() {
                   <button
                     type="submit"
                     disabled={profileMutation.isPending}
-                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {profileMutation.isPending ? 'Saving...' : 'Save changes'}
                   </button>
@@ -313,35 +353,40 @@ export default function SettingsPage() {
               </div>
             </motion.div>
 
+            {/* Appearance Section */}
+            <motion.div variants={itemVariants}>
+              <AppearanceSection />
+            </motion.div>
+
             {/* Change Password Section */}
             <motion.div variants={itemVariants}>
-              <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-6 shadow-xs">
-                <h2 className="text-sm font-semibold text-[#F0EDE8] mb-4">Change Password</h2>
+              <div className="bg-app-surface border border-border-strong rounded-xl p-6 shadow-xs">
+                <h2 className="text-sm font-semibold text-text-primary mb-4">Change Password</h2>
                 <form onSubmit={handlePasswordSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="current-password" className="text-sm font-medium text-[#A09D98]">Current Password</Label>
+                    <Label htmlFor="current-password" className="text-sm font-medium text-text-secondary">Current Password</Label>
                     <Input
                       id="current-password"
                       type="password"
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       required
-                      className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
+                      className="bg-app-recessed border border-border-default text-text-primary focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="new-password" className="text-sm font-medium text-[#A09D98]">New Password</Label>
+                    <Label htmlFor="new-password" className="text-sm font-medium text-text-secondary">New Password</Label>
                     <Input
                       id="new-password"
                       type="password"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       required
-                      className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
+                      className="bg-app-recessed border border-border-default text-text-primary focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="confirm-password" className="text-sm font-medium text-[#A09D98]">Confirm Password</Label>
+                    <Label htmlFor="confirm-password" className="text-sm font-medium text-text-secondary">Confirm Password</Label>
                     <Input
                       id="confirm-password"
                       type="password"
@@ -351,7 +396,7 @@ export default function SettingsPage() {
                         if (confirmError) setConfirmError('')
                       }}
                       required
-                      className="bg-[#131210] border border-white/[0.06] text-[#F0EDE8] focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
+                      className="bg-app-recessed border border-border-default text-text-primary focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
                     />
                     {confirmError && (
                       <p className="text-[#D4766A] text-sm">{confirmError}</p>
@@ -367,7 +412,7 @@ export default function SettingsPage() {
                   <button
                     type="submit"
                     disabled={passwordMutation.isPending}
-                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {passwordMutation.isPending ? 'Updating...' : 'Update password'}
                   </button>
@@ -379,13 +424,13 @@ export default function SettingsPage() {
 
         {activeTab === 'notifications' && (
           <motion.div variants={itemVariants}>
-            <div className="bg-[#1A1916] border border-white/[0.08] rounded-xl p-6 shadow-xs">
-              <h2 className="text-sm font-semibold text-[#F0EDE8] mb-4">Notifications</h2>
+            <div className="bg-app-surface border border-border-strong rounded-xl p-6 shadow-xs">
+              <h2 className="text-sm font-semibold text-text-primary mb-4">Notifications</h2>
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium text-[#F0EDE8]">Email Notifications</p>
-                  <p className="text-xs text-[#A09D98] mt-0.5">Get notified when your document analysis is complete</p>
-                  <p className="text-xs text-[#A09D98] mt-1">We&apos;ll send you an email when AI finishes analyzing your uploaded documents.</p>
+                  <p className="text-sm font-medium text-text-primary">Email Notifications</p>
+                  <p className="text-xs text-text-secondary mt-0.5">Get notified when your document analysis is complete</p>
+                  <p className="text-xs text-text-secondary mt-1">We&apos;ll send you an email when AI finishes analyzing your uploaded documents.</p>
                 </div>
                 <Switch
                   checked={notifPrefs?.email_notifications ?? false}

@@ -178,10 +178,10 @@ function WholesaleForm() {
   }
 
   return (
-    <motion.div {...shakeProps} className="relative rounded-xl border border-white/[0.06] bg-[#1A1916] shadow-xs p-6">
+    <motion.div {...shakeProps} className="relative rounded-xl border border-border-default bg-app-surface shadow-xs p-6">
       {createDeal.isPending && (
         <div className="absolute inset-0 rounded-xl bg-[#1A1916]/80 z-10 flex items-center justify-center">
-          <div className="h-full w-full animate-pulse rounded-xl bg-white/[0.04]" />
+          <div className="h-full w-full animate-pulse rounded-xl bg-layer-2" />
         </div>
       )}
 
@@ -189,22 +189,22 @@ function WholesaleForm() {
         {/* Property Info */}
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="address" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">Property Address</Label>
+            <Label htmlFor="address" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">Property Address</Label>
             <Input
               id="address"
               placeholder="123 Main St, City, State"
-              className={`bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] ${errors.address ? 'border-[#D4766A]' : ''}`}
+              className={`bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.address ? 'border-[#D4766A]' : ''}`}
               {...register('address')}
             />
             {errors.address && <p className="text-[#D4766A] text-xs">{errors.address.message}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="zip_code" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">Zip Code</Label>
+            <Label htmlFor="zip_code" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">Zip Code</Label>
             <Input
               id="zip_code"
               placeholder="00000"
               maxLength={5}
-              className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] w-32 ${errors.zip_code ? 'border-[#D4766A]' : ''}`}
+              className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled w-32 ${errors.zip_code ? 'border-[#D4766A]' : ''}`}
               {...register('zip_code')}
             />
             {errors.zip_code && <p className="text-[#D4766A] text-xs">{errors.zip_code.message}</p>}
@@ -214,14 +214,14 @@ function WholesaleForm() {
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           {WHOLESALE_FIELDS.map((field) => (
             <div key={field.name} className="space-y-1.5">
-              <Label htmlFor={field.name} className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+              <Label htmlFor={field.name} className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
                 <ConceptTooltip term={field.label} definition={field.tooltip}>
                   {field.label}
                 </ConceptTooltip>
               </Label>
               <div className="relative">
                 {field.adornment === 'dollar' && (
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">
                     $
                   </span>
                 )}
@@ -231,13 +231,13 @@ function WholesaleForm() {
                   step="any"
                   min={0}
                   placeholder="0"
-                  className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] ${
+                  className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${
                     field.adornment === 'dollar' ? 'pl-7' : 'pr-8'
                   } ${errors[field.name] ? 'border-[#D4766A]' : ''}`}
                   {...register(field.name, { valueAsNumber: true })}
                 />
                 {field.adornment === 'percent' && (
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">
                     %
                   </span>
                 )}
@@ -253,7 +253,7 @@ function WholesaleForm() {
           <Button
             type="submit"
             disabled={createDeal.isPending}
-            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] hover:opacity-90"
+            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
           >
             {createDeal.isPending ? 'Calculating...' : 'Analyze Deal'}
           </Button>
@@ -302,10 +302,10 @@ function BuyAndHoldForm() {
   }
 
   return (
-    <motion.div {...shakeProps} className="relative rounded-xl border border-white/[0.06] bg-[#1A1916] shadow-xs p-6">
+    <motion.div {...shakeProps} className="relative rounded-xl border border-border-default bg-app-surface shadow-xs p-6">
       {createDeal.isPending && (
         <div className="absolute inset-0 rounded-xl bg-[#1A1916]/80 z-10 flex items-center justify-center">
-          <div className="h-full w-full animate-pulse rounded-xl bg-white/[0.04]" />
+          <div className="h-full w-full animate-pulse rounded-xl bg-layer-2" />
         </div>
       )}
 
@@ -313,22 +313,22 @@ function BuyAndHoldForm() {
         {/* Property Info */}
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="bh-address" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">Property Address</Label>
+            <Label htmlFor="bh-address" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">Property Address</Label>
             <Input
               id="bh-address"
               placeholder="123 Main St, City, State"
-              className={`bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] ${errors.address ? 'border-[#D4766A]' : ''}`}
+              className={`bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.address ? 'border-[#D4766A]' : ''}`}
               {...register('address')}
             />
             {errors.address && <p className="text-[#D4766A] text-xs">{errors.address.message}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="bh-zip" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">Zip Code</Label>
+            <Label htmlFor="bh-zip" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">Zip Code</Label>
             <Input
               id="bh-zip"
               placeholder="00000"
               maxLength={5}
-              className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] w-32 ${errors.zip_code ? 'border-[#D4766A]' : ''}`}
+              className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled w-32 ${errors.zip_code ? 'border-[#D4766A]' : ''}`}
               {...register('zip_code')}
             />
             {errors.zip_code && <p className="text-[#D4766A] text-xs">{errors.zip_code.message}</p>}
@@ -338,14 +338,14 @@ function BuyAndHoldForm() {
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           {BUY_AND_HOLD_FIELDS.map((field) => (
             <div key={field.name} className="space-y-1.5">
-              <Label htmlFor={field.name} className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+              <Label htmlFor={field.name} className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
                 <ConceptTooltip term={field.label} definition={field.tooltip}>
                   {field.label}
                 </ConceptTooltip>
               </Label>
               <div className="relative">
                 {field.adornment === 'dollar' && (
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">
                     $
                   </span>
                 )}
@@ -355,13 +355,13 @@ function BuyAndHoldForm() {
                   step="any"
                   min={0}
                   placeholder="0"
-                  className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] ${
+                  className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${
                     field.adornment === 'dollar' ? 'pl-7' : 'pr-8'
                   } ${errors[field.name] ? 'border-[#D4766A]' : ''}`}
                   {...register(field.name, { valueAsNumber: true })}
                 />
                 {field.adornment === 'percent' && (
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">
                     %
                   </span>
                 )}
@@ -375,7 +375,7 @@ function BuyAndHoldForm() {
 
         {/* Loan Term Toggle — full width */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+          <Label className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
             <ConceptTooltip
               term="Loan Term"
               definition="The length of the mortgage. 30-year has lower payments; 15-year builds equity faster."
@@ -393,8 +393,8 @@ function BuyAndHoldForm() {
                   variant={field.value === 15 ? 'default' : 'outline'}
                   className={`flex-1 tabular-nums ${
                     field.value === 15
-                      ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] border-transparent'
-                      : 'border-white/[0.06] text-[#A09D98] hover:text-[#F0EDE8] hover:border-white/[0.08]'
+                      ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent border-transparent'
+                      : 'border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong'
                   }`}
                   onClick={() => field.onChange(15)}
                 >
@@ -405,8 +405,8 @@ function BuyAndHoldForm() {
                   variant={field.value === 30 ? 'default' : 'outline'}
                   className={`flex-1 tabular-nums ${
                     field.value === 30
-                      ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] border-transparent'
-                      : 'border-white/[0.06] text-[#A09D98] hover:text-[#F0EDE8] hover:border-white/[0.08]'
+                      ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent border-transparent'
+                      : 'border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong'
                   }`}
                   onClick={() => field.onChange(30)}
                 >
@@ -424,7 +424,7 @@ function BuyAndHoldForm() {
           <Button
             type="submit"
             disabled={createDeal.isPending}
-            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] hover:opacity-90"
+            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
           >
             {createDeal.isPending ? 'Calculating...' : 'Analyze Deal'}
           </Button>
@@ -510,10 +510,10 @@ function FlipForm() {
   }
 
   return (
-    <motion.div {...shakeProps} className="relative rounded-xl border border-white/[0.06] bg-[#1A1916] shadow-xs p-6">
+    <motion.div {...shakeProps} className="relative rounded-xl border border-border-default bg-app-surface shadow-xs p-6">
       {createDeal.isPending && (
         <div className="absolute inset-0 rounded-xl bg-[#1A1916]/80 z-10 flex items-center justify-center">
-          <div className="h-full w-full animate-pulse rounded-xl bg-white/[0.04]" />
+          <div className="h-full w-full animate-pulse rounded-xl bg-layer-2" />
         </div>
       )}
 
@@ -521,22 +521,22 @@ function FlipForm() {
         {/* Property Info */}
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="flip-address" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">Property Address</Label>
+            <Label htmlFor="flip-address" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">Property Address</Label>
             <Input
               id="flip-address"
               placeholder="123 Main St, City, State"
-              className={`bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] ${errors.address ? 'border-[#D4766A]' : ''}`}
+              className={`bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.address ? 'border-[#D4766A]' : ''}`}
               {...register('address')}
             />
             {errors.address && <p className="text-[#D4766A] text-xs">{errors.address.message}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="flip-zip" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">Zip Code</Label>
+            <Label htmlFor="flip-zip" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">Zip Code</Label>
             <Input
               id="flip-zip"
               placeholder="00000"
               maxLength={5}
-              className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] w-32 ${errors.zip_code ? 'border-[#D4766A]' : ''}`}
+              className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled w-32 ${errors.zip_code ? 'border-[#D4766A]' : ''}`}
               {...register('zip_code')}
             />
             {errors.zip_code && <p className="text-[#D4766A] text-xs">{errors.zip_code.message}</p>}
@@ -546,14 +546,14 @@ function FlipForm() {
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           {FLIP_FIELDS.map((field) => (
             <div key={field.name} className="space-y-1.5">
-              <Label htmlFor={field.name} className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+              <Label htmlFor={field.name} className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
                 <ConceptTooltip term={field.label} definition={field.tooltip}>
                   {field.label}
                 </ConceptTooltip>
               </Label>
               <div className="relative">
                 {field.adornment === 'dollar' && (
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">
                     $
                   </span>
                 )}
@@ -562,13 +562,13 @@ function FlipForm() {
                   type="number"
                   step="any"
                   placeholder="0"
-                  className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] ${
+                  className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${
                     field.adornment === 'dollar' ? 'pl-7' : field.adornment === 'percent' ? 'pr-8' : ''
                   } ${errors[field.name] ? 'border-[#D4766A]' : ''}`}
                   {...register(field.name, { valueAsNumber: true })}
                 />
                 {field.adornment === 'percent' && (
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">
                     %
                   </span>
                 )}
@@ -584,7 +584,7 @@ function FlipForm() {
           <Button
             type="submit"
             disabled={createDeal.isPending}
-            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] hover:opacity-90"
+            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
           >
             {createDeal.isPending ? 'Calculating...' : 'Analyze Deal'}
           </Button>
@@ -684,10 +684,10 @@ function BRRRRForm() {
   }
 
   return (
-    <motion.div {...shakeProps} className="relative rounded-xl border border-white/[0.06] bg-[#1A1916] shadow-xs p-6">
+    <motion.div {...shakeProps} className="relative rounded-xl border border-border-default bg-app-surface shadow-xs p-6">
       {createDeal.isPending && (
         <div className="absolute inset-0 rounded-xl bg-[#1A1916]/80 z-10 flex items-center justify-center">
-          <div className="h-full w-full animate-pulse rounded-xl bg-white/[0.04]" />
+          <div className="h-full w-full animate-pulse rounded-xl bg-layer-2" />
         </div>
       )}
 
@@ -695,22 +695,22 @@ function BRRRRForm() {
         {/* Property Info */}
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="brrrr-address" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">Property Address</Label>
+            <Label htmlFor="brrrr-address" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">Property Address</Label>
             <Input
               id="brrrr-address"
               placeholder="123 Main St, City, State"
-              className={`bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] ${errors.address ? 'border-[#D4766A]' : ''}`}
+              className={`bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.address ? 'border-[#D4766A]' : ''}`}
               {...register('address')}
             />
             {errors.address && <p className="text-[#D4766A] text-xs">{errors.address.message}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="brrrr-zip" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">Zip Code</Label>
+            <Label htmlFor="brrrr-zip" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">Zip Code</Label>
             <Input
               id="brrrr-zip"
               placeholder="00000"
               maxLength={5}
-              className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] w-32 ${errors.zip_code ? 'border-[#D4766A]' : ''}`}
+              className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled w-32 ${errors.zip_code ? 'border-[#D4766A]' : ''}`}
               {...register('zip_code')}
             />
             {errors.zip_code && <p className="text-[#D4766A] text-xs">{errors.zip_code.message}</p>}
@@ -720,14 +720,14 @@ function BRRRRForm() {
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           {BRRRR_FIELDS.map((field) => (
             <div key={field.name} className="space-y-1.5">
-              <Label htmlFor={field.name} className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+              <Label htmlFor={field.name} className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
                 <ConceptTooltip term={field.label} definition={field.tooltip}>
                   {field.label}
                 </ConceptTooltip>
               </Label>
               <div className="relative">
                 {field.adornment === 'dollar' && (
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">
                     $
                   </span>
                 )}
@@ -736,13 +736,13 @@ function BRRRRForm() {
                   type="number"
                   step="any"
                   placeholder="0"
-                  className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] ${
+                  className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${
                     field.adornment === 'dollar' ? 'pl-7' : field.adornment === 'percent' ? 'pr-8' : ''
                   } ${errors[field.name] ? 'border-[#D4766A]' : ''}`}
                   {...register(field.name, { valueAsNumber: true })}
                 />
                 {field.adornment === 'percent' && (
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">
                     %
                   </span>
                 )}
@@ -756,7 +756,7 @@ function BRRRRForm() {
 
         {/* Loan Term Toggle — full width */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+          <Label className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
             <ConceptTooltip
               term="Loan Term"
               definition="30-year maximizes cash flow, 15-year builds equity faster."
@@ -774,8 +774,8 @@ function BRRRRForm() {
                   variant={field.value === 15 ? 'default' : 'outline'}
                   className={`flex-1 tabular-nums ${
                     field.value === 15
-                      ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] border-transparent'
-                      : 'border-white/[0.06] text-[#A09D98] hover:text-[#F0EDE8] hover:border-white/[0.08]'
+                      ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent border-transparent'
+                      : 'border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong'
                   }`}
                   onClick={() => field.onChange(15)}
                 >
@@ -786,8 +786,8 @@ function BRRRRForm() {
                   variant={field.value === 30 ? 'default' : 'outline'}
                   className={`flex-1 tabular-nums ${
                     field.value === 30
-                      ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] border-transparent'
-                      : 'border-white/[0.06] text-[#A09D98] hover:text-[#F0EDE8] hover:border-white/[0.08]'
+                      ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent border-transparent'
+                      : 'border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong'
                   }`}
                   onClick={() => field.onChange(30)}
                 >
@@ -805,7 +805,7 @@ function BRRRRForm() {
           <Button
             type="submit"
             disabled={createDeal.isPending}
-            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] hover:opacity-90"
+            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
           >
             {createDeal.isPending ? 'Calculating...' : 'Analyze Deal'}
           </Button>
@@ -873,10 +873,10 @@ function CreativeFinanceForm() {
   }
 
   return (
-    <motion.div {...shakeProps} className="relative rounded-xl border border-white/[0.06] bg-[#1A1916] shadow-xs p-6">
+    <motion.div {...shakeProps} className="relative rounded-xl border border-border-default bg-app-surface shadow-xs p-6">
       {createDeal.isPending && (
         <div className="absolute inset-0 rounded-xl bg-[#1A1916]/80 z-10 flex items-center justify-center">
-          <div className="h-full w-full animate-pulse rounded-xl bg-white/[0.04]" />
+          <div className="h-full w-full animate-pulse rounded-xl bg-layer-2" />
         </div>
       )}
 
@@ -884,22 +884,22 @@ function CreativeFinanceForm() {
         {/* Property Info */}
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="cf-address" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">Property Address</Label>
+            <Label htmlFor="cf-address" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">Property Address</Label>
             <Input
               id="cf-address"
               placeholder="123 Main St, City, State"
-              className={`bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] ${errors.address ? 'border-[#D4766A]' : ''}`}
+              className={`bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.address ? 'border-[#D4766A]' : ''}`}
               {...register('address')}
             />
             {errors.address && <p className="text-[#D4766A] text-xs">{errors.address.message}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="cf-zip" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">Zip Code</Label>
+            <Label htmlFor="cf-zip" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">Zip Code</Label>
             <Input
               id="cf-zip"
               placeholder="00000"
               maxLength={5}
-              className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] w-32 ${errors.zip_code ? 'border-[#D4766A]' : ''}`}
+              className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled w-32 ${errors.zip_code ? 'border-[#D4766A]' : ''}`}
               {...register('zip_code')}
             />
             {errors.zip_code && <p className="text-[#D4766A] text-xs">{errors.zip_code.message}</p>}
@@ -908,7 +908,7 @@ function CreativeFinanceForm() {
 
         {/* Finance Type Toggle — full width, rendered first */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+          <Label className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
             <ConceptTooltip
               term="Finance Type"
               definition="Subject-To: you take over the seller's existing mortgage. Seller Finance: seller acts as the bank with new negotiated terms."
@@ -922,8 +922,8 @@ function CreativeFinanceForm() {
               variant={financeType === 'subject_to' ? 'default' : 'outline'}
               className={`flex-1 tabular-nums ${
                 financeType === 'subject_to'
-                  ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] border-transparent'
-                  : 'border-white/[0.06] text-[#A09D98] hover:text-[#F0EDE8] hover:border-white/[0.08]'
+                  ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent border-transparent'
+                  : 'border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong'
               }`}
               onClick={() => handleFinanceTypeChange('subject_to')}
             >
@@ -934,8 +934,8 @@ function CreativeFinanceForm() {
               variant={financeType === 'seller_finance' ? 'default' : 'outline'}
               className={`flex-1 tabular-nums ${
                 financeType === 'seller_finance'
-                  ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] border-transparent'
-                  : 'border-white/[0.06] text-[#A09D98] hover:text-[#F0EDE8] hover:border-white/[0.08]'
+                  ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent border-transparent'
+                  : 'border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong'
               }`}
               onClick={() => handleFinanceTypeChange('seller_finance')}
             >
@@ -948,7 +948,7 @@ function CreativeFinanceForm() {
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-4">
           {/* Existing Loan Balance */}
           <div className="space-y-1.5">
-            <Label htmlFor="existing_loan_balance" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+            <Label htmlFor="existing_loan_balance" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
               <ConceptTooltip
                 term="Existing Loan Balance"
                 definition="Current outstanding mortgage balance the seller owes. This is the amount you're taking over or the basis for seller financing."
@@ -957,14 +957,14 @@ function CreativeFinanceForm() {
               </ConceptTooltip>
             </Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">$</span>
               <Input
                 id="existing_loan_balance"
                 type="number"
                 step="any"
                 min={0}
                 placeholder="0"
-                className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] pl-7 ${errors.existing_loan_balance ? 'border-[#D4766A]' : ''}`}
+                className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.existing_loan_balance ? 'border-[#D4766A]' : ''}`}
                 {...register('existing_loan_balance', { valueAsNumber: true })}
               />
             </div>
@@ -975,7 +975,7 @@ function CreativeFinanceForm() {
 
           {/* Monthly Rent Estimate */}
           <div className="space-y-1.5">
-            <Label htmlFor="monthly_rent_estimate" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+            <Label htmlFor="monthly_rent_estimate" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
               <ConceptTooltip
                 term="Monthly Rent Estimate"
                 definition="Expected gross monthly rent at market rate for this property."
@@ -984,14 +984,14 @@ function CreativeFinanceForm() {
               </ConceptTooltip>
             </Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">$</span>
               <Input
                 id="monthly_rent_estimate"
                 type="number"
                 step="any"
                 min={0}
                 placeholder="0"
-                className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] pl-7 ${errors.monthly_rent_estimate ? 'border-[#D4766A]' : ''}`}
+                className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.monthly_rent_estimate ? 'border-[#D4766A]' : ''}`}
                 {...register('monthly_rent_estimate', { valueAsNumber: true })}
               />
             </div>
@@ -1002,7 +1002,7 @@ function CreativeFinanceForm() {
 
           {/* Additional Monthly Expenses */}
           <div className="space-y-1.5">
-            <Label htmlFor="monthly_expenses" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+            <Label htmlFor="monthly_expenses" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
               <ConceptTooltip
                 term="Additional Monthly Expenses"
                 definition="Maintenance, property management, and other costs BEYOND the mortgage payment."
@@ -1011,14 +1011,14 @@ function CreativeFinanceForm() {
               </ConceptTooltip>
             </Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">$</span>
               <Input
                 id="monthly_expenses"
                 type="number"
                 step="any"
                 min={0}
                 placeholder="0"
-                className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] pl-7 ${errors.monthly_expenses ? 'border-[#D4766A]' : ''}`}
+                className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.monthly_expenses ? 'border-[#D4766A]' : ''}`}
                 {...register('monthly_expenses', { valueAsNumber: true })}
               />
             </div>
@@ -1029,7 +1029,7 @@ function CreativeFinanceForm() {
 
           {/* ARV */}
           <div className="space-y-1.5">
-            <Label htmlFor="arv" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+            <Label htmlFor="arv" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
               <ConceptTooltip
                 term="ARV"
                 definition="Current or post-repair market value. Used to calculate your equity position from day one."
@@ -1038,14 +1038,14 @@ function CreativeFinanceForm() {
               </ConceptTooltip>
             </Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">$</span>
               <Input
                 id="arv"
                 type="number"
                 step="any"
                 min={0}
                 placeholder="0"
-                className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] pl-7 ${errors.arv ? 'border-[#D4766A]' : ''}`}
+                className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.arv ? 'border-[#D4766A]' : ''}`}
                 {...register('arv', { valueAsNumber: true })}
               />
             </div>
@@ -1061,7 +1061,7 @@ function CreativeFinanceForm() {
             <>
               {/* Subject-To: Existing Interest Rate */}
               <div className="space-y-1.5">
-                <Label htmlFor="existing_interest_rate" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+                <Label htmlFor="existing_interest_rate" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
                   <ConceptTooltip
                     term="Existing Interest Rate"
                     definition="Seller's current mortgage rate you're taking over. This is the key advantage of subject-to — locking in their low rate."
@@ -1076,10 +1076,10 @@ function CreativeFinanceForm() {
                     step="any"
                     min={0}
                     placeholder="0"
-                    className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] pr-8 ${errors.existing_interest_rate ? 'border-[#D4766A]' : ''}`}
+                    className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pr-8 ${errors.existing_interest_rate ? 'border-[#D4766A]' : ''}`}
                     {...register('existing_interest_rate', { valueAsNumber: true })}
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">%</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">%</span>
                 </div>
                 {errors.existing_interest_rate && (
                   <p className="text-[#D4766A] text-xs">{errors.existing_interest_rate.message}</p>
@@ -1088,7 +1088,7 @@ function CreativeFinanceForm() {
 
               {/* Subject-To: Existing Monthly PITI */}
               <div className="space-y-1.5">
-                <Label htmlFor="monthly_piti" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+                <Label htmlFor="monthly_piti" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
                   <ConceptTooltip
                     term="Existing Monthly PITI"
                     definition="Seller's current monthly mortgage payment including principal, interest, taxes, and insurance. This becomes YOUR payment."
@@ -1097,14 +1097,14 @@ function CreativeFinanceForm() {
                   </ConceptTooltip>
                 </Label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">$</span>
                   <Input
                     id="monthly_piti"
                     type="number"
                     step="any"
                     min={0}
                     placeholder="0"
-                    className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] pl-7 ${errors.monthly_piti ? 'border-[#D4766A]' : ''}`}
+                    className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.monthly_piti ? 'border-[#D4766A]' : ''}`}
                     {...register('monthly_piti', { valueAsNumber: true })}
                   />
                 </div>
@@ -1117,7 +1117,7 @@ function CreativeFinanceForm() {
             <>
               {/* Seller Finance: Negotiated Rate */}
               <div className="space-y-1.5">
-                <Label htmlFor="new_rate" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+                <Label htmlFor="new_rate" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
                   <ConceptTooltip
                     term="Negotiated Rate"
                     definition="The interest rate you negotiate with the seller. Often below market rate — this is the main benefit of seller financing."
@@ -1132,10 +1132,10 @@ function CreativeFinanceForm() {
                     step="any"
                     min={0}
                     placeholder="0"
-                    className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] pr-8 ${errors.new_rate ? 'border-[#D4766A]' : ''}`}
+                    className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pr-8 ${errors.new_rate ? 'border-[#D4766A]' : ''}`}
                     {...register('new_rate', { valueAsNumber: true })}
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">%</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">%</span>
                 </div>
                 {errors.new_rate && (
                   <p className="text-[#D4766A] text-xs">{errors.new_rate.message}</p>
@@ -1144,7 +1144,7 @@ function CreativeFinanceForm() {
 
               {/* Seller Finance: Loan Term */}
               <div className="space-y-1.5">
-                <Label htmlFor="new_term_years" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+                <Label htmlFor="new_term_years" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
                   <ConceptTooltip
                     term="Loan Term (Years)"
                     definition="Length of the seller-financed loan. Balloon payments are common — e.g. 30-year amortization with 5-year balloon."
@@ -1159,7 +1159,7 @@ function CreativeFinanceForm() {
                     step="1"
                     min={0}
                     placeholder="30"
-                    className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] ${errors.new_term_years ? 'border-[#D4766A]' : ''}`}
+                    className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.new_term_years ? 'border-[#D4766A]' : ''}`}
                     {...register('new_term_years', { valueAsNumber: true })}
                   />
                 </div>
@@ -1170,7 +1170,7 @@ function CreativeFinanceForm() {
 
               {/* Seller Finance: Estimated Monthly PITI */}
               <div className="space-y-1.5">
-                <Label htmlFor="monthly_piti" className="text-xs font-medium text-[#A09D98] uppercase tracking-[0.08em]">
+                <Label htmlFor="monthly_piti" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
                   <ConceptTooltip
                     term="Estimated Monthly PITI"
                     definition="Estimated monthly payment including taxes and insurance. Leave at 0 to let the calculator derive from rate and term."
@@ -1179,14 +1179,14 @@ function CreativeFinanceForm() {
                   </ConceptTooltip>
                 </Label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5C5A56] text-sm tabular-nums">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">$</span>
                   <Input
                     id="monthly_piti"
                     type="number"
                     step="any"
                     min={0}
                     placeholder="0"
-                    className={`tabular-nums bg-[#131210] border-white/[0.06] text-[#F0EDE8] placeholder:text-[#5C5A56] pl-7 ${errors.monthly_piti ? 'border-[#D4766A]' : ''}`}
+                    className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.monthly_piti ? 'border-[#D4766A]' : ''}`}
                     {...register('monthly_piti', { valueAsNumber: true })}
                   />
                 </div>
@@ -1202,7 +1202,7 @@ function CreativeFinanceForm() {
           <Button
             type="submit"
             disabled={createDeal.isPending}
-            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-[#0C0B0A] hover:opacity-90"
+            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
           >
             {createDeal.isPending ? 'Calculating...' : 'Analyze Deal'}
           </Button>
@@ -1228,7 +1228,7 @@ export default function AnalyzerFormPage() {
       <AppShell title="Analyzer">
         <div className="flex items-center justify-center h-64">
           <div className="text-center space-y-3">
-            <p className="text-[#7A7872] text-sm">Strategy not found.</p>
+            <p className="text-text-secondary text-sm">Strategy not found.</p>
             <Link to="/analyze" className="text-[#8B7AFF] text-sm hover:underline">
               Back to Analyzer
             </Link>
@@ -1244,7 +1244,7 @@ export default function AnalyzerFormPage() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center space-y-4">
             <StrategyBadge strategy={strategy as Strategy} />
-            <p className="text-[#A09D98] text-sm">
+            <p className="text-text-secondary text-sm">
               This strategy&apos;s calculator is coming soon.
             </p>
             <Link
@@ -1267,18 +1267,18 @@ export default function AnalyzerFormPage() {
         <nav aria-label="Breadcrumb" className="mb-4">
           <ol className="flex items-center gap-1.5 text-xs">
             <li>
-              <Link to="/dashboard" className="text-[#7A7872] hover:text-[#8B7AFF] transition-colors">
+              <Link to="/dashboard" className="text-text-muted hover:text-[#8B7AFF] transition-colors">
                 Dashboard
               </Link>
             </li>
-            <li aria-hidden="true"><ChevronRight size={12} className="text-[#5C5A56]" /></li>
+            <li aria-hidden="true"><ChevronRight size={12} className="text-text-disabled" /></li>
             <li>
-              <Link to="/analyze" className="text-[#7A7872] hover:text-[#8B7AFF] transition-colors">
+              <Link to="/analyze" className="text-text-muted hover:text-[#8B7AFF] transition-colors">
                 Analyzer
               </Link>
             </li>
-            <li aria-hidden="true"><ChevronRight size={12} className="text-[#5C5A56]" /></li>
-            <li aria-current="page" className="text-[#F0EDE8] font-medium">
+            <li aria-hidden="true"><ChevronRight size={12} className="text-text-disabled" /></li>
+            <li aria-current="page" className="text-text-primary font-medium">
               {STRATEGY_DISPLAY_NAMES[strategy as string] ?? 'Unknown'}
             </li>
           </ol>
@@ -1286,7 +1286,7 @@ export default function AnalyzerFormPage() {
 
         <div className="mb-6 flex items-center gap-3">
           <StrategyBadge strategy={strategy as Strategy} />
-          <h2 className="text-lg font-semibold text-[#F0EDE8]">
+          <h2 className="text-lg font-semibold text-text-primary">
             {STRATEGY_LABELS[strategy as string] ?? 'Analyzer'}
           </h2>
         </div>
