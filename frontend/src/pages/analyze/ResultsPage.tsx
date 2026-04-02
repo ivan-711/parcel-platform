@@ -270,9 +270,9 @@ export default function ResultsPage() {
   const handleDownloadReport = () => {
     setGeneratingPDF(true)
     // Defer to next tick so the button shows loading state
-    setTimeout(() => {
+    setTimeout(async () => {
       try {
-        generateDealReport(deal)
+        await generateDealReport(deal)
         toast.success('Report downloaded')
       } catch {
         toast.error('Failed to generate report')

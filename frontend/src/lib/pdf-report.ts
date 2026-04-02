@@ -11,7 +11,6 @@
  * - Print-friendly: minimal background fills, high contrast ratios
  */
 
-import jsPDF from 'jspdf'
 import { getStrategyKPIs } from '@/lib/strategy-kpis'
 import type { KPIDefinition } from '@/lib/strategy-kpis'
 import type { Strategy, DealResponse } from '@/types'
@@ -155,7 +154,7 @@ const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2
 const HEADER_HEIGHT = 22
 const FOOTER_HEIGHT = 18
 
-function drawPageHeader(doc: jsPDF): void {
+function drawPageHeader(doc: any): void {
   // Logo icon — indigo rounded square
   doc.setFillColor(...INDIGO_600)
   doc.roundedRect(MARGIN, 6, 8, 8, 1.5, 1.5, 'F')
@@ -182,7 +181,7 @@ function drawPageHeader(doc: jsPDF): void {
   doc.line(MARGIN, HEADER_HEIGHT, PAGE_WIDTH - MARGIN, HEADER_HEIGHT)
 }
 
-function drawPageFooter(doc: jsPDF, pageNum: number, totalPages: number, dateStr: string): void {
+function drawPageFooter(doc: any, pageNum: number, totalPages: number, dateStr: string): void {
   const y = PAGE_HEIGHT - FOOTER_HEIGHT
   doc.setDrawColor(...GRAY_300)
   doc.setLineWidth(0.3)
@@ -223,7 +222,7 @@ interface TableRow {
   isCashFlow?: boolean
 }
 
-function drawTable(doc: jsPDF, title: string, rows: TableRow[], startY: number): number {
+function drawTable(doc: any, title: string, rows: TableRow[], startY: number): number {
   let y = startY
 
   // Check if we need a new page just for the title
@@ -296,7 +295,7 @@ function drawTable(doc: jsPDF, title: string, rows: TableRow[], startY: number):
 // ---------------------------------------------------------------------------
 
 function drawKPIGrid(
-  doc: jsPDF,
+  doc: any,
   kpis: KPIDefinition[],
   outputs: Record<string, number | string>,
   startY: number,
@@ -342,7 +341,7 @@ function drawKPIGrid(
 // Risk score display
 // ---------------------------------------------------------------------------
 
-function drawRiskScore(doc: jsPDF, score: number, startY: number): number {
+function drawRiskScore(doc: any, score: number, startY: number): number {
   let y = startY
 
   if (y + 24 > maxContentY()) {
@@ -382,7 +381,7 @@ function drawRiskScore(doc: jsPDF, score: number, startY: number): number {
 // Strategy badge
 // ---------------------------------------------------------------------------
 
-function drawStrategyBadge(doc: jsPDF, strategy: Strategy, x: number, y: number): void {
+function drawStrategyBadge(doc: any, strategy: Strategy, x: number, y: number): void {
   const label = formatStrategyLabel(strategy)
   const colors = STRATEGY_COLORS[strategy]
 
@@ -412,7 +411,8 @@ function drawStrategyBadge(doc: jsPDF, strategy: Strategy, x: number, y: number)
  *
  * @param deal - The full DealResponse object from the API
  */
-export function generateDealReport(deal: DealResponse): void {
+export async function generateDealReport(deal: DealResponse): Promise<void> {
+  const { default: jsPDF } = await import('jspdf')
   const doc = new jsPDF({ unit: 'mm', format: 'a4' })
   const dateStr = new Date().toLocaleDateString('en-US', {
     year: 'numeric',

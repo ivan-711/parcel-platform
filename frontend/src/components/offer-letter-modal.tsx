@@ -14,7 +14,6 @@ import {
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api'
-import jsPDF from 'jspdf'
 import type { Strategy } from '@/types'
 
 /** Strip markdown bold/italic markers from AI-generated text. */
@@ -63,8 +62,9 @@ export function OfferLetterModal({
     }
   }
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     if (!data?.offer_letter) return
+    const { default: jsPDF } = await import('jspdf')
     const doc = new jsPDF()
     const cleanText = cleanLetter(data.offer_letter)
     const lines = doc.splitTextToSize(cleanText, 180)
