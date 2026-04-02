@@ -271,7 +271,7 @@ export default function SettingsPage() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              'shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors',
+              'shrink-0 px-3.5 py-1.5 min-h-[44px] rounded-full text-xs font-medium transition-colors',
               activeTab === tab.id
                 ? 'bg-layer-4 text-text-primary'
                 : 'text-text-secondary hover:text-text-primary hover:bg-layer-2'
@@ -345,7 +345,7 @@ export default function SettingsPage() {
                   <button
                     type="submit"
                     disabled={profileMutation.isPending}
-                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 min-h-[44px] md:min-h-0 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {profileMutation.isPending ? 'Saving...' : 'Save changes'}
                   </button>
@@ -412,7 +412,7 @@ export default function SettingsPage() {
                   <button
                     type="submit"
                     disabled={passwordMutation.isPending}
-                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 min-h-[44px] md:min-h-0 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {passwordMutation.isPending ? 'Updating...' : 'Update password'}
                   </button>

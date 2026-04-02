@@ -254,7 +254,7 @@ export default function ChatPage() {
   return (
     <AppShell title="AI Chat" noPadding>
       <FeatureGate feature="ai_chat">
-      <div className="flex flex-col h-[100dvh] md:h-full bg-app-bg">
+      <div className="flex flex-col h-[calc(100dvh-4rem)] md:h-full bg-app-bg">
         {/* Header */}
         <div className="shrink-0 px-6 py-4 border-b border-border-default bg-app-bg">
           <div className="max-w-3xl mx-auto flex items-center gap-3">

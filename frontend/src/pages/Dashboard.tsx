@@ -302,7 +302,9 @@ export default function Dashboard() {
                 View all &rarr;
               </Link>
             </div>
-            <div className="rounded-xl border border-border-subtle bg-app-surface overflow-x-auto shadow-xs edge-highlight">
+            <div className="relative rounded-xl border border-border-subtle bg-app-surface overflow-x-auto shadow-xs edge-highlight">
+              {/* Mobile scroll hint */}
+              <div className="md:hidden absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-app-surface to-transparent pointer-events-none z-10 rounded-r-xl" />
               <table className="w-full min-w-[600px]">
                 <thead>
                   <tr className="border-b border-border-default">

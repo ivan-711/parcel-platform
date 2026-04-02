@@ -488,7 +488,7 @@ export default function ResultsPage() {
               <button
                 type="button"
                 disabled
-                className="inline-flex items-center gap-2 rounded-lg border border-[#8B7AFF]/20 bg-[#8B7AFF]/10 px-4 py-2 text-sm font-medium text-[#8B7AFF] cursor-default"
+                className="inline-flex items-center gap-2 rounded-lg border border-[#8B7AFF]/20 bg-[#8B7AFF]/10 px-4 py-2 min-h-[44px] md:min-h-0 text-sm font-medium text-[#8B7AFF] cursor-default"
               >
                 <Check size={14} />
                 In Pipeline
@@ -501,7 +501,7 @@ export default function ResultsPage() {
                 disabled={addToPipeline.isPending}
                 aria-haspopup="true"
                 aria-expanded={stageMenuOpen}
-                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] px-4 py-2 text-sm font-medium text-accent-text-on-accent hover:opacity-90 transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] px-4 py-2 min-h-[44px] md:min-h-0 text-sm font-medium text-accent-text-on-accent hover:opacity-90 transition-colors disabled:opacity-50"
               >
                 <PlusCircle size={14} />
                 {addToPipeline.isPending ? 'Adding...' : 'Add to Pipeline'}

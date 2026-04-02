@@ -192,14 +192,14 @@ export default function MyDeals() {
                 </button>
                 <button
                   onClick={exitSelectionMode}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong text-sm font-medium transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 min-h-[44px] md:min-h-0 rounded-lg border border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong text-sm font-medium transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => setBulkDeleteOpen(true)}
                   disabled={selectedIds.size === 0}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4766A] hover:bg-[#D4766A]/80 text-text-primary text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-2 px-4 py-2 min-h-[44px] md:min-h-0 rounded-lg bg-[#D4766A] hover:bg-[#D4766A]/80 text-text-primary text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Delete Selected ({selectedIds.size})
                 </button>
@@ -208,7 +208,7 @@ export default function MyDeals() {
               <>
                 <button
                   onClick={() => setSelectionMode(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong text-sm font-medium transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 min-h-[44px] md:min-h-0 rounded-lg border border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong text-sm font-medium transition-colors"
                 >
                   <CheckSquare size={16} />
                   Select
