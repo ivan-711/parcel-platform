@@ -29,7 +29,7 @@ interface UIMessage {
 }
 
 // ---------------------------------------------------------------------------
-// Markdown component map — dark theme
+// Markdown component map — uses semantic tokens, works in both themes
 // ---------------------------------------------------------------------------
 
 const MD_LIGHT: React.ComponentProps<typeof ReactMarkdown>['components'] = {
@@ -348,19 +348,15 @@ export default function ChatPage() {
             </motion.div>
           ) : (
             <div>
-              <AnimatePresence initial={false}>
-                {messages.map((msg) => (
-                  <motion.div
-                    key={msg.id}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-                    className={cn(
-                      'w-full py-5 px-6 border-b border-border-subtle',
-                      msg.role === 'user' ? 'bg-app-bg' : 'bg-app-recessed'
-                    )}
-                  >
+              {/* Older messages render without AnimatePresence for perf */}
+              {messages.slice(0, -3).map((msg) => (
+                <div
+                  key={msg.id}
+                  className={cn(
+                    'w-full py-5 px-6 border-b border-border-subtle',
+                    msg.role === 'user' ? 'bg-app-bg' : 'bg-app-recessed'
+                  )}
+                >
                     <div className="max-w-3xl mx-auto flex gap-4">
                       {msg.role === 'assistant' && (
                         <div className="w-8 h-8 rounded-lg bg-[#8B7AFF]/10 border border-[#8B7AFF]/15 flex items-center justify-center shrink-0 mt-0.5">
@@ -405,6 +401,93 @@ export default function ChatPage() {
                           )}
 
                           {/* State C: complete — post-message actions */}
+                          {!msg.isStreaming && msg.role === 'assistant' && msg.content && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ delay: 0.2, duration: 0.3 }}
+                              className="flex items-center gap-3 mt-3 pt-2 border-t border-border-subtle"
+                            >
+                              <button
+                                onClick={() => handleCopy(msg.id, msg.content)}
+                                className="flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+                              >
+                                <Copy size={12} />
+                                {copiedId === msg.id ? 'Copied!' : 'Copy'}
+                              </button>
+                              <button
+                                onClick={() => handleRegenerate(msg.id)}
+                                className="flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+                              >
+                                <RotateCcw size={12} />
+                                Regenerate
+                              </button>
+                            </motion.div>
+                          )}
+                        </div>
+                      )}
+
+                      {msg.role === 'user' && (
+                        <div className="w-8 h-8 rounded-full bg-[#8B7AFF] flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="text-xs font-semibold text-text-primary">U</span>
+                        </div>
+                      )}
+                    </div>
+                </div>
+              ))}
+              {/* Recent messages animate in/out */}
+              <AnimatePresence initial={false}>
+                {messages.slice(-3).map((msg) => (
+                  <motion.div
+                    key={msg.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                    className={cn(
+                      'w-full py-5 px-6 border-b border-border-subtle',
+                      msg.role === 'user' ? 'bg-app-bg' : 'bg-app-recessed'
+                    )}
+                  >
+                    <div className="max-w-3xl mx-auto flex gap-4">
+                      {msg.role === 'assistant' && (
+                        <div className="w-8 h-8 rounded-lg bg-[#8B7AFF]/10 border border-[#8B7AFF]/15 flex items-center justify-center shrink-0 mt-0.5">
+                          <Sparkles size={14} className="text-[#8B7AFF]" />
+                        </div>
+                      )}
+
+                      {msg.role === 'user' ? (
+                        <div className="flex-1 min-w-0 flex justify-end">
+                          <div className="max-w-[85%]">
+                            <p className="text-sm text-text-primary leading-relaxed whitespace-pre-wrap">
+                              {msg.content}
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-text-secondary mb-1.5">Parcel AI</p>
+                          <ReactMarkdown components={MD_LIGHT}>{msg.content}</ReactMarkdown>
+
+                          {msg.isStreaming && !msg.content && (
+                            <span
+                              className="inline-flex items-center gap-1.5 py-1"
+                              role="status"
+                              aria-label="AI is thinking"
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#8B7AFF]/60 animate-[typing_1.4s_ease-in-out_infinite]" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#8B7AFF]/60 animate-[typing_1.4s_ease-in-out_0.2s_infinite]" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#8B7AFF]/60 animate-[typing_1.4s_ease-in-out_0.4s_infinite]" />
+                            </span>
+                          )}
+
+                          {msg.isStreaming && msg.content && (
+                            <span
+                              className="inline-block w-[2px] h-[18px] bg-[#8B7AFF] animate-pulse ml-0.5 align-text-bottom rounded-full"
+                              aria-hidden="true"
+                            />
+                          )}
+
                           {!msg.isStreaming && msg.role === 'assistant' && msg.content && (
                             <motion.div
                               initial={{ opacity: 0 }}

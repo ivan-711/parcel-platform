@@ -312,7 +312,7 @@ export default function SettingsPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Your name"
-                      className="bg-app-recessed border border-border-default text-text-primary placeholder:text-text-disabled focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
+                      className="bg-app-recessed border border-border-default text-text-primary placeholder:text-text-disabled focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/40 focus:ring-offset-2 focus:ring-offset-app-bg"
                     />
                   </div>
                   <div className="space-y-2">
@@ -323,7 +323,7 @@ export default function SettingsPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
-                      className="bg-app-recessed border border-border-default text-text-primary placeholder:text-text-disabled focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
+                      className="bg-app-recessed border border-border-default text-text-primary placeholder:text-text-disabled focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/40 focus:ring-offset-2 focus:ring-offset-app-bg"
                     />
                   </div>
                   <div className="space-y-2">
@@ -371,7 +371,7 @@ export default function SettingsPage() {
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       required
-                      className="bg-app-recessed border border-border-default text-text-primary focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
+                      className="bg-app-recessed border border-border-default text-text-primary focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/40 focus:ring-offset-2 focus:ring-offset-app-bg"
                     />
                   </div>
                   <div className="space-y-2">
@@ -382,7 +382,7 @@ export default function SettingsPage() {
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       required
-                      className="bg-app-recessed border border-border-default text-text-primary focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
+                      className="bg-app-recessed border border-border-default text-text-primary focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/40 focus:ring-offset-2 focus:ring-offset-app-bg"
                     />
                   </div>
                   <div className="space-y-2">
@@ -396,7 +396,7 @@ export default function SettingsPage() {
                         if (confirmError) setConfirmError('')
                       }}
                       required
-                      className="bg-app-recessed border border-border-default text-text-primary focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
+                      className="bg-app-recessed border border-border-default text-text-primary focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/40 focus:ring-offset-2 focus:ring-offset-app-bg"
                     />
                     {confirmError && (
                       <p className="text-[#D4766A] text-sm">{confirmError}</p>

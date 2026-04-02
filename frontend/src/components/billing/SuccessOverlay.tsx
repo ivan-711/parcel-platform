@@ -49,6 +49,12 @@ export function SuccessOverlay() {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
 
+    const handleResize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+    window.addEventListener('resize', handleResize)
+
     const colors = ['#8B7AFF', '#A89FFF', '#7CCBA5', '#D4A867', '#F0EDE8', '#6B5AD6', '#D4766A']
     const particles: { x: number; y: number; vx: number; vy: number; color: string; size: number; rotation: number; rv: number }[] = []
 
@@ -86,7 +92,10 @@ export function SuccessOverlay() {
       if (alive) raf = requestAnimationFrame(animate)
     }
     raf = requestAnimationFrame(animate)
-    return () => cancelAnimationFrame(raf)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('resize', handleResize)
+    }
   }, [show])
 
   const dismiss = useCallback(() => {

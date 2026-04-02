@@ -73,7 +73,7 @@ export function MobilePipeline({ board, isLoading, onRemove, onCloseDeal, onMove
                 transition-all duration-200
                 min-h-[44px]
                 cursor-pointer
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B7AFF]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0C0B0A]
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B7AFF]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg
                 ${isActive
                   ? 'bg-[#8B7AFF] text-accent-text-on-accent shadow-sm'
                   : 'bg-layer-2 text-text-secondary hover:bg-layer-3'

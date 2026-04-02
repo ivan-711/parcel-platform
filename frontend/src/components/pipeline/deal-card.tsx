@@ -80,7 +80,7 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
         isDragging
           ? 'opacity-50 border-dashed border-border-default shadow-[0_0_24px_rgba(139,122,255,0.15)]'
           : isFocused
-            ? 'ring-2 ring-[#8B7AFF]/50 ring-offset-2 ring-offset-[#0C0B0A] border-[#8B7AFF]/40'
+            ? 'ring-2 ring-[#8B7AFF]/40 ring-offset-2 ring-offset-app-bg border-[#8B7AFF]/40'
             : 'border-border-default hover:border-border-emphasis hover:-translate-y-px',
       ].join(' ')}
     >

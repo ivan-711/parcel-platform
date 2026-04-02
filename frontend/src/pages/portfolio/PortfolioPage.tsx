@@ -455,8 +455,8 @@ export default function PortfolioPage() {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
         >
           <KPICard label="Total Deals Closed" value={summary?.total_deals_closed ?? 0} format="number" />
-          <KPICard label="Total Profit" value={summary?.total_profit ?? 0} format="currency" className="[&_.kpi-value]:text-[#6DBEA3]" />
-          <KPICard label="Monthly Cash Flow" value={summary?.total_monthly_cash_flow ?? 0} format="currency" className="[&_.kpi-value]:text-[#6DBEA3]" />
+          <KPICard label="Total Profit" value={summary?.total_profit ?? 0} format="currency" />
+          <KPICard label="Monthly Cash Flow" value={summary?.total_monthly_cash_flow ?? 0} format="currency" />
           <KPICard label="Total Equity" value={summary?.total_equity ?? 0} format="currency" />
         </motion.div>
 

@@ -257,7 +257,7 @@ export default function Dashboard() {
     <AppShell title="Dashboard">
       {demoBanner}
       <motion.div
-        className="space-y-8"
+        className="space-y-10"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
