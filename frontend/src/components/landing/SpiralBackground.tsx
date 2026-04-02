@@ -68,7 +68,7 @@ class AnimationController {
     private setupTimeline() {
         this.timeline.to(this, {
             time: 1,
-            duration: 15,
+            duration: 10,
             repeat: -1,
             ease: "none",
             onUpdate: () => this.render()
@@ -146,11 +146,32 @@ class AnimationController {
         }
     }
 
+    private drawAmbientDust() {
+        const ctx = this.ctx
+        const count = 80
+        for (let i = 0; i < count; i++) {
+            const seed1 = Math.sin(i * 127.1 + 311.7) * 43758.5453
+            const seed2 = Math.sin(i * 269.5 + 183.3) * 43758.5453
+            const x = (seed1 - Math.floor(seed1)) * this.size
+            const y = (seed2 - Math.floor(seed2)) * this.size
+            const sizeSeed = Math.sin(i * 78.233 + 12.9898) * 43758.5453
+            const radius = 0.5 + (sizeSeed - Math.floor(sizeSeed)) * 1.2
+            ctx.globalAlpha = this.isLight ? 0.12 : 0.08
+            ctx.fillStyle = this.isLight ? '#0C0B0A' : '#F0EDE8'
+            ctx.beginPath()
+            ctx.arc(x, y, radius, 0, Math.PI * 2)
+            ctx.fill()
+        }
+        ctx.globalAlpha = 1.0
+    }
+
     public render() {
         const ctx = this.ctx
         if (!ctx) return
         ctx.fillStyle = this.isLight ? '#F9FAFB' : '#0C0B0A'
         ctx.fillRect(0, 0, this.size, this.size)
+
+        this.drawAmbientDust()
 
         // Two spirals offset by half a cycle for continuous particle coverage
         this.drawSpiral(this.time, false)
