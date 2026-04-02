@@ -24,7 +24,7 @@ export function StrategyBadge({ strategy }: StrategyBadgeProps) {
         color: config.textVar,
         borderColor: config.borderVar,
       }}
-      className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium border"
+      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border"
     >
       {config.label}
     </span>

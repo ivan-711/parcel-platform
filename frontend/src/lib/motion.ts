@@ -33,7 +33,7 @@ export const duration = {
   dramatic: 0.50,
 } as const
 
-// Backward compat alias
+// Legacy aliases — kept for backward compatibility, prefer motion.duration.*, motion.easing.*, motion.spring.*
 export const DURATION = {
   fast: duration.fast,
   normal: duration.slow,
@@ -49,7 +49,7 @@ export const ease = {
   vercel: [0.22, 1, 0.36, 1] as [number, number, number, number],
 } as const
 
-// Backward compat alias
+// Legacy aliases — kept for backward compatibility, prefer motion.duration.*, motion.easing.*, motion.spring.*
 export const EASING = {
   snappy: ease.luxury,
   smooth: [0.4, 0, 0.2, 1] as [number, number, number, number],
@@ -64,7 +64,7 @@ export const spring = {
   gentle: { type: 'spring' as const, stiffness: 400, damping: 28, mass: 0.5 },
 } as const
 
-// Backward compat alias
+// Legacy aliases — kept for backward compatibility, prefer motion.duration.*, motion.easing.*, motion.spring.*
 export const SPRING = {
   default: { type: 'spring' as const, damping: 25, stiffness: 300 },
   stiff: spring.snappy,

@@ -134,7 +134,7 @@ const config: Config = {
       'sm':      ['13px', { lineHeight: '1.5',  letterSpacing: '0',        fontWeight: '400' }],
       'xs':      ['11px', { lineHeight: '1.45', letterSpacing: '0.01em',   fontWeight: '500' }],
       'micro':   ['10px', { lineHeight: '1.4',  letterSpacing: '0.04em',   fontWeight: '500' }],
-      // Preserve Tailwind defaults needed by landing page and existing code
+      // legacy — not in design system (needed by landing page and existing code)
       'base':    ['14px', { lineHeight: '1.6' }],
       'lg':      ['16px', { lineHeight: '1.6' }],
       'xl':      ['18px', { lineHeight: '1.4' }],

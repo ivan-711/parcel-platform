@@ -210,7 +210,7 @@ function NavSection({
             to={item.path}
             onClick={onNavigate}
             className={cn(
-              'flex items-center rounded-lg',
+              'flex items-center rounded-md',
               'transition-colors duration-150',
               collapsed
                 ? 'w-10 h-10 justify-center mx-auto'
@@ -528,7 +528,7 @@ function Topbar({
               })}
             </nav>
           ) : (
-            <h1 className="text-sm font-semibold text-text-primary truncate">
+            <h1 className="text-base font-semibold text-text-primary truncate">
               {title ?? 'Parcel'}
             </h1>
           )}
@@ -638,7 +638,7 @@ export function AppShell({
       {/* Skip nav */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[#8B7AFF] focus:text-text-primary focus:text-sm focus:font-medium focus:shadow-lg focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[#8B7AFF] focus:text-text-primary focus:text-base focus:font-medium focus:shadow-lg focus:outline-none"
       >
         Skip to main content
       </a>

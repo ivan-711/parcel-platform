@@ -222,7 +222,7 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                   placeholder="Search deals, pages, actions..."
                   className="flex-1 h-12 bg-transparent text-sm text-text-primary placeholder:text-text-disabled outline-none"
                 />
-                <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-border-default bg-layer-3 px-1.5 py-0.5 text-[10px] font-mono text-[#F0EDE8]/20">
+                <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-border-default bg-layer-3 px-1.5 py-0.5 text-[10px] font-mono text-text-muted">
                   ESC
                 </kbd>
               </div>
@@ -248,7 +248,7 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                         onSelect={() => handleSelect(page.path)}
                         className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-text-secondary cursor-pointer transition-colors data-[selected=true]:bg-[#8B7AFF]/[0.08] data-[selected=true]:border-l-2 data-[selected=true]:border-l-[#8B7AFF] data-[selected=true]:pl-[calc(0.75rem-2px)] data-[selected=true]:text-text-primary"
                       >
-                        <Icon size={16} className="shrink-0 text-text-secondary group-data-[selected=true]:text-[#8B7AFF]" />
+                        <Icon size={16} className="shrink-0 text-text-secondary data-[selected=true]:text-[#8B7AFF]" />
                         <span>{page.label}</span>
                       </CommandPrimitive.Item>
                     )
@@ -318,16 +318,16 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               {/* Footer with keyboard hints */}
               <div className="flex items-center gap-4 border-t border-border-default bg-layer-1 px-4 py-2">
                 <div className="flex items-center gap-1.5 text-[10px] text-text-secondary">
-                  <kbd className="rounded border border-border-default bg-layer-3 px-1 py-0.5 font-mono text-[#F0EDE8]/20">&uarr;</kbd>
-                  <kbd className="rounded border border-border-default bg-layer-3 px-1 py-0.5 font-mono text-[#F0EDE8]/20">&darr;</kbd>
+                  <kbd className="rounded border border-border-default bg-layer-3 px-1 py-0.5 font-mono text-text-muted">&uarr;</kbd>
+                  <kbd className="rounded border border-border-default bg-layer-3 px-1 py-0.5 font-mono text-text-muted">&darr;</kbd>
                   <span>navigate</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-[10px] text-text-secondary">
-                  <kbd className="rounded border border-border-default bg-layer-3 px-1 py-0.5 font-mono text-[#F0EDE8]/20">&crarr;</kbd>
+                  <kbd className="rounded border border-border-default bg-layer-3 px-1 py-0.5 font-mono text-text-muted">&crarr;</kbd>
                   <span>select</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-[10px] text-text-secondary">
-                  <kbd className="rounded border border-border-default bg-layer-3 px-1 py-0.5 font-mono text-[#F0EDE8]/20">esc</kbd>
+                  <kbd className="rounded border border-border-default bg-layer-3 px-1 py-0.5 font-mono text-text-muted">esc</kbd>
                   <span>close</span>
                 </div>
               </div>
