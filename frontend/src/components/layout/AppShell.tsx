@@ -470,7 +470,7 @@ function Topbar({
   const user = useAuthStore((s) => s.user)
 
   return (
-    <header className="h-14 shrink-0 flex items-center justify-between px-4 md:px-6 lg:px-8 bg-app-bg border-b border-border-default">
+    <header className="h-14 shrink-0 flex items-center justify-between px-4 md:px-6 lg:px-8 bg-app-bg border-b border-border-default pt-[env(safe-area-inset-top)]">
       {/* Left */}
       <div className="flex items-center gap-3 min-w-0">
         {/* Hamburger -- mobile only */}

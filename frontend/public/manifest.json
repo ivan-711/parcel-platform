@@ -1,0 +1,11 @@
+{
+  "name": "Parcel — Real Estate Deal Analysis",
+  "short_name": "Parcel",
+  "description": "Analyze real estate deals with precision",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0C0B0A",
+  "theme_color": "#0C0B0A",
+  "orientation": "portrait",
+  "icons": []
+}

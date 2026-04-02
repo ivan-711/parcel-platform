@@ -25,7 +25,7 @@ export function LandingNavbar({ onNavClick }: { onNavClick?: () => void }) {
   return (
     <nav
       className={cn(
-        'fixed top-6 left-1/2 -translate-x-1/2 z-50',
+        'fixed top-[max(1.5rem,env(safe-area-inset-top))] left-1/2 -translate-x-1/2 z-50',
         'flex items-center gap-3 md:gap-6',
         'border border-border-default rounded-full',
         'shadow-[0_4px_24px_rgba(0,0,0,0.3)]',
