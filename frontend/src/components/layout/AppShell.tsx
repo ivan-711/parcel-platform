@@ -18,6 +18,7 @@ import {
   ChevronsLeft,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { MobileTabBar } from './MobileTabBar'
 import { useAuthStore } from '@/stores/authStore'
 import { useLogout } from '@/hooks/useAuth'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -476,7 +477,7 @@ function Topbar({
         <button
           onClick={onMenuToggle}
           aria-label="Open navigation"
-          className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg text-[#8A8580] hover:text-[#C4C0BA] hover:bg-layer-2 transition-colors cursor-pointer"
+          className="hidden flex items-center justify-center w-9 h-9 rounded-lg text-[#8A8580] hover:text-[#C4C0BA] hover:bg-layer-2 transition-colors cursor-pointer"
         >
           <Menu size={20} />
         </button>
@@ -484,7 +485,7 @@ function Topbar({
         {/* Mobile logo -- visible only below md */}
         <Link
           to={user?.email === 'demo@parcel.app' ? '/' : '/dashboard'}
-          className="md:hidden flex items-center gap-1.5"
+          className="hidden flex items-center gap-1.5"
         >
           <div className="w-6 h-6 rounded-md bg-[#8B7AFF] flex items-center justify-center">
             <span className="text-text-primary text-[10px] font-bold">P</span>
@@ -686,13 +687,13 @@ export function AppShell({
               className="h-full"
             >
               {noPadding ? (
-                children
+                <div className="pb-20 md:pb-0">{children}</div>
               ) : fullWidth ? (
-                <div className="px-4 py-5 md:px-8 md:py-6 lg:px-10">
+                <div className="px-4 py-5 pb-20 md:px-8 md:py-6 lg:px-10">
                   {children}
                 </div>
               ) : (
-                <div className="max-w-7xl mx-auto px-4 py-5 md:px-8 md:py-6 lg:px-10">
+                <div className="max-w-7xl mx-auto px-4 py-5 pb-20 md:px-8 md:py-6 lg:px-10">
                   {children}
                 </div>
               )}
@@ -706,6 +707,9 @@ export function AppShell({
         open={commandPaletteOpen}
         onOpenChange={setCommandPaletteOpen}
       />
+
+      {/* Mobile bottom tab bar */}
+      <MobileTabBar />
     </div>
   )
 }
