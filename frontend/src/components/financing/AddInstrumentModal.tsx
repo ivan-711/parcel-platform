@@ -1,6 +1,6 @@
 // frontend/src/components/financing/AddInstrumentModal.tsx
 import { useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+// framer-motion not needed for this modal
 import {
   X,
   Building,
