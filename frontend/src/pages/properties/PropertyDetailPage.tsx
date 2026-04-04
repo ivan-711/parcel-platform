@@ -32,6 +32,7 @@ import { TaskList } from '@/components/tasks/TaskList'
 import { AddTaskForm } from '@/components/tasks/AddTaskForm'
 import { useTasksList } from '@/hooks/useTasks'
 import { useInstruments, useInstrument } from '@/hooks/useFinancing'
+import { AddInstrumentModal } from '@/components/financing/AddInstrumentModal'
 import { cn } from '@/lib/utils'
 import type { PropertyDetail, ScenarioDetail, PropertyActivityEvent } from '@/types'
 import type { InstrumentListItem } from '@/types/financing'
@@ -506,6 +507,7 @@ function FinancingTab({
   propertyAddress: string
 }) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [showAddModal, setShowAddModal] = useState(false)
 
   // Find wrap + underlying pairs for visualization
   const wrapInstrument = instruments.find((i) => i.is_wrap)
@@ -520,6 +522,20 @@ function FinancingTab({
           icon={Landmark}
           heading="No financing instruments"
           description="Add an instrument to track mortgages, wraps, and other financing on this property."
+        />
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors cursor-pointer"
+        >
+          <Landmark size={14} />
+          Add Instrument
+        </button>
+        <AddInstrumentModal
+          open={showAddModal}
+          onOpenChange={setShowAddModal}
+          propertyId={propertyId}
+          propertyAddress={propertyAddress}
+          existingInstruments={[]}
         />
       </div>
     )
@@ -632,6 +648,23 @@ function FinancingTab({
           })}
         </div>
       </Card>
+
+      {/* Add Instrument button */}
+      <button
+        onClick={() => setShowAddModal(true)}
+        className="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors cursor-pointer"
+      >
+        <Landmark size={14} />
+        Add Instrument
+      </button>
+
+      <AddInstrumentModal
+        open={showAddModal}
+        onOpenChange={setShowAddModal}
+        propertyId={propertyId}
+        propertyAddress={propertyAddress}
+        existingInstruments={instruments.map((i) => ({ id: i.id, name: i.name }))}
+      />
     </div>
   )
 }
