@@ -6,7 +6,9 @@ import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { Toaster } from '@/components/ui/sonner'
 import { ErrorBoundary, PageErrorBoundary } from '@/components/error-boundary'
 import { useAuthStore } from '@/stores/authStore'
+import { useOnboardingStore } from '@/stores/onboardingStore'
 import { api } from '@/lib/api'
+import { ClerkProviderWrapper } from '@/components/auth/ClerkProviderWrapper'
 
 // Lazy-loaded pages
 const Landing = lazy(() => import('@/components/landing/LandingPage'))
@@ -16,8 +18,10 @@ const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'))
 const ResetPassword = lazy(() => import('@/pages/ResetPassword'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
 const StrategySelectPage = lazy(() => import('@/pages/analyze/StrategySelectPage'))
+const AnalyzePage = lazy(() => import('@/pages/analyze/AnalyzePage'))
 const AnalyzerFormPage = lazy(() => import('@/pages/analyze/AnalyzerFormPage'))
 const ResultsPage = lazy(() => import('@/pages/analyze/ResultsPage'))
+const AnalysisResultsPage = lazy(() => import('@/pages/analyze/AnalysisResultsPage'))
 const MyDeals = lazy(() => import('@/pages/MyDeals'))
 const Pipeline = lazy(() => import('@/pages/Pipeline'))
 const Portfolio = lazy(() => import('@/pages/portfolio/PortfolioPage'))
@@ -27,6 +31,18 @@ const Settings = lazy(() => import('@/pages/settings/SettingsPage'))
 const PricingPage = lazy(() => import('@/pages/PricingPage'))
 const ShareDeal = lazy(() => import('@/pages/share/ShareDealPage'))
 const ComparePage = lazy(() => import('@/pages/compare/ComparePage'))
+const Onboarding = lazy(() => import('@/pages/OnboardingPage'))
+const TodayPage = lazy(() => import('@/pages/TodayPage'))
+const PropertiesListPage = lazy(() => import('@/pages/properties/PropertiesListPage'))
+const PropertyDetailPage = lazy(() => import('@/pages/properties/PropertyDetailPage'))
+const ContactsListPage = lazy(() => import('@/pages/contacts/ContactsListPage'))
+const ContactDetailPage = lazy(() => import('@/pages/contacts/ContactDetailPage'))
+const TransactionsPage = lazy(() => import('@/pages/transactions/TransactionsPage'))
+const ReportsListPage = lazy(() => import('@/pages/reports/ReportsListPage'))
+const SharedReportPage = lazy(() => import('@/pages/reports/SharedReportPage'))
+const LockedFeaturePage = lazy(() => import('@/pages/LockedFeaturePage'))
+const ObligationsPage = lazy(() => import('@/pages/financing/ObligationsPage'))
+const FinancingDashboardPage = lazy(() => import('@/pages/financing/FinancingDashboardPage'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
 const queryClient = new QueryClient({
@@ -55,6 +71,8 @@ function useSessionValidation() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const clearAuth = useAuthStore((s) => s.clearAuth)
   const setAuth = useAuthStore((s) => s.setAuth)
+  const fetchOnboardingStatus = useOnboardingStore((s) => s.fetchStatus)
+  const onboardingFetched = useOnboardingStore((s) => s.fetched)
 
   const { data, isError } = useQuery({
     queryKey: ['session-check'],
@@ -74,21 +92,34 @@ function useSessionValidation() {
   useEffect(() => {
     if (data) {
       setAuth(data)
+      // Fetch onboarding status once after session is validated
+      if (!onboardingFetched) {
+        fetchOnboardingStatus()
+      }
     }
-  }, [data, setAuth])
+  }, [data, setAuth, onboardingFetched, fetchOnboardingStatus])
 }
 
-/** Redirects unauthenticated users to /login. */
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
+/** Redirects unauthenticated users to /login. Redirects to /onboarding if not completed. */
+function ProtectedRoute({ children, skipOnboarding }: { children: React.ReactNode; skipOnboarding?: boolean }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const onboardingCompleted = useOnboardingStore((s) => s.completed)
+  const onboardingFetched = useOnboardingStore((s) => s.fetched)
+
   if (!isAuthenticated) return <Navigate to="/login" replace />
+
+  // Wait for onboarding status to load before redirecting
+  if (!skipOnboarding && onboardingFetched && !onboardingCompleted) {
+    return <Navigate to="/onboarding" replace />
+  }
+
   return <>{children}</>
 }
 
 /** Redirects authenticated users to /dashboard (prevents accessing login/register when logged in). */
 function GuestRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
-  if (isAuthenticated) return <Navigate to="/dashboard" replace />
+  if (isAuthenticated) return <Navigate to="/today" replace />
   return <>{children}</>
 }
 
@@ -107,11 +138,17 @@ function AnimatedRoutes() {
         <Route path="/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
         <Route path="/reset-password" element={<GuestRoute><ResetPassword /></GuestRoute>} />
         <Route path="/share/:dealId" element={<ShareDeal />} />
+        <Route path="/reports/view/:shareToken" element={<SharedReportPage />} />
+
+        {/* Onboarding — protected but skips the onboarding guard */}
+        <Route path="/onboarding" element={<ProtectedRoute skipOnboarding><Onboarding /></ProtectedRoute>} />
 
         {/* Protected app routes — AppShell handles page transitions via AnimatePresence */}
         <Route path="/dashboard" element={<ProtectedRoute><PageErrorBoundary><Dashboard /></PageErrorBoundary></ProtectedRoute>} />
-        <Route path="/analyze" element={<ProtectedRoute><PageErrorBoundary><StrategySelectPage /></PageErrorBoundary></ProtectedRoute>} />
-        <Route path="/analyze/results/:dealId" element={<ProtectedRoute><PageErrorBoundary><ResultsPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/analyze" element={<ProtectedRoute><PageErrorBoundary><AnalyzePage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/analyze/strategies" element={<ProtectedRoute><PageErrorBoundary><StrategySelectPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/analyze/results/:propertyId" element={<ProtectedRoute><PageErrorBoundary><AnalysisResultsPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/analyze/deal/:dealId" element={<ProtectedRoute><PageErrorBoundary><ResultsPage /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/analyze/:strategy" element={<ProtectedRoute><PageErrorBoundary><AnalyzerFormPage /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/deals" element={<ProtectedRoute><PageErrorBoundary><MyDeals /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/compare" element={<ProtectedRoute><PageErrorBoundary><ComparePage /></PageErrorBoundary></ProtectedRoute>} />
@@ -121,6 +158,24 @@ function AnimatedRoutes() {
         <Route path="/chat" element={<ProtectedRoute><PageErrorBoundary><Chat /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><PageErrorBoundary><Settings /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/pricing" element={<ProtectedRoute><PageErrorBoundary><PricingPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/today" element={<ProtectedRoute><PageErrorBoundary><TodayPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/properties" element={<ProtectedRoute><PageErrorBoundary><PropertiesListPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/properties/:propertyId" element={<ProtectedRoute><PageErrorBoundary><PropertyDetailPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/contacts" element={<ProtectedRoute><PageErrorBoundary><ContactsListPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/contacts/:contactId" element={<ProtectedRoute><PageErrorBoundary><ContactDetailPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/transactions" element={<ProtectedRoute><PageErrorBoundary><TransactionsPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/reports" element={<ProtectedRoute><PageErrorBoundary><ReportsListPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/obligations" element={<ProtectedRoute><PageErrorBoundary><ObligationsPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/financing" element={<ProtectedRoute><PageErrorBoundary><FinancingDashboardPage /></PageErrorBoundary></ProtectedRoute>} />
+
+        {/* Locked feature routes — show upgrade prompt instead of 404 */}
+        <Route path="/buyers" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
+        <Route path="/rehabs" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
+        <Route path="/sequences" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
+        <Route path="/skip-tracing" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
+        <Route path="/mail-campaigns" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
+        <Route path="/d4d" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
+        <Route path="/compliance" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
 
         {/* Catch-all 404 */}
         <Route path="*" element={<NotFound />} />
@@ -138,12 +193,14 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <AnimatedRoutes />
-          <Toaster />
-        </BrowserRouter>
-      </QueryClientProvider>
+      <ClerkProviderWrapper>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <AnimatedRoutes />
+            <Toaster />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </ClerkProviderWrapper>
     </ErrorBoundary>
   )
 }
