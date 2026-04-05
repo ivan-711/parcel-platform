@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
   Users,
   Mail,
@@ -174,6 +174,13 @@ export default function ContactDetailPage() {
                 </div>
               )}
             </div>
+            <Link
+              to="/mail-campaigns/new"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#C5C0B8] border border-[#1E1D1B] hover:bg-[#141311] hover:text-[#F0EDE8] transition-colors"
+            >
+              <Mail size={14} />
+              Send Mail
+            </Link>
             <button
               onClick={handleDelete}
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#F87171] border border-[#F87171]/20 hover:bg-[#F87171]/10 transition-colors cursor-pointer"

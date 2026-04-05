@@ -19,6 +19,7 @@ import {
   Landmark,
   Users,
   Loader2,
+  Mail,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
@@ -338,6 +339,13 @@ function PropertyHeader({
           {isTracing ? <Loader2 size={14} className="animate-spin" /> : <Search size={14} />}
           Skip Trace
         </button>
+        <Link
+          to="/mail-campaigns/new"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-colors"
+        >
+          <Mail size={14} />
+          Send Mail
+        </Link>
         <button
           onClick={onDelete}
           className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#F87171] border border-[#F87171]/20 hover:bg-[#F87171]/10 transition-colors cursor-pointer"
