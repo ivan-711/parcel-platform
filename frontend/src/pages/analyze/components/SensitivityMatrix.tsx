@@ -55,6 +55,10 @@ function formatCell(value: number, metric: SensitivityMetric): string {
 export function SensitivityMatrix({ scenario }: Props) {
   const [activeMetric, setActiveMetric] = useState<SensitivityMetric>('cash_flow')
 
+  const strategy = scenario.strategy
+  // Only show sensitivity for strategies where price/rate analysis is meaningful
+  const supportedStrategies = ['buy_and_hold', 'brrrr', 'creative_finance']
+
   const basePrice = Number(scenario.purchase_price) || 150000
   const baseRate = Number(scenario.interest_rate) || 7.0
   const downPct = Number(scenario.down_payment_pct) || 20
@@ -76,6 +80,8 @@ export function SensitivityMatrix({ scenario }: Props) {
   [basePrice, baseRate, downPct, rent, termYears, expenseRatio, activeMetric])
 
   const isPositive = (v: number) => activeMetric === 'cash_flow' ? v > 0 : v > 0
+
+  if (!supportedStrategies.includes(strategy)) return null
 
   return (
     <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">

@@ -44,7 +44,7 @@ export default function AnalysisResultsPage() {
   const [recalculating, setRecalculating] = useState(false)
   const [reportModalOpen, setReportModalOpen] = useState(false)
 
-  const activeScenario = scenarios.find(s => s.strategy === activeStrategy) || scenarios[0] || null
+  const activeScenario = scenarios.find(s => s.strategy === activeStrategy) || null
 
   // Load data
   useEffect(() => {
@@ -279,7 +279,16 @@ export default function AnalysisResultsPage() {
                 Recalculating...
               </div>
             )}
-            {activeScenario && <KeyMetrics scenario={activeScenario} />}
+            {activeScenario ? (
+              <KeyMetrics scenario={activeScenario} />
+            ) : (
+              <div className="flex items-center justify-center py-12 text-center">
+                <div>
+                  <p className="text-sm text-[#8A8580] mb-2">No analysis for this strategy yet</p>
+                  <p className="text-xs text-[#8A8580]/60">Select a different strategy or run a new analysis</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

@@ -294,7 +294,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-0.5">Monthly CF</p>
                 <p className={`text-lg font-medium tabular-nums ${portfolioData.summary.total_monthly_cash_flow >= 0 ? 'text-[#4ADE80]' : 'text-[#F87171]'}`}>
-                  ${Math.abs(Math.round(portfolioData.summary.total_monthly_cash_flow)).toLocaleString()}
+                  {portfolioData.summary.total_monthly_cash_flow < 0 ? '-' : ''}${Math.abs(Math.round(portfolioData.summary.total_monthly_cash_flow)).toLocaleString()}
                 </p>
               </div>
               <div>
