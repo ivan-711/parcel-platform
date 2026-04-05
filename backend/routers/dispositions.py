@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.orm import Session
 
 from core.dispositions.match_engine import score_property_against_buy_box
@@ -110,6 +110,7 @@ def _buy_box_to_dict(box: BuyBox) -> dict:
         "max_arv": float(box.max_arv) if box.max_arv is not None else None,
         "min_cash_flow": float(box.min_cash_flow) if box.min_cash_flow is not None else None,
         "min_cap_rate": float(box.min_cap_rate) if box.min_cap_rate is not None else None,
+        "min_coc_return": float(box.min_coc_return) if box.min_coc_return is not None else None,
         "max_repair_cost": float(box.max_repair_cost) if box.max_repair_cost is not None else None,
         "property_types": box.property_types,
         "min_bedrooms": box.min_bedrooms,
@@ -125,8 +126,7 @@ def _freeze_packet_data(prop: Property, scenario: AnalysisScenario, user: User) 
     """Build a full JSONB snapshot for a buyer packet."""
     return {
         "property": {
-            "id": str(prop.id),
-            "address_line1": prop.address_line1,
+            "address": prop.address_line1,
             "city": prop.city,
             "state": prop.state,
             "zip_code": prop.zip_code,
@@ -135,23 +135,19 @@ def _freeze_packet_data(prop: Property, scenario: AnalysisScenario, user: User) 
             "bathrooms": float(prop.bathrooms) if prop.bathrooms is not None else None,
             "sqft": prop.sqft,
             "year_built": prop.year_built,
-            "status": prop.status,
         },
         "scenario": {
-            "id": str(scenario.id),
             "strategy": scenario.strategy,
             "purchase_price": float(scenario.purchase_price) if scenario.purchase_price is not None else None,
             "after_repair_value": float(scenario.after_repair_value) if scenario.after_repair_value is not None else None,
             "repair_cost": float(scenario.repair_cost) if scenario.repair_cost is not None else None,
             "monthly_rent": float(scenario.monthly_rent) if scenario.monthly_rent is not None else None,
             "outputs": scenario.outputs or {},
-            "ai_narrative": scenario.ai_narrative,
         },
-        "seller": {
-            "name": user.name,
-            "email": user.email,
-        },
-        "snapshot_at": datetime.utcnow().isoformat(),
+        "ai_narrative": scenario.ai_narrative,
+        "seller_name": user.name,
+        "seller_email": user.email,
+        "seller_phone": None,
     }
 
 
@@ -171,7 +167,7 @@ def _strategy_title(strategy: Optional[str]) -> str:
 
 
 def _share_url(token: str) -> str:
-    return f"{_FRONTEND_URL}/packets/{token}"
+    return f"{_FRONTEND_URL}/packets/view/{token}"
 
 
 # ---------------------------------------------------------------------------
@@ -284,6 +280,7 @@ async def matches_for_property(
             zip_code=prop.zip_code,
             strategy=scenario.strategy if scenario else None,
             purchase_price=float(scenario.purchase_price) if scenario and scenario.purchase_price else None,
+            scenario_id=scenario.id if scenario else None,
         ),
         matches=results,
     )
@@ -593,6 +590,8 @@ async def list_packets(
 @router.get("/packets/share/{share_token}", response_model=SharedPacketResponse)
 async def view_shared_packet(
     share_token: str,
+    request: Request,
+    ref: Optional[str] = Query(None),
     db: Session = Depends(get_db),
 ):
     """Public endpoint — view a shared buyer packet by token."""
@@ -611,9 +610,29 @@ async def view_shared_packet(
             detail={"error": "Packet not found or not public", "code": "PACKET_NOT_FOUND"},
         )
 
-    # Increment view count
-    packet.view_count = (packet.view_count or 0) + 1
-    packet.last_viewed_at = datetime.utcnow()
+    # S2: Bot-filtered view count increment
+    user_agent = (request.headers.get("user-agent") or "").lower()
+    is_bot = any(bot in user_agent for bot in ["googlebot", "bingbot", "headlesschrome", "crawler", "spider", "bot/"])
+
+    if not is_bot:
+        packet.view_count = (packet.view_count or 0) + 1
+        packet.last_viewed_at = datetime.utcnow()
+
+    # S2: Track opened_at for specific buyer sends
+    if ref:
+        try:
+            from uuid import UUID as UUID_type
+            ref_uuid = UUID_type(ref)
+            send_record = db.query(BuyerPacketSend).filter(
+                BuyerPacketSend.packet_id == packet.id,
+                BuyerPacketSend.contact_id == ref_uuid,
+                BuyerPacketSend.opened_at.is_(None),
+            ).first()
+            if send_record:
+                send_record.opened_at = datetime.utcnow()
+        except (ValueError, AttributeError):
+            pass  # invalid ref UUID, ignore
+
     db.commit()
 
     return SharedPacketResponse(
@@ -655,12 +674,13 @@ async def send_packet(
             detail={"error": "At least one buyer contact is required", "code": "NO_BUYERS"},
         )
 
-    # Validate all buyer contacts belong to the user
+    # Validate all buyer contacts belong to the user and are typed as buyers
     contacts = (
         db.query(Contact)
         .filter(
             Contact.id.in_(body.buyer_contact_ids),
             Contact.created_by == current_user.id,
+            Contact.contact_type == "buyer",  # S1: must be a buyer contact
             Contact.is_deleted == False,  # noqa: E712
         )
         .all()

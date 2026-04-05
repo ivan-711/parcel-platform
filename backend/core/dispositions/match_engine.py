@@ -116,8 +116,8 @@ def _score_financial(
     sub_score = 0
     sub_max = 0
 
-    # --- purchase price (10 pts) ---
-    price_pts = 10
+    # --- purchase price (8 pts) ---
+    price_pts = 8
     sub_max += price_pts
     purchase_price = _to_float(
         (scenario_data or {}).get("purchase_price") or property_data.get("purchase_price")
@@ -140,8 +140,8 @@ def _score_financial(
             f"({_format_price(min_price)}–{_format_price(max_price)})."
         )
 
-    # --- ARV (5 pts) ---
-    arv_pts = 5
+    # --- ARV (4 pts) ---
+    arv_pts = 4
     sub_max += arv_pts
     arv = _to_float((scenario_data or {}).get("after_repair_value"))
     min_arv = _to_float(buy_box_data.get("min_arv"))
@@ -162,8 +162,8 @@ def _score_financial(
             f"({_format_price(min_arv)}–{_format_price(max_arv)})."
         )
 
-    # --- monthly cash flow (5 pts) ---
-    cf_pts = 5
+    # --- monthly cash flow (4 pts) ---
+    cf_pts = 4
     sub_max += cf_pts
     outputs = (scenario_data or {}).get("outputs") or {}
     cash_flow = _to_float(outputs.get("monthly_cash_flow"))
@@ -203,8 +203,28 @@ def _score_financial(
             f"Cap rate {cap_rate:.1f}% is below minimum {min_cap_rate:.1f}%."
         )
 
-    # --- repair cost (2 pts) ---
-    rc_pts = 2
+    # --- CoC return (3 pts) ---
+    coc_pts = 3
+    sub_max += coc_pts
+    coc_return = _to_float(outputs.get("coc_return"))
+    min_coc_return = _to_float(buy_box_data.get("min_coc_return"))
+    if min_coc_return is None:
+        sub_score += coc_pts
+        reasons.append("No minimum CoC return restriction.")
+    elif coc_return is None:
+        reasons.append("CoC return data unavailable; criterion not met.")
+    elif coc_return >= min_coc_return:
+        sub_score += coc_pts
+        reasons.append(
+            f"CoC return {coc_return:.1f}% meets minimum {min_coc_return:.1f}%."
+        )
+    else:
+        reasons.append(
+            f"CoC return {coc_return:.1f}% is below minimum {min_coc_return:.1f}%."
+        )
+
+    # --- repair cost (3 pts) ---
+    rc_pts = 3
     sub_max += rc_pts
     repair_cost = _to_float((scenario_data or {}).get("repair_cost"))
     max_repair_cost = _to_float(buy_box_data.get("max_repair_cost"))

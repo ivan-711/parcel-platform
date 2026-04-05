@@ -40,6 +40,7 @@ class PropertyInfo(BaseModel):
     zip_code: str
     strategy: Optional[str] = None
     purchase_price: Optional[float] = None
+    scenario_id: Optional[UUID] = None  # ADD THIS
 
 
 class PropertyMatchResponse(BaseModel):
