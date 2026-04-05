@@ -63,6 +63,7 @@ app.add_middleware(
 from routers import auth, dashboard, deals, pipeline, portfolio, chat, documents, settings  # noqa: E402
 from routers import webhooks, billing, clerk_webhooks, analysis, onboarding, calculators, properties, activity, contacts, today, tasks, reports, financing, transactions, rehab, portfolio_v2, buyers, dispositions  # noqa: E402
 from routers import communications as comms_router  # noqa: E402
+from routers import sequences as seq_router  # noqa: E402
 from routers.webhooks import communications as comms_webhooks  # noqa: E402
 
 app.include_router(auth.router, prefix="/api/v1")
@@ -92,6 +93,8 @@ app.include_router(portfolio_v2.router, prefix="/api")
 app.include_router(buyers.router, prefix="/api")
 app.include_router(dispositions.router, prefix="/api")
 app.include_router(comms_router.router, prefix="/api")
+app.include_router(seq_router.router, prefix="/api")
+app.include_router(seq_router.internal_router, prefix="/api")
 app.include_router(comms_webhooks.router, prefix="/api/webhooks/communications")
 
 
