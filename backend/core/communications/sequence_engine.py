@@ -25,7 +25,7 @@ class SequenceEngine:
     # Enroll
     # ------------------------------------------------------------------
 
-    def enroll(
+    async def enroll(
         self,
         sequence_id: UUID,
         contact_id: UUID,
@@ -106,7 +106,7 @@ class SequenceEngine:
     # Process due enrollments
     # ------------------------------------------------------------------
 
-    def process_due_enrollments(self) -> int:
+    async def process_due_enrollments(self) -> int:
         """Execute all steps whose next_send_at is now or past. Returns count processed."""
         now = datetime.utcnow()
         due = (
@@ -122,7 +122,7 @@ class SequenceEngine:
         processed = 0
         for enrollment in due:
             try:
-                self.execute_step(enrollment)
+                await self.execute_step(enrollment)
                 processed += 1
             except Exception:
                 enrollment.status = "failed"
@@ -134,7 +134,7 @@ class SequenceEngine:
     # Execute a single step
     # ------------------------------------------------------------------
 
-    def execute_step(self, enrollment: SequenceEnrollment) -> None:
+    async def execute_step(self, enrollment: SequenceEnrollment) -> None:
         """Send the current step for an enrollment and advance state."""
         # Load active steps ordered by step_order
         steps = (
@@ -149,7 +149,7 @@ class SequenceEngine:
 
         step_index = enrollment.current_step
         if step_index >= len(steps):
-            self._complete_enrollment(enrollment)
+            await self._complete_enrollment(enrollment)
             return
 
         step = steps[step_index]
@@ -173,34 +173,28 @@ class SequenceEngine:
                 enrollment.status = "failed"
                 self.db.commit()
                 return
-            import asyncio
-            asyncio.get_event_loop().run_until_complete(
-                self.comm_service.send_sms(
-                    to_phone=contact.phone,
-                    body=body,
-                    from_user_id=enrollment.created_by,
-                    contact_id=enrollment.contact_id,
-                    deal_id=enrollment.deal_id,
-                    property_id=enrollment.property_id,
-                )
+            await self.comm_service.send_sms(
+                to_phone=contact.phone,
+                body=body,
+                from_user_id=enrollment.created_by,
+                contact_id=enrollment.contact_id,
+                deal_id=enrollment.deal_id,
+                property_id=enrollment.property_id,
             )
         elif step.channel == "email":
             if not contact or not contact.email:
                 enrollment.status = "failed"
                 self.db.commit()
                 return
-            import asyncio
-            asyncio.get_event_loop().run_until_complete(
-                self.comm_service.send_email(
-                    to_email=contact.email,
-                    subject=subject,
-                    body_html=body,
-                    body_text=body,
-                    from_user_id=enrollment.created_by,
-                    contact_id=enrollment.contact_id,
-                    deal_id=enrollment.deal_id,
-                    property_id=enrollment.property_id,
-                )
+            await self.comm_service.send_email(
+                to_email=contact.email,
+                subject=subject,
+                body_html=body,
+                body_text=body,
+                from_user_id=enrollment.created_by,
+                contact_id=enrollment.contact_id,
+                deal_id=enrollment.deal_id,
+                property_id=enrollment.property_id,
             )
 
         # Advance step
@@ -215,7 +209,7 @@ class SequenceEngine:
             )
             self.db.commit()
         else:
-            self._complete_enrollment(enrollment)
+            await self._complete_enrollment(enrollment)
 
     # ------------------------------------------------------------------
     # Handle reply
@@ -318,7 +312,7 @@ class SequenceEngine:
     # Helpers
     # ------------------------------------------------------------------
 
-    def _complete_enrollment(self, enrollment: SequenceEnrollment) -> None:
+    async def _complete_enrollment(self, enrollment: SequenceEnrollment) -> None:
         """Mark an enrollment completed and increment the sequence counter."""
         now = datetime.utcnow()
         enrollment.status = "completed"

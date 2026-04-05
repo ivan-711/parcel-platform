@@ -443,7 +443,7 @@ async def enroll_contact(
     engine = SequenceEngine(db, service)
 
     try:
-        enrollment = engine.enroll(
+        enrollment = await engine.enroll(
             sequence_id=seq_id,
             contact_id=body.contact_id,
             user_id=current_user.id,
@@ -499,7 +499,7 @@ async def bulk_enroll(
             continue
 
         try:
-            engine.enroll(
+            await engine.enroll(
                 sequence_id=seq_id,
                 contact_id=contact_id,
                 user_id=current_user.id,
@@ -662,7 +662,7 @@ async def process_sequences(request: Request, db: Session = Depends(get_db)) -> 
     engine = SequenceEngine(db, service)
 
     try:
-        processed = engine.process_due_enrollments()
+        processed = await engine.process_due_enrollments()
     except Exception as exc:
         logger.error("process_due_enrollments failed: %s", exc)
         raise HTTPException(
