@@ -134,6 +134,16 @@ async def create_transaction(
 ):
     prop = _validate_property_ownership(db, body.property_id, current_user.id)
 
+    # Validate deal ownership if provided
+    if body.deal_id:
+        from models.deals import Deal
+        deal = db.query(Deal).filter(
+            Deal.id == body.deal_id,
+            Deal.user_id == current_user.id,
+        ).first()
+        if not deal:
+            raise HTTPException(status_code=400, detail={"error": "Deal not found or not owned", "code": "DEAL_NOT_FOUND"})
+
     signed_amount = _apply_sign(float(body.amount), body.category)
 
     txn = Transaction(
@@ -178,6 +188,16 @@ async def update_transaction(
 ):
     txn = _get_transaction_or_404(db, transaction_id, current_user.id)
     update_data = body.model_dump(exclude_unset=True)
+
+    # Validate deal ownership if deal_id is being updated
+    if "deal_id" in update_data and update_data["deal_id"]:
+        from models.deals import Deal
+        deal = db.query(Deal).filter(
+            Deal.id == update_data["deal_id"],
+            Deal.user_id == current_user.id,
+        ).first()
+        if not deal:
+            raise HTTPException(status_code=400, detail={"error": "Deal not found or not owned", "code": "DEAL_NOT_FOUND"})
 
     new_category = update_data.get("category", txn.category)
     if "amount" in update_data:
@@ -305,6 +325,12 @@ async def bulk_create_transactions(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    if len(body.transactions) > 100:
+        raise HTTPException(
+            status_code=400,
+            detail={"error": "Maximum 100 items per bulk request", "code": "BATCH_TOO_LARGE"},
+        )
+
     created = 0
     errors: list[str] = []
 
@@ -319,9 +345,25 @@ async def bulk_create_transactions(
         if prop:
             valid_props.add(pid)
 
+    # Validate deal ownership for all deal_ids referenced in the batch
+    deal_ids = {t.deal_id for t in body.transactions if t.deal_id}
+    valid_deals: set = set()
+    if deal_ids:
+        from models.deals import Deal
+        for did in deal_ids:
+            deal = db.query(Deal).filter(
+                Deal.id == did,
+                Deal.user_id == current_user.id,
+            ).first()
+            if deal:
+                valid_deals.add(did)
+
     for i, txn_data in enumerate(body.transactions):
         if txn_data.property_id not in valid_props:
             errors.append(f"Row {i + 1}: property not found or not owned")
+            continue
+        if txn_data.deal_id and txn_data.deal_id not in valid_deals:
+            errors.append(f"Row {i + 1}: deal not found or not owned")
             continue
         try:
             signed_amount = _apply_sign(float(txn_data.amount), txn_data.category)

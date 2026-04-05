@@ -35,7 +35,7 @@ CATEGORY_KEYWORDS = {
     "bathroom": ["bathroom", "bath", "shower", "toilet", "vanity", "tub"],
     "flooring": ["floor", "carpet", "tile", "hardwood", "vinyl", "laminate"],
     "roof": ["roof", "shingle", "gutter"],
-    "hvac": ["hvac", "furnace", "ac", "air condition", "heating", "cooling", "duct"],
+    "hvac": ["hvac", "furnace", "air condition", "heating", "cooling", "duct"],
     "plumbing": ["plumb", "pipe", "water heater", "faucet", "sewer", "drain"],
     "electrical": ["electric", "wiring", "panel", "outlet", "breaker", "light"],
     "exterior": ["siding", "deck", "porch", "stucco", "facade", "garage"],
@@ -109,9 +109,15 @@ def _compute_project_stats(db: Session, project: RehabProject, prop_address: str
 def _map_category(repair_name: str) -> str:
     """Map a Bricked repair name to a rehab category via keyword matching."""
     lower = repair_name.lower()
+    words = set(lower.split())
     for category, keywords in CATEGORY_KEYWORDS.items():
-        if any(kw in lower for kw in keywords):
-            return category
+        for kw in keywords:
+            # Multi-word keywords: check substring. Single-word: check word boundary.
+            if ' ' in kw:
+                if kw in lower:
+                    return category
+            elif kw in words:
+                return category
     return "general"
 
 
@@ -180,6 +186,15 @@ async def create_project(
     db: Session = Depends(get_db),
 ):
     prop = _validate_property_ownership(db, body.property_id, current_user.id)
+
+    if body.deal_id:
+        from models.deals import Deal
+        deal = db.query(Deal).filter(
+            Deal.id == body.deal_id,
+            Deal.user_id == current_user.id,
+        ).first()
+        if not deal:
+            raise HTTPException(status_code=400, detail={"error": "Deal not found or not owned", "code": "DEAL_NOT_FOUND"})
 
     project = RehabProject(
         property_id=body.property_id,
@@ -387,6 +402,12 @@ async def bulk_create_items(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    if len(body.items) > 100:
+        raise HTTPException(
+            status_code=400,
+            detail={"error": "Maximum 100 items per bulk request", "code": "BATCH_TOO_LARGE"},
+        )
+
     proj = _get_project_or_404(db, project_id, current_user.id)
     created = []
     for item_data in body.items:
