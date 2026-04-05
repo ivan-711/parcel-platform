@@ -49,6 +49,8 @@ const BuyersListPage = lazy(() => import('@/pages/buyers/BuyersListPage'))
 const BuyerDetailPage = lazy(() => import('@/pages/buyers/BuyerDetailPage'))
 const MatchResultsPage = lazy(() => import('@/pages/dispositions/MatchResultsPage'))
 const SharedPacketPage = lazy(() => import('@/pages/dispositions/SharedPacketPage'))
+const SequencesListPage = lazy(() => import('@/pages/sequences/SequencesListPage'))
+const SequenceBuilderPage = lazy(() => import('@/pages/sequences/SequenceBuilderPage'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
 const queryClient = new QueryClient({
@@ -181,7 +183,9 @@ function AnimatedRoutes() {
         <Route path="/dispositions/matches/:propertyId" element={<ProtectedRoute><PageErrorBoundary><MatchResultsPage /></PageErrorBoundary></ProtectedRoute>} />
 
         {/* Locked feature routes — show upgrade prompt instead of 404 */}
-        <Route path="/sequences" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
+        <Route path="/sequences" element={<ProtectedRoute><PageErrorBoundary><SequencesListPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/sequences/new" element={<ProtectedRoute><PageErrorBoundary><SequenceBuilderPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/sequences/:id" element={<ProtectedRoute><PageErrorBoundary><SequenceBuilderPage /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/skip-tracing" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
         <Route path="/mail-campaigns" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
         <Route path="/d4d" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
