@@ -13,6 +13,28 @@ from models.subscriptions import Subscription
 from models.usage_records import UsageRecord
 from models.webhook_events import WebhookEvent
 
+# Wave 0 models
+from models.properties import Property
+from models.analysis_scenarios import AnalysisScenario
+from models.contacts import Contact
+from models.tasks import Task
+from models.communications import Communication
+from models.transactions import Transaction
+from models.reports import Report
+from models.data_source_events import DataSourceEvent
+from models.import_jobs import ImportJob
+from models.deal_contacts import DealContact
+from models.document_chunks import DocumentChunk
+from models.report_views import ReportView
+
+# Wave 2 models
+from models.financing_instruments import FinancingInstrument
+from models.obligations import Obligation
+from models.payments import Payment
+
+# Wave 3 models
+from models.rehab_projects import RehabProject, RehabItem
+
 __all__ = [
     "User",
     "Team",
@@ -26,4 +48,24 @@ __all__ = [
     "Subscription",
     "UsageRecord",
     "WebhookEvent",
+    # Wave 0
+    "Property",
+    "AnalysisScenario",
+    "Contact",
+    "Task",
+    "Communication",
+    "Transaction",
+    "Report",
+    "DataSourceEvent",
+    "ImportJob",
+    "DealContact",
+    "DocumentChunk",
+    "ReportView",
+    # Wave 2
+    "FinancingInstrument",
+    "Obligation",
+    "Payment",
+    # Wave 3
+    "RehabProject",
+    "RehabItem",
 ]
