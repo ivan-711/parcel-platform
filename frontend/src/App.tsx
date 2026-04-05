@@ -47,6 +47,8 @@ const RehabsPage = lazy(() => import('@/pages/rehab/RehabsPage'))
 const RehabDetailPage = lazy(() => import('@/pages/rehab/RehabDetailPage'))
 const BuyersListPage = lazy(() => import('@/pages/buyers/BuyersListPage'))
 const BuyerDetailPage = lazy(() => import('@/pages/buyers/BuyerDetailPage'))
+const MatchResultsPage = lazy(() => import('@/pages/dispositions/MatchResultsPage'))
+const SharedPacketPage = lazy(() => import('@/pages/dispositions/SharedPacketPage'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
 const queryClient = new QueryClient({
@@ -143,6 +145,7 @@ function AnimatedRoutes() {
         <Route path="/reset-password" element={<GuestRoute><ResetPassword /></GuestRoute>} />
         <Route path="/share/:dealId" element={<ShareDeal />} />
         <Route path="/reports/view/:shareToken" element={<SharedReportPage />} />
+        <Route path="/packets/view/:shareToken" element={<SharedPacketPage />} />
 
         {/* Onboarding — protected but skips the onboarding guard */}
         <Route path="/onboarding" element={<ProtectedRoute skipOnboarding><Onboarding /></ProtectedRoute>} />
@@ -175,6 +178,7 @@ function AnimatedRoutes() {
         <Route path="/rehabs/:projectId" element={<ProtectedRoute><PageErrorBoundary><RehabDetailPage /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/buyers" element={<ProtectedRoute><PageErrorBoundary><BuyersListPage /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/buyers/:contactId" element={<ProtectedRoute><PageErrorBoundary><BuyerDetailPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/dispositions/matches/:propertyId" element={<ProtectedRoute><PageErrorBoundary><MatchResultsPage /></PageErrorBoundary></ProtectedRoute>} />
 
         {/* Locked feature routes — show upgrade prompt instead of 404 */}
         <Route path="/sequences" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
