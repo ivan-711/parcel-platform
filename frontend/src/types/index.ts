@@ -1255,3 +1255,142 @@ export interface BuyerFilters {
   strategy?: string
   q?: string
 }
+
+// ---------------------------------------------------------------------------
+// Disposition + Match Scoring types
+// ---------------------------------------------------------------------------
+
+export interface MatchBreakdown {
+  location: number
+  financial: number
+  property: number
+  strategy: number
+}
+
+export interface PropertyMatchResult {
+  contact_id: string
+  buyer_name: string
+  company: string | null
+  buy_box_id: string
+  buy_box_name: string
+  score: number
+  match_level: 'strong' | 'moderate' | 'weak' | 'no_match'
+  breakdown: MatchBreakdown
+  reasons: string[]
+  funding_type: string | null
+  has_pof: boolean
+  can_close_days: number | null
+}
+
+export interface PropertyMatchResponse {
+  property: {
+    id: string
+    address: string
+    city: string
+    state: string
+    zip_code: string
+    strategy: string | null
+    purchase_price: number | null
+  }
+  matches: PropertyMatchResult[]
+}
+
+export interface BuyerMatchResult {
+  property_id: string
+  address: string
+  city: string
+  state: string
+  zip_code: string
+  strategy: string | null
+  purchase_price: number | null
+  buy_box_name: string
+  score: number
+  match_level: 'strong' | 'moderate' | 'weak' | 'no_match'
+  breakdown: MatchBreakdown
+}
+
+export interface BuyerMatchResponse {
+  buyer: { id: string; name: string; company: string | null }
+  matches: BuyerMatchResult[]
+}
+
+export interface MatchPreviewRequest {
+  property_id: string
+  buy_box_id: string
+}
+
+export interface MatchPreviewResponse {
+  score: number
+  match_level: string
+  breakdown: MatchBreakdown
+  reasons: string[]
+}
+
+export interface CreatePacketRequest {
+  property_id: string
+  scenario_id: string
+  title?: string
+  asking_price?: number
+  assignment_fee?: number
+  notes_to_buyer?: string
+}
+
+export interface PacketListItem {
+  id: string
+  title: string
+  share_url: string
+  property_address: string
+  asking_price: number | null
+  view_count: number
+  send_count: number
+  created_at: string
+}
+
+export interface SharedPacketData {
+  title: string
+  packet_data: {
+    property: {
+      address: string
+      city: string
+      state: string
+      zip_code: string
+      property_type: string | null
+      bedrooms: number | null
+      bathrooms: number | null
+      sqft: number | null
+      year_built: number | null
+    }
+    scenario: {
+      strategy: string
+      purchase_price: number | null
+      after_repair_value: number | null
+      repair_cost: number | null
+      monthly_rent: number | null
+      outputs: Record<string, unknown>
+    }
+    ai_narrative: string | null
+    seller_name: string | null
+    seller_email: string | null
+    seller_phone: string | null
+  }
+  asking_price: number | null
+  assignment_fee: number | null
+  notes_to_buyer: string | null
+  created_at: string
+}
+
+export interface SendPacketRequest {
+  buyer_contact_ids: string[]
+  message?: string
+}
+
+export interface SendPacketResponse {
+  sent_count: number
+  buyer_names: string[]
+}
+
+export interface MatchFilters {
+  min_score?: number
+  funding_type?: string
+  has_pof?: boolean
+}

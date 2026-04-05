@@ -729,4 +729,41 @@ export const api = {
         request<void>(`/api/buyers/${contactId}/buy-boxes/${boxId}`, { method: 'DELETE' }),
     },
   },
+  dispositions: {
+    matchProperty: (propertyId: string, filters?: import('@/types').MatchFilters) => {
+      const params = new URLSearchParams()
+      if (filters?.min_score != null) params.set('min_score', String(filters.min_score))
+      if (filters?.funding_type) params.set('funding_type', filters.funding_type)
+      if (filters?.has_pof) params.set('has_pof', 'true')
+      const qs = params.toString()
+      return request<import('@/types').PropertyMatchResponse>(`/api/dispositions/matches/property/${propertyId}${qs ? '?' + qs : ''}`)
+    },
+    matchBuyer: (contactId: string, filters?: { min_score?: number }) => {
+      const params = new URLSearchParams()
+      if (filters?.min_score != null) params.set('min_score', String(filters.min_score))
+      const qs = params.toString()
+      return request<import('@/types').BuyerMatchResponse>(`/api/dispositions/matches/buyer/${contactId}${qs ? '?' + qs : ''}`)
+    },
+    matchPreview: (data: import('@/types').MatchPreviewRequest) =>
+      request<import('@/types').MatchPreviewResponse>('/api/dispositions/match-preview', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    packets: {
+      create: (data: import('@/types').CreatePacketRequest) =>
+        request<{ id: string; share_url: string }>('/api/dispositions/packets', {
+          method: 'POST',
+          body: JSON.stringify(data),
+        }),
+      list: () =>
+        request<import('@/types').PacketListItem[]>('/api/dispositions/packets'),
+      send: (packetId: string, data: import('@/types').SendPacketRequest) =>
+        request<import('@/types').SendPacketResponse>(`/api/dispositions/packets/${packetId}/send`, {
+          method: 'POST',
+          body: JSON.stringify(data),
+        }),
+    },
+    sharedPacket: (shareToken: string) =>
+      requestPublic<import('@/types').SharedPacketData>(`/api/dispositions/packets/share/${shareToken}`),
+  },
 }
