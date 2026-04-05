@@ -43,6 +43,9 @@ from models.sequences import Sequence, SequenceStep, SequenceEnrollment
 # Wave 5 — Skip Tracing
 from models.skip_traces import SkipTrace
 
+# Wave 6 — Direct Mail
+from models.mail_campaigns import MailCampaign, MailRecipient
+
 __all__ = [
     "User",
     "Team",
@@ -86,4 +89,7 @@ __all__ = [
     "SequenceEnrollment",
     # Wave 5 — Skip Tracing
     "SkipTrace",
+    # Wave 6 — Direct Mail
+    "MailCampaign",
+    "MailRecipient",
 ]

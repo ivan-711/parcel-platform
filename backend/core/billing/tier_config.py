@@ -36,6 +36,7 @@ class TierLimits:
     document_uploads_per_month: Optional[int]
     bricked_lookups_per_month: Optional[int]
     skip_traces_per_month: Optional[int]
+    mail_pieces_per_month: Optional[int]
     ai_chat_enabled: bool
     pdf_export: bool
     pipeline_enabled: bool
@@ -53,6 +54,7 @@ TIER_LIMITS: dict[Tier, TierLimits] = {
         document_uploads_per_month=0,
         bricked_lookups_per_month=0,
         skip_traces_per_month=0,
+        mail_pieces_per_month=0,
         ai_chat_enabled=True,
         pdf_export=False,
         pipeline_enabled=False,
@@ -68,6 +70,7 @@ TIER_LIMITS: dict[Tier, TierLimits] = {
         document_uploads_per_month=5,
         bricked_lookups_per_month=10,
         skip_traces_per_month=0,
+        mail_pieces_per_month=0,
         ai_chat_enabled=True,
         pdf_export=True,
         pipeline_enabled=True,
@@ -83,6 +86,7 @@ TIER_LIMITS: dict[Tier, TierLimits] = {
         document_uploads_per_month=25,
         bricked_lookups_per_month=50,
         skip_traces_per_month=25,
+        mail_pieces_per_month=0,
         ai_chat_enabled=True,
         pdf_export=True,
         pipeline_enabled=True,
@@ -98,6 +102,7 @@ TIER_LIMITS: dict[Tier, TierLimits] = {
         document_uploads_per_month=None,
         bricked_lookups_per_month=None,
         skip_traces_per_month=200,
+        mail_pieces_per_month=100,
         ai_chat_enabled=True,
         pdf_export=True,
         pipeline_enabled=True,
