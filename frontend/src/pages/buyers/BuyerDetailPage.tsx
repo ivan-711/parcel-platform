@@ -7,10 +7,6 @@ import {
   Plus,
   Trash2,
   ShieldCheck,
-  Home,
-  Bed,
-  Bath,
-  Maximize,
   ArrowLeft,
 } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
@@ -19,16 +15,16 @@ import { BuyBoxEditor } from '@/components/buyers/BuyBoxEditor'
 import { cn } from '@/lib/utils'
 import {
   useBuyer,
-  useBuyerMatches,
   useCreateBuyBox,
   useDeleteBuyBox,
 } from '@/hooks/useBuyers'
+import { useBuyerMatches } from '@/hooks/useDispositions'
 import type {
   BuyerDetail,
   BuyBox,
-  MatchingPropertyItem,
   LinkedDeal,
   CreateBuyBoxRequest,
+  BuyerMatchResult,
 } from '@/types'
 
 // ── Constants ────────────────────────────────────────────
@@ -91,7 +87,7 @@ export default function BuyerDetailPage() {
   const { data: matchesData } = useBuyerMatches(contactId)
 
   const buyer = data as BuyerDetail | undefined
-  const matches = (matchesData as MatchingPropertyItem[] | undefined) ?? []
+  const matches = matchesData?.matches ?? []
 
   // PostHog event
   if (buyer) {
@@ -384,8 +380,15 @@ function DetailField({
   )
 }
 
+const MATCH_LEVEL_COLORS: Record<string, { text: string; bg: string }> = {
+  strong:   { text: 'text-[#4ADE80]', bg: 'bg-[#4ADE80]/15' },
+  moderate: { text: 'text-[#FBBF24]', bg: 'bg-[#FBBF24]/15' },
+  weak:     { text: 'text-[#F97316]', bg: 'bg-[#F97316]/15' },
+  no_match: { text: 'text-[#8A8580]', bg: 'bg-[#1E1D1B]' },
+}
+
 // ── Matching Properties Section ──────────────────────────
-function MatchingPropertiesSection({ matches }: { matches: MatchingPropertyItem[] }) {
+function MatchingPropertiesSection({ matches }: { matches: BuyerMatchResult[] }) {
   return (
     <section className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
       <div className="flex items-center gap-2 mb-4">
@@ -406,55 +409,43 @@ function MatchingPropertiesSection({ matches }: { matches: MatchingPropertyItem[
         <p className="text-sm text-[#8A8580]">No properties match this buyer's criteria</p>
       ) : (
         <div className="space-y-2">
-          {matches.map((property) => (
-            <Link
-              key={property.id}
-              to={`/properties/${property.id}`}
-              className="flex items-center justify-between gap-4 p-3 rounded-lg border border-[#1E1D1B] hover:border-[#8B7AFF]/30 transition-colors group"
-            >
-              <div className="min-w-0 flex-1">
-                <p className="text-sm text-[#F0EDE8] group-hover:text-[#8B7AFF] transition-colors truncate">
-                  {property.address}
-                </p>
-                <p className="text-xs text-[#8A8580] mt-0.5">
-                  {[property.city, property.state].filter(Boolean).join(', ')}
-                </p>
-              </div>
-              <div className="flex items-center gap-3 shrink-0 text-xs text-[#C5C0B8]">
-                {property.purchase_price != null && (
-                  <span className="text-[#F0EDE8] font-medium">
-                    {formatPrice(property.purchase_price)}
-                  </span>
-                )}
-                {property.property_type && (
-                  <span className="px-2 py-0.5 rounded bg-[#1E1D1B] text-[#8A8580]">
-                    {property.property_type}
-                  </span>
-                )}
-                {property.bedrooms != null && (
-                  <span className="inline-flex items-center gap-0.5">
-                    <Bed size={11} className="text-[#8A8580]" /> {property.bedrooms}
-                  </span>
-                )}
-                {property.bathrooms != null && (
-                  <span className="inline-flex items-center gap-0.5">
-                    <Bath size={11} className="text-[#8A8580]" /> {property.bathrooms}
-                  </span>
-                )}
-                {property.sqft != null && (
-                  <span className="inline-flex items-center gap-0.5">
-                    <Maximize size={11} className="text-[#8A8580]" />{' '}
-                    {property.sqft.toLocaleString()}
-                  </span>
-                )}
-                {property.strategy && (
-                  <span className="px-2 py-0.5 rounded bg-[#8B7AFF]/15 text-[#8B7AFF] border border-[#8B7AFF]/30">
-                    {humanizeStrategy(property.strategy)}
-                  </span>
-                )}
-              </div>
-            </Link>
-          ))}
+          {matches.map((match) => {
+            const levelColors = MATCH_LEVEL_COLORS[match.match_level] ?? MATCH_LEVEL_COLORS.no_match
+            return (
+              <Link
+                key={match.property_id}
+                to={`/properties/${match.property_id}`}
+                className="flex items-center justify-between gap-4 p-3 rounded-lg border border-[#1E1D1B] hover:border-[#8B7AFF]/30 transition-colors group"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm text-[#F0EDE8] group-hover:text-[#8B7AFF] transition-colors truncate">
+                    {match.address}
+                  </p>
+                  <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                    <span className={cn('text-xs font-medium tabular-nums', levelColors.text)}>
+                      {match.score}
+                    </span>
+                    <span className={cn('text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded', levelColors.bg, levelColors.text)}>
+                      {match.match_level.replace('_', ' ')}
+                    </span>
+                    <span className="text-[10px] text-[#8A8580] truncate">{match.buy_box_name}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0 text-xs">
+                  {match.purchase_price != null && (
+                    <span className="text-[#F0EDE8] font-medium">
+                      {formatPrice(match.purchase_price)}
+                    </span>
+                  )}
+                  {match.strategy && (
+                    <span className="px-2 py-0.5 rounded bg-[#8B7AFF]/15 text-[#8B7AFF] border border-[#8B7AFF]/30">
+                      {humanizeStrategy(match.strategy)}
+                    </span>
+                  )}
+                </div>
+              </Link>
+            )
+          })}
         </div>
       )}
     </section>

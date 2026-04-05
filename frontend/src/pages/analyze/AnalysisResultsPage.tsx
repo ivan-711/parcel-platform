@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Save, GitBranch, FileText, Loader2, Check } from 'lucide-react'
+import { Save, GitBranch, FileText, Loader2, Check, Users } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { CreateReportModal } from '@/components/reports/CreateReportModal'
 import { NarrativeCard } from './components/NarrativeCard'
@@ -237,6 +237,16 @@ export default function AnalysisResultsPage() {
             >
               <FileText size={14} />
               Report
+            </button>
+            <button
+              onClick={() => {
+                try { ;(window as any).posthog?.capture?.('find_buyers_clicked', { source: 'analysis' }) } catch {}
+                navigate(`/dispositions/matches/${propertyId}`)
+              }}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-all cursor-pointer"
+            >
+              <Users size={14} />
+              Find Buyers
             </button>
           </div>
         </motion.div>

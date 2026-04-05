@@ -17,6 +17,7 @@ import {
   GitBranch,
   Database,
   Landmark,
+  Users,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
@@ -149,6 +150,8 @@ export default function PropertyDetailPage() {
         {/* Header */}
         <PropertyHeader
           property={property}
+          propertyId={propertyId!}
+          navigate={navigate}
           onDelete={handleDelete}
         />
 
@@ -217,9 +220,13 @@ export default function PropertyDetailPage() {
 
 function PropertyHeader({
   property,
+  propertyId,
+  navigate,
   onDelete,
 }: {
   property: PropertyDetail
+  propertyId: string
+  navigate: (path: string) => void
   onDelete: () => void
 }) {
   return (
@@ -284,6 +291,16 @@ function PropertyHeader({
           <Search size={14} />
           Analyze
         </Link>
+        <button
+          onClick={() => {
+            try { ;(window as any).posthog?.capture?.('find_buyers_clicked', { source: 'property' }) } catch {}
+            navigate(`/dispositions/matches/${propertyId}`)
+          }}
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-colors cursor-pointer"
+        >
+          <Users size={14} />
+          Find Buyers
+        </button>
         <button
           onClick={onDelete}
           className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#F87171] border border-[#F87171]/20 hover:bg-[#F87171]/10 transition-colors cursor-pointer"
