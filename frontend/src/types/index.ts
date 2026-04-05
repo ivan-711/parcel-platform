@@ -1002,3 +1002,92 @@ export interface BulkCreateResponse {
   created: number
   errors: string[]
 }
+
+// ---------------------------------------------------------------------------
+// Rehab types
+// ---------------------------------------------------------------------------
+
+export interface RehabProject {
+  id: string
+  property_id: string
+  deal_id: string | null
+  created_by: string
+  team_id: string | null
+  name: string
+  status: string
+  estimated_budget: number | null
+  actual_spent: number | null
+  start_date: string | null
+  target_completion: string | null
+  actual_completion: string | null
+  notes: string | null
+  created_at: string
+  updated_at: string
+  item_count: number
+  total_estimated: number
+  total_actual: number
+  budget_variance: number
+  completion_pct: number
+  property_address: string
+}
+
+export interface RehabItem {
+  id: string
+  project_id: string
+  created_by: string
+  category: string
+  description: string
+  estimated_cost: number | null
+  actual_cost: number | null
+  status: string
+  contractor_name: string | null
+  contractor_bid: number | null
+  priority: string | null
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface RehabProjectDetail extends RehabProject {
+  items: RehabItem[]
+}
+
+export interface RehabCategorySummary {
+  category: string
+  estimated: number
+  actual: number
+  variance: number
+  item_count: number
+  completed_count: number
+}
+
+export interface RehabProjectSummary {
+  total_estimated: number
+  total_actual: number
+  total_variance: number
+  overall_completion_pct: number
+  by_category: RehabCategorySummary[]
+}
+
+export interface CreateRehabProjectRequest {
+  property_id: string
+  name: string
+  deal_id?: string
+  status?: string
+  start_date?: string
+  target_completion?: string
+  notes?: string
+  import_bricked?: boolean
+}
+
+export interface CreateRehabItemRequest {
+  category: string
+  description: string
+  estimated_cost?: number
+  actual_cost?: number
+  status?: string
+  contractor_name?: string
+  contractor_bid?: number
+  priority?: string
+  notes?: string
+}

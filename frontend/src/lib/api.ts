@@ -645,4 +645,50 @@ export const api = {
         body: JSON.stringify(data),
       }),
   },
+  rehab: {
+    projects: {
+      list: (filters?: { property_id?: string; status?: string }) => {
+        const params = new URLSearchParams()
+        if (filters?.property_id) params.set('property_id', filters.property_id)
+        if (filters?.status) params.set('status', filters.status)
+        const qs = params.toString()
+        return request<import('@/types').RehabProject[]>(`/api/rehab/projects${qs ? '?' + qs : ''}`)
+      },
+      get: (id: string) =>
+        request<import('@/types').RehabProjectDetail>(`/api/rehab/projects/${id}`),
+      create: (data: import('@/types').CreateRehabProjectRequest) =>
+        request<import('@/types').RehabProject>('/api/rehab/projects', {
+          method: 'POST',
+          body: JSON.stringify(data),
+        }),
+      update: (id: string, data: Record<string, unknown>) =>
+        request<import('@/types').RehabProject>(`/api/rehab/projects/${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify(data),
+        }),
+      delete: (id: string) =>
+        request<void>(`/api/rehab/projects/${id}`, { method: 'DELETE' }),
+      summary: (id: string) =>
+        request<import('@/types').RehabProjectSummary>(`/api/rehab/projects/${id}/summary`),
+    },
+    items: {
+      create: (projectId: string, data: import('@/types').CreateRehabItemRequest) =>
+        request<import('@/types').RehabItem>(`/api/rehab/projects/${projectId}/items`, {
+          method: 'POST',
+          body: JSON.stringify(data),
+        }),
+      update: (projectId: string, itemId: string, data: Record<string, unknown>) =>
+        request<import('@/types').RehabItem>(`/api/rehab/projects/${projectId}/items/${itemId}`, {
+          method: 'PATCH',
+          body: JSON.stringify(data),
+        }),
+      delete: (projectId: string, itemId: string) =>
+        request<void>(`/api/rehab/projects/${projectId}/items/${itemId}`, { method: 'DELETE' }),
+      bulkCreate: (projectId: string, data: { items: import('@/types').CreateRehabItemRequest[] }) =>
+        request<import('@/types').RehabItem[]>(`/api/rehab/projects/${projectId}/items/bulk`, {
+          method: 'POST',
+          body: JSON.stringify(data),
+        }),
+    },
+  },
 }
