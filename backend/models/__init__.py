@@ -40,6 +40,9 @@ from models.buy_boxes import BuyBox
 from models.buyer_packets import BuyerPacket, BuyerPacketSend
 from models.sequences import Sequence, SequenceStep, SequenceEnrollment
 
+# Wave 5 — Skip Tracing
+from models.skip_traces import SkipTrace
+
 __all__ = [
     "User",
     "Team",
@@ -81,4 +84,6 @@ __all__ = [
     "Sequence",
     "SequenceStep",
     "SequenceEnrollment",
+    # Wave 5 — Skip Tracing
+    "SkipTrace",
 ]

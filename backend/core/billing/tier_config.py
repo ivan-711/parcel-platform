@@ -4,18 +4,24 @@ from typing import Optional
 
 
 class Tier(IntEnum):
-    """Billing tiers ordered by feature access level."""
+    """Billing tiers ordered by feature access level.
+
+    Canonical pricing: Free / Plus ($29) / Pro ($79) / Business ($149)
+    """
 
     FREE = 0
-    STARTER = 1
+    PLUS = 1       # was STARTER
     PRO = 2
-    TEAM = 3
+    BUSINESS = 3   # was TEAM
 
     @classmethod
     def from_str(cls, value: str) -> "Tier":
         """Convert a string like 'pro' to the corresponding Tier enum."""
+        # Legacy mapping for in-flight subscriptions / Stripe metadata
+        _legacy = {"starter": "PLUS", "team": "BUSINESS"}
+        key = _legacy.get(value.lower(), value.upper()) if value else "FREE"
         try:
-            return cls[value.upper()]
+            return cls[key]
         except (KeyError, AttributeError):
             return cls.FREE
 
@@ -28,6 +34,8 @@ class TierLimits:
     saved_deals: Optional[int]
     ai_messages_per_month: Optional[int]
     document_uploads_per_month: Optional[int]
+    bricked_lookups_per_month: Optional[int]
+    skip_traces_per_month: Optional[int]
     ai_chat_enabled: bool
     pdf_export: bool
     pipeline_enabled: bool
@@ -43,6 +51,8 @@ TIER_LIMITS: dict[Tier, TierLimits] = {
         saved_deals=5,
         ai_messages_per_month=5,
         document_uploads_per_month=0,
+        bricked_lookups_per_month=0,
+        skip_traces_per_month=0,
         ai_chat_enabled=True,
         pdf_export=False,
         pipeline_enabled=False,
@@ -51,11 +61,13 @@ TIER_LIMITS: dict[Tier, TierLimits] = {
         compare_deals=False,
         team_seats=None,
     ),
-    Tier.STARTER: TierLimits(
+    Tier.PLUS: TierLimits(            # $29/mo
         analyses_per_month=25,
         saved_deals=50,
         ai_messages_per_month=30,
         document_uploads_per_month=5,
+        bricked_lookups_per_month=10,
+        skip_traces_per_month=0,
         ai_chat_enabled=True,
         pdf_export=True,
         pipeline_enabled=True,
@@ -69,6 +81,8 @@ TIER_LIMITS: dict[Tier, TierLimits] = {
         saved_deals=None,
         ai_messages_per_month=150,
         document_uploads_per_month=25,
+        bricked_lookups_per_month=50,
+        skip_traces_per_month=25,
         ai_chat_enabled=True,
         pdf_export=True,
         pipeline_enabled=True,
@@ -77,11 +91,13 @@ TIER_LIMITS: dict[Tier, TierLimits] = {
         compare_deals=True,
         team_seats=None,
     ),
-    Tier.TEAM: TierLimits(
+    Tier.BUSINESS: TierLimits(        # $149/mo
         analyses_per_month=None,
         saved_deals=None,
         ai_messages_per_month=500,
         document_uploads_per_month=None,
+        bricked_lookups_per_month=None,
+        skip_traces_per_month=200,
         ai_chat_enabled=True,
         pdf_export=True,
         pipeline_enabled=True,
