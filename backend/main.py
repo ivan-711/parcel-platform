@@ -61,7 +61,7 @@ app.add_middleware(
 )
 
 from routers import auth, dashboard, deals, pipeline, portfolio, chat, documents, settings  # noqa: E402
-from routers import webhooks, billing, clerk_webhooks, analysis, onboarding, calculators, properties, activity, contacts, today, tasks, reports, financing, transactions, rehab, portfolio_v2  # noqa: E402
+from routers import webhooks, billing, clerk_webhooks, analysis, onboarding, calculators, properties, activity, contacts, today, tasks, reports, financing, transactions, rehab, portfolio_v2, buyers  # noqa: E402
 
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(dashboard.router, prefix="/api/v1")
@@ -87,6 +87,7 @@ app.include_router(financing.router, prefix="/api")
 app.include_router(transactions.router, prefix="/api")
 app.include_router(rehab.router, prefix="/api")
 app.include_router(portfolio_v2.router, prefix="/api")
+app.include_router(buyers.router, prefix="/api")
 
 
 @app.get("/health")
