@@ -17,6 +17,8 @@ from core.security.jwt import get_current_user
 from core.telemetry import track_event
 from database import get_db
 from models.contacts import Contact
+from models.deals import Deal
+from models.properties import Property
 from models.sequences import Sequence, SequenceEnrollment, SequenceStep
 from models.users import User
 from schemas.sequences import (
@@ -439,6 +441,16 @@ async def enroll_contact(
             detail={"error": "Contact not found", "code": "NOT_FOUND"},
         )
 
+    # Validate deal and property ownership to prevent cross-tenant access
+    if body.deal_id is not None:
+        deal = db.query(Deal).filter(Deal.id == body.deal_id, Deal.user_id == current_user.id, Deal.deleted_at.is_(None)).first()
+        if not deal:
+            raise HTTPException(status_code=404, detail={"error": "Deal not found", "code": "DEAL_NOT_FOUND"})
+    if body.property_id is not None:
+        prop = db.query(Property).filter(Property.id == body.property_id, Property.created_by == current_user.id, Property.is_deleted == False).first()  # noqa: E712
+        if not prop:
+            raise HTTPException(status_code=404, detail={"error": "Property not found", "code": "PROPERTY_NOT_FOUND"})
+
     service = _get_service(db)
     engine = SequenceEngine(db, service)
 
@@ -477,6 +489,16 @@ async def bulk_enroll(
     db: Session = Depends(get_db),
 ) -> dict:
     """Enroll up to 50 contacts in a sequence. Returns count enrolled and any errors."""
+    # Validate deal and property ownership once before processing any contacts
+    if body.deal_id is not None:
+        deal = db.query(Deal).filter(Deal.id == body.deal_id, Deal.user_id == current_user.id, Deal.deleted_at.is_(None)).first()
+        if not deal:
+            raise HTTPException(status_code=404, detail={"error": "Deal not found", "code": "DEAL_NOT_FOUND"})
+    if body.property_id is not None:
+        prop = db.query(Property).filter(Property.id == body.property_id, Property.created_by == current_user.id, Property.is_deleted == False).first()  # noqa: E712
+        if not prop:
+            raise HTTPException(status_code=404, detail={"error": "Property not found", "code": "PROPERTY_NOT_FOUND"})
+
     service = _get_service(db)
     engine = SequenceEngine(db, service)
 

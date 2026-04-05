@@ -63,20 +63,23 @@ def normalize_phone(raw: str) -> str:
     Normalize *raw* to E.164 format.
 
     Rules:
-    - Strip non-digits.
+    - Strip non-digits (except a leading +).
     - 10-digit US number  → prepend +1
     - 11-digit number starting with 1 → prepend +
-    - Already has leading + and valid length → pass through
+    - Already has leading + with 10+ digits → pass through
     - Anything else → raise ValueError
     """
     if not raw:
         raise ValueError("Empty phone number")
 
-    # If already E.164 (starts with +), validate and return.
+    # If already E.164 (starts with +), validate digit count strictly.
     if raw.startswith("+"):
         digits = phone_digits(raw)
-        if len(digits) < 7 or len(digits) > 15:
-            raise ValueError(f"Invalid E.164 number: {raw}")
+        if len(digits) < 10:
+            raise ValueError(
+                f"Invalid E.164 number (too few digits): {raw!r}. "
+                "Expected at least 10 digits after country code."
+            )
         return raw
 
     digits = phone_digits(raw)
@@ -87,10 +90,11 @@ def normalize_phone(raw: str) -> str:
     if len(digits) == 11 and digits.startswith("1"):
         return f"+{digits}"
 
-    if 7 <= len(digits) <= 15:
-        return f"+{digits}"
-
-    raise ValueError(f"Cannot normalize phone number: {raw!r}")
+    raise ValueError(
+        f"Cannot normalize phone number: {raw!r}. "
+        "Provide a 10-digit US number, an 11-digit US number starting with 1, "
+        "or a full E.164 number starting with +."
+    )
 
 
 # ---------------------------------------------------------------------------
