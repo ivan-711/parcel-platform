@@ -807,4 +807,38 @@ export const api = {
     analytics: (seqId: string) =>
       request<import('@/types').SequenceAnalytics>(`/api/sequences/${seqId}/analytics`),
   },
+  skipTracing: {
+    trace: (data: import('@/types').TraceAddressRequest) =>
+      request<import('@/types').SkipTraceResult>('/api/skip-tracing/trace', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    traceBatch: (data: { records: { address: string; city: string; state: string; zip_code: string }[]; auto_create_contacts?: boolean }) =>
+      request<{ batch_id: string; status: string; total: number }>('/api/skip-tracing/trace-batch', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    batchStatus: (batchId: string) =>
+      request<import('@/types').BatchStatusResponse>(`/api/skip-tracing/batch/${batchId}/status`),
+    history: (filters?: import('@/types').SkipTraceHistoryFilters) => {
+      const params = new URLSearchParams()
+      if (filters?.property_id) params.set('property_id', filters.property_id)
+      if (filters?.status) params.set('status', filters.status)
+      if (filters?.date_from) params.set('date_from', filters.date_from)
+      if (filters?.date_to) params.set('date_to', filters.date_to)
+      if (filters?.page) params.set('page', String(filters.page))
+      if (filters?.per_page) params.set('per_page', String(filters.per_page))
+      const qs = params.toString()
+      return request<{ items: import('@/types').SkipTraceListItem[]; total: number }>(`/api/skip-tracing/history${qs ? '?' + qs : ''}`)
+    },
+    get: (id: string) =>
+      request<import('@/types').SkipTraceResult>(`/api/skip-tracing/${id}`),
+    createContact: (id: string, data?: { contact_type?: string }) =>
+      request<import('@/types').CreateContactFromTraceResponse>(`/api/skip-tracing/${id}/create-contact`, {
+        method: 'POST',
+        body: JSON.stringify(data ?? {}),
+      }),
+    usage: () =>
+      request<import('@/types').SkipTraceUsage>('/api/skip-tracing/usage'),
+  },
 }

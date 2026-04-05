@@ -1547,3 +1547,93 @@ export interface BulkEnrollRequest {
   property_id?: string
   deal_id?: string
 }
+
+// ---------------------------------------------------------------------------
+// Skip Tracing types
+// ---------------------------------------------------------------------------
+
+export interface PhoneResult {
+  number: string
+  type: 'mobile' | 'landline' | 'voip' | 'unknown'
+  is_primary: boolean
+}
+
+export interface EmailResult {
+  email: string
+  is_primary: boolean
+}
+
+export interface SkipTraceResult {
+  id: string
+  property_id: string | null
+  contact_id: string | null
+  status: 'pending' | 'processing' | 'found' | 'not_found' | 'failed'
+  input_address: string | null
+  input_city: string | null
+  input_state: string | null
+  input_zip: string | null
+  owner_first_name: string | null
+  owner_last_name: string | null
+  phones: PhoneResult[]
+  emails: EmailResult[]
+  mailing_address: { line1: string; city: string; state: string; zip: string } | null
+  is_absentee_owner: boolean | null
+  demographics: Record<string, unknown> | null
+  cost_cents: number | null
+  traced_at: string | null
+  created_at: string
+}
+
+export interface SkipTraceListItem {
+  id: string
+  status: string
+  input_address: string | null
+  input_city: string | null
+  input_state: string | null
+  owner_first_name: string | null
+  owner_last_name: string | null
+  phone_count: number
+  email_count: number
+  is_absentee_owner: boolean | null
+  contact_id: string | null
+  traced_at: string | null
+  created_at: string
+}
+
+export interface TraceAddressRequest {
+  property_id?: string
+  address?: string
+  city?: string
+  state?: string
+  zip_code?: string
+}
+
+export interface SkipTraceUsage {
+  used: number
+  limit: number | null
+  cost_total_cents: number
+}
+
+export interface CreateContactFromTraceResponse {
+  existing: boolean
+  contact_id: string
+  contact_name: string
+}
+
+export interface BatchStatusResponse {
+  batch_id: string
+  status: string
+  total: number
+  completed: number
+  found: number
+  not_found: number
+}
+
+export interface SkipTraceHistoryFilters {
+  property_id?: string
+  status?: string
+  date_from?: string
+  date_to?: string
+  page?: number
+  per_page?: number
+}
