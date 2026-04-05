@@ -53,6 +53,9 @@ const SequencesListPage = lazy(() => import('@/pages/sequences/SequencesListPage
 const SequenceBuilderPage = lazy(() => import('@/pages/sequences/SequenceBuilderPage'))
 const SkipTracingPage = lazy(() => import('@/pages/skip-tracing/SkipTracingPage'))
 const BatchSkipTracePage = lazy(() => import('@/pages/skip-tracing/BatchSkipTracePage'))
+const MailCampaignsPage = lazy(() => import('@/pages/mail/MailCampaignsPage'))
+const CampaignBuilderPage = lazy(() => import('@/pages/mail/CampaignBuilderPage'))
+const CampaignAnalyticsPage = lazy(() => import('@/pages/mail/CampaignAnalyticsPage'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
 const queryClient = new QueryClient({
@@ -190,7 +193,10 @@ function AnimatedRoutes() {
         <Route path="/sequences/:id" element={<ProtectedRoute><PageErrorBoundary><SequenceBuilderPage /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/skip-tracing" element={<ProtectedRoute><PageErrorBoundary><SkipTracingPage /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/skip-tracing/batch" element={<ProtectedRoute><PageErrorBoundary><BatchSkipTracePage /></PageErrorBoundary></ProtectedRoute>} />
-        <Route path="/mail-campaigns" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
+        <Route path="/mail-campaigns" element={<ProtectedRoute><PageErrorBoundary><MailCampaignsPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/mail-campaigns/new" element={<ProtectedRoute><PageErrorBoundary><CampaignBuilderPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/mail-campaigns/:id" element={<ProtectedRoute><PageErrorBoundary><CampaignBuilderPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/mail-campaigns/:id/analytics" element={<ProtectedRoute><PageErrorBoundary><CampaignAnalyticsPage /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/d4d" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
         <Route path="/compliance" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
 

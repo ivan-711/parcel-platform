@@ -85,7 +85,7 @@ export const NAV_SECTIONS: NavSection[] = [
     items: [
       { label: 'Sequences', path: '/sequences', icon: Repeat },
       { label: 'Skip Tracing', path: '/skip-tracing', icon: Search },
-      { label: 'Mail Campaigns', path: '/mail-campaigns', icon: Mail, locked: true },
+      { label: 'Mail Campaigns', path: '/mail-campaigns', icon: Mail },
       { label: 'D4D', path: '/d4d', icon: MapPin, locked: true },
     ],
   },
