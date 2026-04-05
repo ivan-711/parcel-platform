@@ -32,6 +32,7 @@ import { TaskList } from '@/components/tasks/TaskList'
 import { AddTaskForm } from '@/components/tasks/AddTaskForm'
 import { useTasksList } from '@/hooks/useTasks'
 import { useInstruments, useInstrument } from '@/hooks/useFinancing'
+import { useRehabProjects } from '@/hooks/useRehab'
 import { AddInstrumentModal } from '@/components/financing/AddInstrumentModal'
 import { useTransactions } from '@/hooks/useTransactions'
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal'
@@ -308,6 +309,7 @@ function OverviewTab({
   propertyId: string
   tasks: import('@/types').TaskItem[]
 }) {
+  const { data: rehabProjects } = useRehabProjects({ property_id: propertyId })
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Left column */}
@@ -393,6 +395,40 @@ function OverviewTab({
           <div className="mt-3">
             <AddTaskForm propertyId={propertyId} />
           </div>
+        </Card>
+
+        {/* Rehab Projects */}
+        <Card title="Rehab Projects">
+          {(!rehabProjects || rehabProjects.length === 0) ? (
+            <div className="py-2">
+              <p className="text-sm text-[#8A8580]">No rehab projects.</p>
+              <Link to="/rehabs" className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors mt-1 inline-block">
+                + Create Rehab Project
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {rehabProjects.map(proj => {
+                const pct = proj.total_estimated > 0 ? Math.min((proj.total_actual / proj.total_estimated) * 100, 100) : 0
+                const overBudget = proj.total_actual > proj.total_estimated && proj.total_estimated > 0
+                return (
+                  <Link key={proj.id} to={`/rehabs/${proj.id}`} className="block p-3 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B] hover:border-[#8B7AFF]/20 transition-colors">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm text-[#F0EDE8]">{proj.name}</span>
+                      <span className="text-[10px] uppercase tracking-wider text-[#8A8580]">{proj.status.replace(/_/g, ' ')}</span>
+                    </div>
+                    <div className="h-1.5 bg-[#1E1D1B] rounded-full overflow-hidden mb-1">
+                      <div className={`h-full rounded-full ${overBudget ? 'bg-[#F87171]' : 'bg-[#4ADE80]'}`} style={{ width: `${Math.min(pct, 100)}%` }} />
+                    </div>
+                    <div className="flex items-center justify-between text-[10px] text-[#8A8580]">
+                      <span>${Number(proj.total_actual).toLocaleString()} of ${Number(proj.total_estimated).toLocaleString()}</span>
+                      <span>{proj.completion_pct}% complete</span>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          )}
         </Card>
 
         {/* Data Sources */}
