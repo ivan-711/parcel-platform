@@ -33,6 +33,8 @@ import { AddTaskForm } from '@/components/tasks/AddTaskForm'
 import { useTasksList } from '@/hooks/useTasks'
 import { useInstruments, useInstrument } from '@/hooks/useFinancing'
 import { AddInstrumentModal } from '@/components/financing/AddInstrumentModal'
+import { useTransactions } from '@/hooks/useTransactions'
+import { AddTransactionModal } from '@/components/transactions/AddTransactionModal'
 import { cn } from '@/lib/utils'
 import type { PropertyDetail, ScenarioDetail, PropertyActivityEvent } from '@/types'
 import type { InstrumentListItem } from '@/types/financing'
@@ -422,6 +424,10 @@ function FinancialsTab({
   scenarios: ScenarioDetail[]
   propertyId: string
 }) {
+  const { data: txnData } = useTransactions({ property_id: propertyId, per_page: 20 })
+  const recentTransactions = txnData?.items ?? []
+  const [showAddTxn, setShowAddTxn] = useState(false)
+
   return (
     <div className="space-y-6">
       {/* Scenario summaries */}
@@ -463,16 +469,56 @@ function FinancialsTab({
         )}
       </Card>
 
-      {/* Transactions placeholder */}
+      {/* Recent Transactions */}
       <Card title="Transactions">
-        <div className="flex items-center justify-center py-8 text-center">
-          <div className="flex flex-col items-center gap-2">
+        {recentTransactions.length === 0 ? (
+          <div className="flex flex-col items-center gap-2 py-4">
             <DollarSign size={24} className="text-[#8A8580]" />
             <p className="text-sm text-[#8A8580]">No transactions recorded yet.</p>
-            <p className="text-xs text-[#8A8580]/60">Transaction tracking coming in a future update.</p>
+            <button
+              onClick={() => setShowAddTxn(true)}
+              className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors cursor-pointer mt-1"
+            >
+              + Add Transaction
+            </button>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="space-y-1 mb-3">
+              {recentTransactions.slice(0, 10).map((txn) => {
+                const amt = Number(txn.amount)
+                const isPositive = amt >= 0
+                return (
+                  <div key={txn.id} className="flex items-center justify-between py-1.5 text-xs">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-[#8A8580] shrink-0">
+                        {new Date(txn.occurred_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      </span>
+                      <span className="text-[#C5C0B8] truncate">{txn.description || txn.transaction_type.replace(/_/g, ' ')}</span>
+                    </div>
+                    <span className={cn('tabular-nums font-medium shrink-0 ml-2', isPositive ? 'text-[#4ADE80]' : 'text-[#F87171]')}>
+                      {isPositive ? '+' : ''}${Math.abs(amt).toLocaleString()}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+            <button
+              onClick={() => setShowAddTxn(true)}
+              className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors cursor-pointer"
+            >
+              + Add Transaction
+            </button>
+          </>
+        )}
       </Card>
+
+      <AddTransactionModal
+        open={showAddTxn}
+        onOpenChange={setShowAddTxn}
+        properties={[{ id: propertyId, address: '' }]}
+        defaultPropertyId={propertyId}
+      />
     </div>
   )
 }
