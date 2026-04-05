@@ -54,5 +54,6 @@ if REDIS_URL:
     from core.tasks import document_processing  # noqa: F401
     from core.tasks import pdf_generation  # noqa: F401
     from core.tasks import skip_trace_batch  # noqa: F401
+    from core.tasks import mail_campaign  # noqa: F401
 else:
     logger.info("REDIS_URL not set — Dramatiq broker disabled (tasks will not be processed)")
