@@ -2,6 +2,8 @@
 """Portfolio V2 router — automated property-centric portfolio overview."""
 
 from datetime import date, timedelta
+
+from core.financing.obligation_engine import _add_months
 from typing import Optional
 from uuid import UUID
 
@@ -188,11 +190,30 @@ async def portfolio_overview(
             monthly_income = sum(float(t.amount) for t in month_txns if float(t.amount or 0) > 0)
             monthly_expenses = sum(abs(float(t.amount)) for t in month_txns if float(t.amount or 0) < 0)
         else:
-            # Fall back to scenario projections
-            monthly_income = float(outputs.get("monthly_cash_flow", 0)) + float(outputs.get("total_monthly_expenses", 0))
-            monthly_expenses = float(outputs.get("total_monthly_expenses", 0))
-            if monthly_income < 0:
-                monthly_income = float(outputs.get("effective_gross_income", 0))
+            # Fall back to scenario projections — preserve negative cash flow
+            projected_cf = outputs.get("monthly_cash_flow")
+            projected_expenses = outputs.get("total_monthly_expenses", 0)
+            projected_income = outputs.get("effective_gross_income", 0)
+
+            if isinstance(projected_cf, (int, float)):
+                # Use projected cash flow directly
+                if isinstance(projected_expenses, (int, float)) and projected_expenses > 0:
+                    monthly_expenses = float(projected_expenses)
+                    monthly_income = float(projected_cf) + monthly_expenses
+                elif isinstance(projected_income, (int, float)) and projected_income > 0:
+                    monthly_income = float(projected_income)
+                    monthly_expenses = monthly_income - float(projected_cf)
+                else:
+                    # Only cash flow known — attribute entirely
+                    if float(projected_cf) >= 0:
+                        monthly_income = float(projected_cf)
+                        monthly_expenses = 0
+                    else:
+                        monthly_income = 0
+                        monthly_expenses = abs(float(projected_cf))
+            else:
+                monthly_income = 0
+                monthly_expenses = 0
 
         monthly_cf = monthly_income - monthly_expenses
 
@@ -255,8 +276,9 @@ async def portfolio_overview(
 
     # Equity history — current values for all 12 months (flat, honest)
     equity_history = []
+    first_of_month = date.today().replace(day=1)
     for i in range(11, -1, -1):
-        d = date.today().replace(day=1) - timedelta(days=i * 30)
+        d = _add_months(first_of_month, -i)
         equity_history.append(MonthlyEquity(
             month=d.strftime("%Y-%m"),
             total_equity=round(total_equity, 2),
@@ -264,7 +286,7 @@ async def portfolio_overview(
         ))
 
     # Cash flow history from transactions (last 12 months)
-    twelve_months_ago = date.today().replace(day=1) - timedelta(days=365)
+    twelve_months_ago = _add_months(first_of_month, -12)
     prop_ids = [p.id for p in owned]
     all_txns = (
         db.query(Transaction)
@@ -290,7 +312,7 @@ async def portfolio_overview(
 
     cash_flow_history = []
     for i in range(11, -1, -1):
-        d = date.today().replace(day=1) - timedelta(days=i * 30)
+        d = _add_months(first_of_month, -i)
         key = d.strftime("%Y-%m")
         entry = monthly_cf_map.get(key, {"income": 0, "expenses": 0})
         cash_flow_history.append(MonthlyCashFlow(

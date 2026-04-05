@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from sqlalchemy import and_, func, or_
 from sqlalchemy.orm import Session
 
+from core.financing.obligation_engine import _add_months
 from core.security.jwt import get_current_user
 from database import get_db
 from models.users import User
@@ -184,6 +185,8 @@ def _build_portfolio_summary(
 ) -> PortfolioSummary:
     from models.properties import Property
     from models.analysis_scenarios import AnalysisScenario
+    from models.financing_instruments import FinancingInstrument
+    from models.transactions import Transaction as TxnModel
 
     owned = (
         db.query(Property)
@@ -197,6 +200,10 @@ def _build_portfolio_summary(
 
     total_value = 0.0
     total_cf = 0.0
+    total_debt = 0.0
+
+    now = date.today()
+    month_start = now.replace(day=1)
 
     for p in owned:
         scenario = (
@@ -209,10 +216,39 @@ def _build_portfolio_summary(
             .first()
         )
         if scenario:
-            pp = scenario.purchase_price
-            if pp is not None:
-                total_value += float(pp)
+            pp = float(scenario.purchase_price or 0)
+            arv = float(scenario.after_repair_value or 0)
+            total_value += arv if arv > 0 else pp
             outputs = scenario.outputs or {}
+        else:
+            outputs = {}
+
+        # Debt from active financing instruments
+        debt = sum(
+            float(i.current_balance or 0)
+            for i in db.query(FinancingInstrument).filter(
+                FinancingInstrument.property_id == p.id,
+                FinancingInstrument.created_by == user_id,
+                FinancingInstrument.deleted_at.is_(None),
+                FinancingInstrument.status == "active",
+            ).all()
+        )
+        total_debt += debt
+
+        # Prefer actual transactions for cash flow, fall back to scenario
+        month_txns = (
+            db.query(TxnModel)
+            .filter(
+                TxnModel.property_id == p.id,
+                TxnModel.created_by == user_id,
+                TxnModel.is_deleted == False,  # noqa: E712
+                TxnModel.occurred_at >= month_start,
+            )
+            .all()
+        )
+        if month_txns:
+            total_cf += sum(float(t.amount or 0) for t in month_txns)
+        else:
             mcf = outputs.get("monthly_cash_flow")
             if isinstance(mcf, (int, float)):
                 total_cf += mcf
@@ -273,15 +309,14 @@ def _build_portfolio_summary(
         pass
 
     # Monthly transaction actuals (last 6 months)
-    from models.transactions import Transaction as TransactionModel
-
-    six_months_ago = date.today().replace(day=1) - timedelta(days=180)
+    first_of_month = date.today().replace(day=1)
+    six_months_ago = _add_months(first_of_month, -6)
     txns = (
-        db.query(TransactionModel)
+        db.query(TxnModel)
         .filter(
-            TransactionModel.created_by == user_id,
-            TransactionModel.is_deleted == False,  # noqa: E712
-            TransactionModel.occurred_at >= six_months_ago,
+            TxnModel.created_by == user_id,
+            TxnModel.is_deleted == False,  # noqa: E712
+            TxnModel.occurred_at >= six_months_ago,
         )
         .all()
     )
@@ -292,7 +327,7 @@ def _build_portfolio_summary(
 
     monthly_actuals = []
     for i in range(5, -1, -1):
-        d = date.today().replace(day=1) - timedelta(days=i * 30)
+        d = _add_months(first_of_month, -i)
         key = d.strftime("%Y-%m")
         monthly_actuals.append({"month": key, "net": round(monthly_actuals_map.get(key, 0), 2)})
 
