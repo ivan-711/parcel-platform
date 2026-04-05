@@ -128,10 +128,59 @@ async def list_buyers(
 
     buyers = query.order_by(Contact.created_at.desc()).all()
 
+    if not buyers:
+        return []
+
+    buyer_ids = [b.id for b in buyers]
+
+    # Batch load buy boxes (1 query instead of N)
+    all_boxes = db.query(BuyBox).filter(
+        BuyBox.contact_id.in_(buyer_ids),
+        BuyBox.deleted_at.is_(None),
+    ).all()
+    boxes_by_contact: dict = {}
+    for box in all_boxes:
+        boxes_by_contact.setdefault(box.contact_id, []).append(box)
+
+    # Batch load deal counts (1 query instead of N)
+    deal_counts = dict(
+        db.query(DealContact.contact_id, func.count(DealContact.id))
+        .filter(DealContact.contact_id.in_(buyer_ids))
+        .group_by(DealContact.contact_id)
+        .all()
+    )
+
+    # Batch load last communications (1 query instead of N)
+    last_comms = dict(
+        db.query(Communication.contact_id, func.max(Communication.occurred_at))
+        .filter(Communication.contact_id.in_(buyer_ids))
+        .group_by(Communication.contact_id)
+        .all()
+    )
+
     # Build items and apply buy-box-level filters
     items = []
     for contact in buyers:
-        item = _build_buyer_item(db, contact)
+        boxes = boxes_by_contact.get(contact.id, [])
+        active_boxes = [b for b in boxes if b.is_active]
+        funding = active_boxes[0].funding_type if active_boxes else None
+        contact_has_pof = any(b.proof_of_funds for b in active_boxes)
+        last_comm = last_comms.get(contact.id)
+
+        item = BuyerListItem(
+            id=contact.id,
+            first_name=contact.first_name,
+            last_name=contact.last_name,
+            email=contact.email,
+            phone=contact.phone,
+            company=contact.company,
+            contact_type=contact.contact_type,
+            buy_boxes=[BuyBoxResponse.model_validate(b, from_attributes=True) for b in boxes],
+            deal_count=deal_counts.get(contact.id, 0),
+            last_communication=last_comm.isoformat() if last_comm else None,
+            funding_type=funding,
+            has_pof=contact_has_pof,
+        )
 
         # Filter by funding type
         if funding_type and item.funding_type != funding_type:

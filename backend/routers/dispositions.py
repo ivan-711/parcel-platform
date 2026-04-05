@@ -203,16 +203,33 @@ async def matches_for_property(
 
     results: list[PropertyMatchResult] = []
 
-    for buyer in buyers:
-        boxes = (
-            db.query(BuyBox)
-            .filter(
-                BuyBox.contact_id == buyer.id,
-                BuyBox.is_active == True,  # noqa: E712
-                BuyBox.deleted_at.is_(None),
-            )
-            .all()
+    if not buyers:
+        return PropertyMatchResponse(
+            property=PropertyInfo(
+                id=prop.id,
+                address=prop.address_line1,
+                city=prop.city,
+                state=prop.state,
+                zip_code=prop.zip_code,
+                strategy=scenario.strategy if scenario else None,
+                purchase_price=float(scenario.purchase_price) if scenario and scenario.purchase_price else None,
+                scenario_id=scenario.id if scenario else None,
+            ),
+            matches=[],
         )
+
+    # Batch load all active buy boxes for all buyers (1 query instead of N)
+    all_boxes = db.query(BuyBox).filter(
+        BuyBox.contact_id.in_([b.id for b in buyers]),
+        BuyBox.is_active == True,  # noqa: E712
+        BuyBox.deleted_at.is_(None),
+    ).all()
+    boxes_by_contact: dict = {}
+    for box in all_boxes:
+        boxes_by_contact.setdefault(box.contact_id, []).append(box)
+
+    for buyer in buyers:
+        boxes = boxes_by_contact.get(buyer.id, [])
         if not boxes:
             continue
 
@@ -340,11 +357,28 @@ async def matches_for_buyer(
         .all()
     )
 
+    # Batch load latest scenario per property (1 query instead of N)
+    latest_scenarios: dict[UUID, Optional[AnalysisScenario]] = {}
+    if properties:
+        prop_ids = [p.id for p in properties]
+        all_scenarios = (
+            db.query(AnalysisScenario)
+            .filter(
+                AnalysisScenario.property_id.in_(prop_ids),
+                AnalysisScenario.is_deleted == False,  # noqa: E712
+            )
+            .order_by(AnalysisScenario.created_at.desc())
+            .all()
+        )
+        for s in all_scenarios:
+            if s.property_id not in latest_scenarios:
+                latest_scenarios[s.property_id] = s
+
     # Track best score per property across all buy boxes
     best_per_property: dict[UUID, tuple[dict, BuyBox, AnalysisScenario | None]] = {}
 
     for prop in properties:
-        scenario = _get_primary_scenario(db, prop.id)
+        scenario = latest_scenarios.get(prop.id)
         prop_dict = _property_to_dict(prop)
         scenario_dict = _scenario_to_dict(scenario)
 
