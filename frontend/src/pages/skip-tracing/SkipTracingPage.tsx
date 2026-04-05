@@ -241,7 +241,7 @@ export default function SkipTracingPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-[#1E1D1B]">
-                      {['Date', 'Address', 'Status', 'Owner', 'Phones', 'Emails', 'Contact', 'Actions'].map((col) => (
+                      {['Date', 'Address', 'Status', 'Owner', 'Phones', 'Emails', 'Contact'].map((col) => (
                         <th
                           key={col}
                           className="text-left px-4 py-3 text-xs text-[#8A8580] uppercase tracking-wide font-medium whitespace-nowrap"
@@ -281,14 +281,6 @@ export default function SkipTracingPage() {
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap">
                             <HistoryContactCell row={row} />
-                          </td>
-                          <td className="px-4 py-3 whitespace-nowrap">
-                            <Link
-                              to={`/skip-tracing/${row.id}`}
-                              className="text-xs text-[#8A8580] hover:text-[#C5C0B8] transition-colors"
-                            >
-                              View
-                            </Link>
                           </td>
                         </tr>
                       )

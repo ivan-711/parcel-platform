@@ -184,38 +184,42 @@ export function SkipTraceResultCard({ result, onCreateContact }: Props) {
       )}
 
       {/* Phones */}
-      {result.phones.length > 0 && (
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Phone size={13} className="text-[#8A8580]" />
-            <span className="text-xs text-[#8A8580] uppercase tracking-wide font-medium">
-              Phones ({result.phones.length})
-            </span>
-          </div>
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+          <Phone size={13} className="text-[#8A8580]" />
+          <span className="text-xs text-[#8A8580] uppercase tracking-wide font-medium">
+            Phones {(result.phones ?? []).length > 0 && `(${(result.phones ?? []).length})`}
+          </span>
+        </div>
+        {(result.phones ?? []).length > 0 ? (
           <div className="divide-y divide-[#1E1D1B]">
-            {result.phones.map((p, i) => (
+            {(result.phones ?? []).map((p, i) => (
               <PhoneRow key={i} phone={p} />
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-sm text-[#8A8580] italic">No phone numbers found</p>
+        )}
+      </div>
 
       {/* Emails */}
-      {result.emails.length > 0 && (
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Mail size={13} className="text-[#8A8580]" />
-            <span className="text-xs text-[#8A8580] uppercase tracking-wide font-medium">
-              Emails ({result.emails.length})
-            </span>
-          </div>
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+          <Mail size={13} className="text-[#8A8580]" />
+          <span className="text-xs text-[#8A8580] uppercase tracking-wide font-medium">
+            Emails {(result.emails ?? []).length > 0 && `(${(result.emails ?? []).length})`}
+          </span>
+        </div>
+        {(result.emails ?? []).length > 0 ? (
           <div className="divide-y divide-[#1E1D1B]">
-            {result.emails.map((e, i) => (
+            {(result.emails ?? []).map((e, i) => (
               <EmailRow key={i} email={e} />
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-sm text-[#8A8580] italic">No email addresses found</p>
+        )}
+      </div>
 
       {/* Mailing address */}
       {mailingLine && (
