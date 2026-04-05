@@ -694,4 +694,39 @@ export const api = {
         }),
     },
   },
+  buyers: {
+    list: (filters?: import('@/types').BuyerFilters) => {
+      const params = new URLSearchParams()
+      if (filters?.funding_type) params.set('funding_type', filters.funding_type)
+      if (filters?.has_pof) params.set('has_pof', 'true')
+      if (filters?.market) params.set('market', filters.market)
+      if (filters?.strategy) params.set('strategy', filters.strategy)
+      if (filters?.q) params.set('q', filters.q)
+      const qs = params.toString()
+      return request<import('@/types').BuyerListItem[]>(`/api/buyers${qs ? '?' + qs : ''}`)
+    },
+    get: (contactId: string) =>
+      request<import('@/types').BuyerDetail>(`/api/buyers/${contactId}`),
+    quickAdd: (data: import('@/types').QuickAddBuyerRequest) =>
+      request<import('@/types').BuyerListItem>('/api/buyers/quick-add', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    matches: (contactId: string) =>
+      request<import('@/types').MatchingPropertyItem[]>(`/api/buyers/${contactId}/matches`),
+    buyBoxes: {
+      create: (contactId: string, data: import('@/types').CreateBuyBoxRequest) =>
+        request<import('@/types').BuyBox>(`/api/buyers/${contactId}/buy-boxes`, {
+          method: 'POST',
+          body: JSON.stringify(data),
+        }),
+      update: (contactId: string, boxId: string, data: Record<string, unknown>) =>
+        request<import('@/types').BuyBox>(`/api/buyers/${contactId}/buy-boxes/${boxId}`, {
+          method: 'PATCH',
+          body: JSON.stringify(data),
+        }),
+      delete: (contactId: string, boxId: string) =>
+        request<void>(`/api/buyers/${contactId}/buy-boxes/${boxId}`, { method: 'DELETE' }),
+    },
+  },
 }

@@ -1139,3 +1139,118 @@ export interface PortfolioOverview {
     by_value: Record<string, number>
   }
 }
+
+// ---------------------------------------------------------------------------
+// Buyer + Buy Box types
+// ---------------------------------------------------------------------------
+
+export interface BuyBox {
+  id: string
+  contact_id: string
+  name: string
+  is_active: boolean
+  target_markets: string[] | null
+  max_distance_miles: number | null
+  min_price: number | null
+  max_price: number | null
+  min_arv: number | null
+  max_arv: number | null
+  min_cash_flow: number | null
+  min_cap_rate: number | null
+  min_coc_return: number | null
+  max_repair_cost: number | null
+  property_types: string[] | null
+  min_bedrooms: number | null
+  min_bathrooms: number | null
+  min_sqft: number | null
+  max_year_built: number | null
+  min_year_built: number | null
+  strategies: string[] | null
+  funding_type: string | null
+  can_close_days: number | null
+  proof_of_funds: boolean
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface BuyerListItem {
+  id: string
+  first_name: string
+  last_name: string | null
+  email: string | null
+  phone: string | null
+  company: string | null
+  contact_type: string | null
+  buy_boxes: BuyBox[]
+  deal_count: number
+  last_communication: string | null
+  funding_type: string | null
+  has_pof: boolean
+}
+
+export interface BuyerDetail extends BuyerListItem {
+  notes: string | null
+  tags: string[] | null
+  total_deals_closed: number
+  total_deal_volume: number
+}
+
+export interface MatchingPropertyItem {
+  id: string
+  address: string
+  city: string
+  state: string
+  zip_code: string
+  purchase_price: number | null
+  after_repair_value: number | null
+  property_type: string | null
+  bedrooms: number | null
+  bathrooms: number | null
+  sqft: number | null
+  strategy: string | null
+}
+
+export interface CreateBuyBoxRequest {
+  name: string
+  is_active?: boolean
+  target_markets?: string[]
+  min_price?: number
+  max_price?: number
+  min_arv?: number
+  max_arv?: number
+  min_cash_flow?: number
+  min_cap_rate?: number
+  min_coc_return?: number
+  max_repair_cost?: number
+  property_types?: string[]
+  min_bedrooms?: number
+  min_bathrooms?: number
+  min_sqft?: number
+  max_year_built?: number
+  min_year_built?: number
+  strategies?: string[]
+  funding_type?: string
+  can_close_days?: number
+  proof_of_funds?: boolean
+  notes?: string
+}
+
+export interface QuickAddBuyerRequest {
+  first_name: string
+  last_name?: string
+  phone?: string
+  email?: string
+  company?: string
+  funding_type?: string
+  proof_of_funds?: boolean
+  buy_box: CreateBuyBoxRequest
+}
+
+export interface BuyerFilters {
+  funding_type?: string
+  has_pof?: boolean
+  market?: string
+  strategy?: string
+  q?: string
+}
