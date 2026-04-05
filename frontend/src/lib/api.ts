@@ -841,4 +841,29 @@ export const api = {
     usage: () =>
       request<import('@/types').SkipTraceUsage>('/api/skip-tracing/usage'),
   },
+  mailCampaigns: {
+    list: () => request<import('@/types').MailCampaignListItem[]>('/api/mail-campaigns'),
+    get: (id: string) => request<import('@/types').MailCampaignDetail>(`/api/mail-campaigns/${id}`),
+    create: (data: import('@/types').CreateMailCampaignRequest) =>
+      request<import('@/types').MailCampaignDetail>('/api/mail-campaigns', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: import('@/types').UpdateMailCampaignRequest) =>
+      request<import('@/types').MailCampaignDetail>(`/api/mail-campaigns/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    delete: (id: string) => request<void>(`/api/mail-campaigns/${id}`, { method: 'DELETE' }),
+    addRecipients: (id: string, data: import('@/types').AddRecipientsRequest) =>
+      request<import('@/types').MailRecipient[]>(`/api/mail-campaigns/${id}/recipients`, { method: 'POST', body: JSON.stringify(data) }),
+    removeRecipient: (campaignId: string, recipientId: string) =>
+      request<void>(`/api/mail-campaigns/${campaignId}/recipients/${recipientId}`, { method: 'DELETE' }),
+    verify: (id: string) =>
+      request<import('@/types').MailVerifyResponse>(`/api/mail-campaigns/${id}/verify`, { method: 'POST' }),
+    send: (id: string) =>
+      request<{ status: string }>(`/api/mail-campaigns/${id}/send`, { method: 'POST' }),
+    cancel: (id: string) =>
+      request<{ status: string }>(`/api/mail-campaigns/${id}/cancel`, { method: 'POST' }),
+    preview: (id: string) =>
+      request<{ front_html: string; back_html: string }>(`/api/mail-campaigns/${id}/preview`),
+    analytics: (id: string) =>
+      request<import('@/types').MailCampaignAnalytics>(`/api/mail-campaigns/${id}/analytics`),
+    quickSend: (data: import('@/types').QuickSendRequest) =>
+      request<{ lob_id: string; status: string }>('/api/mail-campaigns/quick-send', { method: 'POST', body: JSON.stringify(data) }),
+  },
 }

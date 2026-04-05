@@ -1637,3 +1637,100 @@ export interface SkipTraceHistoryFilters {
   page?: number
   per_page?: number
 }
+
+// ---------------------------------------------------------------------------
+// Mail Campaign types
+// ---------------------------------------------------------------------------
+
+export interface MailCampaignListItem {
+  id: string
+  name: string
+  status: 'draft' | 'scheduled' | 'sending' | 'sent' | 'cancelled'
+  mail_type: string
+  total_recipients: number
+  total_sent: number
+  total_delivered: number
+  total_returned: number
+  total_cost_cents: number
+  scheduled_date: string | null
+  sent_at: string | null
+  created_at: string
+}
+
+export interface MailRecipient {
+  id: string
+  campaign_id: string
+  contact_id: string | null
+  property_id: string | null
+  to_name: string | null
+  to_address: { line1: string; line2?: string; city: string; state: string; zip: string }
+  address_verified: boolean
+  deliverability: string | null
+  status: string
+  cost_cents: number | null
+  lob_mail_id: string | null
+  created_at: string
+}
+
+export interface MailCampaignDetail extends MailCampaignListItem {
+  description: string | null
+  template_front_html: string | null
+  template_back_html: string | null
+  from_address: { name?: string; line1: string; city: string; state: string; zip: string } | null
+  recipients: MailRecipient[]
+}
+
+export interface CreateMailCampaignRequest {
+  name: string
+  mail_type: string
+  template_front_html?: string
+  template_back_html?: string
+  from_address?: { name?: string; line1: string; city: string; state: string; zip: string }
+  description?: string
+}
+
+export interface UpdateMailCampaignRequest {
+  name?: string
+  template_front_html?: string
+  template_back_html?: string
+  from_address?: Record<string, string>
+  description?: string
+  scheduled_date?: string
+}
+
+export interface RecipientInput {
+  contact_id?: string
+  property_id?: string
+  to_name?: string
+  to_address: { line1: string; line2?: string; city: string; state: string; zip: string }
+}
+
+export interface AddRecipientsRequest {
+  recipients: RecipientInput[]
+}
+
+export interface MailVerifyResponse {
+  total: number
+  deliverable: number
+  undeliverable: number
+  no_match: number
+}
+
+export interface MailCampaignAnalytics {
+  total_recipients: number
+  total_sent: number
+  total_delivered: number
+  total_returned: number
+  total_cost_cents: number
+  delivery_rate: number
+  return_rate: number
+}
+
+export interface QuickSendRequest {
+  mail_type: string
+  to_name?: string
+  to_address: { line1: string; city: string; state: string; zip: string }
+  from_address?: Record<string, string>
+  front_html: string
+  back_html?: string
+}
