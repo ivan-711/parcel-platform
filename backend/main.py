@@ -11,6 +11,16 @@ from limiter import limiter
 
 load_dotenv()
 
+# --- Sentry error tracking ---
+_sentry_dsn = os.getenv("SENTRY_DSN")
+if _sentry_dsn:
+    import sentry_sdk
+    sentry_sdk.init(
+        dsn=_sentry_dsn,
+        traces_sample_rate=0.1,
+        environment=os.getenv("ENVIRONMENT", "development"),
+    )
+
 app = FastAPI(
     title="Parcel API",
     description="Backend API for Parcel — the all-in-one platform for real estate professionals.",
@@ -51,7 +61,7 @@ app.add_middleware(
 )
 
 from routers import auth, dashboard, deals, pipeline, portfolio, chat, documents, settings  # noqa: E402
-from routers import webhooks, billing  # noqa: E402
+from routers import webhooks, billing, clerk_webhooks, analysis, onboarding, calculators, properties, activity, contacts, today, tasks, reports, financing, transactions  # noqa: E402
 
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(dashboard.router, prefix="/api/v1")
@@ -62,7 +72,19 @@ app.include_router(chat.router, prefix="/api/v1")
 app.include_router(documents.router, prefix="/api/v1")
 app.include_router(settings.router, prefix="/api/v1")
 app.include_router(webhooks.router)  # /webhooks/stripe — no /api/v1 prefix
+app.include_router(clerk_webhooks.router)  # /webhooks/clerk — no /api/v1 prefix
 app.include_router(billing.router, prefix="/api/v1")
+app.include_router(analysis.router, prefix="/api")
+app.include_router(onboarding.router, prefix="/api")
+app.include_router(calculators.router, prefix="/api")
+app.include_router(properties.router, prefix="/api")
+app.include_router(activity.router, prefix="/api")
+app.include_router(contacts.router, prefix="/api")
+app.include_router(today.router, prefix="/api")
+app.include_router(tasks.router, prefix="/api")
+app.include_router(reports.router, prefix="/api")
+app.include_router(financing.router, prefix="/api")
+app.include_router(transactions.router, prefix="/api")
 
 
 @app.get("/health")
