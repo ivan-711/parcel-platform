@@ -66,10 +66,13 @@ export function AddInstrumentModal({ open, onOpenChange, propertyId, propertyAdd
     const bal = formData.original_balance
     const rate = formData.interest_rate
     const term = formData.term_months
-    if (!bal || !rate || !term || rate <= 0 || term <= 0) return null
-    const r = Number(rate) / 100 / 12
-    const n = Number(term)
+    if (!bal || rate == null || !term || term <= 0) return null
     const p = Number(bal)
+    const n = Number(term)
+    if (p <= 0 || n <= 0) return null
+    // 0% interest: simple division
+    if (Number(rate) === 0) return Math.round((p / n) * 100) / 100
+    const r = Number(rate) / 100 / 12
     return Math.round((p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) * 100) / 100
   }, [formData.original_balance, formData.interest_rate, formData.term_months])
 
