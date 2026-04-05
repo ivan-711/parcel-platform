@@ -462,6 +462,11 @@ export const api = {
         after_repair_value: number | null
         repair_cost: number | null
       }>(`/api/analysis/scenarios/${scenarioId}/comps`),
+    compare: (inputs: Record<string, number | string>) =>
+      request<import('@/types').CompareResponse>('/api/analysis/compare', {
+        method: 'POST',
+        body: JSON.stringify({ inputs }),
+      }),
   },
   onboarding: {
     status: () =>

@@ -48,11 +48,11 @@ export interface User {
 // Billing types
 // ---------------------------------------------------------------------------
 
-export type PlanTier = 'free' | 'starter' | 'pro' | 'team'
+export type PlanTier = 'free' | 'plus' | 'pro' | 'business'
 export type SubscriptionStatus = 'active' | 'trialing' | 'past_due' | 'canceled' | 'incomplete' | 'unpaid'
 export type BillingCycle = 'monthly' | 'annual'
 
-export const PLAN_RANK: Record<PlanTier, number> = { free: 0, starter: 1, pro: 2, team: 3 }
+export const PLAN_RANK: Record<PlanTier, number> = { free: 0, plus: 1, pro: 2, business: 3 }
 
 export function hasAccess(current: PlanTier, required: PlanTier): boolean {
   return PLAN_RANK[current] >= PLAN_RANK[required]
@@ -79,7 +79,7 @@ export interface BillingStatus {
 }
 
 export interface CheckoutRequest {
-  plan: 'starter' | 'pro' | 'team'
+  plan: 'plus' | 'pro' | 'business'
   interval: BillingCycle
 }
 
@@ -118,6 +118,414 @@ export const FEATURE_LABELS: Record<GatedFeature, { label: string; tier: PlanTie
 
 export interface AuthResponse {
   user: User
+}
+
+// ---------------------------------------------------------------------------
+// Onboarding types
+// ---------------------------------------------------------------------------
+
+export type OnboardingPersona =
+  | 'wholesale' | 'flip' | 'buy_and_hold' | 'creative_finance'
+  | 'brrrr' | 'hybrid' | 'agent' | 'beginner'
+
+export interface OnboardingStatus {
+  completed: boolean
+  persona: OnboardingPersona | null
+  has_sample_data: boolean
+  has_real_data: boolean
+  real_property_count: number
+}
+
+export interface OnboardingProperty {
+  id: string
+  address_line1: string
+  city: string
+  state: string
+  zip_code: string
+  property_type: string | null
+  bedrooms: number | null
+  bathrooms: number | null
+  sqft: number | null
+  year_built: number | null
+  is_sample: boolean
+}
+
+export interface OnboardingScenario {
+  id: string
+  property_id: string
+  strategy: string
+  purchase_price: number | null
+  after_repair_value: number | null
+  repair_cost: number | null
+  monthly_rent: number | null
+  outputs: Record<string, unknown>
+  ai_narrative: string | null
+  is_sample: boolean
+}
+
+export interface PersonaResponse {
+  persona: OnboardingPersona
+  sample_property: OnboardingProperty
+  sample_scenarios: OnboardingScenario[]
+}
+
+// ---------------------------------------------------------------------------
+// Analysis types
+// ---------------------------------------------------------------------------
+
+export interface PropertyDetail {
+  id: string
+  address_line1: string
+  address_line2: string | null
+  city: string
+  state: string
+  zip_code: string
+  county: string | null
+  property_type: string | null
+  bedrooms: number | null
+  bathrooms: number | null
+  sqft: number | null
+  lot_sqft: number | null
+  year_built: number | null
+  status: string
+  data_sources: Record<string, { source: string; timestamp: string; confidence: string }> | null
+  is_sample: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface ScenarioDetail {
+  id: string
+  property_id: string
+  strategy: string
+  purchase_price: number | null
+  after_repair_value: number | null
+  repair_cost: number | null
+  monthly_rent: number | null
+  down_payment_pct: number | null
+  interest_rate: number | null
+  loan_term_years: number | null
+  inputs_extended: Record<string, number | string> | null
+  outputs: Record<string, number | string | null>
+  risk_score: number | null
+  risk_flags: Array<{ flag: string; severity: string; explanation: string }> | null
+  ai_narrative: string | null
+  ai_narrative_generated_at: string | null
+  source_confidence: Record<string, { source: string; confidence: string; fetched_at: string }> | null
+  is_sample: boolean
+  is_snapshot: boolean
+  created_at: string
+}
+
+// ---------------------------------------------------------------------------
+// Properties list types
+// ---------------------------------------------------------------------------
+
+export interface ScenarioSummary {
+  id: string
+  strategy: Strategy
+  purchase_price: number | null
+  risk_score: number | null
+  outputs: Record<string, number | string | null>
+  created_at: string
+}
+
+export interface PropertyListItem {
+  id: string
+  address_line1: string
+  address_line2: string | null
+  city: string
+  state: string
+  zip_code: string
+  property_type: string | null
+  bedrooms: number | null
+  bathrooms: number | null
+  sqft: number | null
+  year_built: number | null
+  status: string
+  is_sample: boolean
+  created_at: string
+  updated_at: string
+  primary_scenario: ScenarioSummary | null
+  deal_count: number
+}
+
+export interface PropertyListResponse {
+  properties: PropertyListItem[]
+  total: number
+  page: number
+  per_page: number
+}
+
+export interface PropertyFilters {
+  status?: string
+  strategy?: string
+  q?: string
+  page?: number
+  per_page?: number
+}
+
+export interface PropertyUpdateRequest {
+  address_line1?: string
+  city?: string
+  state?: string
+  zip_code?: string
+  property_type?: string
+  bedrooms?: number
+  bathrooms?: number
+  sqft?: number
+  year_built?: number
+  status?: string
+}
+
+export interface PropertyActivityEvent {
+  type: string
+  description: string
+  timestamp: string
+  entity_id: string | null
+  entity_type: string | null
+}
+
+// ---------------------------------------------------------------------------
+// Contact types
+// ---------------------------------------------------------------------------
+
+export type ContactType =
+  | 'seller'
+  | 'buyer'
+  | 'agent'
+  | 'lender'
+  | 'contractor'
+  | 'tenant'
+  | 'partner'
+  | 'other'
+
+export interface ContactItem {
+  id: string
+  first_name: string
+  last_name: string | null
+  email: string | null
+  phone: string | null
+  company: string | null
+  contact_type: ContactType | null
+  deal_count: number
+  last_communication: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ContactDetail {
+  id: string
+  first_name: string
+  last_name: string | null
+  email: string | null
+  phone: string | null
+  company: string | null
+  contact_type: ContactType | null
+  notes: string | null
+  tags: string[] | null
+  is_deleted: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface ContactListResponse {
+  contacts: ContactItem[]
+  total: number
+  page: number
+  per_page: number
+}
+
+export interface ContactFilters {
+  type?: string
+  q?: string
+  page?: number
+  per_page?: number
+}
+
+export interface CreateContactRequest {
+  first_name: string
+  last_name?: string
+  email?: string
+  phone?: string
+  company?: string
+  contact_type?: ContactType
+  notes?: string
+  tags?: string[]
+}
+
+export interface UpdateContactRequest {
+  first_name?: string
+  last_name?: string
+  email?: string
+  phone?: string
+  company?: string
+  contact_type?: ContactType
+  notes?: string
+  tags?: string[]
+}
+
+export interface CommunicationItem {
+  id: string
+  channel: 'call' | 'sms' | 'email' | 'meeting' | 'note'
+  direction: 'inbound' | 'outbound' | null
+  subject: string | null
+  body: string | null
+  deal_id: string | null
+  property_id: string | null
+  occurred_at: string
+  created_at: string
+}
+
+export interface CreateCommunicationRequest {
+  channel: string
+  occurred_at: string
+  direction?: string
+  subject?: string
+  body?: string
+  deal_id?: string
+  property_id?: string
+}
+
+export interface LinkedDeal {
+  deal_id: string
+  address: string
+  strategy: string
+  status: string
+  role: string | null
+  created_at: string
+}
+
+// ---------------------------------------------------------------------------
+// Today view types
+// ---------------------------------------------------------------------------
+
+export interface TodayPortfolioSummary {
+  total_value: number
+  total_cash_flow: number
+  property_count: number
+  deal_count: number
+  change_pct: number
+}
+
+export interface TodayBriefingItem {
+  id: string
+  severity: 'urgent' | 'warning' | 'info'
+  title: string
+  description: string
+  entity_type: string | null
+  entity_id: string | null
+  action_url: string | null
+  created_at: string
+}
+
+export interface TodayPipelineSummary {
+  total_active: number
+  by_stage: Record<string, number>
+  total_value: number
+}
+
+export interface TodayActivityItem {
+  type: string
+  description: string
+  timestamp: string
+  entity_id: string | null
+  entity_type: string | null
+}
+
+export interface TodayResponse {
+  greeting: string
+  date: string
+  portfolio_summary: TodayPortfolioSummary
+  briefing_items: TodayBriefingItem[]
+  pipeline_summary: TodayPipelineSummary
+  recent_activity: TodayActivityItem[]
+  has_sample_data: boolean
+  has_real_data: boolean
+}
+
+// ---------------------------------------------------------------------------
+// Task types
+// ---------------------------------------------------------------------------
+
+export type TaskStatus = 'open' | 'due' | 'snoozed' | 'done' | 'canceled'
+export type TaskPriority = 'low' | 'normal' | 'high' | 'urgent'
+
+export interface TaskItem {
+  id: string
+  title: string
+  description: string | null
+  status: TaskStatus
+  priority: TaskPriority
+  due_date: string | null
+  completed_at: string | null
+  property_id: string | null
+  deal_id: string | null
+  contact_id: string | null
+  assigned_to: string | null
+  is_deleted: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface TaskListResponse {
+  tasks: TaskItem[]
+  total: number
+  page: number
+  per_page: number
+}
+
+export interface TaskFilters {
+  status?: string
+  priority?: string
+  property_id?: string
+  deal_id?: string
+  contact_id?: string
+  page?: number
+  per_page?: number
+}
+
+export interface CreateTaskRequest {
+  title: string
+  description?: string
+  status?: string
+  priority?: string
+  due_date?: string
+  property_id?: string
+  deal_id?: string
+  contact_id?: string
+}
+
+export interface UpdateTaskRequest {
+  title?: string
+  description?: string
+  status?: string
+  priority?: string
+  due_date?: string
+  property_id?: string
+  deal_id?: string
+  contact_id?: string
+}
+
+export interface TasksTodayResponse {
+  due_today: TaskItem[]
+  overdue: TaskItem[]
+  urgent: TaskItem[]
+}
+
+// ---------------------------------------------------------------------------
+// Calculator types
+// ---------------------------------------------------------------------------
+
+export interface CalculateRequest {
+  strategy: string
+  inputs: Record<string, number | string>
+}
+
+export interface CalculateResponse {
+  strategy: string
+  outputs: Record<string, number | string | null>
+  risk_score: number
 }
 
 export type Strategy = 'wholesale' | 'creative_finance' | 'brrrr' | 'buy_and_hold' | 'flip'
@@ -162,6 +570,17 @@ export interface PipelineCardResponse {
   stage: string
   days_in_stage: number
   entered_stage_at: string
+  city: string | null
+  state: string | null
+  property_type: string | null
+  is_sample: boolean
+}
+
+export interface PipelineStatsResponse {
+  by_stage: Record<string, number>
+  by_strategy: Record<string, number>
+  total_value: number
+  total_active: number
 }
 
 export interface RecentDeal {
@@ -204,13 +623,30 @@ export interface DealsFilters {
   sort?: string
 }
 
+export interface Citation {
+  chunk_id: string
+  document_id: string
+  document_name: string
+  content_preview: string
+  relevance_score: number
+  page_number: number | null
+}
+
 export interface ChatMessage {
   id: string
   role: 'user' | 'assistant'
   content: string
   context_type: string | null
   context_id: string | null
+  citations: Citation[] | null
   created_at: string
+}
+
+export interface ChatSessionItem {
+  session_id: string
+  title: string
+  last_message_at: string
+  message_count: number
 }
 
 export interface ChatRequest {
@@ -302,10 +738,13 @@ export interface DocumentParty {
 export interface DocumentResponse {
   id: string
   user_id: string
+  property_id: string | null
   original_filename: string
   file_type: string
   file_size_bytes: number
   status: 'pending' | 'processing' | 'complete' | 'failed'
+  embedding_status: 'pending' | 'processing' | 'complete' | 'failed'
+  embedding_meta: { total_chunks?: number; processed_chunks?: number; error?: string } | null
   document_type: string | null
   ai_summary: string | null
   parties: DocumentParty[]
@@ -316,6 +755,13 @@ export interface DocumentResponse {
   presigned_url: string | null
   created_at: string
   updated_at: string
+}
+
+export interface DocumentStatusResponse {
+  status: string
+  embedding_status: string
+  embedding_meta: { total_chunks?: number; processed_chunks?: number; error?: string } | null
+  chunks_count: number
 }
 
 export interface ActivityItem {
@@ -358,6 +804,7 @@ export interface DocumentListItem {
   file_type: string
   file_size_bytes: number
   status: 'pending' | 'processing' | 'complete' | 'failed'
+  embedding_status: 'pending' | 'processing' | 'complete' | 'failed'
   document_type: string | null
   ai_summary: string | null
   presigned_url: string | null
@@ -371,4 +818,115 @@ export interface PaginatedDocuments {
   page: number
   per_page: number
   pages: number
+}
+
+// ---------------------------------------------------------------------------
+// Report types
+// ---------------------------------------------------------------------------
+
+export interface BrandKit {
+  logo_url?: string
+  primary_color?: string
+  company_name?: string
+  phone?: string
+  email?: string
+  website?: string
+}
+
+export interface ReportDataSnapshot {
+  property: {
+    address_line1: string
+    city: string
+    state: string
+    zip_code: string
+    property_type: string | null
+    bedrooms: number | null
+    bathrooms: number | null
+    sqft: number | null
+    year_built: number | null
+  }
+  scenario: {
+    strategy: string
+    purchase_price: number | null
+    after_repair_value: number | null
+    repair_cost: number | null
+    monthly_rent: number | null
+    inputs_extended: Record<string, unknown> | null
+    outputs: Record<string, number | string> | null
+    risk_score: number | null
+    risk_flags: Array<{ flag: string; severity: string; explanation: string }> | null
+    ai_narrative: string | null
+  }
+  brand_kit: BrandKit | null
+}
+
+export interface ReportResponse {
+  id: string
+  title: string
+  report_type: string
+  property_id: string | null
+  scenario_id: string | null
+  audience: string | null
+  share_token: string | null
+  share_url: string | null
+  is_public: boolean
+  view_count: number
+  last_viewed_at: string | null
+  property_address: string | null
+  pdf_status: 'none' | 'generating' | 'ready'
+  created_at: string
+  updated_at: string
+  report_data: ReportDataSnapshot | null
+}
+
+export interface ReportListResponse {
+  reports: ReportResponse[]
+  total: number
+  page: number
+  per_page: number
+  pages: number
+}
+
+export interface SharedReportResponse {
+  title: string
+  report_type: string
+  report_data: ReportDataSnapshot
+  created_at: string
+}
+
+export interface CreateReportRequest {
+  title: string
+  report_type: string
+  property_id: string
+  scenario_id: string
+  audience?: string
+}
+
+export interface PdfStatusResponse {
+  status: 'none' | 'generating' | 'ready'
+  download_url?: string
+}
+
+// ---------------------------------------------------------------------------
+// Strategy Comparison types
+// ---------------------------------------------------------------------------
+
+export interface StrategyResult {
+  strategy: string
+  key_metric: number | null
+  key_metric_label: string
+  roi: number | null
+  risk_score: number
+  time_horizon: string
+  break_even_months: number | null
+  five_year_total_return: number | null
+  monthly_cash_flow: number | null
+  verdict: string
+  outputs: Record<string, number | string | null>
+}
+
+export interface CompareResponse {
+  strategies: StrategyResult[]
+  recommendation: string
+  recommendation_reason: string
 }
