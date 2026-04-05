@@ -4,10 +4,12 @@ import logging
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
+from sqlalchemy import update
 from sqlalchemy.orm import Session
 
-from core.billing.tier_gate import require_quota, record_usage
+from core.billing.tier_gate import require_quota, record_usage, get_tier_limits
+from limiter import limiter
 from core.security.jwt import get_current_user
 from database import get_db
 from models.mail_campaigns import MailCampaign, MailRecipient
@@ -78,6 +80,17 @@ def create_campaign(
     db: Session = Depends(get_db),
 ):
     """Create a new direct mail campaign in draft status."""
+    limits = get_tier_limits(current_user)
+    if limits.mail_pieces_per_month == 0:
+        raise HTTPException(
+            status_code=402,
+            detail={
+                "error": "Direct mail is available on the Business plan",
+                "code": "UPGRADE_REQUIRED",
+                "upgrade_url": "/pricing",
+            },
+        )
+
     service = _get_service(db)
     campaign = service.create_campaign(
         name=body.name,
@@ -129,9 +142,19 @@ def get_campaign(
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Fetch a single campaign with all recipients."""
+    """Fetch a single campaign with all non-deleted recipients."""
     campaign = _get_campaign_or_404(db, campaign_id, current_user.id)
-    return CampaignResponse.model_validate(campaign)
+    active_recipients = (
+        db.query(MailRecipient)
+        .filter(
+            MailRecipient.campaign_id == campaign_id,
+            MailRecipient.deleted_at.is_(None),
+        )
+        .all()
+    )
+    data = CampaignResponse.model_validate(campaign)
+    data.recipients = [RecipientResponse.model_validate(r) for r in active_recipients]
+    return data
 
 
 # ---------------------------------------------------------------------------
@@ -266,12 +289,25 @@ def remove_recipient(
 
 
 @router.post("/{campaign_id}/verify", response_model=VerifyResponse)
+@limiter.limit("10/hour")
 async def verify_addresses(
+    request: Request,
     campaign_id: UUID,
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """Verify all unverified recipient addresses in the campaign via Lob."""
+    limits = get_tier_limits(current_user)
+    if limits.mail_pieces_per_month == 0:
+        raise HTTPException(
+            status_code=402,
+            detail={
+                "error": "Direct mail is available on the Business plan",
+                "code": "UPGRADE_REQUIRED",
+                "upgrade_url": "/pricing",
+            },
+        )
+
     _get_campaign_or_404(db, campaign_id, current_user.id)
 
     service = _get_service(db)
@@ -289,7 +325,9 @@ async def verify_addresses(
 
 
 @router.post("/{campaign_id}/send", response_model=CampaignResponse)
+@limiter.limit("10/hour")
 def send_campaign(
+    request: Request,
     campaign_id: UUID,
     _quota: None = Depends(require_quota("mail_pieces_per_month")),
     current_user=Depends(get_current_user),
@@ -298,18 +336,15 @@ def send_campaign(
     """Queue a campaign for sending. Dispatches a Dramatiq background task."""
     from core.tasks.mail_campaign import send_mail_campaign
 
-    campaign = _get_campaign_or_404(db, campaign_id, current_user.id)
-    if campaign.status not in ("draft", "scheduled"):
-        raise HTTPException(
-            status_code=400,
-            detail=f"Campaign cannot be sent from status '{campaign.status}'",
-        )
+    # Verify campaign exists and is owned before the atomic update
+    _get_campaign_or_404(db, campaign_id, current_user.id)
 
     verified_count = (
         db.query(MailRecipient)
         .filter(
             MailRecipient.campaign_id == campaign_id,
             MailRecipient.address_verified == True,  # noqa: E712
+            MailRecipient.deliverability == "deliverable",
             MailRecipient.status == "pending",
             MailRecipient.deleted_at.is_(None),
         )
@@ -318,20 +353,30 @@ def send_campaign(
     if verified_count == 0:
         raise HTTPException(
             status_code=400,
-            detail="No verified recipients available to send to. Run /verify first.",
+            detail="No deliverable recipients available to send to. Run /verify first.",
         )
 
-    campaign.status = "scheduled"
+    # Atomic state transition — prevents double-send
+    result = db.execute(
+        update(MailCampaign)
+        .where(
+            MailCampaign.id == campaign_id,
+            MailCampaign.created_by == current_user.id,
+            MailCampaign.status.in_(["draft", "scheduled"]),
+        )
+        .values(status="sending")
+        .returning(MailCampaign.id)
+    )
+    if not result.fetchone():
+        raise HTTPException(
+            status_code=409,
+            detail={"error": "Campaign is already sending or sent", "code": "ALREADY_SENDING"},
+        )
     db.commit()
 
     send_mail_campaign.send(str(campaign_id), str(current_user.id))
 
-    # Record usage for each verified recipient piece
-    for _ in range(verified_count):
-        record_usage(current_user.id, "mail_pieces_per_month", db)
-    db.commit()
-
-    db.refresh(campaign)
+    campaign = _get_campaign_or_404(db, campaign_id, current_user.id)
     return CampaignResponse.model_validate(campaign)
 
 
@@ -423,20 +468,80 @@ def get_analytics(
 
 
 @router.post("/quick-send")
+@limiter.limit("20/hour")
 async def quick_send(
+    request: Request,
     body: QuickSendRequest,
     _quota: None = Depends(require_quota("mail_pieces_per_month")),
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """Send a single mail piece directly via Lob without creating a campaign."""
+    from datetime import datetime, timedelta
     from core.direct_mail.lob_provider import LobProvider
 
-    provider = LobProvider()
+    # Dedup: if same from+to+type was created in last 5 minutes, return existing
+    five_min_ago = datetime.utcnow() - timedelta(minutes=5)
+    from_addr_str = str(body.from_address)
+    to_addr_str = str(body.to_address)
+    existing = (
+        db.query(MailCampaign)
+        .join(MailRecipient, MailRecipient.campaign_id == MailCampaign.id)
+        .filter(
+            MailCampaign.created_by == current_user.id,
+            MailCampaign.mail_type == body.mail_type,
+            MailCampaign.status.in_(["pending", "sent"]),
+            MailCampaign.created_at >= five_min_ago,
+            MailRecipient.deleted_at.is_(None),
+        )
+        .first()
+    )
+    if existing and existing.recipients:
+        r = existing.recipients[0]
+        if (
+            str(existing.from_address) == from_addr_str
+            and str(r.to_address) == to_addr_str
+        ):
+            return {
+                "status": "sent",
+                "lob_id": r.lob_mail_id,
+                "expected_delivery": None,
+                "cost_cents": r.cost_cents,
+                "deduplicated": True,
+            }
+
     to_addr = {**body.to_address}
     if body.to_name and "name" not in to_addr:
         to_addr["name"] = body.to_name
 
+    # 1. Create MailCampaign + MailRecipient records FIRST (status="pending")
+    campaign = MailCampaign(
+        created_by=current_user.id,
+        name=f"Quick Send \u2014 {body.mail_type}",
+        status="pending",
+        mail_type=body.mail_type,
+        template_front_html=body.template_front_html,
+        template_back_html=body.template_back_html or "",
+        from_address=body.from_address,
+        total_recipients=1,
+    )
+    db.add(campaign)
+    db.flush()  # get campaign.id without full commit
+
+    recipient = MailRecipient(
+        campaign_id=campaign.id,
+        to_name=body.to_name,
+        to_address=to_addr,
+        address_verified=False,
+        status="pending",
+    )
+    db.add(recipient)
+    db.commit()
+    db.refresh(campaign)
+    db.refresh(recipient)
+
+    # 2. Call Lob
+    provider = LobProvider()
     if body.mail_type.startswith("postcard"):
         size = (
             body.mail_type.split("_", 1)[1] if "_" in body.mail_type else "4x6"
@@ -456,11 +561,23 @@ async def quick_send(
         )
 
     if result.status != "success":
+        campaign.status = "failed"
+        recipient.status = "failed"
+        db.commit()
         raise HTTPException(
             status_code=502,
             detail=f"Lob send failed: {result.error or result.status}",
         )
 
+    # 3. Update recipient with Lob result on success
+    recipient.lob_mail_id = result.lob_id
+    recipient.status = "sent"
+    recipient.cost_cents = result.cost_cents
+    campaign.status = "sent"
+    campaign.total_sent = 1
+    campaign.total_cost_cents = result.cost_cents or 0
+
+    # 4. Record usage only after confirmed Lob success
     record_usage(current_user.id, "mail_pieces_per_month", db)
     db.commit()
 

@@ -35,8 +35,14 @@ if dramatiq:
             if not campaign:
                 return
 
-            campaign.status = "sending"
-            db.commit()
+            # Idempotency guard: only proceed if campaign is in "sending" state
+            if campaign.status != "sending":
+                logger.warning(
+                    "send_mail_campaign called for campaign %s with status %s — skipping",
+                    campaign_id,
+                    campaign.status,
+                )
+                return
 
             recipients = (
                 db.query(MailRecipient)
@@ -44,6 +50,7 @@ if dramatiq:
                     MailRecipient.campaign_id == campaign_id,
                     MailRecipient.status == "pending",
                     MailRecipient.address_verified == True,  # noqa: E712
+                    MailRecipient.deliverability == "deliverable",
                     MailRecipient.deleted_at.is_(None),
                 )
                 .all()
@@ -52,6 +59,12 @@ if dramatiq:
             sent = 0
             total_cost = 0
             for recipient in recipients:
+                # Idempotency: skip recipients already dispatched to Lob
+                if recipient.lob_mail_id:
+                    sent += 1
+                    total_cost += recipient.cost_cents or 0
+                    continue
+
                 try:
                     context = service._build_context(recipient, campaign)
                     front = service.render_template(campaign.template_front_html or "", context)
@@ -73,6 +86,9 @@ if dramatiq:
                         result = provider.send_letter_sync(to_addr, front, from_addr)
 
                     if result.status == "success":
+                        from core.billing.tier_gate import record_usage
+                        from uuid import UUID as _UUID
+
                         recipient.lob_mail_id = result.lob_id
                         recipient.status = "sent"
                         recipient.cost_cents = result.cost_cents
@@ -80,6 +96,8 @@ if dramatiq:
                         recipient.rendered_back = back
                         sent += 1
                         total_cost += result.cost_cents
+                        # Record usage only after confirmed Lob success
+                        record_usage(_UUID(user_id), "mail_pieces_per_month", db)
                     else:
                         recipient.status = "failed"
 
@@ -160,16 +178,16 @@ if dramatiq:
             campaign.total_returned = (campaign.total_returned or 0) + returned
             db.commit()
 
-            # Re-poll if still in transit (max 5 days)
+            # Re-poll if still in transit (max 5 days after sent_at)
             still_pending = db.query(MailRecipient).filter(
                 MailRecipient.campaign_id == campaign_id,
                 MailRecipient.status.in_(["sent", "in_transit"]),
             ).count()
-            if still_pending > 0:
-                poll_count = campaign.poll_count or 0
-                if poll_count < 5:
-                    campaign.poll_count = poll_count + 1
-                    db.commit()
+            if still_pending > 0 and campaign.sent_at:
+                from datetime import timezone
+                now = datetime.utcnow()
+                days_since_sent = (now - campaign.sent_at.replace(tzinfo=None)).days
+                if days_since_sent < 5:
                     try:
                         check_mail_delivery.send_with_options(
                             args=(campaign_id,),
