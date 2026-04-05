@@ -1091,3 +1091,51 @@ export interface CreateRehabItemRequest {
   priority?: string
   notes?: string
 }
+
+// ---------------------------------------------------------------------------
+// Portfolio V2 types
+// ---------------------------------------------------------------------------
+
+export interface PortfolioPropertyItem {
+  id: string
+  address: string
+  city: string
+  state: string
+  zip_code: string
+  estimated_value: number
+  purchase_price: number | null
+  equity: number
+  debt: number
+  monthly_income: number
+  monthly_expenses: number
+  monthly_cash_flow: number
+  cap_rate: number | null
+  coc_return: number | null
+  appreciation_pct: number
+  strategy: string | null
+  instruments_count: number
+  has_obligations: boolean
+}
+
+export interface PortfolioOverview {
+  summary: {
+    total_properties: number
+    total_estimated_value: number
+    total_equity: number
+    total_debt: number
+    total_monthly_income: number
+    total_monthly_expenses: number
+    total_monthly_cash_flow: number
+    total_annual_cash_flow: number
+    avg_cap_rate: number
+    avg_coc_return: number
+    ltv_ratio: number
+  }
+  properties: PortfolioPropertyItem[]
+  equity_history: { month: string; total_equity: number; total_value: number }[]
+  cash_flow_history: { month: string; income: number; expenses: number; net: number }[]
+  allocation: {
+    by_strategy: Record<string, number>
+    by_value: Record<string, number>
+  }
+}

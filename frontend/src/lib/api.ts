@@ -645,6 +645,9 @@ export const api = {
         body: JSON.stringify(data),
       }),
   },
+  portfolioV2: {
+    overview: () => request<import('@/types').PortfolioOverview>('/api/portfolio/overview'),
+  },
   rehab: {
     projects: {
       list: (filters?: { property_id?: string; status?: string }) => {
