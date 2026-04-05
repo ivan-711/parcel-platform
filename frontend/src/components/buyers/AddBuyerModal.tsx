@@ -15,7 +15,12 @@ interface Props {
   onOpenChange: (open: boolean) => void
 }
 
-const FUNDING_TYPES = ['Cash', 'Hard Money', 'Conventional', 'Creative']
+const FUNDING_TYPE_OPTIONS = [
+  { value: 'cash', label: 'Cash' },
+  { value: 'hard_money', label: 'Hard Money' },
+  { value: 'conventional', label: 'Conventional' },
+  { value: 'creative', label: 'Creative' },
+]
 
 const inputCls =
   'w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none'
@@ -185,9 +190,9 @@ export function AddBuyerModal({ open, onOpenChange }: Props) {
                   onChange={(e) => setFundingType(e.target.value)}
                 >
                   <option value="">Select funding type…</option>
-                  {FUNDING_TYPES.map((f) => (
-                    <option key={f} value={f}>
-                      {f}
+                  {FUNDING_TYPE_OPTIONS.map((f) => (
+                    <option key={f.value} value={f.value}>
+                      {f.label}
                     </option>
                   ))}
                 </select>

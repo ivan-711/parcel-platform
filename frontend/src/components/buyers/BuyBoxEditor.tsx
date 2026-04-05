@@ -8,9 +8,26 @@ interface Props {
   onChange: (value: Partial<CreateBuyBoxRequest>) => void
 }
 
-const PROPERTY_TYPES = ['SFH', 'Duplex', 'Triplex', 'Fourplex', 'Multi-Family']
-const STRATEGIES = ['Buy & Hold', 'BRRRR', 'Flip', 'Wholesale', 'Creative Finance']
-const FUNDING_TYPES = ['Cash', 'Hard Money', 'Conventional', 'Creative']
+const PROPERTY_TYPE_OPTIONS = [
+  { value: 'single_family', label: 'SFH' },
+  { value: 'duplex', label: 'Duplex' },
+  { value: 'triplex', label: 'Triplex' },
+  { value: 'fourplex', label: 'Fourplex' },
+  { value: 'multi_family', label: 'Multi-Family' },
+]
+const STRATEGY_OPTIONS = [
+  { value: 'buy_and_hold', label: 'Buy & Hold' },
+  { value: 'brrrr', label: 'BRRRR' },
+  { value: 'flip', label: 'Flip' },
+  { value: 'wholesale', label: 'Wholesale' },
+  { value: 'creative_finance', label: 'Creative Finance' },
+]
+const FUNDING_TYPE_OPTIONS = [
+  { value: 'cash', label: 'Cash' },
+  { value: 'hard_money', label: 'Hard Money' },
+  { value: 'conventional', label: 'Conventional' },
+  { value: 'creative', label: 'Creative' },
+]
 
 const inputCls =
   'w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none'
@@ -140,20 +157,20 @@ export function BuyBoxEditor({ value, onChange }: Props) {
       <div>
         <label className={labelCls}>Property Types</label>
         <div className="flex flex-wrap gap-2">
-          {PROPERTY_TYPES.map((pt) => {
-            const selected = (value.property_types || []).includes(pt)
+          {PROPERTY_TYPE_OPTIONS.map((pt) => {
+            const selected = (value.property_types || []).includes(pt.value)
             return (
               <button
-                key={pt}
+                key={pt.value}
                 type="button"
-                onClick={() => toggleArrayItem('property_types', pt)}
+                onClick={() => toggleArrayItem('property_types', pt.value)}
                 className={`px-3 py-1.5 rounded-lg text-xs border transition-colors ${
                   selected
                     ? 'bg-[#8B7AFF]/20 border-[#8B7AFF]/50 text-[#8B7AFF]'
                     : 'bg-[#0C0B0A] border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30'
                 }`}
               >
-                {pt}
+                {pt.label}
               </button>
             )
           })}
@@ -164,20 +181,20 @@ export function BuyBoxEditor({ value, onChange }: Props) {
       <div>
         <label className={labelCls}>Strategies</label>
         <div className="flex flex-wrap gap-2">
-          {STRATEGIES.map((s) => {
-            const selected = (value.strategies || []).includes(s)
+          {STRATEGY_OPTIONS.map((s) => {
+            const selected = (value.strategies || []).includes(s.value)
             return (
               <button
-                key={s}
+                key={s.value}
                 type="button"
-                onClick={() => toggleArrayItem('strategies', s)}
+                onClick={() => toggleArrayItem('strategies', s.value)}
                 className={`px-3 py-1.5 rounded-lg text-xs border transition-colors ${
                   selected
                     ? 'bg-[#8B7AFF]/20 border-[#8B7AFF]/50 text-[#8B7AFF]'
                     : 'bg-[#0C0B0A] border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30'
                 }`}
               >
-                {s}
+                {s.label}
               </button>
             )
           })}
@@ -220,9 +237,9 @@ export function BuyBoxEditor({ value, onChange }: Props) {
           onChange={(e) => onChange({ ...value, funding_type: e.target.value || undefined })}
         >
           <option value="">Select funding type…</option>
-          {FUNDING_TYPES.map((f) => (
-            <option key={f} value={f}>
-              {f}
+          {FUNDING_TYPE_OPTIONS.map((f) => (
+            <option key={f.value} value={f.value}>
+              {f.label}
             </option>
           ))}
         </select>
