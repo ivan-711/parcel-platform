@@ -606,4 +606,43 @@ export const api = {
     dashboard: () =>
       request<import('@/types/financing').FinancingDashboard>('/api/financing/dashboard'),
   },
+  transactions: {
+    list: (filters?: import('@/types').TransactionFilters) => {
+      const params = new URLSearchParams()
+      if (filters?.property_id) params.set('property_id', filters.property_id)
+      if (filters?.category) params.set('category', filters.category)
+      if (filters?.transaction_type) params.set('transaction_type', filters.transaction_type)
+      if (filters?.date_from) params.set('date_from', filters.date_from)
+      if (filters?.date_to) params.set('date_to', filters.date_to)
+      if (filters?.page) params.set('page', String(filters.page))
+      if (filters?.per_page) params.set('per_page', String(filters.per_page))
+      const qs = params.toString()
+      return request<import('@/types').PaginatedTransactions>(`/api/transactions${qs ? '?' + qs : ''}`)
+    },
+    create: (data: import('@/types').CreateTransactionRequest) =>
+      request<import('@/types').Transaction>('/api/transactions', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    update: (id: string, data: Record<string, unknown>) =>
+      request<import('@/types').Transaction>(`/api/transactions/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      }),
+    delete: (id: string) =>
+      request<void>(`/api/transactions/${id}`, { method: 'DELETE' }),
+    summary: (filters?: { property_id?: string; date_from?: string; date_to?: string }) => {
+      const params = new URLSearchParams()
+      if (filters?.property_id) params.set('property_id', filters.property_id)
+      if (filters?.date_from) params.set('date_from', filters.date_from)
+      if (filters?.date_to) params.set('date_to', filters.date_to)
+      const qs = params.toString()
+      return request<import('@/types').TransactionSummary>(`/api/transactions/summary${qs ? '?' + qs : ''}`)
+    },
+    bulkCreate: (data: { transactions: import('@/types').CreateTransactionRequest[] }) =>
+      request<import('@/types').BulkCreateResponse>('/api/transactions/bulk', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+  },
 }

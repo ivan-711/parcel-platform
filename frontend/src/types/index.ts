@@ -930,3 +930,74 @@ export interface CompareResponse {
   recommendation: string
   recommendation_reason: string
 }
+
+// ---------------------------------------------------------------------------
+// Transaction types
+// ---------------------------------------------------------------------------
+
+export interface Transaction {
+  id: string
+  property_id: string
+  deal_id: string | null
+  created_by: string
+  team_id: string | null
+  transaction_type: string
+  amount: number
+  description: string | null
+  occurred_at: string
+  category: string | null
+  vendor: string | null
+  is_deleted: boolean
+  created_at: string
+  updated_at: string
+  property_address: string | null
+}
+
+export interface TransactionFilters {
+  property_id?: string
+  category?: string
+  transaction_type?: string
+  date_from?: string
+  date_to?: string
+  page?: number
+  per_page?: number
+}
+
+export interface PaginatedTransactions {
+  items: Transaction[]
+  total: number
+  page: number
+  per_page: number
+  pages: number
+}
+
+export interface TransactionMonthlySummary {
+  month: string
+  income: number
+  expenses: number
+  net: number
+}
+
+export interface TransactionSummary {
+  by_month: TransactionMonthlySummary[]
+  by_category: { category: string; total: number }[]
+  by_property: { property_id: string; address: string; income: number; expenses: number; net: number }[]
+}
+
+export interface CreateTransactionRequest {
+  property_id: string
+  amount: number
+  transaction_date: string
+  category: string
+  transaction_type: string
+  description?: string
+  notes?: string
+  is_recurring?: boolean
+  recurrence_interval?: string
+  deal_id?: string
+}
+
+export interface BulkCreateResponse {
+  created: number
+  errors: string[]
+}
