@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -39,6 +39,22 @@ export function RecordPaymentModal({ open, onOpenChange, defaults, instruments =
   const [paymentMethod, setPaymentMethod] = useState('bank_transfer')
   const [confirmationNumber, setConfirmationNumber] = useState('')
   const [notes, setNotes] = useState('')
+
+  // Reset form when defaults change
+  useEffect(() => {
+    if (open) {
+      setInstrumentId(defaults?.instrumentId ?? '')
+      setAmount(defaults?.amount ? String(defaults.amount) : '')
+      setPaymentDate(new Date().toISOString().split('T')[0])
+      setDirection(defaults?.direction ?? 'outgoing')
+      setPaymentType('regular')
+      setPrincipalPortion('')
+      setInterestPortion('')
+      setPaymentMethod('bank_transfer')
+      setConfirmationNumber('')
+      setNotes('')
+    }
+  }, [open, defaults?.instrumentId])
 
   function handleSubmit() {
     const selectedInstrument = instruments.find((i) => i.id === instrumentId)

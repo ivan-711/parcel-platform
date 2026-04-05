@@ -1,5 +1,5 @@
 // frontend/src/components/financing/AddInstrumentModal.tsx
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 // framer-motion not needed for this modal
 import {
   X,
@@ -55,6 +55,16 @@ export function AddInstrumentModal({ open, onOpenChange, propertyId, propertyAdd
 
   const createMutation = useCreateInstrument()
 
+  // Reset form when modal opens
+  const prevOpen = useRef(open)
+  useEffect(() => {
+    if (open && !prevOpen.current) {
+      setStep(1)
+      setFormData({ property_id: propertyId, requires_insurance: true })
+    }
+    prevOpen.current = open
+  }, [open, propertyId])
+
   const selectedType = INSTRUMENT_TYPES.find((t) => t.type === formData.instrument_type)
 
   function updateField<K extends keyof CreateInstrumentRequest>(key: K, value: CreateInstrumentRequest[K]) {
@@ -97,6 +107,7 @@ export function AddInstrumentModal({ open, onOpenChange, propertyId, propertyAdd
       monthly_payment: formData.monthly_payment ?? calculatedPayment ?? undefined,
       origination_date: formData.origination_date,
       maturity_date: formData.maturity_date ?? calculatedMaturity ?? undefined,
+      amortization_months: formData.amortization_months,
       first_payment_date: formData.first_payment_date,
       has_balloon: formData.has_balloon ?? false,
       balloon_date: formData.balloon_date,
@@ -374,6 +385,13 @@ function Step2CoreTerms({
             <span className="text-[10px] text-[#8B7AFF] mt-0.5 block">Calculated</span>
           )}
         </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <NumberField label="Amortization Period (months)" value={formData.amortization_months ?? formData.term_months} onChange={(v) => updateField('amortization_months', v)} />
+        <FormField label="First Payment Date">
+          <input type="date" value={formData.first_payment_date ?? ''} onChange={(e) => updateField('first_payment_date', e.target.value)} className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none" />
+        </FormField>
       </div>
 
       {/* Sub-to specific */}
