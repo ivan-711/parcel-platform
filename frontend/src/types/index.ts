@@ -1192,6 +1192,7 @@ export interface BuyerListItem {
 export interface BuyerDetail extends BuyerListItem {
   notes: string | null
   tags: string[] | null
+  deals: LinkedDeal[]
   total_deals_closed: number
   total_deal_volume: number
 }
