@@ -1,4 +1,5 @@
 from .utils import pmt, validate_inputs
+from .projections import compute_common_projections
 
 _REQUIRED = [
     "purchase_price", "down_payment_pct", "interest_rate", "loan_term_years",
@@ -57,7 +58,28 @@ def calculate_buy_and_hold(inputs: dict) -> dict:
 
     break_even_rent = total_monthly_expenses / inputs.get("number_of_units", 1)
 
-    return {
+    # Enhanced outputs
+    vacancy_amount = monthly_rent * (vacancy_rate_pct / 100)
+    rent_to_price_ratio = round((monthly_rent / purchase_price) * 100, 4) if purchase_price > 0 else 0
+    expense_ratio = round((total_monthly_expenses / effective_gross_income) * 100, 2) if effective_gross_income > 0 else 0
+    debt_yield = round((annual_noi / loan_amount) * 100, 2) if loan_amount > 0 else 0
+
+    projections = compute_common_projections(
+        purchase_price=purchase_price,
+        total_investment=down_payment,
+        monthly_cash_flow=monthly_cash_flow,
+        monthly_pi=monthly_pi,
+        loan_amount=loan_amount,
+        interest_rate=interest_rate,
+        loan_term_years=loan_term_years,
+        monthly_taxes=monthly_taxes,
+        monthly_insurance=monthly_insurance,
+        monthly_vacancy=vacancy_amount,
+        monthly_maintenance=monthly_maintenance,
+        monthly_management=monthly_mgmt,
+    )
+
+    result = {
         "purchase_price": round(purchase_price, 2),
         "down_payment": round(down_payment, 2),
         "loan_amount": round(loan_amount, 2),
@@ -76,3 +98,8 @@ def calculate_buy_and_hold(inputs: dict) -> dict:
         "dscr": round(dscr, 2),
         "break_even_rent": round(break_even_rent, 2),
     }
+    result.update(projections)
+    result["rent_to_price_ratio"] = rent_to_price_ratio
+    result["expense_ratio"] = expense_ratio
+    result["debt_yield"] = debt_yield
+    return result
