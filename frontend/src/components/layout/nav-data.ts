@@ -60,7 +60,7 @@ export const NAV_SECTIONS: NavSection[] = [
     label: 'PEOPLE',
     items: [
       { label: 'Contacts', path: '/contacts', icon: Users },
-      { label: 'Buyers', path: '/buyers', icon: Tag, locked: true },
+      { label: 'Buyers', path: '/buyers', icon: Tag },
     ],
   },
   {
