@@ -1,6 +1,8 @@
 """Communications webhook router — Twilio and SendGrid inbound/status handlers."""
 
+import hmac
 import logging
+import os
 
 from fastapi import APIRouter, Depends, Request, Response
 from fastapi.responses import JSONResponse
@@ -46,10 +48,12 @@ async def twilio_incoming(
     url = str(request.url)
 
     # Lazy-init real credentials from env so module can import without them set
-    import os
     _sms.account_sid = os.getenv("TWILIO_ACCOUNT_SID", "")
     _sms.auth_token = os.getenv("TWILIO_AUTH_TOKEN", "")
     _sms.default_from = os.getenv("TWILIO_PHONE_NUMBER", "")
+
+    if not _sms.auth_token:
+        return Response(content="Twilio not configured", status_code=503)
 
     if not _sms.validate_webhook(body_bytes, signature, url):
         return JSONResponse(
@@ -89,9 +93,11 @@ async def twilio_status(
     signature = request.headers.get("X-Twilio-Signature", "")
     url = str(request.url)
 
-    import os
     _sms.account_sid = os.getenv("TWILIO_ACCOUNT_SID", "")
     _sms.auth_token = os.getenv("TWILIO_AUTH_TOKEN", "")
+
+    if not _sms.auth_token:
+        return Response(content="Twilio not configured", status_code=503)
 
     if not _sms.validate_webhook(body_bytes, signature, url):
         return JSONResponse(
@@ -124,12 +130,17 @@ async def twilio_status(
 # ---------------------------------------------------------------------------
 
 
-@router.post("/sendgrid/incoming")
+@router.post("/sendgrid/incoming/{webhook_token}")
 async def sendgrid_incoming(
+    webhook_token: str,
     request: Request,
     db: Session = Depends(get_db),
 ) -> JSONResponse:
     """Receive an inbound email from SendGrid Inbound Parse."""
+    expected = os.getenv("SENDGRID_WEBHOOK_SECRET", "")
+    if not expected or not hmac.compare_digest(webhook_token, expected):
+        return Response(content="Invalid webhook token", status_code=403)
+
     form = await request.form()
     payload = dict(form)
     parsed = _email.parse_incoming(payload)
@@ -152,12 +163,17 @@ async def sendgrid_incoming(
     return JSONResponse(status_code=200, content={"status": "ok"})
 
 
-@router.post("/sendgrid/events")
+@router.post("/sendgrid/events/{webhook_token}")
 async def sendgrid_events(
+    webhook_token: str,
     request: Request,
     db: Session = Depends(get_db),
 ) -> JSONResponse:
     """Receive SendGrid event webhook (delivery, open, click, bounce, etc.)."""
+    expected = os.getenv("SENDGRID_WEBHOOK_SECRET", "")
+    if not expected or not hmac.compare_digest(webhook_token, expected):
+        return Response(content="Invalid webhook token", status_code=403)
+
     body_bytes = await request.body()
     signature = request.headers.get("X-Twilio-Email-Event-Webhook-Signature", "")
 

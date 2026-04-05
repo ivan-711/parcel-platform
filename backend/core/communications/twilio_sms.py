@@ -232,6 +232,8 @@ class TwilioSMSProvider(BaseSMSProvider):
         3. Sign the resulting string with HMAC-SHA1 using the auth_token as key.
         4. Base64-encode the digest and compare to the X-Twilio-Signature header.
         """
+        if not self.auth_token:
+            return False
         if not signature:
             return False
 
