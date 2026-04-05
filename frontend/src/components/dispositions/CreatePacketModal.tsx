@@ -56,6 +56,7 @@ export function CreatePacketModal({
   const [assignmentFee, setAssignmentFee] = useState('')
   const [notes, setNotes] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [createdPacketId, setCreatedPacketId] = useState<string | null>(null)
 
   // Reset state when modal opens
   useEffect(() => {
@@ -65,6 +66,7 @@ export function CreatePacketModal({
       setAssignmentFee('')
       setNotes('')
       setSubmitting(false)
+      setCreatedPacketId(null)
     }
   }, [open, propertyAddress, strategy, purchasePrice])
 
@@ -75,19 +77,24 @@ export function CreatePacketModal({
     if (!title.trim()) return
     setSubmitting(true)
     try {
-      // Phase 1: create packet
-      const packet = await createPacket.mutateAsync({
-        property_id: propertyId,
-        scenario_id: scenarioId,
-        title: title.trim(),
-        asking_price: askingPrice ? Number(askingPrice) : undefined,
-        assignment_fee: assignmentFee ? Number(assignmentFee) : undefined,
-        notes_to_buyer: notes.trim() || undefined,
-      })
+      let pid = createdPacketId
+      // Phase 1: create packet (skip if already created)
+      if (!pid) {
+        const packet = await createPacket.mutateAsync({
+          property_id: propertyId,
+          scenario_id: scenarioId,
+          title: title.trim(),
+          asking_price: askingPrice ? Number(askingPrice) : undefined,
+          assignment_fee: assignmentFee ? Number(assignmentFee) : undefined,
+          notes_to_buyer: notes.trim() || undefined,
+        })
+        pid = packet.id
+        setCreatedPacketId(pid)
+      }
 
       // Phase 2: send to selected buyers
       if (selectedBuyerIds.length > 0) {
-        const result = await api.dispositions.packets.send(packet.id, {
+        const result = await api.dispositions.packets.send(pid, {
           buyer_contact_ids: selectedBuyerIds,
           message: notes.trim() || undefined,
         })
@@ -99,7 +106,11 @@ export function CreatePacketModal({
       onSuccess()
       onOpenChange(false)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to create packet')
+      if (createdPacketId) {
+        toast.error('Packet created but sending failed. Click send to retry.')
+      } else {
+        toast.error(err instanceof Error ? err.message : 'Failed to create packet')
+      }
     } finally {
       setSubmitting(false)
     }
@@ -218,7 +229,7 @@ export function CreatePacketModal({
               ) : (
                 <Send size={14} />
               )}
-              {submitting ? 'Sending…' : `Send to ${selectedBuyerIds.length} Buyer${selectedBuyerIds.length !== 1 ? 's' : ''}`}
+              {submitting ? 'Sending…' : createdPacketId ? 'Retry Send' : `Send to ${selectedBuyerIds.length} Buyer${selectedBuyerIds.length !== 1 ? 's' : ''}`}
             </button>
           </div>
         </form>
