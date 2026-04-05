@@ -1395,3 +1395,55 @@ export interface MatchFilters {
   funding_type?: string
   has_pof?: boolean
 }
+
+// ---------------------------------------------------------------------------
+// Communication + Thread types
+// ---------------------------------------------------------------------------
+
+export type DeliveryStatus = 'logged' | 'queued' | 'sent' | 'delivered' | 'failed' | 'bounced' | 'opened' | 'clicked'
+
+export interface SendSMSRequest {
+  contact_id: string
+  body: string
+  deal_id?: string
+  property_id?: string
+}
+
+export interface SendEmailRequest {
+  contact_id: string
+  subject: string
+  body_html: string
+  body_text?: string
+  deal_id?: string
+  property_id?: string
+}
+
+export interface ThreadMessage {
+  id: string
+  channel: string
+  direction: 'inbound' | 'outbound' | null
+  subject: string | null
+  body: string | null
+  status: DeliveryStatus
+  error_message: string | null
+  external_id: string | null
+  contact_id: string | null
+  deal_id: string | null
+  property_id: string | null
+  cost_cents: number | null
+  occurred_at: string
+  created_at: string
+}
+
+export interface ThreadContact {
+  id: string
+  name: string
+  phone: string | null
+  email: string | null
+}
+
+export interface ThreadResponse {
+  contact: ThreadContact
+  messages: ThreadMessage[]
+  total: number
+}

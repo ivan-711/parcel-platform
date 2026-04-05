@@ -766,4 +766,18 @@ export const api = {
     sharedPacket: (shareToken: string) =>
       requestPublic<import('@/types').SharedPacketData>(`/api/dispositions/packets/share/${shareToken}`),
   },
+  communications: {
+    sendSMS: (data: import('@/types').SendSMSRequest) =>
+      request<import('@/types').ThreadMessage>('/api/communications/send-sms', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    sendEmail: (data: import('@/types').SendEmailRequest) =>
+      request<import('@/types').ThreadMessage>('/api/communications/send-email', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    thread: (contactId: string) =>
+      request<import('@/types').ThreadResponse>(`/api/communications/thread/${contactId}`),
+  },
 }
