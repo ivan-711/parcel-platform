@@ -406,6 +406,7 @@ export interface TodayPortfolioSummary {
   property_count: number
   deal_count: number
   change_pct: number
+  monthly_actuals?: { month: string; net: number }[]
 }
 
 export interface TodayBriefingItem {
