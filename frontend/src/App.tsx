@@ -51,6 +51,8 @@ const MatchResultsPage = lazy(() => import('@/pages/dispositions/MatchResultsPag
 const SharedPacketPage = lazy(() => import('@/pages/dispositions/SharedPacketPage'))
 const SequencesListPage = lazy(() => import('@/pages/sequences/SequencesListPage'))
 const SequenceBuilderPage = lazy(() => import('@/pages/sequences/SequenceBuilderPage'))
+const SkipTracingPage = lazy(() => import('@/pages/skip-tracing/SkipTracingPage'))
+const BatchSkipTracePage = lazy(() => import('@/pages/skip-tracing/BatchSkipTracePage'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
 const queryClient = new QueryClient({
@@ -186,7 +188,8 @@ function AnimatedRoutes() {
         <Route path="/sequences" element={<ProtectedRoute><PageErrorBoundary><SequencesListPage /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/sequences/new" element={<ProtectedRoute><PageErrorBoundary><SequenceBuilderPage /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/sequences/:id" element={<ProtectedRoute><PageErrorBoundary><SequenceBuilderPage /></PageErrorBoundary></ProtectedRoute>} />
-        <Route path="/skip-tracing" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
+        <Route path="/skip-tracing" element={<ProtectedRoute><PageErrorBoundary><SkipTracingPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/skip-tracing/batch" element={<ProtectedRoute><PageErrorBoundary><BatchSkipTracePage /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/mail-campaigns" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
         <Route path="/d4d" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
         <Route path="/compliance" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
