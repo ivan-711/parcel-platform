@@ -780,4 +780,31 @@ export const api = {
     thread: (contactId: string) =>
       request<import('@/types').ThreadResponse>(`/api/communications/thread/${contactId}`),
   },
+  sequences: {
+    list: () => request<import('@/types').SequenceListItem[]>('/api/sequences'),
+    get: (id: string) => request<import('@/types').SequenceDetail>(`/api/sequences/${id}`),
+    create: (data: import('@/types').CreateSequenceRequest) =>
+      request<import('@/types').SequenceDetail>('/api/sequences', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: import('@/types').UpdateSequenceRequest) =>
+      request<import('@/types').SequenceDetail>(`/api/sequences/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    delete: (id: string) => request<void>(`/api/sequences/${id}`, { method: 'DELETE' }),
+    steps: {
+      add: (seqId: string, data: { channel: string; delay_days?: number; delay_hours?: number; subject?: string; body_template: string }) =>
+        request<import('@/types').SequenceStep>(`/api/sequences/${seqId}/steps`, { method: 'POST', body: JSON.stringify(data) }),
+      update: (seqId: string, stepId: string, data: Record<string, unknown>) =>
+        request<import('@/types').SequenceStep>(`/api/sequences/${seqId}/steps/${stepId}`, { method: 'PATCH', body: JSON.stringify(data) }),
+      delete: (seqId: string, stepId: string) =>
+        request<void>(`/api/sequences/${seqId}/steps/${stepId}`, { method: 'DELETE' }),
+    },
+    enroll: (seqId: string, data: import('@/types').EnrollRequest) =>
+      request<import('@/types').SequenceEnrollment>(`/api/sequences/${seqId}/enroll`, { method: 'POST', body: JSON.stringify(data) }),
+    enrollBulk: (seqId: string, data: import('@/types').BulkEnrollRequest) =>
+      request<{ enrolled: number; errors: string[] }>(`/api/sequences/${seqId}/enroll-bulk`, { method: 'POST', body: JSON.stringify(data) }),
+    stopEnrollment: (seqId: string, enrollmentId: string) =>
+      request<void>(`/api/sequences/${seqId}/enrollments/${enrollmentId}`, { method: 'DELETE' }),
+    enrollments: (seqId: string) =>
+      request<{ enrollments: import('@/types').SequenceEnrollment[]; total: number }>(`/api/sequences/${seqId}/enrollments`),
+    analytics: (seqId: string) =>
+      request<import('@/types').SequenceAnalytics>(`/api/sequences/${seqId}/analytics`),
+  },
 }

@@ -1447,3 +1447,103 @@ export interface ThreadResponse {
   messages: ThreadMessage[]
   total: number
 }
+
+// ---------------------------------------------------------------------------
+// Sequence types
+// ---------------------------------------------------------------------------
+
+export interface SequenceStep {
+  id: string
+  sequence_id: string
+  step_order: number
+  channel: 'sms' | 'email'
+  delay_days: number
+  delay_hours: number
+  subject: string | null
+  body_template: string
+  created_at: string
+}
+
+export interface SequenceListItem {
+  id: string
+  name: string
+  description: string | null
+  status: 'active' | 'paused' | 'archived'
+  step_count: number
+  total_enrolled: number
+  total_completed: number
+  total_replied: number
+  reply_rate: number
+  created_at: string
+}
+
+export interface SequenceDetail {
+  id: string
+  name: string
+  description: string | null
+  status: 'active' | 'paused' | 'archived'
+  trigger_type: string
+  stop_on_reply: boolean
+  stop_on_deal_created: boolean
+  total_enrolled: number
+  total_completed: number
+  total_replied: number
+  steps: SequenceStep[]
+  created_at: string
+  updated_at: string
+}
+
+export interface CreateSequenceRequest {
+  name: string
+  description?: string
+  stop_on_reply?: boolean
+  stop_on_deal_created?: boolean
+  steps?: { channel: 'sms' | 'email'; delay_days?: number; delay_hours?: number; subject?: string; body_template: string }[]
+}
+
+export interface UpdateSequenceRequest {
+  name?: string
+  description?: string
+  status?: string
+  stop_on_reply?: boolean
+  stop_on_deal_created?: boolean
+}
+
+export interface SequenceEnrollment {
+  id: string
+  sequence_id: string
+  contact_id: string
+  property_id: string | null
+  deal_id: string | null
+  status: 'active' | 'completed' | 'replied' | 'stopped' | 'failed'
+  current_step: number
+  next_send_at: string | null
+  enrolled_at: string
+  completed_at: string | null
+  stopped_at: string | null
+  stopped_reason: string | null
+  contact_name: string
+}
+
+export interface SequenceAnalytics {
+  total_enrolled: number
+  active: number
+  completed: number
+  replied: number
+  stopped: number
+  failed: number
+  reply_rate: number
+  completion_rate: number
+}
+
+export interface EnrollRequest {
+  contact_id: string
+  property_id?: string
+  deal_id?: string
+}
+
+export interface BulkEnrollRequest {
+  contact_ids: string[]
+  property_id?: string
+  deal_id?: string
+}
