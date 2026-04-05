@@ -35,6 +35,9 @@ from models.payments import Payment
 # Wave 3 models
 from models.rehab_projects import RehabProject, RehabItem
 
+# Wave 4 models
+from models.buy_boxes import BuyBox
+
 __all__ = [
     "User",
     "Team",
@@ -68,4 +71,6 @@ __all__ = [
     # Wave 3
     "RehabProject",
     "RehabItem",
+    # Wave 4
+    "BuyBox",
 ]
