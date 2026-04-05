@@ -8,6 +8,7 @@ import { NarrativeCard } from './components/NarrativeCard'
 import { KeyMetrics } from './components/KeyMetrics'
 import { FinancialInputs } from './components/FinancialInputs'
 import { CashFlowChart } from './components/CashFlowChart'
+import { BreakEvenChart } from './components/BreakEvenChart'
 import { SensitivityMatrix } from './components/SensitivityMatrix'
 import { StrategyComparison } from './components/StrategyComparison'
 import { CompsCard } from '@/components/analysis/CompsCard'
@@ -286,6 +287,13 @@ export default function AnalysisResultsPage() {
         {activeScenario && (activeStrategy === 'buy_and_hold' || activeStrategy === 'brrrr') && (
           <div className="mb-6">
             <CashFlowChart scenario={activeScenario} />
+          </div>
+        )}
+
+        {/* Break-even timeline */}
+        {activeScenario && (
+          <div className="mb-6">
+            <BreakEvenChart scenario={activeScenario} />
           </div>
         )}
 
