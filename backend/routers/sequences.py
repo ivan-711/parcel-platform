@@ -255,6 +255,7 @@ async def update_sequence(
 ) -> SequenceResponse:
     """Update sequence metadata or status."""
     seq = _get_sequence_or_404(db, seq_id, current_user.id)
+    old_status = seq.status
 
     if body.status is not None and body.status not in _VALID_STATUSES:
         raise HTTPException(
@@ -272,6 +273,33 @@ async def update_sequence(
         seq.stop_on_reply = body.stop_on_reply
     if body.stop_on_deal_created is not None:
         seq.stop_on_deal_created = body.stop_on_deal_created
+
+    # Handle enrollment status transitions when the sequence status changes
+    if body.status and body.status != old_status:
+        if body.status == "paused":
+            # Pause all active enrollments
+            db.query(SequenceEnrollment).filter(
+                SequenceEnrollment.sequence_id == seq_id,
+                SequenceEnrollment.status == "active",
+                SequenceEnrollment.deleted_at.is_(None),
+            ).update(
+                {SequenceEnrollment.status: "paused", SequenceEnrollment.next_send_at: None},
+                synchronize_session="fetch",
+            )
+        elif body.status == "active" and old_status == "paused":
+            # Resume paused enrollments — schedule to send ASAP
+            paused = (
+                db.query(SequenceEnrollment)
+                .filter(
+                    SequenceEnrollment.sequence_id == seq_id,
+                    SequenceEnrollment.status == "paused",
+                    SequenceEnrollment.deleted_at.is_(None),
+                )
+                .all()
+            )
+            for enrollment in paused:
+                enrollment.status = "active"
+                enrollment.next_send_at = datetime.utcnow()
 
     db.commit()
     db.refresh(seq)
@@ -301,6 +329,22 @@ async def delete_sequence(
     """Soft-delete a sequence."""
     seq = _get_sequence_or_404(db, seq_id, current_user.id)
     seq.deleted_at = datetime.utcnow()
+
+    # Stop all active/paused enrollments when the sequence is deleted
+    db.query(SequenceEnrollment).filter(
+        SequenceEnrollment.sequence_id == seq_id,
+        SequenceEnrollment.status.in_(["active", "paused"]),
+        SequenceEnrollment.deleted_at.is_(None),
+    ).update(
+        {
+            SequenceEnrollment.status: "stopped",
+            SequenceEnrollment.stopped_at: datetime.utcnow(),
+            SequenceEnrollment.stopped_reason: "sequence_deleted",
+            SequenceEnrollment.next_send_at: None,
+        },
+        synchronize_session="fetch",
+    )
+
     db.commit()
 
 

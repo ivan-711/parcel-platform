@@ -111,11 +111,17 @@ class SequenceEngine:
         now = datetime.utcnow()
         due = (
             self.db.query(SequenceEnrollment)
+            .join(Sequence, Sequence.id == SequenceEnrollment.sequence_id)
+            .join(Contact, Contact.id == SequenceEnrollment.contact_id)
             .filter(
                 SequenceEnrollment.status == "active",
                 SequenceEnrollment.next_send_at <= now,
                 SequenceEnrollment.deleted_at.is_(None),
+                Sequence.status == "active",
+                Sequence.deleted_at.is_(None),
+                Contact.is_deleted.is_(False),
             )
+            .with_for_update(skip_locked=True)
             .all()
         )
 
