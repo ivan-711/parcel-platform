@@ -50,7 +50,12 @@ def calculate_brrrr(inputs: dict) -> dict:
         loan_amount=refi_proceeds,
         interest_rate=new_loan_rate,
         loan_term_years=new_loan_term_years,
+        monthly_other=monthly_expenses,  # lump expenses mapped to other for breakdown visibility
     )
+
+    # Override break-even for infinite return
+    if infinite_return:
+        projections["break_even_months"] = 0
 
     result = {
         "all_in": round(all_in, 2),

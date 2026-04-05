@@ -13,6 +13,8 @@ def compute_common_projections(
     interest_rate: float = 0,
     loan_term_years: int = 30,
     appreciation_rate: float = 3.0,
+    rent_growth_rate: float = 2.0,
+    expense_growth_rate: float = 3.0,
     monthly_taxes: float = 0,
     monthly_insurance: float = 0,
     monthly_vacancy: float = 0,
@@ -20,7 +22,7 @@ def compute_common_projections(
     monthly_capex: float = 0,
     monthly_management: float = 0,
     monthly_hoa: float = 0,
-    **kwargs,
+    monthly_other: float = 0,
 ) -> dict:
     """Compute break-even, 5-year projections, and expense breakdown.
 
@@ -31,7 +33,9 @@ def compute_common_projections(
     annual_cash_flow = round(monthly_cash_flow * 12, 2)
 
     # Break-even: months until cumulative cash flow covers investment
-    if monthly_cash_flow > 0 and total_investment > 0:
+    if total_investment <= 0:
+        break_even_months = 0
+    elif monthly_cash_flow > 0:
         break_even_months = math.ceil(total_investment / monthly_cash_flow)
     else:
         break_even_months = None
@@ -58,7 +62,15 @@ def compute_common_projections(
         principal_paid_5yr = min(monthly_pi * 60, loan_amount)
 
     five_year_equity = round(appreciation_5yr + principal_paid_5yr, 2)
-    five_year_total_return = round(annual_cash_flow * 5 + five_year_equity, 2)
+
+    # 5-year cumulative cash flow — compound net CF at rent_growth_rate
+    # (rent grows faster than expenses, so net CF grows roughly at rent growth rate)
+    cumulative_cf_5yr = 0.0
+    for year in range(5):
+        year_cf = annual_cash_flow * ((1 + rent_growth_rate / 100) ** year)
+        cumulative_cf_5yr += year_cf
+
+    five_year_total_return = round(cumulative_cf_5yr + five_year_equity, 2)
 
     monthly_expense_breakdown = {
         "mortgage": round(monthly_pi, 2),
@@ -69,6 +81,7 @@ def compute_common_projections(
         "capex": round(monthly_capex, 2),
         "management": round(monthly_management, 2),
         "hoa": round(monthly_hoa, 2),
+        "other": round(monthly_other, 2),
     }
 
     return {
