@@ -1,62 +1,74 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   ArrowRight, GitBranch, FileText, MessageSquare, AlertCircle, X,
-  Calculator, CheckCircle2,
+  Calculator, CheckCircle2, MapPin, Search, Plus, Clock,
 } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { KPICard } from '@/components/ui/KPICard'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
+import { SampleBadge } from '@/components/SampleBadge'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useDashboard } from '@/hooks/useDashboard'
+import { usePortfolioOverview } from '@/hooks/usePortfolio'
 import { useAuthStore } from '@/stores/authStore'
+import { useOnboardingStore } from '@/stores/onboardingStore'
 import { api } from '@/lib/api'
 import { timeAgo } from '@/lib/utils'
-import type { ActivityItem } from '@/types'
-
-interface HintCard {
-  icon: React.ElementType
-  title: string
-  description: string
-}
-
-const HINT_CARDS: HintCard[] = [
-  {
-    icon: GitBranch,
-    title: 'Pipeline',
-    description: 'Track deals from lead to close',
-  },
-  {
-    icon: FileText,
-    title: 'Documents',
-    description: 'Upload contracts and leases',
-  },
-  {
-    icon: MessageSquare,
-    title: 'AI Chat',
-    description: 'Ask anything about a deal',
-  },
-]
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-    },
-  },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
 }
 
 const itemVariants = {
   hidden: { opacity: 0, y: 6 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.18, ease: 'easeOut' },
-  },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.18, ease: 'easeOut' } },
+}
+
+function getGreeting(): string {
+  const h = new Date().getHours()
+  if (h >= 5 && h < 12) return 'Good morning'
+  if (h >= 12 && h < 17) return 'Good afternoon'
+  if (h >= 17 && h < 21) return 'Good evening'
+  return 'Good night'
+}
+
+function formatDate(): string {
+  return new Date().toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+  })
+}
+
+const ACTIVITY_ICONS: Record<string, { icon: React.ElementType; color: string }> = {
+  property_saved: { icon: MapPin, color: '#8B7AFF' },
+  analysis_completed: { icon: Calculator, color: '#8B7AFF' },
+  deal_created: { icon: GitBranch, color: '#D4A867' },
+  document_uploaded: { icon: FileText, color: '#7CCBA5' },
+  deal_analyzed: { icon: Calculator, color: '#8B7AFF' },
+  pipeline_moved: { icon: ArrowRight, color: '#D4A867' },
+  document_analyzed: { icon: FileText, color: '#7CCBA5' },
+  deal_closed: { icon: CheckCircle2, color: '#7CCBA5' },
+}
+
+/**
+ * Generate a flat sparkline at the current value.
+ * We do NOT fabricate trends — that would be misleading in underwriting software.
+ * Real historical data comes in Wave 2 when time-series tracking ships.
+ */
+function generateTrendData(current: number, points: number = 7): number[] {
+  return Array(points).fill(current)
+}
+
+const STAGE_LABELS: Record<string, string> = {
+  lead: 'Lead', analyzing: 'Analyzing', offer_sent: 'Offer Sent',
+  under_contract: 'Under Contract', due_diligence: 'Due Diligence', closed: 'Closed',
+}
+
+function statusLabel(status: string): string {
+  return status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
 function riskColor(score: number | null): string {
@@ -66,46 +78,6 @@ function riskColor(score: number | null): string {
   return 'text-[#D4766A]'
 }
 
-function statusLabel(status: string): string {
-  return status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
-}
-
-const ACTIVITY_ICONS: Record<ActivityItem['activity_type'], { icon: React.ElementType; color: string }> = {
-  deal_analyzed: { icon: Calculator, color: '#8B7AFF' },
-  pipeline_moved: { icon: ArrowRight, color: '#D4A867' },
-  document_analyzed: { icon: FileText, color: '#7CCBA5' },
-  deal_closed: { icon: CheckCircle2, color: '#7CCBA5' },
-}
-
-const STAGE_LABELS: Record<string, string> = {
-  lead: 'Lead',
-  analyzing: 'Analyzing',
-  offer_sent: 'Offer Sent',
-  under_contract: 'Under Contract',
-  due_diligence: 'Due Diligence',
-  closed: 'Closed',
-}
-
-/**
- * Generate plausible sparkline trend data ending at the given current value.
- * Produces `points` data points with gentle random variation leading to `current`.
- */
-function generateTrendData(current: number, points: number = 7, volatility: number = 0.15): number[] {
-  if (current === 0) return Array(points).fill(0)
-  const data: number[] = []
-  // Start roughly 30% below current and walk upward
-  let val = current * (1 - volatility * 2)
-  const step = (current - val) / (points - 1)
-  for (let i = 0; i < points - 1; i++) {
-    data.push(Math.max(0, val + (Math.random() - 0.4) * current * volatility))
-    val += step
-  }
-  // Last point is the exact current value
-  data.push(current)
-  return data
-}
-
-/** Dashboard — shows KPI overview when user has deals, empty state otherwise. */
 export default function Dashboard() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -113,61 +85,71 @@ export default function Dashboard() {
   const user = useAuthStore((s) => s.user)
   const isDemoUser = user?.email === 'demo@parcel.app'
   const [bannerDismissed, setBannerDismissed] = useState(false)
+  const { realPropertyCount, hasSampleData, fetchStatus, fetched: onboardingFetched } = useOnboardingStore()
 
-  const { data: activityData, isLoading: activityLoading, isError: activityError } = useQuery({
-    queryKey: ['activity'],
-    queryFn: () => api.activity.list(),
+  const { data: portfolioData } = usePortfolioOverview()
+
+  const { data: activityData, isLoading: activityLoading } = useQuery({
+    queryKey: ['recent-activity'],
+    queryFn: () => api.recentActivity.list(10),
     staleTime: 60_000,
   })
 
-  /* ── Derived values (must be above early returns to preserve hook order) ── */
+  useEffect(() => {
+    if (!onboardingFetched) fetchStatus()
+  }, [onboardingFetched, fetchStatus])
+
+  useEffect(() => {
+    try {
+      (window as any).posthog?.capture?.('dashboard_viewed', {
+        state: realPropertyCount > 0 ? 'returning_user' : 'new_user',
+        has_sample_data: hasSampleData,
+        real_property_count: realPropertyCount,
+      })
+    } catch { /* ignore */ }
+  }, [])
+
   const closedDeals = stats?.closed_deals ?? 0
-
-  const pipelineEntries = Object.entries(stats?.pipeline_by_stage ?? {}).filter(
-    ([, count]) => count > 0
-  )
-
-  /* Memoize sparkline data so it stays stable across re-renders */
+  const pipelineEntries = Object.entries(stats?.pipeline_by_stage ?? {}).filter(([, count]) => count > 0)
   const sparklines = useMemo(() => ({
-    totalDeals: generateTrendData(stats?.total_deals ?? 0, 7, 0.12),
-    activePipeline: generateTrendData(stats?.active_pipeline_deals ?? 0, 7, 0.18),
-    closedDeals: generateTrendData(closedDeals, 7, 0.1),
-    dealsAnalyzed: generateTrendData(stats?.total_deals ?? 0, 7, 0.15),
+    totalDeals: generateTrendData(stats?.total_deals ?? 0),
+    activePipeline: generateTrendData(stats?.active_pipeline_deals ?? 0),
+    closedDeals: generateTrendData(closedDeals),
+    dealsAnalyzed: generateTrendData(stats?.total_deals ?? 0),
   }), [stats?.total_deals, stats?.active_pipeline_deals, closedDeals])
+
+  const firstName = user?.name?.split(' ')[0] || 'there'
 
   const demoBanner = isDemoUser && !bannerDismissed ? (
     <div className="bg-violet-400/10 border border-violet-400/20 rounded-lg px-4 py-3 text-sm text-text-primary flex items-center justify-between mb-4">
       <p>
-        You&apos;re viewing a demo account. Create your free account to analyze your own deals.{' '}
+        You&apos;re viewing a demo account.{' '}
         <Link to="/register" className="font-semibold text-violet-400 underline underline-offset-2 hover:text-violet-300">
-          Get Started &rarr;
+          Create your free account &rarr;
         </Link>
       </p>
-      <button onClick={() => setBannerDismissed(true)} className="ml-4 shrink-0 opacity-50 hover:opacity-100 transition-opacity cursor-pointer" aria-label="Dismiss banner">
+      <button onClick={() => setBannerDismissed(true)} className="ml-4 shrink-0 opacity-50 hover:opacity-100 transition-opacity" aria-label="Dismiss">
         <X size={16} />
       </button>
     </div>
   ) : null
 
-  /* ── Loading state ── */
+  // Loading
   if (isLoading) {
     return (
       <AppShell title="Dashboard">
         {demoBanner}
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <SkeletonCard key={i} lines={2} />
-            ))}
+            {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} lines={2} />)}
           </div>
           <SkeletonCard lines={4} />
-          <SkeletonCard lines={3} />
         </div>
       </AppShell>
     )
   }
 
-  /* ── Error state ── */
+  // Error
   if (isError) {
     return (
       <AppShell title="Dashboard">
@@ -176,13 +158,8 @@ export default function Dashboard() {
           <AlertCircle size={20} className="text-[#D4766A] shrink-0 mt-0.5" />
           <div className="space-y-2">
             <p className="text-sm font-medium text-text-primary">Failed to load dashboard</p>
-            <p className="text-xs text-text-secondary">
-              {error instanceof Error ? error.message : 'Something went wrong. Please try again.'}
-            </p>
-            <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: ['dashboard'] })}
-              className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
-            >
+            <p className="text-xs text-text-secondary">{error instanceof Error ? error.message : 'Something went wrong.'}</p>
+            <button onClick={() => queryClient.invalidateQueries({ queryKey: ['dashboard'] })} className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors">
               Try again
             </button>
           </div>
@@ -191,245 +168,251 @@ export default function Dashboard() {
     )
   }
 
-  /* ── Empty state (no deals yet) ── */
-  if (!stats || stats.total_deals === 0) {
+  // ─── STATE A: New User (no real data yet) ───
+  const isNewUser = !stats || (stats.total_deals === 0 && realPropertyCount === 0)
+
+  if (isNewUser) {
     return (
       <AppShell title="Dashboard">
         {demoBanner}
         <motion.div
-          className="max-w-2xl space-y-6"
+          className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] px-4"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
-          <motion.h1
-            variants={itemVariants}
-            className="text-3xl font-semibold tracking-tight text-text-primary"
-          >
-            Let&apos;s analyze your first deal.
-          </motion.h1>
-
-          <motion.div variants={itemVariants}>
-            <motion.button
-              onClick={() => navigate('/analyze')}
-              whileHover={{ y: -2 }}
-              transition={{ duration: 0.15 }}
-              className="w-full text-left p-6 rounded-xl border border-[#8B7AFF]/20 bg-[#8B7AFF]/[0.08] hover:border-[#8B7AFF]/30 transition-colors group shadow-xs edge-highlight"
-            >
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-base font-semibold text-text-primary">
-                    Analyze Your First Deal
-                  </p>
-                  <p className="text-sm text-text-secondary">
-                    Run numbers on any strategy — wholesale, BRRRR, flip, or buy &amp; hold.
-                  </p>
-                </div>
-                <ArrowRight
-                  size={20}
-                  className="text-violet-400 shrink-0 ml-4 group-hover:translate-x-0.5 transition-transform"
-                />
-              </div>
-            </motion.button>
+          {/* Welcome icon */}
+          <motion.div variants={itemVariants} className="w-14 h-14 rounded-2xl bg-[#8B7AFF]/10 flex items-center justify-center mb-6">
+            <Search size={24} className="text-[#8B7AFF]/60" />
           </motion.div>
 
-          <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {HINT_CARDS.map(({ icon: Icon, title, description }) => (
-              <div
-                key={title}
-                className="p-5 rounded-xl border border-border-subtle bg-app-surface shadow-xs edge-highlight space-y-3 cursor-default"
-              >
-                <div className="w-9 h-9 rounded-lg bg-violet-400/10 flex items-center justify-center">
-                  <Icon size={18} className="text-violet-400" />
-                </div>
-                <p className="text-sm font-medium text-text-primary">{title}</p>
-                <p className="text-xs text-text-secondary leading-relaxed">{description}</p>
+          <motion.h1
+            variants={itemVariants}
+            className="text-2xl sm:text-3xl text-[#F0EDE8] text-center mb-2"
+            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+          >
+            Welcome to Parcel
+          </motion.h1>
+
+          <motion.p variants={itemVariants} className="text-sm text-[#C5C0B8] text-center mb-8 max-w-md">
+            Analyze your first property to start building your briefing.
+          </motion.p>
+
+          <motion.div variants={itemVariants}>
+            <button
+              onClick={() => { navigate('/analyze'); try { (window as any).posthog?.capture?.('welcome_cta_clicked', { action: 'analyze' }) } catch {} }}
+              className="px-6 py-3 rounded-lg text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
+            >
+              Analyze a Property
+            </button>
+          </motion.div>
+
+          {/* Sample data cards */}
+          {hasSampleData && (
+            <motion.div variants={itemVariants} className="mt-12 w-full max-w-2xl">
+              <p className="text-[11px] text-[#8A8580] uppercase tracking-wider font-medium mb-3 text-center">
+                Sample Deal Preview
+              </p>
+              <div className="rounded-xl border border-dashed border-[#1E1D1B] bg-[#141311]/50 p-5 text-center">
+                <p className="text-sm text-[#C5C0B8] mb-2">
+                  Explore your sample deal to see what Parcel can do.
+                </p>
+                <p className="text-xs text-[#8A8580]">
+                  Sample data will be replaced when you analyze real properties.
+                </p>
               </div>
-            ))}
+            </motion.div>
+          )}
+
+          {/* Briefing placeholder */}
+          <motion.div variants={itemVariants} className="mt-6 w-full max-w-2xl">
+            <div className="rounded-xl border border-dashed border-[#1E1D1B] p-6 text-center">
+              <p className="text-sm text-[#8A8580]">
+                Your morning briefing will appear here as you add properties and track deals.
+              </p>
+            </div>
           </motion.div>
         </motion.div>
       </AppShell>
     )
   }
 
-  /* ── Populated state ── */
+  // ─── STATE B: Returning User (has data) ───
   return (
     <AppShell title="Dashboard">
       {demoBanner}
-      <motion.div
-        className="space-y-10"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
+      <motion.div className="space-y-8" variants={containerVariants} initial="hidden" animate="visible">
+        {/* Greeting + Quick Actions */}
+        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl text-[#F0EDE8] font-light" style={{ fontFamily: 'Satoshi, sans-serif' }}>
+              {getGreeting()}, {firstName}
+            </h1>
+            <p className="text-sm text-[#8A8580] mt-1">{formatDate()}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="px-3 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 transition-all">
+              Log Activity
+            </button>
+            <button className="px-3 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 transition-all">
+              Add Contact
+            </button>
+            <button
+              onClick={() => navigate('/analyze')}
+              className="px-4 py-2 rounded-lg text-sm bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
+            >
+              Analyze Property
+            </button>
+          </div>
+        </motion.div>
+
         {/* KPI Row */}
         <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <KPICard
-            label="Total Deals"
-            value={stats.total_deals}
-            format="number"
-            sparklineData={sparklines.totalDeals}
-          />
-          <KPICard
-            label="Active Pipeline"
-            value={stats.active_pipeline_deals}
-            format="number"
-            sparklineData={sparklines.activePipeline}
-          />
-          <KPICard
-            label="Closed Deals"
-            value={closedDeals}
-            format="number"
-            sparklineData={sparklines.closedDeals}
-          />
-          <KPICard
-            label="Deals Analyzed"
-            value={stats.total_deals}
-            format="number"
-            sparklineData={sparklines.dealsAnalyzed}
-          />
+          <KPICard label="Total Deals" value={stats?.total_deals ?? 0} format="number" sparklineData={sparklines.totalDeals} />
+          <KPICard label="Active Pipeline" value={stats?.active_pipeline_deals ?? 0} format="number" sparklineData={sparklines.activePipeline} />
+          <KPICard label="Closed Deals" value={closedDeals} format="number" sparklineData={sparklines.closedDeals} />
+          <KPICard label="Properties" value={realPropertyCount} format="number" sparklineData={generateTrendData(realPropertyCount)} />
         </motion.div>
 
-        {/* Recent Deals */}
-        {(stats.recent_deals ?? []).length > 0 && (
-          <motion.div variants={itemVariants} className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-text-primary">Recent Deals</h2>
-              <Link
-                to="/deals"
-                className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
-              >
-                View all &rarr;
+        {portfolioData && portfolioData.summary.total_properties > 0 && (
+          <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium">Portfolio</h3>
+              <Link to="/portfolio" className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors">
+                View Portfolio →
               </Link>
             </div>
-            <div className="relative rounded-xl border border-border-subtle bg-app-surface overflow-x-auto shadow-xs edge-highlight">
-              {/* Mobile scroll hint */}
-              <div className="md:hidden absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-app-surface to-transparent pointer-events-none z-10 rounded-r-xl" />
-              <table className="w-full min-w-[600px]">
-                <thead>
-                  <tr className="border-b border-border-default">
-                    <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3">Address</th>
-                    <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3">Strategy</th>
-                    <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3">Risk</th>
-                    <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-4 py-3">Status</th>
-                    <th className="px-4 py-3" />
-                  </tr>
-                </thead>
-                <tbody>
-                  {(stats.recent_deals ?? []).map((deal) => (
-                    <tr key={deal.id} className="border-b border-white/[0.03] last:border-0 hover:bg-layer-2 transition-colors">
-                      <td className="px-4 py-3 text-sm text-text-primary">{deal.address}</td>
-                      <td className="px-4 py-3">
-                        <StrategyBadge strategy={deal.strategy} />
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`text-sm font-medium tabular-nums ${riskColor(deal.risk_score)}`}>
-                          {deal.risk_score !== null ? deal.risk_score : '\u2014'}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-layer-3 text-text-secondary">
-                          {statusLabel(deal.status)}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <Link
-                          to={`/analyze/results/${deal.id}`}
-                          className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
-                        >
-                          View
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Pipeline Summary */}
-        {pipelineEntries.length > 0 && (
-          <motion.div variants={itemVariants} className="space-y-3">
-            <h2 className="text-sm font-semibold text-text-primary">Pipeline Summary</h2>
-            <div className="rounded-xl border border-border-subtle bg-app-surface p-4 shadow-xs edge-highlight">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {pipelineEntries.map(([stage, count]) => (
-                  <div key={stage} className="flex items-center justify-between p-3 rounded-lg bg-layer-2">
-                    <span className="text-sm text-text-secondary">
-                      {STAGE_LABELS[stage] ?? statusLabel(stage)}
-                    </span>
-                    <span className="text-lg font-semibold text-text-primary tabular-nums">{count}</span>
-                  </div>
-                ))}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-0.5">Total Value</p>
+                <p className="text-lg text-[#F0EDE8] font-medium tabular-nums">
+                  ${portfolioData.summary.total_estimated_value >= 1_000_000
+                    ? `${(portfolioData.summary.total_estimated_value / 1_000_000).toFixed(1)}M`
+                    : `${Math.round(portfolioData.summary.total_estimated_value / 1000)}K`}
+                </p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-0.5">Monthly CF</p>
+                <p className={`text-lg font-medium tabular-nums ${portfolioData.summary.total_monthly_cash_flow >= 0 ? 'text-[#4ADE80]' : 'text-[#F87171]'}`}>
+                  ${Math.abs(Math.round(portfolioData.summary.total_monthly_cash_flow)).toLocaleString()}
+                </p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-0.5">LTV</p>
+                <p className="text-lg text-[#F0EDE8] font-medium tabular-nums">{portfolioData.summary.ltv_ratio}%</p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-0.5">Properties</p>
+                <p className="text-lg text-[#F0EDE8] font-medium tabular-nums">{portfolioData.summary.total_properties}</p>
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
 
-        {/* Recent Activity */}
-        <motion.div variants={itemVariants} className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-text-primary">Recent Activity</h2>
-            <Link to="/deals" className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors">View all</Link>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main column */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Pipeline Summary */}
+            {pipelineEntries.length > 0 ? (
+              <motion.div variants={itemVariants} className="space-y-3">
+                <h2 className="text-sm font-semibold text-text-primary">Pipeline Velocity</h2>
+                <div className="rounded-xl border border-[#1E1D1B] bg-[#141311] p-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {pipelineEntries.map(([stage, count]) => (
+                      <div key={stage} className="flex items-center justify-between p-3 rounded-lg bg-[#0C0B0A]">
+                        <span className="text-sm text-[#C5C0B8]">{STAGE_LABELS[stage] ?? statusLabel(stage)}</span>
+                        <span className="text-lg font-semibold text-[#F0EDE8] tabular-nums">{count}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div variants={itemVariants} className="rounded-xl border border-dashed border-[#1E1D1B] bg-[#141311]/50 p-6 text-center">
+                <p className="text-sm text-[#8A8580] mb-2">No active deals in your pipeline</p>
+                <Link to="/analyze" className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors">
+                  Analyze a property and move it to your pipeline →
+                </Link>
+              </motion.div>
+            )}
+
+            {/* Recent Deals Table */}
+            {(stats?.recent_deals ?? []).length > 0 && (
+              <motion.div variants={itemVariants} className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-semibold text-text-primary">Recent Deals</h2>
+                  <Link to="/deals" className="text-xs text-violet-400 hover:text-violet-300 transition-colors">View all →</Link>
+                </div>
+                <div className="rounded-xl border border-[#1E1D1B] bg-[#141311] overflow-x-auto">
+                  <table className="w-full min-w-[500px]">
+                    <thead>
+                      <tr className="border-b border-[#1E1D1B]">
+                        <th className="text-left text-xs text-[#8A8580] uppercase tracking-wider px-4 py-3">Address</th>
+                        <th className="text-left text-xs text-[#8A8580] uppercase tracking-wider px-4 py-3">Strategy</th>
+                        <th className="text-left text-xs text-[#8A8580] uppercase tracking-wider px-4 py-3">Risk</th>
+                        <th className="px-4 py-3" />
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(stats.recent_deals ?? []).map((deal) => (
+                        <tr key={deal.id} className="border-b border-[#1E1D1B]/50 last:border-0 hover:bg-[#1E1D1B]/30 transition-colors">
+                          <td className="px-4 py-3 text-sm text-[#F0EDE8]">{deal.address}</td>
+                          <td className="px-4 py-3"><StrategyBadge strategy={deal.strategy} /></td>
+                          <td className="px-4 py-3">
+                            <span className={`text-sm font-medium tabular-nums ${riskColor(deal.risk_score)}`}>
+                              {deal.risk_score ?? '—'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <Link to={`/analyze/deal/${deal.id}`} className="text-xs text-violet-400 hover:text-violet-300 transition-colors">View</Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </motion.div>
+            )}
           </div>
 
-          {activityLoading && (
-            <div className="space-y-2">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <SkeletonCard key={i} lines={1} />
-              ))}
-            </div>
-          )}
+          {/* Right column: Recent Activity */}
+          <motion.div variants={itemVariants} className="space-y-3">
+            <h2 className="text-sm font-semibold text-text-primary">Recent Activity</h2>
+            <div className="rounded-xl border border-[#1E1D1B] bg-[#141311] p-4">
+              {activityLoading && (
+                <div className="space-y-3">
+                  {Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} lines={1} />)}
+                </div>
+              )}
 
-          {!activityLoading && activityError && (
-            <div className="rounded-xl border border-[#D4766A]/20 bg-[#D4766A]/10 px-4 py-4 flex items-center gap-3">
-              <AlertCircle size={16} className="text-[#D4766A] shrink-0" />
-              <p className="text-sm text-text-secondary flex-1">Failed to load activity</p>
-              <button
-                onClick={() => queryClient.invalidateQueries({ queryKey: ['activity'] })}
-                className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
-              >
-                Retry
-              </button>
-            </div>
-          )}
+              {!activityLoading && (!activityData || activityData.length === 0) && (
+                <div className="py-8 text-center">
+                  <p className="text-sm text-[#8A8580]">Your activity will appear here as you use Parcel</p>
+                </div>
+              )}
 
-          {!activityLoading && !activityError && (!activityData?.activities || activityData.activities.length === 0) && (
-            <div className="rounded-xl border border-border-subtle bg-app-surface px-4 py-8 text-center shadow-xs edge-highlight">
-              <p className="text-sm text-text-secondary">No recent activity. Analyze your first deal to get started.</p>
-            </div>
-          )}
-
-          {!activityLoading && activityData?.activities && activityData.activities.length > 0 && (
-            <div className="rounded-xl border border-border-subtle bg-app-surface p-5 shadow-xs edge-highlight">
-              <div className="space-y-1">
-                {activityData.activities.map((item, index) => {
-                  const config = ACTIVITY_ICONS[item.activity_type] ?? ACTIVITY_ICONS.deal_analyzed
-                  const Icon = config.icon
-                  return (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.18, ease: 'easeOut', delay: 0.05 * index }}
-                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-layer-2 transition-colors"
-                    >
-                      <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                        style={{ backgroundColor: `${config.color}15` }}
-                      >
-                        <Icon size={16} style={{ color: config.color }} />
+              {!activityLoading && activityData && activityData.length > 0 && (
+                <div className="space-y-1">
+                  {activityData.slice(0, 8).map((item, i) => {
+                    const config = ACTIVITY_ICONS[item.type] ?? ACTIVITY_ICONS.property_saved
+                    const Icon = config.icon
+                    return (
+                      <div key={i} className="flex items-center gap-3 rounded-lg px-2 py-2.5 hover:bg-[#0C0B0A] transition-colors">
+                        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: `${config.color}15` }}>
+                          <Icon size={14} style={{ color: config.color }} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-[#C5C0B8] truncate">{item.description}</p>
+                          <p className="text-[10px] text-[#8A8580]">{item.timestamp ? timeAgo(item.timestamp) : ''}</p>
+                        </div>
                       </div>
-                      <p className="text-sm text-text-secondary flex-1 truncate">{item.text}</p>
-                      <span className="text-xs text-text-secondary tabular-nums shrink-0">{timeAgo(item.timestamp)}</span>
-                    </motion.div>
-                  )
-                })}
-              </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
-          )}
-        </motion.div>
+          </motion.div>
+        </div>
       </motion.div>
     </AppShell>
   )
