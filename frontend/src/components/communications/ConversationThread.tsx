@@ -16,6 +16,15 @@ const CHANNEL_ICON: Record<string, React.ComponentType<{ size?: number; classNam
   email: Mail,
 }
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 function formatTime(iso: string): string {
   const d = new Date(iso)
   const now = new Date()
@@ -131,7 +140,7 @@ export function ConversationThread({ contactId, contactPhone, contactEmail }: Pr
         {
           contact_id: contactId,
           subject: subject || '(no subject)',
-          body_html: `<p>${body.replace(/\n/g, '<br>')}</p>`,
+          body_html: `<p>${escapeHtml(body).replace(/\n/g, '<br>')}</p>`,
           body_text: body,
         },
         {

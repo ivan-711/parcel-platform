@@ -2,9 +2,11 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Plus, Trash2, ChevronDown, ChevronUp, Mail, MessageSquare } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { useSequence, useCreateSequence, useUpdateSequence } from '@/hooks/useSequences'
+import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import type { SequenceDetail } from '@/types'
 
@@ -372,6 +374,7 @@ function StepCard({
 export default function SequenceBuilderPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const isEdit = Boolean(id)
 
   // Load existing sequence when editing
@@ -433,6 +436,45 @@ export default function SequenceBuilderPage() {
           stop_on_deal_created: stopOnDealCreated,
         },
       })
+
+      // Persist step changes (add / update / delete)
+      if (existing) {
+        const serverStepIds = new Set(existing.steps.map((s) => s.id))
+        const localStepIds = new Set(steps.map((s) => s.id))
+
+        // Delete steps that were removed locally
+        for (const serverStep of existing.steps) {
+          if (!localStepIds.has(serverStep.id)) {
+            await api.sequences.steps.delete(id, serverStep.id)
+          }
+        }
+
+        // Add new steps or update changed existing steps
+        for (const localStep of steps) {
+          if (serverStepIds.has(localStep.id)) {
+            await api.sequences.steps.update(id, localStep.id, {
+              channel: localStep.channel,
+              delay_days: localStep.delay_days,
+              delay_hours: localStep.delay_hours,
+              subject: localStep.subject || undefined,
+              body_template: localStep.body_template,
+            })
+          } else {
+            await api.sequences.steps.add(id, {
+              channel: localStep.channel,
+              delay_days: localStep.delay_days,
+              delay_hours: localStep.delay_hours,
+              subject: localStep.subject || undefined,
+              body_template: localStep.body_template,
+            })
+          }
+        }
+
+        // Invalidate so list/detail pages show fresh data
+        queryClient.invalidateQueries({ queryKey: ['sequences'] })
+        queryClient.invalidateQueries({ queryKey: ['sequences', id] })
+      }
+
       navigate('/sequences')
     } else {
       await createSeq.mutateAsync({
