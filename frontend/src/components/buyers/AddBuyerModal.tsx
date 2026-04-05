@@ -15,13 +15,6 @@ interface Props {
   onOpenChange: (open: boolean) => void
 }
 
-const FUNDING_TYPE_OPTIONS = [
-  { value: 'cash', label: 'Cash' },
-  { value: 'hard_money', label: 'Hard Money' },
-  { value: 'conventional', label: 'Conventional' },
-  { value: 'creative', label: 'Creative' },
-]
-
 const inputCls =
   'w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none'
 const labelCls = 'text-[10px] uppercase tracking-wider text-[#8A8580] mb-1 block'
@@ -45,8 +38,6 @@ export function AddBuyerModal({ open, onOpenChange }: Props) {
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [company, setCompany] = useState('')
-  const [fundingType, setFundingType] = useState('')
-  const [proofOfFunds, setProofOfFunds] = useState(false)
 
   // Step 2: buy box data
   const [buyBoxData, setBuyBoxData] = useState<Partial<CreateBuyBoxRequest>>({})
@@ -60,8 +51,6 @@ export function AddBuyerModal({ open, onOpenChange }: Props) {
       setPhone('')
       setEmail('')
       setCompany('')
-      setFundingType('')
-      setProofOfFunds(false)
       setBuyBoxData({})
     }
   }, [open])
@@ -83,8 +72,6 @@ export function AddBuyerModal({ open, onOpenChange }: Props) {
         phone: phone.trim() || undefined,
         email: email.trim() || undefined,
         company: company.trim() || undefined,
-        funding_type: fundingType || undefined,
-        proof_of_funds: proofOfFunds || undefined,
         buy_box: {
           name: buyBoxData.name || `${firstName.trim()}'s Buy Box`,
           ...buyBoxData,
@@ -181,47 +168,6 @@ export function AddBuyerModal({ open, onOpenChange }: Props) {
                   onChange={(e) => setCompany(e.target.value)}
                 />
               </Field>
-
-              {/* Funding Type */}
-              <Field label="Funding Type">
-                <select
-                  className={`${inputCls} cursor-pointer`}
-                  value={fundingType}
-                  onChange={(e) => setFundingType(e.target.value)}
-                >
-                  <option value="">Select funding type…</option>
-                  {FUNDING_TYPE_OPTIONS.map((f) => (
-                    <option key={f.value} value={f.value}>
-                      {f.label}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-
-              {/* Proof of Funds */}
-              <div className="flex items-center justify-between py-1">
-                <div>
-                  <p className="text-sm text-[#F0EDE8]">Proof of Funds</p>
-                  <p className="text-xs text-[#8A8580] mt-0.5">
-                    Buyer has verifiable proof of funds
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={proofOfFunds}
-                  onClick={() => setProofOfFunds((v) => !v)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    proofOfFunds ? 'bg-[#8B7AFF]' : 'bg-[#1E1D1B]'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
-                      proofOfFunds ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
 
               {/* Continue */}
               <button

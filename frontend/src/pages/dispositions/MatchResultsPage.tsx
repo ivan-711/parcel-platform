@@ -1,7 +1,6 @@
 // frontend/src/pages/dispositions/MatchResultsPage.tsx
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
 import {
   ArrowLeft,
   Users,
@@ -16,7 +15,6 @@ import { EmptyState } from '@/components/EmptyState'
 import { CreatePacketModal } from '@/components/dispositions/CreatePacketModal'
 import { cn } from '@/lib/utils'
 import { usePropertyMatches } from '@/hooks/useDispositions'
-import { api } from '@/lib/api'
 import type { PropertyMatchResult, MatchFilters } from '@/types'
 
 // ---------------------------------------------------------------------------
@@ -276,16 +274,8 @@ export default function MatchResultsPage() {
 
   const { data, isLoading, isError } = usePropertyMatches(propertyId, filters)
 
-  // Fetch scenarios to get primary scenario ID
-  const scenariosQuery = useQuery({
-    queryKey: ['property-scenarios', propertyId],
-    queryFn: () => api.properties.scenarios(propertyId!),
-    enabled: !!propertyId,
-    staleTime: 60_000,
-  })
-  const primaryScenarioId = scenariosQuery.data?.[0]?.id ?? ''
-
   const property = data?.property
+  const primaryScenarioId = data?.property?.scenario_id ?? ''
   const matches = data?.matches ?? []
 
   function toggleBuyer(contactId: string) {

@@ -1192,7 +1192,7 @@ export interface BuyerListItem {
 export interface BuyerDetail extends BuyerListItem {
   notes: string | null
   tags: string[] | null
-  deals: LinkedDeal[]
+  deals?: LinkedDeal[]
   total_deals_closed: number
   total_deal_volume: number
 }
@@ -1291,6 +1291,7 @@ export interface PropertyMatchResponse {
     zip_code: string
     strategy: string | null
     purchase_price: number | null
+    scenario_id: string | null
   }
   matches: PropertyMatchResult[]
 }

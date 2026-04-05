@@ -22,7 +22,6 @@ import { useBuyerMatches } from '@/hooks/useDispositions'
 import type {
   BuyerDetail,
   BuyBox,
-  LinkedDeal,
   CreateBuyBoxRequest,
   BuyerMatchResult,
 } from '@/types'
@@ -135,7 +134,6 @@ export default function BuyerDetailPage() {
   const fullName = [buyer.first_name, buyer.last_name].filter(Boolean).join(' ')
   const ft = buyer.funding_type?.toLowerCase().replace(/\s+/g, '_') ?? ''
   const fundingCls = FUNDING_COLORS[ft] ?? ''
-  const deals: LinkedDeal[] = buyer.deals ?? []
 
   return (
     <AppShell title={fullName}>
@@ -192,7 +190,10 @@ export default function BuyerDetailPage() {
         <MatchingPropertiesSection matches={matches} />
 
         {/* Deal History Section */}
-        <DealHistorySection deals={deals} />
+        <DealHistorySection
+          totalDealsClosed={buyer.total_deals_closed}
+          totalDealVolume={buyer.total_deal_volume}
+        />
       </div>
     </AppShell>
   )
@@ -453,7 +454,13 @@ function MatchingPropertiesSection({ matches }: { matches: BuyerMatchResult[] })
 }
 
 // ── Deal History Section ─────────────────────────────────
-function DealHistorySection({ deals }: { deals: LinkedDeal[] }) {
+function DealHistorySection({
+  totalDealsClosed,
+  totalDealVolume,
+}: {
+  totalDealsClosed: number
+  totalDealVolume: number
+}) {
   return (
     <section className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
       <h2
@@ -463,40 +470,22 @@ function DealHistorySection({ deals }: { deals: LinkedDeal[] }) {
         Deal History
       </h2>
 
-      {deals.length === 0 ? (
-        <p className="text-sm text-[#8A8580]">No deals linked to this buyer</p>
+      {totalDealsClosed === 0 ? (
+        <p className="text-sm text-[#8A8580]">No deals closed with this buyer yet</p>
       ) : (
-        <div className="space-y-2">
-          {deals.map((deal) => (
-            <Link
-              key={deal.deal_id}
-              to={`/deals/${deal.deal_id}`}
-              className="flex items-center justify-between gap-4 p-3 rounded-lg border border-[#1E1D1B] hover:border-[#8B7AFF]/30 transition-colors group"
-            >
-              <div className="min-w-0">
-                <p className="text-sm text-[#F0EDE8] group-hover:text-[#8B7AFF] transition-colors truncate">
-                  {deal.address}
-                </p>
-              </div>
-              <div className="flex items-center gap-2 shrink-0 text-xs">
-                {deal.strategy && (
-                  <span className="px-2 py-0.5 rounded bg-[#8B7AFF]/15 text-[#8B7AFF] border border-[#8B7AFF]/30">
-                    {humanizeStrategy(deal.strategy)}
-                  </span>
-                )}
-                <span
-                  className={cn(
-                    'px-2 py-0.5 rounded border',
-                    deal.status === 'closed'
-                      ? 'bg-[#4ADE80]/15 text-[#4ADE80] border-[#4ADE80]/30'
-                      : 'bg-[#1E1D1B] text-[#8A8580] border-[#1E1D1B]',
-                  )}
-                >
-                  {deal.status?.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) ?? 'Unknown'}
-                </span>
-              </div>
-            </Link>
-          ))}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-4 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B]">
+            <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1">Deals Closed</p>
+            <p className="text-2xl text-[#F0EDE8]" style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
+              {totalDealsClosed}
+            </p>
+          </div>
+          <div className="p-4 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B]">
+            <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1">Total Volume</p>
+            <p className="text-2xl text-[#F0EDE8]" style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
+              {formatVolume(totalDealVolume)}
+            </p>
+          </div>
         </div>
       )}
     </section>
