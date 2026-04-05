@@ -144,6 +144,16 @@ class CommunicationService:
         self.db.add(comm)
         self.db.commit()
         self.db.refresh(comm)
+
+        # Stop active sequences on reply
+        if contact:
+            try:
+                from core.communications.sequence_engine import SequenceEngine
+                engine = SequenceEngine(self.db, self)
+                engine.handle_reply(contact.id, contact.created_by)
+            except Exception:
+                pass  # don't fail inbound handling if sequence engine errors
+
         return comm
 
     def handle_incoming_email(
@@ -171,6 +181,16 @@ class CommunicationService:
         self.db.add(comm)
         self.db.commit()
         self.db.refresh(comm)
+
+        # Stop active sequences on reply
+        if contact:
+            try:
+                from core.communications.sequence_engine import SequenceEngine
+                engine = SequenceEngine(self.db, self)
+                engine.handle_reply(contact.id, contact.created_by)
+            except Exception:
+                pass  # don't fail inbound handling if sequence engine errors
+
         return comm
 
     # ------------------------------------------------------------------
