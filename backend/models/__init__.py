@@ -37,6 +37,7 @@ from models.rehab_projects import RehabProject, RehabItem
 
 # Wave 4 models
 from models.buy_boxes import BuyBox
+from models.buyer_packets import BuyerPacket, BuyerPacketSend
 
 __all__ = [
     "User",
@@ -73,4 +74,6 @@ __all__ = [
     "RehabItem",
     # Wave 4
     "BuyBox",
+    "BuyerPacket",
+    "BuyerPacketSend",
 ]
