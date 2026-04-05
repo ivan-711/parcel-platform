@@ -9,8 +9,10 @@ import {
   Trash2,
   Plus,
   GitBranch,
+  Repeat,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useQueryClient } from '@tanstack/react-query'
 import { TaskList } from '@/components/tasks/TaskList'
 import { AddTaskForm } from '@/components/tasks/AddTaskForm'
 import { useTasksList } from '@/hooks/useTasks'
@@ -27,12 +29,18 @@ import {
   useContactDeals,
   useDeleteContact,
 } from '@/hooks/useContacts'
+import { useSequences } from '@/hooks/useSequences'
+import { api } from '@/lib/api'
 
 export default function ContactDetailPage() {
   const { contactId } = useParams<{ contactId: string }>()
   const navigate = useNavigate()
   const [editOpen, setEditOpen] = useState(false)
   const [showLogForm, setShowLogForm] = useState(false)
+  const [seqDropdownOpen, setSeqDropdownOpen] = useState(false)
+  const { data: sequences } = useSequences()
+  const activeSequences = (sequences ?? []).filter(s => s.status === 'active')
+  const queryClient = useQueryClient()
 
   const { data: contact, isLoading, isError } = useContact(contactId)
   const { data: communications, isLoading: commsLoading } = useContactCommunications(contactId)
@@ -124,6 +132,48 @@ export default function ContactDetailPage() {
               <Pencil size={14} />
               Edit
             </button>
+            {seqDropdownOpen && (
+              <div className="fixed inset-0 z-10" onClick={() => setSeqDropdownOpen(false)} />
+            )}
+            <div className="relative">
+              <button
+                onClick={() => setSeqDropdownOpen(v => !v)}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#C5C0B8] border border-[#1E1D1B] hover:bg-[#141311] hover:text-[#F0EDE8] transition-colors cursor-pointer"
+              >
+                <Repeat size={14} />
+                Add to Sequence
+              </button>
+              {seqDropdownOpen && activeSequences.length > 0 && (
+                <div className="absolute right-0 top-full mt-1 w-56 bg-[#141311] border border-[#1E1D1B] rounded-xl shadow-xl z-20 py-1">
+                  {activeSequences.map(seq => (
+                    <button
+                      key={seq.id}
+                      onClick={async () => {
+                        try {
+                          await api.sequences.enroll(seq.id, { contact_id: contactId! })
+                          toast.success(`Enrolled in "${seq.name}"`)
+                          queryClient.invalidateQueries({ queryKey: ['sequences'] })
+                          setSeqDropdownOpen(false)
+                        } catch (err) {
+                          toast.error(err instanceof Error ? err.message : 'Failed to enroll')
+                        }
+                      }}
+                      className="w-full text-left px-3 py-2 text-sm text-[#C5C0B8] hover:bg-[#1E1D1B] hover:text-[#F0EDE8] transition-colors"
+                    >
+                      {seq.name}
+                      <span className="text-[10px] text-[#8A8580] ml-1">
+                        ({seq.step_count} steps)
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {seqDropdownOpen && activeSequences.length === 0 && (
+                <div className="absolute right-0 top-full mt-1 w-56 bg-[#141311] border border-[#1E1D1B] rounded-xl shadow-xl z-20 p-3">
+                  <p className="text-xs text-[#8A8580]">No active sequences. Create one first.</p>
+                </div>
+              )}
+            </div>
             <button
               onClick={handleDelete}
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#F87171] border border-[#F87171]/20 hover:bg-[#F87171]/10 transition-colors cursor-pointer"

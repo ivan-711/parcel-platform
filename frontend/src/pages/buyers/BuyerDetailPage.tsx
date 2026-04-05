@@ -8,7 +8,10 @@ import {
   Trash2,
   ShieldCheck,
   ArrowLeft,
+  Repeat,
 } from 'lucide-react'
+import { toast } from 'sonner'
+import { useQueryClient } from '@tanstack/react-query'
 import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
 import { BuyBoxEditor } from '@/components/buyers/BuyBoxEditor'
@@ -19,6 +22,8 @@ import {
   useDeleteBuyBox,
 } from '@/hooks/useBuyers'
 import { useBuyerMatches } from '@/hooks/useDispositions'
+import { useSequences } from '@/hooks/useSequences'
+import { api } from '@/lib/api'
 import type {
   BuyerDetail,
   BuyBox,
@@ -84,6 +89,10 @@ export default function BuyerDetailPage() {
   const { contactId } = useParams<{ contactId: string }>()
   const { data, isLoading, isError } = useBuyer(contactId)
   const { data: matchesData } = useBuyerMatches(contactId)
+  const [seqDropdownOpen, setSeqDropdownOpen] = useState(false)
+  const { data: sequences } = useSequences()
+  const activeSequences = (sequences ?? []).filter(s => s.status === 'active')
+  const queryClient = useQueryClient()
 
   const buyer = data as BuyerDetail | undefined
   const matches = matchesData?.matches ?? []
@@ -164,7 +173,7 @@ export default function BuyerDetailPage() {
               {formatVolume(buyer.total_deal_volume)} volume
             </p>
           </div>
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
             {ft && (
               <span
                 className={cn(
@@ -180,6 +189,48 @@ export default function BuyerDetailPage() {
                 <ShieldCheck size={11} /> POF &#x2713;
               </span>
             )}
+            {seqDropdownOpen && (
+              <div className="fixed inset-0 z-10" onClick={() => setSeqDropdownOpen(false)} />
+            )}
+            <div className="relative">
+              <button
+                onClick={() => setSeqDropdownOpen(v => !v)}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#C5C0B8] border border-[#1E1D1B] hover:bg-[#141311] hover:text-[#F0EDE8] transition-colors cursor-pointer"
+              >
+                <Repeat size={14} />
+                Add to Sequence
+              </button>
+              {seqDropdownOpen && activeSequences.length > 0 && (
+                <div className="absolute right-0 top-full mt-1 w-56 bg-[#141311] border border-[#1E1D1B] rounded-xl shadow-xl z-20 py-1">
+                  {activeSequences.map(seq => (
+                    <button
+                      key={seq.id}
+                      onClick={async () => {
+                        try {
+                          await api.sequences.enroll(seq.id, { contact_id: contactId! })
+                          toast.success(`Enrolled in "${seq.name}"`)
+                          queryClient.invalidateQueries({ queryKey: ['sequences'] })
+                          setSeqDropdownOpen(false)
+                        } catch (err) {
+                          toast.error(err instanceof Error ? err.message : 'Failed to enroll')
+                        }
+                      }}
+                      className="w-full text-left px-3 py-2 text-sm text-[#C5C0B8] hover:bg-[#1E1D1B] hover:text-[#F0EDE8] transition-colors"
+                    >
+                      {seq.name}
+                      <span className="text-[10px] text-[#8A8580] ml-1">
+                        ({seq.step_count} steps)
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {seqDropdownOpen && activeSequences.length === 0 && (
+                <div className="absolute right-0 top-full mt-1 w-56 bg-[#141311] border border-[#1E1D1B] rounded-xl shadow-xl z-20 p-3">
+                  <p className="text-xs text-[#8A8580]">No active sequences. Create one first.</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
