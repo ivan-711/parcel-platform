@@ -28,6 +28,7 @@ class Contact(TimestampMixin, Base):
     tags = Column(JSONB, nullable=True)
 
     is_deleted = Column(Boolean, default=False, nullable=False)
+    opted_out_sms = Column(Boolean, default=False, nullable=False)
 
     # Relationships
     buy_boxes = relationship("BuyBox", back_populates="contact", cascade="all, delete-orphan")

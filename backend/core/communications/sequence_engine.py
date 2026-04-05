@@ -179,6 +179,18 @@ class SequenceEngine:
                 enrollment.status = "failed"
                 self.db.commit()
                 return
+            if getattr(contact, 'opted_out_sms', False):
+                # Contact opted out — skip this SMS step, advance
+                enrollment.current_step = step_index + 1
+                if enrollment.current_step < len(steps):
+                    next_step = steps[enrollment.current_step]
+                    enrollment.next_send_at = datetime.utcnow() + timedelta(
+                        days=next_step.delay_days, hours=next_step.delay_hours,
+                    )
+                    self.db.commit()
+                else:
+                    await self._complete_enrollment(enrollment)
+                return
             await self.comm_service.send_sms(
                 to_phone=contact.phone,
                 body=body,

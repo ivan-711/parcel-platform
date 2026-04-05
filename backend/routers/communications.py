@@ -99,6 +99,12 @@ async def send_sms(
             detail={"error": "Contact has no phone number", "code": "NO_PHONE"},
         )
 
+    if contact.opted_out_sms:
+        raise HTTPException(
+            status_code=400,
+            detail={"error": "Contact has opted out of SMS", "code": "OPTED_OUT"},
+        )
+
     service = _get_service(db)
     try:
         comm = await service.send_sms(

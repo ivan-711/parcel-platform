@@ -145,6 +145,17 @@ class CommunicationService:
         self.db.commit()
         self.db.refresh(comm)
 
+        # Handle SMS opt-out keywords
+        if contact:
+            stripped_body = (body or "").strip().upper()
+            if stripped_body in ("STOP", "UNSUBSCRIBE", "CANCEL", "END", "QUIT"):
+                contact.opted_out_sms = True
+                self.db.commit()
+                # Also stop all active sequences (reuse handle_reply logic)
+            elif stripped_body in ("START", "UNSTOP"):
+                contact.opted_out_sms = False
+                self.db.commit()
+
         # Stop active sequences on reply
         if contact:
             try:
