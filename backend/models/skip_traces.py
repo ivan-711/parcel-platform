@@ -52,6 +52,7 @@ class SkipTrace(TimestampMixin, Base):
     traced_at = Column(DateTime, nullable=True)
     batch_id = Column(String, nullable=True, index=True)  # groups batch traces
     deleted_at = Column(DateTime, nullable=True)
+    compliance_acknowledged_at = Column(DateTime, nullable=True)
 
     # Relationships
     property = relationship("Property", foreign_keys=[property_id])

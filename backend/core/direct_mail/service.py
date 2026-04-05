@@ -107,6 +107,34 @@ class DirectMailService:
 
         created: list[MailRecipient] = []
         for r in recipients:
+            # Ownership check: contact_id must belong to this user
+            if r.get("contact_id"):
+                contact_check = (
+                    self.db.query(Contact)
+                    .filter(
+                        Contact.id == r["contact_id"],
+                        Contact.created_by == user_id,
+                        Contact.is_deleted == False,  # noqa: E712
+                    )
+                    .first()
+                )
+                if not contact_check:
+                    continue
+
+            # Ownership check: property_id must belong to this user
+            if r.get("property_id"):
+                prop_check = (
+                    self.db.query(Property)
+                    .filter(
+                        Property.id == r["property_id"],
+                        Property.created_by == user_id,
+                        Property.is_deleted == False,  # noqa: E712
+                    )
+                    .first()
+                )
+                if not prop_check:
+                    continue
+
             to_address = r.get("to_address", {})
             # Ensure name is present in address dict for Lob
             if "name" not in to_address and r.get("to_name"):
@@ -162,24 +190,31 @@ class DirectMailService:
         stats = {"total": len(unverified), "deliverable": 0, "undeliverable": 0, "no_match": 0}
 
         for recipient in unverified:
-            result = await self.provider.verify_address(recipient.to_address or {})
-            recipient.address_verified = True
-            recipient.deliverability = result.deliverability
+            try:
+                result = await self.provider.verify_address(recipient.to_address or {})
+                recipient.deliverability = result.deliverability
 
-            if result.deliverability == "deliverable":
-                # Overwrite with standardized components from Lob
-                standardized = {
-                    **recipient.to_address,
-                    "line1": result.primary_line or recipient.to_address.get("line1", ""),
-                    "city": result.city or recipient.to_address.get("city", ""),
-                    "state": result.state or recipient.to_address.get("state", ""),
-                    "zip": result.zip_code or recipient.to_address.get("zip", ""),
-                }
-                recipient.to_address = standardized
-                stats["deliverable"] += 1
-            elif result.deliverability in ("undeliverable", "deliverable_missing_unit"):
-                stats["undeliverable"] += 1
-            else:
+                if result.deliverability == "deliverable":
+                    recipient.address_verified = True
+                    # Overwrite with standardized components from Lob
+                    standardized = {
+                        **recipient.to_address,
+                        "line1": result.primary_line or recipient.to_address.get("line1", ""),
+                        "city": result.city or recipient.to_address.get("city", ""),
+                        "state": result.state or recipient.to_address.get("state", ""),
+                        "zip": result.zip_code or recipient.to_address.get("zip", ""),
+                    }
+                    recipient.to_address = standardized
+                    stats["deliverable"] += 1
+                elif result.deliverability in ("undeliverable", "deliverable_missing_unit"):
+                    recipient.address_verified = False
+                    stats["undeliverable"] += 1
+                else:
+                    recipient.address_verified = False
+                    stats["no_match"] += 1
+            except Exception:
+                recipient.address_verified = False
+                recipient.deliverability = "no_match"
                 stats["no_match"] += 1
 
         self.db.commit()
@@ -231,7 +266,8 @@ class DirectMailService:
     def render_template(self, template: str, context: dict) -> str:
         """Replace {{variable}} placeholders with context values.
 
-        Unknown variables are left as empty strings.
+        Unknown variables are left as-is (not blanked) so missing data is
+        visible rather than silently dropped.
 
         Args:
             template: HTML string with {{key}} placeholders.
@@ -242,9 +278,12 @@ class DirectMailService:
         """
         def replacer(match: re.Match) -> str:
             key = match.group(1).strip()
-            return str(context.get(key, ""))
+            value = context.get(key)
+            if value is None:
+                return match.group(0)  # leave {{variable}} as-is
+            return str(value)
 
-        return re.sub(r"\{\{(.+?)\}\}", replacer, template)
+        return re.sub(r"\{\{(\s*\w+\s*)\}\}", replacer, template)
 
     # ------------------------------------------------------------------
     # Context building
@@ -265,7 +304,10 @@ class DirectMailService:
         if not recipient_name and recipient.contact_id:
             contact: Contact | None = (
                 self.db.query(Contact)
-                .filter(Contact.id == recipient.contact_id)
+                .filter(
+                    Contact.id == recipient.contact_id,
+                    Contact.created_by == campaign.created_by,
+                )
                 .first()
             )
             if contact:
@@ -277,7 +319,10 @@ class DirectMailService:
         if recipient.property_id:
             prop: Property | None = (
                 self.db.query(Property)
-                .filter(Property.id == recipient.property_id)
+                .filter(
+                    Property.id == recipient.property_id,
+                    Property.created_by == campaign.created_by,
+                )
                 .first()
             )
             if prop:

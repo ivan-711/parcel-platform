@@ -5,12 +5,13 @@ from datetime import datetime, timedelta
 from typing import Optional
 from uuid import UUID, uuid4
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from core.billing.tier_config import TIER_LIMITS, Tier
-from core.billing.tier_gate import require_quota, record_usage, get_effective_tier
+from limiter import limiter
+from core.billing.tier_gate import require_quota, record_usage, get_effective_tier, get_tier_limits, _get_usage_count
 from core.security.jwt import get_current_user
 from core.telemetry import track_event
 from database import get_db
@@ -48,7 +49,9 @@ def _get_service(db: Session):
 # ---------------------------------------------------------------------------
 
 @router.post("/trace", response_model=SkipTraceResponse)
+@limiter.limit("30/hour")
 async def trace_single(
+    request: Request,
     body: TraceAddressRequest,
     _quota: None = Depends(require_quota("skip_traces_per_month")),
     current_user=Depends(get_current_user),
@@ -61,6 +64,7 @@ async def trace_single(
         skip_trace = await service.trace_property(
             property_id=body.property_id,
             user_id=current_user.id,
+            compliance_acknowledged=body.compliance_acknowledged,
         )
     else:
         skip_trace = await service.trace_address(
@@ -69,6 +73,7 @@ async def trace_single(
             state=body.state or "",
             zip_code=body.zip_code or "",
             user_id=current_user.id,
+            compliance_acknowledged=body.compliance_acknowledged,
         )
 
     # Detect cache hit: traced_at older than 10 seconds means it was a prior trace
@@ -77,7 +82,8 @@ async def trace_single(
         and skip_trace.traced_at < datetime.utcnow() - timedelta(seconds=10)
     )
 
-    if not is_cache_hit:
+    # Only charge quota when the trace actually found results (E1)
+    if skip_trace.status == "found" and not is_cache_hit:
         record_usage(current_user.id, "skip_traces_per_month", db)
         db.commit()
 
@@ -95,7 +101,9 @@ async def trace_single(
 # ---------------------------------------------------------------------------
 
 @router.post("/trace-batch")
+@limiter.limit("5/hour")
 async def trace_batch(
+    request: Request,
     body: TraceBatchRequest,
     _quota: None = Depends(require_quota("skip_traces_per_month")),
     current_user=Depends(get_current_user),
@@ -104,6 +112,23 @@ async def trace_batch(
     """Queue a batch of skip traces (max 100 records)."""
     if len(body.records) > 100:
         raise HTTPException(status_code=400, detail="Maximum 100 records per batch")
+
+    # E2: Check remaining quota BEFORE creating any records or dispatching the worker
+    limits = get_tier_limits(current_user)
+    limit_value = limits.skip_traces_per_month
+    if limit_value is not None:  # None = unlimited
+        current_count = _get_usage_count(current_user.id, "skip_traces_per_month", db)
+        remaining = limit_value - current_count
+        if len(body.records) > remaining:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "error": f"Batch size ({len(body.records)}) exceeds remaining quota ({remaining}). Reduce batch size or upgrade.",
+                    "code": "BATCH_EXCEEDS_QUOTA",
+                    "remaining": remaining,
+                    "requested": len(body.records),
+                },
+            )
 
     batch_id = uuid4().hex[:12]
 

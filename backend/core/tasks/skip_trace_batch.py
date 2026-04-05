@@ -1,6 +1,7 @@
 """Dramatiq actor for processing skip trace batches."""
 
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +29,19 @@ if dramatiq:
         try:
             provider = BatchDataProvider()
             service = SkipTraceService(db, provider)
+
+            # H1: Clean up stale "processing" rows stuck for more than 10 minutes
+            from datetime import datetime, timedelta
+            stale_cutoff = datetime.utcnow() - timedelta(minutes=10)
+            stale = db.query(SkipTrace).filter(
+                SkipTrace.batch_id == batch_id,
+                SkipTrace.status == "processing",
+                SkipTrace.updated_at < stale_cutoff,
+            ).all()
+            for row in stale:
+                row.status = "failed"
+                row.error = "Processing timeout — please retry"
+            db.commit()
 
             traces = (
                 db.query(SkipTrace)
@@ -87,6 +101,9 @@ if dramatiq:
 
                         record_usage(UUID(user_id), "skip_traces_per_month", db)
                         db.commit()
+
+                    # H2: Pace API calls — 200ms between BatchData requests
+                    time.sleep(0.2)
 
                 except Exception as e:
                     logger.error("Failed to process trace %s: %s", trace.id, e)

@@ -24,11 +24,18 @@ class TraceAddressRequest(BaseModel):
     city: Optional[str] = None
     state: Optional[str] = None
     zip_code: Optional[str] = None
+    compliance_acknowledged: bool = False
 
     @model_validator(mode="after")
     def require_property_or_address(self):
         if not self.property_id and not self.address:
             raise ValueError("Either property_id or address fields are required")
+        return self
+
+    @model_validator(mode="after")
+    def require_compliance(self):
+        if not self.compliance_acknowledged:
+            raise ValueError("Compliance acknowledgment is required. Confirm this trace is for a lawful purpose.")
         return self
 
 

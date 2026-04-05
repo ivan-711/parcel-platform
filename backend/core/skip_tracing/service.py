@@ -32,6 +32,7 @@ class SkipTraceService:
         property_id: UUID,
         user_id: UUID,
         team_id: Optional[UUID] = None,
+        compliance_acknowledged: bool = False,
     ) -> SkipTrace:
         """Load a property and run a skip trace using its address fields."""
         prop = (
@@ -50,6 +51,7 @@ class SkipTraceService:
             user_id=user_id,
             team_id=team_id,
             property_id=property_id,
+            compliance_acknowledged=compliance_acknowledged,
         )
 
     # ------------------------------------------------------------------
@@ -65,6 +67,7 @@ class SkipTraceService:
         user_id: UUID,
         team_id: Optional[UUID] = None,
         property_id: Optional[UUID] = None,
+        compliance_acknowledged: bool = False,
     ) -> SkipTrace:
         """Run a skip trace for an address, returning a cached result if available."""
         # 1. 30-day cache check
@@ -73,10 +76,27 @@ class SkipTraceService:
             logger.info("Skip trace cache hit for address=%s, city=%s", address, city)
             return cached
 
-        # 2. Call provider
+        # 2. Create SkipTrace record in "pending" status BEFORE calling the paid provider
+        #    so there is always a record of the attempt (cost-leak guard).
+        skip_trace = SkipTrace(
+            property_id=property_id,
+            created_by=user_id,
+            team_id=team_id,
+            input_address=address,
+            input_city=city,
+            input_state=state,
+            input_zip=zip_code,
+            status="pending",
+            compliance_acknowledged_at=datetime.utcnow() if compliance_acknowledged else None,
+        )
+        self.db.add(skip_trace)
+        self.db.commit()
+        self.db.refresh(skip_trace)
+
+        # 3. Call provider
         result = await self.provider.skip_trace_address(address, city, state, zip_code)
 
-        # 3. Map status
+        # 4. Map status
         if result.status == "success":
             mapped_status = "found"
         elif result.status == "not_found":
@@ -86,43 +106,46 @@ class SkipTraceService:
 
         cost = COST_CENTS_PER_TRACE if mapped_status == "found" else None
 
-        # 4. Persist SkipTrace record
-        skip_trace = SkipTrace(
-            property_id=property_id,
-            created_by=user_id,
-            team_id=team_id,
-            input_address=address,
-            input_city=city,
-            input_state=state,
-            input_zip=zip_code,
-            status=mapped_status,
-            owner_first_name=result.owner_first_name,
-            owner_last_name=result.owner_last_name,
-            phones=result.phones,
-            emails=result.emails,
-            mailing_address=result.mailing_address,
-            is_absentee_owner=result.is_absentee_owner,
-            demographics=result.demographics,
-            raw_response=result.raw_response,
-            traced_at=datetime.utcnow(),
-            cost_cents=cost,
-        )
-        self.db.add(skip_trace)
+        # 5. Update record with provider results
+        try:
+            skip_trace.status = mapped_status
+            skip_trace.owner_first_name = result.owner_first_name
+            skip_trace.owner_last_name = result.owner_last_name
+            skip_trace.phones = result.phones
+            skip_trace.emails = result.emails
+            skip_trace.mailing_address = result.mailing_address
+            skip_trace.is_absentee_owner = result.is_absentee_owner
+            skip_trace.demographics = result.demographics
+            skip_trace.raw_response = result.raw_response
+            skip_trace.traced_at = datetime.utcnow()
+            skip_trace.cost_cents = cost
 
-        # 5. Log DataSourceEvent only when property_id is provided (NOT NULL constraint)
-        if property_id is not None:
-            event = DataSourceEvent(
-                property_id=property_id,
-                provider="batchdata",
-                request_type="skip_trace",
-                response_status=result.status,
-                cost_cents=cost,
-                latency_ms=result.latency_ms,
+            # Log DataSourceEvent only when property_id is provided (NOT NULL constraint)
+            if property_id is not None:
+                event = DataSourceEvent(
+                    property_id=property_id,
+                    provider="batchdata",
+                    request_type="skip_trace",
+                    response_status=result.status,
+                    cost_cents=cost,
+                    latency_ms=result.latency_ms,
+                )
+                self.db.add(event)
+
+            self.db.commit()
+            self.db.refresh(skip_trace)
+        except Exception as db_exc:
+            # Provider returned success but DB update failed — log for manual reconciliation.
+            ext_id = getattr(result, "external_id", None) or getattr(result, "request_id", None)
+            logger.error(
+                "DB update failed after successful provider call — "
+                "skip_trace.id=%s external_id=%s error=%s",
+                skip_trace.id,
+                ext_id,
+                db_exc,
             )
-            self.db.add(event)
+            raise
 
-        self.db.commit()
-        self.db.refresh(skip_trace)
         return skip_trace
 
     # ------------------------------------------------------------------

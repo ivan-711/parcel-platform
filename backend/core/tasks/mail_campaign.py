@@ -1,6 +1,7 @@
 """Dramatiq actors for direct mail campaign sending and delivery tracking."""
 
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -88,11 +89,23 @@ if dramatiq:
                     recipient.status = "failed"
                     db.commit()
 
+                # H2: Pace Lob API calls — 500ms between requests
+                time.sleep(0.5)
+
             campaign.status = "sent"
             campaign.sent_at = datetime.utcnow()
             campaign.total_sent = sent
             campaign.total_cost_cents = total_cost
             db.commit()
+
+            # Schedule delivery polling in 24 hours
+            try:
+                check_mail_delivery.send_with_options(
+                    args=(campaign_id,),
+                    delay=86400000,  # 24 hours in ms
+                )
+            except Exception:
+                logger.warning("Failed to schedule delivery polling for campaign %s", campaign_id)
         finally:
             db.close()
 
@@ -146,6 +159,24 @@ if dramatiq:
             campaign.total_delivered = (campaign.total_delivered or 0) + delivered
             campaign.total_returned = (campaign.total_returned or 0) + returned
             db.commit()
+
+            # Re-poll if still in transit (max 5 days)
+            still_pending = db.query(MailRecipient).filter(
+                MailRecipient.campaign_id == campaign_id,
+                MailRecipient.status.in_(["sent", "in_transit"]),
+            ).count()
+            if still_pending > 0:
+                poll_count = campaign.poll_count or 0
+                if poll_count < 5:
+                    campaign.poll_count = poll_count + 1
+                    db.commit()
+                    try:
+                        check_mail_delivery.send_with_options(
+                            args=(campaign_id,),
+                            delay=86400000,
+                        )
+                    except Exception:
+                        pass
         finally:
             db.close()
 
