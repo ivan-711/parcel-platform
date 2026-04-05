@@ -18,6 +18,7 @@ import {
   Database,
   Landmark,
   Users,
+  Loader2,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
@@ -34,6 +35,8 @@ import { AddTaskForm } from '@/components/tasks/AddTaskForm'
 import { useTasksList } from '@/hooks/useTasks'
 import { useInstruments, useInstrument } from '@/hooks/useFinancing'
 import { useRehabProjects } from '@/hooks/useRehab'
+import { useSkipTrace } from '@/hooks/useSkipTracing'
+import { SkipTraceResultCard } from '@/components/skip-tracing/SkipTraceResultCard'
 import { AddInstrumentModal } from '@/components/financing/AddInstrumentModal'
 import { useTransactions } from '@/hooks/useTransactions'
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal'
@@ -89,6 +92,18 @@ export default function PropertyDetailPage() {
   const { data: tasksData } = useTasksList({ property_id: propertyId, per_page: 5 })
   const { data: instrumentsData } = useInstruments({ property_id: propertyId })
   const deleteMutation = useDeleteProperty()
+
+  const [skipTraceResult, setSkipTraceResult] = useState<import('@/types').SkipTraceResult | null>(null)
+  const skipTrace = useSkipTrace()
+  const isTracing = skipTrace.isPending
+
+  function handleSkipTrace() {
+    if (!propertyId) return
+    skipTrace.mutate({ property_id: propertyId }, {
+      onSuccess: (result) => setSkipTraceResult(result),
+    })
+    try { (window as any).posthog?.capture?.('skip_trace_single', { source: 'property_detail', had_property_id: true }) } catch {}
+  }
 
   // PostHog
   if (property) {
@@ -153,7 +168,17 @@ export default function PropertyDetailPage() {
           propertyId={propertyId!}
           navigate={navigate}
           onDelete={handleDelete}
+          onSkipTrace={handleSkipTrace}
+          isTracing={isTracing}
         />
+
+        {/* Skip Trace Results */}
+        {skipTraceResult && skipTraceResult.status === 'found' && (
+          <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
+            <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium mb-4">Skip Trace Results</h3>
+            <SkipTraceResultCard result={skipTraceResult} />
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="flex items-center gap-1 border-b border-[#1E1D1B] overflow-x-auto scrollbar-luxury">
@@ -223,11 +248,15 @@ function PropertyHeader({
   propertyId,
   navigate,
   onDelete,
+  onSkipTrace,
+  isTracing,
 }: {
   property: PropertyDetail
   propertyId: string
   navigate: (path: string) => void
   onDelete: () => void
+  onSkipTrace: () => void
+  isTracing: boolean
 }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -300,6 +329,14 @@ function PropertyHeader({
         >
           <Users size={14} />
           Find Buyers
+        </button>
+        <button
+          onClick={onSkipTrace}
+          disabled={isTracing}
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-colors cursor-pointer disabled:opacity-50"
+        >
+          {isTracing ? <Loader2 size={14} className="animate-spin" /> : <Search size={14} />}
+          Skip Trace
         </button>
         <button
           onClick={onDelete}
