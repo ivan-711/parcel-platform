@@ -69,7 +69,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { label: 'Portfolio', path: '/portfolio', icon: BarChart3 },
       { label: 'Financing', path: '/financing', icon: Landmark },
       { label: 'Obligations', path: '/obligations', icon: AlertTriangle },
-      { label: 'Rehabs', path: '/rehabs', icon: Hammer, locked: true },
+      { label: 'Rehabs', path: '/rehabs', icon: Hammer },
       { label: 'Transactions', path: '/transactions', icon: DollarSign },
     ],
   },

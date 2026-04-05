@@ -43,6 +43,8 @@ const SharedReportPage = lazy(() => import('@/pages/reports/SharedReportPage'))
 const LockedFeaturePage = lazy(() => import('@/pages/LockedFeaturePage'))
 const ObligationsPage = lazy(() => import('@/pages/financing/ObligationsPage'))
 const FinancingDashboardPage = lazy(() => import('@/pages/financing/FinancingDashboardPage'))
+const RehabsPage = lazy(() => import('@/pages/rehab/RehabsPage'))
+const RehabDetailPage = lazy(() => import('@/pages/rehab/RehabDetailPage'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
 const queryClient = new QueryClient({
@@ -167,10 +169,11 @@ function AnimatedRoutes() {
         <Route path="/reports" element={<ProtectedRoute><PageErrorBoundary><ReportsListPage /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/obligations" element={<ProtectedRoute><PageErrorBoundary><ObligationsPage /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/financing" element={<ProtectedRoute><PageErrorBoundary><FinancingDashboardPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/rehabs" element={<ProtectedRoute><PageErrorBoundary><RehabsPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/rehabs/:projectId" element={<ProtectedRoute><PageErrorBoundary><RehabDetailPage /></PageErrorBoundary></ProtectedRoute>} />
 
         {/* Locked feature routes — show upgrade prompt instead of 404 */}
         <Route path="/buyers" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
-        <Route path="/rehabs" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
         <Route path="/sequences" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
         <Route path="/skip-tracing" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
         <Route path="/mail-campaigns" element={<ProtectedRoute><LockedFeaturePage /></ProtectedRoute>} />
