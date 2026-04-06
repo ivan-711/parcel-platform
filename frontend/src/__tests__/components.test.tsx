@@ -47,7 +47,7 @@ describe('KPICard', () => {
     const deltaEl = screen.getByText((content) => content.includes('1.3'))
     expect(deltaEl).toBeInTheDocument()
     expect(deltaEl.textContent).toContain('\u2193')
-    expect(deltaEl.className).toContain('text-red-600')
+    expect(deltaEl.className).toContain('text-[#D4766A]')
   })
 
   it('renders SkeletonCard when loading is true', () => {
@@ -56,8 +56,8 @@ describe('KPICard', () => {
     )
 
     expect(screen.queryByText('Test')).not.toBeInTheDocument()
-    const pulseElements = container.querySelectorAll('.animate-pulse')
-    expect(pulseElements.length).toBeGreaterThan(0)
+    const shimmerElements = container.querySelectorAll('.animate-shimmer')
+    expect(shimmerElements.length).toBeGreaterThan(0)
   })
 })
 
@@ -83,16 +83,16 @@ describe('SkeletonCard', () => {
   it('renders the correct number of skeleton lines based on lines prop', () => {
     const { container } = render(<SkeletonCard lines={5} />)
 
-    // 1 header skeleton + 5 line skeletons = 6 pulse elements
-    const pulseElements = container.querySelectorAll('.animate-pulse')
-    expect(pulseElements).toHaveLength(6)
+    // 1 header skeleton + 5 line skeletons = 6 shimmer elements
+    const shimmerElements = container.querySelectorAll('.animate-shimmer')
+    expect(shimmerElements).toHaveLength(6)
   })
 
   it('defaults to 3 lines when no lines prop is provided', () => {
     const { container } = render(<SkeletonCard />)
 
-    // 1 header skeleton + 3 line skeletons = 4 pulse elements
-    const pulseElements = container.querySelectorAll('.animate-pulse')
-    expect(pulseElements).toHaveLength(4)
+    // 1 header skeleton + 3 line skeletons = 4 shimmer elements
+    const shimmerElements = container.querySelectorAll('.animate-shimmer')
+    expect(shimmerElements).toHaveLength(4)
   })
 })

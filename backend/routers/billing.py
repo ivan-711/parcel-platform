@@ -183,7 +183,7 @@ async def billing_status(
     return BillingStatusResponse(
         plan=effective_tier.name.lower(),
         status=sub_status["status"] if sub_status else None,
-        interval=None,  # interval not stored on sub yet
+        interval=sub_status.get("interval") if sub_status else None,
         current_period_end=sub_status["current_period_end"] if sub_status else None,
         cancel_at_period_end=sub_status["cancel_at_period_end"] if sub_status else False,
         trial_ends_at=current_user.trial_ends_at,

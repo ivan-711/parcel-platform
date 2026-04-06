@@ -447,22 +447,12 @@ export default function PricingPage() {
                   Manage Subscription
                 </motion.button>
               ) : (
-                <motion.button
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
-                  onClick={handleTitaniumCta}
-                  disabled={isCheckoutLoading}
-                  className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-border-emphasis text-text-primary hover:bg-white/[0.04] transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                <button
+                  disabled
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-border-default text-text-muted cursor-not-allowed"
                 >
-                  {checkout.isPending ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" />
-                      Redirecting...
-                    </>
-                  ) : (
-                    'Get Started'
-                  )}
-                </motion.button>
+                  Coming Soon
+                </button>
               )}
             </div>
           </motion.div>

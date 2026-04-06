@@ -11,8 +11,9 @@ except ImportError:
     dramatiq = None
 
 
-def _noop_actor(*args, **kwargs):
-    logger.warning("Dramatiq not available — skip trace batch skipped")
+def _noop_send(*args, **kwargs):
+    from core.tasks import WorkerUnavailableError
+    raise WorkerUnavailableError("Background worker is not available. Batch skip tracing requires Redis.")
 
 
 if dramatiq:
@@ -113,4 +114,11 @@ if dramatiq:
             db.close()
 
 else:
-    process_skip_trace_batch = _noop_actor
+    class _NoopActor:
+        def __call__(self, *args, **kwargs):
+            _noop_send(*args, **kwargs)
+
+        def send(self, *args, **kwargs):
+            _noop_send(*args, **kwargs)
+
+    process_skip_trace_batch = _NoopActor()

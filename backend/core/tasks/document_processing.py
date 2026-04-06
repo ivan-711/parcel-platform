@@ -12,9 +12,10 @@ except ImportError:
     dramatiq = None
 
 
-def _noop_actor(*args, **kwargs):
-    """Fallback when Dramatiq is not available."""
-    logger.warning("Dramatiq not available — task skipped")
+def _noop_send(*args, **kwargs):
+    """Raise when Dramatiq is not available and a task is dispatched."""
+    from core.tasks import WorkerUnavailableError
+    raise WorkerUnavailableError("Background worker is not available. Document processing requires Redis.")
 
 
 if dramatiq:
@@ -232,13 +233,12 @@ if dramatiq:
             db.close()
 
 else:
-    # Dramatiq not available — provide no-op callables with .send() stubs
     class _NoopActor:
         def __call__(self, *args, **kwargs):
-            _noop_actor(*args, **kwargs)
+            _noop_send(*args, **kwargs)
 
         def send(self, *args, **kwargs):
-            _noop_actor(*args, **kwargs)
+            _noop_send(*args, **kwargs)
 
     process_document_metadata = _NoopActor()
     process_document_embeddings = _NoopActor()

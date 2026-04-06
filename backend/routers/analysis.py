@@ -414,17 +414,36 @@ async def quick_analysis_stream(
             # Stage 2: Fetch property data (RentCast — fast, 2-5s)
             yield _sse("status", {"stage": "fetching_property_data"})
 
-            # TODO: enrich_property and enrich_with_bricked are sync and block the event
-            # loop, but they use the shared DB session so asyncio.to_thread is unsafe.
-            # Future: refactor providers to async or use a separate DB session per thread.
             from core.property_data.service import enrich_property, enrich_with_bricked
-            enrichment = enrich_property(
-                address=address,
-                user_id=current_user.id,
-                db=db,
-                default_strategy=strategy,
-                providers=["rentcast"],  # RentCast only for SSE phase 1
-            )
+            from database import SessionLocal
+
+            _use_thread = "sqlite" not in str(db.bind.url)
+
+            def _enrich_sync():
+                if _use_thread:
+                    thread_db = SessionLocal()
+                    try:
+                        result = enrich_property(
+                            address=address, user_id=current_user.id,
+                            db=thread_db, default_strategy=strategy,
+                            providers=["rentcast"],
+                        )
+                        thread_db.commit()
+                        if result.property:
+                            thread_db.expunge(result.property)
+                        if result.scenario:
+                            thread_db.expunge(result.scenario)
+                        return result
+                    finally:
+                        thread_db.close()
+                else:
+                    return enrich_property(
+                        address=address, user_id=current_user.id,
+                        db=db, default_strategy=strategy,
+                        providers=["rentcast"],
+                    )
+
+            enrichment = await asyncio.to_thread(_enrich_sync) if _use_thread else _enrich_sync()
 
             if not enrichment.is_existing:
                 record_usage(current_user.id, "analyses_per_month", db)
@@ -457,10 +476,28 @@ async def quick_analysis_stream(
                 if should_call_bricked:
                     yield _sse("status", {"stage": "fetching_advanced_data"})
                     try:
-                        bricked_status = enrich_with_bricked(
-                            enrichment.property, enrichment.scenario,
-                            address, db,
-                        )
+                        if _use_thread:
+                            prop_id = enrichment.property.id
+                            scenario_id = enrichment.scenario.id
+
+                            def _bricked_sync():
+                                bdb = SessionLocal()
+                                try:
+                                    bprop = bdb.get(type(enrichment.property), prop_id)
+                                    bscen = bdb.get(type(enrichment.scenario), scenario_id)
+                                    result = enrich_with_bricked(bprop, bscen, address, bdb)
+                                    bdb.commit()
+                                    bdb.expunge(bscen)
+                                    enrichment.scenario.__dict__.update(bscen.__dict__)
+                                    return result
+                                finally:
+                                    bdb.close()
+
+                            bricked_status = await asyncio.to_thread(_bricked_sync)
+                        else:
+                            bricked_status = enrich_with_bricked(
+                                enrichment.property, enrichment.scenario, address, db,
+                            )
                         if bricked_status.status == "success":
                             record_usage(
                                 current_user.id,

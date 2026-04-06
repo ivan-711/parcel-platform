@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import os
 
 from core.billing.exceptions import BillingError
+from core.tasks import WorkerUnavailableError
 from limiter import limiter
 
 load_dotenv()
@@ -45,6 +46,15 @@ async def billing_error_handler(request: Request, exc: BillingError):
     return JSONResponse(
         status_code=code,
         content={"error": exc.message, "code": exc.code},
+    )
+
+
+@app.exception_handler(WorkerUnavailableError)
+async def worker_unavailable_handler(request: Request, exc: WorkerUnavailableError):
+    """Return 503 when a background task is dispatched but no worker is configured."""
+    return JSONResponse(
+        status_code=503,
+        content={"error": str(exc), "code": "WORKER_UNAVAILABLE"},
     )
 
 _frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")

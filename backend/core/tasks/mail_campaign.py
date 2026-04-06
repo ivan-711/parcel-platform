@@ -11,8 +11,9 @@ except ImportError:
     dramatiq = None
 
 
-def _noop(*a, **kw):
-    logger.warning("Dramatiq not available — mail campaign task skipped")
+def _noop_send(*a, **kw):
+    from core.tasks import WorkerUnavailableError
+    raise WorkerUnavailableError("Background worker is not available. Mail campaigns require Redis.")
 
 
 if dramatiq:
@@ -199,5 +200,15 @@ if dramatiq:
             db.close()
 
 else:
-    send_mail_campaign = _noop
-    check_mail_delivery = _noop
+    class _NoopActor:
+        def __call__(self, *args, **kwargs):
+            _noop_send(*args, **kwargs)
+
+        def send(self, *args, **kwargs):
+            _noop_send(*args, **kwargs)
+
+        def send_with_options(self, *args, **kwargs):
+            _noop_send(*args, **kwargs)
+
+    send_mail_campaign = _NoopActor()
+    check_mail_delivery = _NoopActor()

@@ -90,7 +90,7 @@ def test_report_response_pdf_status():
     from routers.reports import _report_to_response
 
     class MockReport:
-        id = "test-id"
+        id = "00000000-0000-0000-0000-000000000001"
         title = "Test Report"
         report_type = "analysis"
         property_id = None
@@ -119,7 +119,7 @@ def test_report_response_property_address():
     from routers.reports import _report_to_response
 
     class MockReport:
-        id = "test-id"
+        id = "00000000-0000-0000-0000-000000000002"
         title = "Test"
         report_type = "analysis"
         property_id = None

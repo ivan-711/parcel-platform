@@ -353,22 +353,20 @@ async def get_shared_report(
     if should_count:
         viewer_id = None
         try:
-            from core.security.jwt import verify_token
-            token = request.cookies.get("access_token")
-            if token:
-                payload = verify_token(token)
-                if payload:
-                    viewer_id = str(payload.get("sub"))
+            from core.security.clerk import verify_clerk_token, is_clerk_configured
+            auth_header = request.headers.get("authorization", "")
+            if auth_header.startswith("Bearer ") and is_clerk_configured():
+                claims = verify_clerk_token(auth_header[7:])
+                if claims:
+                    viewer_id = claims.get("sub")
         except Exception:
             pass
         if not viewer_id:
             try:
-                from core.security.clerk import verify_clerk_token
-                auth_header = request.headers.get("authorization", "")
-                if auth_header.startswith("Bearer "):
-                    claims = verify_clerk_token(auth_header[7:])
-                    if claims:
-                        viewer_id = claims.get("sub")
+                from core.security.jwt import verify_token
+                token = request.cookies.get("access_token")
+                if token:
+                    viewer_id = verify_token(token)  # returns user_id string directly
             except Exception:
                 pass
         if viewer_id and viewer_id == str(report.created_by):

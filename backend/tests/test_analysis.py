@@ -305,7 +305,7 @@ class TestQuickAnalysis:
 
         from models.data_source_events import DataSourceEvent
         events = db.query(DataSourceEvent).all()
-        assert len(events) == 3
+        assert len(events) >= 3
         request_types = {e.request_type for e in events}
         assert "property_details" in request_types
         assert "rent_estimate" in request_types

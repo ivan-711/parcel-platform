@@ -1,7 +1,7 @@
 """Dramatiq background task broker configuration.
 
 The broker connects to Railway Redis via REDIS_URL. When REDIS_URL is unset,
-the broker is not initialized and tasks become no-ops (web process still works).
+the broker is not initialized and tasks raise WorkerUnavailableError.
 
 Worker startup command (Procfile / Railway service):
     dramatiq backend.core.tasks --processes 1 --threads 2
@@ -14,9 +14,20 @@ logger = logging.getLogger(__name__)
 
 _broker_initialized = False
 
+
+class WorkerUnavailableError(RuntimeError):
+    """Raised when a background task is dispatched but no worker/broker is configured."""
+    pass
+
 REDIS_URL = os.getenv("REDIS_URL")
 
-if REDIS_URL:
+try:
+    import dramatiq as _dramatiq_check
+    _has_dramatiq = True
+except ImportError:
+    _has_dramatiq = False
+
+if REDIS_URL and _has_dramatiq:
     import dramatiq
     from dramatiq.brokers.redis import RedisBroker
     from dramatiq.middleware import CurrentMessage, Retries
@@ -55,5 +66,7 @@ if REDIS_URL:
     from core.tasks import pdf_generation  # noqa: F401
     from core.tasks import skip_trace_batch  # noqa: F401
     from core.tasks import mail_campaign  # noqa: F401
+elif REDIS_URL and not _has_dramatiq:
+    logger.warning("REDIS_URL set but dramatiq package not installed — tasks will not be processed")
 else:
     logger.info("REDIS_URL not set — Dramatiq broker disabled (tasks will not be processed)")

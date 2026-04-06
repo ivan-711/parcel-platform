@@ -205,12 +205,19 @@ def get_subscription_status(db: Session, user) -> Optional[dict]:
     if not sub:
         return None
 
+    # Derive interval from period length
+    interval = None
+    if sub.current_period_start and sub.current_period_end:
+        days = (sub.current_period_end - sub.current_period_start).days
+        interval = "annual" if days > 60 else "monthly"
+
     return {
         "status": sub.status,
         "plan_tier": sub.plan_tier,
         "current_period_start": sub.current_period_start,
         "current_period_end": sub.current_period_end,
         "cancel_at_period_end": sub.cancel_at_period_end,
+        "interval": interval,
     }
 
 
@@ -267,7 +274,7 @@ def _resolve_plan_from_subscription(stripe_sub) -> str:
             return plan
 
     logger.warning(
-        "Could not resolve plan for subscription %s, defaulting to 'pro'",
+        "Could not resolve plan for subscription %s, defaulting to 'free'",
         stripe_sub.id,
     )
-    return "pro"
+    return "free"

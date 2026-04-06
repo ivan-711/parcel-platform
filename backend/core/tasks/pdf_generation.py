@@ -16,9 +16,10 @@ except ImportError:
     dramatiq = None
 
 
-def _noop_actor(*args, **kwargs):
-    """Fallback when Dramatiq is not available."""
-    logger.warning("Dramatiq not available — PDF generation skipped")
+def _noop_send(*args, **kwargs):
+    """Raise when Dramatiq is not available and a task is dispatched."""
+    from core.tasks import WorkerUnavailableError
+    raise WorkerUnavailableError("Background worker is not available. PDF generation requires Redis.")
 
 
 if dramatiq:
@@ -116,9 +117,9 @@ else:
 
     class _NoopActor:
         def __call__(self, *args, **kwargs):
-            _noop_actor(*args, **kwargs)
+            _noop_send(*args, **kwargs)
 
         def send(self, *args, **kwargs):
-            _noop_actor(*args, **kwargs)
+            _noop_send(*args, **kwargs)
 
     generate_report_pdf = _NoopActor()
