@@ -11,12 +11,18 @@ import { useQuery } from '@tanstack/react-query'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   LayoutDashboard,
+  LayoutGrid,
+  Calendar,
+  KanbanSquare,
   GitBranch,
   FolderOpen,
+  Building,
   Calculator,
   FileText,
   MessageSquare,
   BarChart3,
+  DollarSign,
+  Users,
   Settings,
   Search,
   Columns,
@@ -47,11 +53,16 @@ interface ActionItem {
 }
 
 const PAGES: PageItem[] = [
-  { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, keywords: ['home', 'overview', 'stats'] },
-  { label: 'Pipeline', path: '/pipeline', icon: GitBranch, keywords: ['kanban', 'stages', 'board', 'track'] },
+  { label: 'Today', path: '/today', icon: Calendar, keywords: ['home', 'briefing', 'daily'] },
+  { label: 'Dashboard', path: '/dashboard', icon: LayoutGrid, keywords: ['overview', 'stats', 'kpis'] },
+  { label: 'Analyze', path: '/analyze', icon: Search, keywords: ['calculate', 'new deal', 'strategy', 'address'] },
+  { label: 'Pipeline', path: '/pipeline', icon: KanbanSquare, keywords: ['kanban', 'stages', 'board', 'track'] },
+  { label: 'Properties', path: '/properties', icon: Building, keywords: ['property', 'portfolio', 'address'] },
   { label: 'My Deals', path: '/deals', icon: FolderOpen, keywords: ['list', 'all deals', 'saved'] },
-  { label: 'Analyzer', path: '/analyze', icon: Calculator, keywords: ['calculate', 'new deal', 'strategy'] },
+  { label: 'Contacts', path: '/contacts', icon: Users, keywords: ['people', 'sellers', 'agents', 'relationships'] },
   { label: 'Portfolio', path: '/portfolio', icon: BarChart3, keywords: ['closed', 'returns', 'equity', 'cash flow'] },
+  { label: 'Transactions', path: '/transactions', icon: DollarSign, keywords: ['money', 'payments', 'income', 'expenses'] },
+  { label: 'Reports', path: '/reports', icon: FileText, keywords: ['generate', 'export', 'pdf'] },
   { label: 'Documents', path: '/documents', icon: FileText, keywords: ['upload', 'contracts', 'files', 'pdf'] },
   { label: 'AI Chat', path: '/chat', icon: MessageSquare, keywords: ['ask', 'question', 'ai', 'assistant'] },
   { label: 'Compare', path: '/compare', icon: Columns, keywords: ['side by side', 'compare deals'] },

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;family=Manrope:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    :root {
+      --satoshi-light: 'Manrope', sans-serif; /* Using Manrope as proxy for Satoshi based on config */
+      --satoshi-medium: 'Manrope', sans-serif;
+      --jetbrains: 'JetBrains Mono', monospace;
+    }
+    body {
+      background-color: #0C0B0A;
+      color: #F0EDE8;
+      font-family: var(--satoshi-light);
+      font-weight: 300;
+    }
+    .font-technical { font-family: var(--jetbrains); }
+    .font-headline { font-family: var(--satoshi-light); }
+    .font-emphasis { font-family: var(--satoshi-medium); font-weight: 500; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+    /* Hide scrollbar but keep functionality */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "on-secondary-fixed-variant": "#464072",
+                  "on-error-container": "#ffdad6",
+                  "inverse-on-surface": "#32302f",
+                  "on-surface-variant": "#c9c4d6",
+                  "on-secondary-fixed": "#1a1444",
+                  "secondary": "#c8c0fb",
+                  "surface-variant": "#363433",
+                  "on-primary": "#2b009e",
+                  "on-secondary-container": "#b6aee8",
+                  "surface-container-lowest": "#0f0e0d",
+                  "secondary-container": "#464072",
+                  "on-tertiary-fixed-variant": "#624000",
+                  "outline-variant": "#474554",
+                  "on-tertiary-container": "#3c2500",
+                  "on-secondary": "#302a5a",
+                  "on-primary-container": "#25008b",
+                  "error": "#ffb4ab",
+                  "surface-container-low": "#1d1b1a",
+                  "on-background": "#e6e1df",
+                  "secondary-fixed": "#e5deff",
+                  "surface-container-highest": "#363433",
+                  "surface-tint": "#c7bfff",
+                  "surface-container": "#211f1e",
+                  "primary-fixed-dim": "#c7bfff",
+                  "on-primary-fixed-variant": "#432cb3",
+                  "inverse-primary": "#5b48cc",
+                  "primary-fixed": "#e5deff",
+                  "tertiary": "#ffb94f",
+                  "tertiary-container": "#c48306",
+                  "primary": "#c7bfff",
+                  "on-tertiary": "#452b00",
+                  "primary-container": "#8f7fff",
+                  "surface-dim": "#141312",
+                  "surface-container-high": "#2b2a28",
+                  "on-error": "#690005",
+                  "on-primary-fixed": "#180064",
+                  "error-container": "#93000a",
+                  "surface-bright": "#3b3937",
+                  "on-surface": "#e6e1df",
+                  "background": "#141312",
+                  "tertiary-fixed": "#ffddb3",
+                  "surface": "#141312",
+                  "inverse-surface": "#e6e1df",
+                  "on-tertiary-fixed": "#291800",
+                  "secondary-fixed-dim": "#c8c0fb",
+                  "outline": "#928e9f",
+                  "tertiary-fixed-dim": "#ffb94f"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.125rem",
+                  "lg": "0.25rem",
+                  "xl": "0.5rem",
+                  "full": "0.75rem"
+          }
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-background text-on-surface">
+<!-- SideNavBar: Authority Source JSON Execution -->
+<aside class="fixed left-0 top-0 flex flex-col h-full py-8 px-6 bg-[#0C0B0A] dark:bg-[#0C0B0A] h-screen w-72 border-r-0 z-50">
+<div class="mb-12">
+<div class="text-2xl font-light tracking-widest text-[#F0EDE8] uppercase mb-1">Parcel</div>
+<div class="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-60">Institutional Grade</div>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Active Navigation: Determining Home is active for Dashboard -->
+<a class="flex items-center gap-4 px-4 py-3 text-[#C7BFFF] font-medium border-r-2 border-[#8B7AFF] bg-gradient-to-r from-[#8B7AFF10] to-transparent transition-all duration-300" href="#">
+<span class="material-symbols-outlined text-lg">dashboard</span>
+<span class="text-sm tracking-wide">Home</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#C5C0B8] opacity-70 hover:opacity-100 hover:bg-[#1D1B1A] transition-all duration-300" href="#">
+<span class="material-symbols-outlined text-lg">analytics</span>
+<span class="text-sm tracking-wide">Deals</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#C5C0B8] opacity-70 hover:opacity-100 hover:bg-[#1D1B1A] transition-all duration-300" href="#">
+<span class="material-symbols-outlined text-lg">group</span>
+<span class="text-sm tracking-wide">People</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#C5C0B8] opacity-70 hover:opacity-100 hover:bg-[#1D1B1A] transition-all duration-300" href="#">
+<span class="material-symbols-outlined text-lg">domain</span>
+<span class="text-sm tracking-wide">Assets</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#C5C0B8] opacity-70 hover:opacity-100 hover:bg-[#1D1B1A] transition-all duration-300" href="#">
+<span class="material-symbols-outlined text-lg">file_download</span>
+<span class="text-sm tracking-wide">Outputs</span>
+</a>
+</nav>
+<div class="mt-auto">
+<button class="w-full py-3 px-4 rounded-lg bg-gradient-to-r from-primary to-primary-container text-on-primary font-emphasis text-sm flex items-center justify-center gap-2 hover:shadow-[0_0_15px_rgba(199,191,255,0.2)] transition-all">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+        AI Assistant
+      </button>
+<div class="mt-8 flex items-center gap-3 px-2">
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="Professional executive profile portrait with soft studio lighting and dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqtKqd9IYrrCAKAujVGhqZZUnrtvV33hepwZqVTBRvCxXHGjVysGO0WVL-Nsa8sMx6RUIS7dpZWnj93TdaoVG4A2DnuOXacpvImjogBwsHTKPtx1YBUCtZiE06p78f2ibGfsRuql4Fi8UPUddFUJFNMVEfzSflfFvWF7qj3sZ7IHvjxe7alp-yD-xfZjiMpl-h4zcH60iyJ0QXInMostepqaonUTVBEY0E2c696cE5w-SGQSYy1AV9A5e0bbxQr8176g80tFiOWAA"/>
+</div>
+<div class="flex flex-col">
+<span class="text-xs font-emphasis text-on-surface">Alexander Vane</span>
+<span class="text-[10px] text-on-surface-variant">Principal</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopAppBar: Authority Source JSON Execution -->
+<header class="fixed top-0 right-0 left-72 z-40 flex justify-between items-center px-12 h-20 bg-[#0C0B0A]/80 backdrop-blur-xl">
+<div class="text-lg font-emphasis text-on-surface">Portfolio Health</div>
+<div class="flex items-center gap-8">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-lg">search</span>
+<input class="bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-lg pl-10 pr-4 py-2 text-sm w-64 font-technical placeholder:text-outline text-on-surface" placeholder="Search portfolio assets..." type="text"/>
+</div>
+<div class="flex items-center gap-4 text-[#C5C0B8]">
+<button class="material-symbols-outlined hover:text-[#C7BFFF] transition-colors">notifications</button>
+<button class="material-symbols-outlined hover:text-[#C7BFFF] transition-colors">settings</button>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="ml-72 pt-28 px-12 pb-12 min-h-screen">
+<!-- Hero Section: Cumulative Valuation -->
+<section class="mb-12">
+<div class="bg-surface-container-low p-8 rounded-xl border-l border-primary/20 flex items-end justify-between">
+<div>
+<h2 class="text-xs uppercase tracking-[0.2em] text-on-surface-variant mb-2">Cumulative Valuation</h2>
+<div class="flex items-baseline gap-4">
+<span class="text-6xl font-headline text-on-surface font-technical">$14.2M</span>
+<div class="flex items-center text-primary gap-1 mb-2">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-sm font-technical">+12.4% <span class="opacity-50 ml-1">YoY</span></span>
+</div>
+</div>
+</div>
+<div class="w-64 h-24 relative overflow-hidden">
+<!-- Sparkline representation -->
+<svg class="w-full h-full" viewbox="0 0 200 60">
+<defs>
+<lineargradient id="gradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#C7BFFF" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#C7BFFF" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0 50 Q 20 45, 40 48 T 80 35 T 120 42 T 160 20 T 200 10 V 60 H 0 Z" fill="url(#gradient)"></path>
+<path d="M0 50 Q 20 45, 40 48 T 80 35 T 120 42 T 160 20 T 200 10" fill="none" stroke="#C7BFFF" stroke-width="1.5"></path>
+</svg>
+</div>
+</div>
+</section>
+<!-- Key Metrics Row -->
+<section class="grid grid-cols-4 gap-6 mb-12">
+<div class="bg-surface-container-low p-6 rounded-xl group hover:bg-surface-container-high transition-colors">
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant block mb-4">Real-time Yield</span>
+<div class="text-3xl font-technical text-on-surface">6.82%</div>
+<div class="mt-4 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[68.2%]"></div>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl group hover:bg-surface-container-high transition-colors">
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant block mb-4">Operating Expense Ratio</span>
+<div class="text-3xl font-technical text-on-surface">34.2%</div>
+<div class="mt-4 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[34.2%]"></div>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl group hover:bg-surface-container-high transition-colors">
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant block mb-4">Portfolio Occupancy</span>
+<div class="text-3xl font-technical text-on-surface">96.8%</div>
+<div class="mt-4 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[96.8%]"></div>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl group hover:bg-surface-container-high transition-colors">
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant block mb-4">Active Rehabs</span>
+<div class="text-3xl font-technical text-on-surface">12 <span class="text-lg opacity-40 ml-1">UNITS</span></div>
+<div class="mt-4 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[45%]"></div>
+</div>
+</div>
+</section>
+<!-- Large Grid Layout -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Equity Growth Trajectory Chart -->
+<div class="col-span-8 bg-surface-container-low p-8 rounded-xl relative overflow-hidden">
+<div class="flex justify-between items-center mb-12">
+<h3 class="text-lg font-emphasis tracking-tight">Equity Growth Trajectory</h3>
+<div class="flex gap-2 p-1 bg-surface-container-lowest rounded-lg">
+<button class="px-3 py-1 text-[10px] font-technical uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors">1Y</button>
+<button class="px-3 py-1 text-[10px] font-technical uppercase tracking-wider bg-surface-container-high text-primary rounded shadow-sm">5Y</button>
+<button class="px-3 py-1 text-[10px] font-technical uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors">MAX</button>
+</div>
+</div>
+<div class="h-[320px] w-full relative">
+<!-- Main Chart SVG -->
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 1000 300">
+<defs>
+<lineargradient id="equityGrad" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#C7BFFF" stop-opacity="0.15"></stop>
+<stop offset="100%" stop-color="#C7BFFF" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<!-- Grid Lines -->
+<line stroke="#474554" stroke-opacity="0.1" x1="0" x2="1000" y1="50" y2="50"></line>
+<line stroke="#474554" stroke-opacity="0.1" x1="0" x2="1000" y1="150" y2="150"></line>
+<line stroke="#474554" stroke-opacity="0.1" x1="0" x2="1000" y1="250" y2="250"></line>
+<!-- Area Path -->
+<path d="M0 280 C 100 270, 200 240, 300 250 C 400 260, 500 180, 600 150 C 700 120, 800 100, 900 60 C 950 40, 1000 30, 1000 30 L 1000 300 L 0 300 Z" fill="url(#equityGrad)"></path>
+<!-- Line Path -->
+<path d="M0 280 C 100 270, 200 240, 300 250 C 400 260, 500 180, 600 150 C 700 120, 800 100, 900 60 C 950 40, 1000 30, 1000 30" fill="none" stroke="#F0EDE8" stroke-opacity="0.8" stroke-width="1.5"></path>
+</svg>
+<!-- Chart Labels -->
+<div class="absolute left-0 bottom-0 text-[10px] font-technical text-on-surface-variant opacity-50 uppercase">2019</div>
+<div class="absolute right-0 bottom-0 text-[10px] font-technical text-on-surface-variant opacity-50 uppercase">Present</div>
+</div>
+</div>
+<!-- Strategy Allocation Donut -->
+<div class="col-span-4 bg-surface-container-low p-8 rounded-xl flex flex-col">
+<h3 class="text-lg font-emphasis tracking-tight mb-8">Strategy Allocation</h3>
+<div class="flex-1 flex flex-col items-center justify-center">
+<div class="relative w-48 h-48">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<!-- Background Circle -->
+<circle class="text-surface-container-highest" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<!-- Progress Segments -->
+<circle cx="50" cy="50" fill="transparent" r="40" stroke="#C7BFFF" stroke-dasharray="100 251" stroke-width="8"></circle>
+<circle cx="50" cy="50" fill="transparent" r="40" stroke="#8F7FFF" stroke-dasharray="80 251" stroke-dashoffset="-100" stroke-width="8"></circle>
+<circle cx="50" cy="50" fill="transparent" r="40" stroke="#464072" stroke-dasharray="71 251" stroke-dashoffset="-180" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-xs text-on-surface-variant uppercase tracking-tighter">Total</span>
+<span class="text-2xl font-technical">100%</span>
+</div>
+</div>
+<div class="mt-12 flex flex-wrap justify-center gap-3">
+<div class="flex items-center gap-2 bg-surface-container-lowest px-3 py-1.5 rounded-full border border-outline-variant/10">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-[10px] uppercase font-technical">Core Plus (42%)</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-lowest px-3 py-1.5 rounded-full border border-outline-variant/10">
+<div class="w-2 h-2 rounded-full bg-primary-container"></div>
+<span class="text-[10px] uppercase font-technical">Value-Add (31%)</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-lowest px-3 py-1.5 rounded-full border border-outline-variant/10">
+<div class="w-2 h-2 rounded-full bg-on-secondary-fixed-variant"></div>
+<span class="text-[10px] uppercase font-technical">Opportunistic (27%)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Cash Flow Benchmark -->
+<div class="col-span-6 bg-surface-container-low p-8 rounded-xl">
+<div class="flex justify-between items-center mb-8">
+<h3 class="text-lg font-emphasis tracking-tight">Cash Flow Benchmark</h3>
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-60">Net Operating Income</span>
+</div>
+<div class="space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between text-[11px] font-technical text-on-surface-variant">
+<span>The Mercer Residence</span>
+<span>$42,800</span>
+</div>
+<div class="h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-full transition-all duration-1000"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-[11px] font-technical text-on-surface-variant">
+<span>Liberty Industrial</span>
+<span>$38,200</span>
+</div>
+<div class="h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[89%] transition-all duration-1000"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-[11px] font-technical text-on-surface-variant">
+<span>Aria Commons</span>
+<span>$31,500</span>
+</div>
+<div class="h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[73%] transition-all duration-1000"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-[11px] font-technical text-on-surface-variant">
+<span>Skyline Towers</span>
+<span>$22,900</span>
+</div>
+<div class="h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[53%] transition-all duration-1000"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Rent Collection MTD -->
+<div class="col-span-6 grid grid-cols-2 gap-6">
+<div class="bg-surface-container-low p-8 rounded-xl">
+<h3 class="text-sm font-emphasis tracking-tight mb-8">Rent Collection MTD</h3>
+<div class="flex items-end gap-3 h-40">
+<div class="flex-1 bg-surface-container-highest rounded-t-sm relative group">
+<div class="absolute bottom-0 w-full bg-on-secondary-fixed-variant transition-all h-[98%]" style="height: 100%;"></div>
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-technical text-on-surface-variant">EXP</div>
+</div>
+<div class="flex-1 bg-surface-container-highest rounded-t-sm relative group">
+<div class="absolute bottom-0 w-full bg-primary transition-all h-[92%]" style="height: 92%;"></div>
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-technical text-primary">COLL</div>
+</div>
+</div>
+<div class="mt-8">
+<div class="text-2xl font-technical text-on-surface">92.4%</div>
+<div class="text-[10px] uppercase text-on-surface-variant opacity-60 mt-1">Status: Healthy</div>
+</div>
+</div>
+<!-- Quick Insight/Mini Stats Card -->
+<div class="bg-primary/5 p-8 rounded-xl border border-primary/10 flex flex-col justify-between">
+<div>
+<div class="w-10 h-10 rounded bg-primary/10 flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined">auto_graph</span>
+</div>
+<p class="text-xs leading-relaxed text-on-surface-variant italic">
+              "Portfolio velocity remains 4.2% above historical benchmarks for Q3. Asset liquidity has increased following the Aria Commons refinancing."
+            </p>
+</div>
+<button class="text-xs font-emphasis text-primary flex items-center gap-2 hover:gap-3 transition-all">
+            Full Audit Report <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Property Performance Comparison -->
+<div class="col-span-12 bg-surface-container-low p-8 rounded-xl">
+<h3 class="text-lg font-emphasis tracking-tight mb-8">Property Performance Comparison</h3>
+<div class="grid grid-cols-1 gap-4">
+<!-- Item 1 -->
+<div class="flex items-center gap-6 group">
+<div class="w-48 text-xs font-technical text-on-surface truncate">Highland Gate Portfolio</div>
+<div class="flex-1 h-8 bg-surface-container-highest/30 rounded flex items-center px-1">
+<div class="h-6 bg-gradient-to-r from-primary/40 to-primary rounded-sm transition-all duration-1000" style="width: 84%"></div>
+<span class="ml-4 text-[11px] font-technical text-primary">12.4% <span class="opacity-40 ml-1">COC</span></span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center gap-6 group">
+<div class="w-48 text-xs font-technical text-on-surface truncate">Metropolitan Medical</div>
+<div class="flex-1 h-8 bg-surface-container-highest/30 rounded flex items-center px-1">
+<div class="h-6 bg-gradient-to-r from-primary/40 to-primary rounded-sm transition-all duration-1000" style="width: 72%"></div>
+<span class="ml-4 text-[11px] font-technical text-primary">10.1% <span class="opacity-40 ml-1">COC</span></span>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex items-center gap-6 group">
+<div class="w-48 text-xs font-technical text-on-surface truncate">Riverside Lofts</div>
+<div class="flex-1 h-8 bg-surface-container-highest/30 rounded flex items-center px-1">
+<div class="h-6 bg-gradient-to-r from-primary/40 to-primary rounded-sm transition-all duration-1000" style="width: 61%"></div>
+<span class="ml-4 text-[11px] font-technical text-primary">8.8% <span class="opacity-40 ml-1">COC</span></span>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="flex items-center gap-6 group">
+<div class="w-48 text-xs font-technical text-on-surface truncate">Northside Logistics</div>
+<div class="flex-1 h-8 bg-surface-container-highest/30 rounded flex items-center px-1">
+<div class="h-6 bg-gradient-to-r from-primary/40 to-primary rounded-sm transition-all duration-1000" style="width: 55%"></div>
+<span class="ml-4 text-[11px] font-technical text-primary">7.9% <span class="opacity-40 ml-1">COC</span></span>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="flex items-center gap-6 group">
+<div class="w-48 text-xs font-technical text-on-surface truncate">Cedar Creek Village</div>
+<div class="flex-1 h-8 bg-surface-container-highest/30 rounded flex items-center px-1">
+<div class="h-6 bg-gradient-to-r from-primary/40 to-primary rounded-sm transition-all duration-1000" style="width: 42%"></div>
+<span class="ml-4 text-[11px] font-technical text-primary">5.2% <span class="opacity-40 ml-1">COC</span></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Responsive FAB suppression as per logic: Suppressed on focused Dashboard -->
+</body></html>

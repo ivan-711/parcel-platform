@@ -218,3 +218,36 @@ export const STRATEGY_CHART_COLORS: Record<string, string> = {
   buy_and_hold: CHART_COLORS.buyAndHold,
   flip: CHART_COLORS.flip,
 } as const
+
+// ── Gradient Opacity Helpers ────────────────────────────────────────────────
+
+/** Returns gradient opacity values for the current theme. */
+export function getGradientOpacity() {
+  const light = isLightTheme()
+  return {
+    primary: { from: light ? 0.12 : 0.25, to: 0 },
+    secondary: { from: light ? 0.06 : 0.10, to: 0 },
+    sparkline: { from: light ? 0.10 : 0.20, mid: light ? 0.03 : 0.06, to: 0 },
+  }
+}
+
+/** Returns crosshair cursor config for current theme. */
+export function getChartCursor() {
+  return {
+    stroke: '#8B7AFF',
+    strokeOpacity: isLightTheme() ? 0.2 : 0.25,
+    strokeWidth: 1,
+    strokeDasharray: '4 4',
+  }
+}
+
+/** Financial color constants with theme variants. */
+export const FINANCIAL_COLORS = {
+  positive: { dark: '#6DBEA3', light: '#16a34a' },
+  negative: { dark: '#D4766A', light: '#dc2626' },
+} as const
+
+/** Returns theme-aware financial color. */
+export function getFinancialColor(type: 'positive' | 'negative'): string {
+  return FINANCIAL_COLORS[type][isLightTheme() ? 'light' : 'dark']
+}

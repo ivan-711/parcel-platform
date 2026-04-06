@@ -1,0 +1,252 @@
+/**
+ * ReportsListPage — lists generated reports with engagement data and actions.
+ * Reference: reports_list.png, reports_empty_state.png
+ */
+
+import { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { motion } from 'framer-motion'
+import {
+  FileText,
+  Link2,
+  Download,
+  Trash2,
+  Plus,
+  Eye,
+  Loader2,
+} from 'lucide-react'
+import { toast } from 'sonner'
+import { AppShell } from '@/components/layout/AppShell'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
+import { api } from '@/lib/api'
+import type { ReportResponse } from '@/types'
+
+function trackEvent(event: string, props?: Record<string, unknown>) {
+  try { (window as any).posthog?.capture?.(event, props) } catch { /* ignore */ }
+}
+
+const TYPE_COLORS: Record<string, string> = {
+  analysis: 'bg-[#8B7AFF]/10 text-[#8B7AFF] border-[#8B7AFF]/20',
+  portfolio_snapshot: 'bg-[#6DBEA3]/10 text-[#6DBEA3] border-[#6DBEA3]/20',
+  buyer_packet: 'bg-[#E5A84B]/10 text-[#E5A84B] border-[#E5A84B]/20',
+}
+
+const AUDIENCE_COLORS: Record<string, string> = {
+  client: 'bg-[#8B7AFF]/10 text-[#8B7AFF] border-[#8B7AFF]/20',
+  lender: 'bg-[#6DBEA3]/10 text-[#6DBEA3] border-[#6DBEA3]/20',
+  internal: 'bg-layer-2 text-text-secondary border-border-default',
+  partner: 'bg-[#E5A84B]/10 text-[#E5A84B] border-[#E5A84B]/20',
+}
+
+function formatRelativeDate(dateStr: string): string {
+  const d = new Date(dateStr)
+  const now = new Date()
+  const diffDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24))
+  if (diffDays === 0) return 'Today'
+  if (diffDays === 1) return 'Yesterday'
+  if (diffDays < 7) return `${diffDays}d ago`
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+function ReportActions({
+  report,
+  onDelete,
+}: {
+  report: ReportResponse
+  onDelete: (id: string) => void
+}) {
+  const [pdfLoading, setPdfLoading] = useState(false)
+
+  const handleCopyLink = () => {
+    if (report.share_url) {
+      void navigator.clipboard.writeText(report.share_url)
+      toast.success('Link copied')
+      trackEvent('report_link_copied', { report_id: report.id })
+    }
+  }
+
+  const handleDownloadPdf = async () => {
+    setPdfLoading(true)
+    try {
+      const initial = await api.reports.triggerPdf(report.id)
+      if (initial.status === 'ready' && initial.download_url) {
+        window.open(initial.download_url, '_blank')
+        trackEvent('report_pdf_downloaded', { report_id: report.id })
+        return
+      }
+      for (let i = 0; i < 30; i++) {
+        await new Promise((r) => setTimeout(r, 2000))
+        const status = await api.reports.pdfStatus(report.id)
+        if (status.status === 'ready' && status.download_url) {
+          window.open(status.download_url, '_blank')
+          trackEvent('report_pdf_downloaded', { report_id: report.id })
+          return
+        }
+      }
+      toast.error('PDF generation timed out')
+    } catch {
+      toast.error('Failed to generate PDF')
+    } finally {
+      setPdfLoading(false)
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-1">
+      <button onClick={handleCopyLink} className="p-1.5 rounded-md hover:bg-layer-2 text-text-secondary hover:text-text-primary transition-colors" title="Copy share link">
+        <Link2 size={14} />
+      </button>
+      <button onClick={() => void handleDownloadPdf()} disabled={pdfLoading} className="p-1.5 rounded-md hover:bg-layer-2 text-text-secondary hover:text-text-primary transition-colors disabled:opacity-40" title="Download PDF">
+        {pdfLoading ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+      </button>
+      <button onClick={() => onDelete(report.id)} className="p-1.5 rounded-md hover:bg-[#D4766A]/10 text-text-secondary hover:text-[#D4766A] transition-colors" title="Delete">
+        <Trash2 size={14} />
+      </button>
+    </div>
+  )
+}
+
+export default function ReportsListPage() {
+  const queryClient = useQueryClient()
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['reports'],
+    queryFn: () => api.reports.list(),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.reports.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reports'] })
+      toast.success('Report deleted')
+      trackEvent('report_deleted')
+    },
+    onError: () => toast.error('Failed to delete report'),
+  })
+
+  const reports = data?.reports ?? []
+  const total = data?.total ?? 0
+  const totalViews = reports.reduce((sum, r) => sum + r.view_count, 0)
+  const viewedCount = reports.filter((r) => r.view_count > 0).length
+  const engagementRate = total > 0 ? Math.round((viewedCount / total) * 100) : 0
+
+  const isEmpty = !isLoading && reports.length === 0
+
+  return (
+    <AppShell title="Reports">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-lg font-semibold text-text-primary">Reports</h1>
+            <p className="text-xs text-text-secondary mt-0.5">
+              {total > 0 ? `${total} report${total !== 1 ? 's' : ''} generated` : 'Generate reports to share with clients'}
+            </p>
+          </div>
+          {!isEmpty && (
+            <Button
+              className="bg-[#8B7AFF] hover:bg-[#6C5CE7] text-white text-xs gap-1.5"
+              size="sm"
+              onClick={() => toast('Create report from an analysis result', { description: 'Go to a property analysis and click "Generate Report"' })}
+            >
+              <Plus size={14} />
+              Create Report
+            </Button>
+          )}
+        </div>
+
+        {/* Stats bar */}
+        {!isEmpty && (
+          <div className="grid grid-cols-3 gap-4">
+            <div className="rounded-lg border border-border-default bg-app-surface p-4">
+              <p className="text-[10px] uppercase tracking-[0.08em] text-text-secondary">Total Reports</p>
+              <p className="text-xl font-semibold text-text-primary mt-1 tabular-nums">{total}</p>
+            </div>
+            <div className="rounded-lg border border-border-default bg-app-surface p-4">
+              <p className="text-[10px] uppercase tracking-[0.08em] text-text-secondary">Total Views</p>
+              <p className="text-xl font-semibold text-text-primary mt-1 tabular-nums">{totalViews}</p>
+            </div>
+            <div className="rounded-lg border border-border-default bg-app-surface p-4">
+              <p className="text-[10px] uppercase tracking-[0.08em] text-text-secondary">Engagement</p>
+              <p className="text-xl font-semibold text-text-primary mt-1 tabular-nums">{engagementRate}%</p>
+            </div>
+          </div>
+        )}
+
+        {/* Empty state */}
+        {isEmpty && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center py-24 text-center"
+          >
+            <div className="w-16 h-16 rounded-2xl bg-[#8B7AFF]/10 border border-[#8B7AFF]/15 flex items-center justify-center mb-4">
+              <FileText size={28} className="text-[#8B7AFF]" />
+            </div>
+            <h2 className="text-lg font-semibold text-text-primary mb-2">
+              Your analysis shelf is empty
+            </h2>
+            <p className="text-sm text-text-secondary max-w-sm mb-6">
+              Generate professional investment reports to share with clients, partners, or lenders.
+            </p>
+            <Button
+              className="bg-[#8B7AFF] hover:bg-[#6C5CE7] text-white gap-1.5"
+              onClick={() => toast('Create report from an analysis result', { description: 'Go to a property analysis and click "Generate Report"' })}
+            >
+              <Plus size={14} />
+              Create First Report
+            </Button>
+          </motion.div>
+        )}
+
+        {/* Loading */}
+        {isLoading && (
+          <div className="space-y-2">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="h-16 rounded-lg bg-layer-2 animate-pulse" />
+            ))}
+          </div>
+        )}
+
+        {/* Reports table */}
+        {!isEmpty && !isLoading && (
+          <div className="rounded-xl border border-border-default bg-app-surface overflow-hidden">
+            <div className="grid grid-cols-[1fr_1fr_auto_auto_auto_auto_auto] gap-4 px-5 py-3 border-b border-border-default bg-layer-1 text-[10px] uppercase tracking-[0.08em] text-text-secondary font-medium">
+              <span>Title</span>
+              <span>Property</span>
+              <span>Type</span>
+              <span>Audience</span>
+              <span>Created</span>
+              <span>Views</span>
+              <span>Actions</span>
+            </div>
+
+            {reports.map((report) => (
+              <div
+                key={report.id}
+                className="grid grid-cols-[1fr_1fr_auto_auto_auto_auto_auto] gap-4 px-5 py-3 border-b border-border-subtle last:border-b-0 items-center hover:bg-layer-1 transition-colors"
+              >
+                <span className="text-sm text-text-primary font-medium truncate">{report.title}</span>
+                <span className="text-xs text-text-secondary truncate">{report.property_address || '—'}</span>
+                <Badge className={cn('text-[10px] capitalize', TYPE_COLORS[report.report_type] || TYPE_COLORS.analysis)}>
+                  {report.report_type.replace('_', ' ')}
+                </Badge>
+                <Badge className={cn('text-[10px] capitalize', AUDIENCE_COLORS[report.audience || 'internal'])}>
+                  {report.audience || 'internal'}
+                </Badge>
+                <span className="text-xs text-text-secondary tabular-nums whitespace-nowrap">{formatRelativeDate(report.created_at)}</span>
+                <span className={cn('text-xs tabular-nums flex items-center gap-1', report.view_count > 0 ? 'text-[#6DBEA3]' : 'text-text-disabled')}>
+                  <Eye size={12} />
+                  {report.view_count}
+                </span>
+                <ReportActions report={report} onDelete={(id) => deleteMutation.mutate(id)} />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </AppShell>
+  )
+}

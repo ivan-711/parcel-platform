@@ -18,6 +18,10 @@ export interface PipelineCard {
   stage: Stage
   days_in_stage: number
   entered_stage_at: string
+  city: string | null
+  state: string | null
+  property_type: string | null
+  is_sample: boolean
 }
 
 export const STAGES: { key: Stage; label: string; color: string }[] = [

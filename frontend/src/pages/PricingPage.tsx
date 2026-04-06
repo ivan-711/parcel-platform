@@ -32,10 +32,19 @@ const staggerItem = {
 /* ─── Plan Data ─── */
 
 const FREE_FEATURES = [
-  '5 analyses per month',
+  '3 analyses per month',
   '5 AI chat messages per month',
   '5 saved deals',
   'Basic risk scoring',
+]
+
+const PLUS_FEATURES = [
+  '25 analyses per month',
+  '30 AI chat messages per month',
+  '50 saved deals',
+  'Full deal pipeline',
+  'PDF deal reports',
+  'Document AI (5/month)',
 ]
 
 const PRO_FEATURES = [
@@ -48,14 +57,16 @@ const PRO_FEATURES = [
   'AI document analysis (25/month)',
   'Offer letter generator',
   'Deal comparison',
+  'Skip tracing (25/month)',
 ]
 
-const TEAM_FEATURES = [
+const BUSINESS_FEATURES = [
   'Everything in Pro',
-  'Unlimited team members',
+  'Up to 5 team members',
   'Shared deal pipeline',
   'Team analytics dashboard',
   'Role-based permissions',
+  'Direct mail (100 pieces/month)',
   'Priority support',
 ]
 
@@ -210,7 +221,7 @@ export default function PricingPage() {
     }
   }, [searchParams, setSearchParams, queryClient])
 
-  const proPrice = interval === 'annual' ? '$55' : '$69'
+  const proPrice = interval === 'annual' ? '$63' : '$79'
 
   function handleProCta() {
     if (isProActive) {
@@ -379,7 +390,7 @@ export default function PricingPage() {
             </div>
           </motion.div>
 
-          {/* Team Card (Coming Soon) */}
+          {/* Business Card (Coming Soon) */}
           <motion.div
             variants={staggerItem}
             className="bg-layer-1 rounded-lg border border-border-subtle p-6 flex flex-col opacity-60 order-3"
@@ -393,7 +404,7 @@ export default function PricingPage() {
 
             <div className="space-y-4 flex-1 mt-2">
               <div>
-                <h3 className="text-lg font-semibold text-text-secondary">Team</h3>
+                <h3 className="text-lg font-semibold text-text-secondary">Business</h3>
                 <div className="mt-2 flex items-baseline gap-1">
                   <span className="text-4xl font-bold text-text-muted tabular-nums">$149</span>
                   <span className="text-text-muted text-sm">/month</span>
@@ -402,7 +413,7 @@ export default function PricingPage() {
               </div>
 
               <ul className="space-y-3">
-                {TEAM_FEATURES.map((f) => (
+                {BUSINESS_FEATURES.map((f) => (
                   <li key={f} className="flex items-start gap-2.5 text-sm text-text-secondary">
                     <Check size={16} className="text-[#3A3835] mt-0.5 shrink-0" />
                     {f}

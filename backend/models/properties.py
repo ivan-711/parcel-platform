@@ -7,11 +7,6 @@ from sqlalchemy.orm import relationship
 from database import Base
 from models.base import TimestampMixin
 
-try:
-    from geoalchemy2 import Geometry
-except ImportError:
-    Geometry = None  # allows import without geoalchemy2 installed locally
-
 
 class Property(TimestampMixin, Base):
     """A physical real estate property — the root entity in the domain model."""
@@ -28,12 +23,6 @@ class Property(TimestampMixin, Base):
     state = Column(String(2), nullable=False)
     zip_code = Column(String(10), nullable=False)
     county = Column(String, nullable=True)
-
-    # Geospatial (PostGIS)
-    location = Column(
-        Geometry("POINT", srid=4326) if Geometry else String,
-        nullable=True,
-    )
 
     # Physical characteristics
     property_type = Column(String, nullable=True)

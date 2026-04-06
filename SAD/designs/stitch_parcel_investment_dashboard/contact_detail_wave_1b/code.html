@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Alexander Sterling | Parcel Contact Detail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.cdnfonts.com/css/satoshi" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "on-secondary-fixed-variant": "#464072",
+                  "on-error-container": "#ffdad6",
+                  "inverse-on-surface": "#32302f",
+                  "on-surface-variant": "#c9c4d6",
+                  "on-secondary-fixed": "#1a1444",
+                  "secondary": "#c8c0fb",
+                  "surface-variant": "#363433",
+                  "on-primary": "#2b009e",
+                  "on-secondary-container": "#b6aee8",
+                  "surface-container-lowest": "#0f0e0d",
+                  "secondary-container": "#464072",
+                  "on-tertiary-fixed-variant": "#624000",
+                  "outline-variant": "#474554",
+                  "on-tertiary-container": "#3c2500",
+                  "on-secondary": "#302a5a",
+                  "on-primary-container": "#25008b",
+                  "error": "#ffb4ab",
+                  "surface-container-low": "#1d1b1a",
+                  "on-background": "#e6e1df",
+                  "secondary-fixed": "#e5deff",
+                  "surface-container-highest": "#363433",
+                  "surface-tint": "#c7bfff",
+                  "surface-container": "#211f1e",
+                  "primary-fixed-dim": "#c7bfff",
+                  "on-primary-fixed-variant": "#432cb3",
+                  "inverse-primary": "#5b48cc",
+                  "primary-fixed": "#e5deff",
+                  "tertiary": "#ffb94f",
+                  "tertiary-container": "#c48306",
+                  "primary": "#c7bfff",
+                  "on-tertiary": "#452b00",
+                  "primary-container": "#8f7fff",
+                  "surface-dim": "#141312",
+                  "surface-container-high": "#2b2a28",
+                  "on-error": "#690005",
+                  "on-primary-fixed": "#180064",
+                  "error-container": "#93000a",
+                  "surface-bright": "#3b3937",
+                  "on-surface": "#e6e1df",
+                  "background": "#141312",
+                  "tertiary-fixed": "#ffddb3",
+                  "surface": "#141312",
+                  "inverse-surface": "#e6e1df",
+                  "on-tertiary-fixed": "#291800",
+                  "secondary-fixed-dim": "#c8c0fb",
+                  "outline": "#928e9f",
+                  "tertiary-fixed-dim": "#ffb94f"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.125rem",
+                  "lg": "0.25rem",
+                  "xl": "0.5rem",
+                  "full": "0.75rem"
+          },
+          "fontFamily": {
+                  "headline": ["Satoshi", "sans-serif"],
+                  "body": ["Satoshi", "sans-serif"],
+                  "mono": ["JetBrains Mono", "monospace"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      background-color: #0C0B0A;
+      font-family: 'Satoshi', sans-serif;
+      color: #F0EDE8;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+      font-size: 20px;
+    }
+    .label-header {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #8A8580;
+      font-weight: 500;
+    }
+    .tonal-bloom {
+      transition: background-color 0.3s ease;
+    }
+    .tonal-bloom:hover {
+      background-color: #1D1B1A;
+    }
+    .ledger-number {
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body class="bg-[#0C0B0A]">
+<!-- Side Navigation Drawer -->
+<aside class="fixed left-0 top-0 flex flex-col h-full py-8 px-6 bg-[#0C0B0A] w-72 border-r-0 z-50">
+<div class="mb-12">
+<h1 class="text-2xl font-light tracking-widest text-[#F0EDE8] uppercase">Parcel</h1>
+<p class="text-[10px] text-[#8B7AFF] tracking-[0.3em] mt-1 font-mono">INSTITUTIONAL GRADE</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center space-x-4 py-3 px-4 rounded transition-all duration-300 text-[#C5C0B8] opacity-70 hover:opacity-100 hover:bg-[#1D1B1A]" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-light tracking-wide">Home</span>
+</a>
+<a class="flex items-center space-x-4 py-3 px-4 rounded transition-all duration-300 text-[#C5C0B8] opacity-70 hover:opacity-100 hover:bg-[#1D1B1A]" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-light tracking-wide">Deals</span>
+</a>
+<!-- Active State for People (Contact Detail) -->
+<a class="flex items-center space-x-4 py-3 px-4 rounded text-[#C7BFFF] font-medium border-r-2 border-[#8B7AFF] bg-gradient-to-r from-[#8B7AFF10] to-transparent" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-light tracking-wide">People</span>
+</a>
+<a class="flex items-center space-x-4 py-3 px-4 rounded transition-all duration-300 text-[#C5C0B8] opacity-70 hover:opacity-100 hover:bg-[#1D1B1A]" href="#">
+<span class="material-symbols-outlined">domain</span>
+<span class="font-light tracking-wide">Assets</span>
+</a>
+<a class="flex items-center space-x-4 py-3 px-4 rounded transition-all duration-300 text-[#C5C0B8] opacity-70 hover:opacity-100 hover:bg-[#1D1B1A]" href="#">
+<span class="material-symbols-outlined">file_download</span>
+<span class="font-light tracking-wide">Outputs</span>
+</a>
+</nav>
+<div class="mt-auto">
+<button class="w-full py-4 px-6 bg-gradient-to-r from-[#8F7FFF] to-[#C7BFFF] text-[#25008B] rounded-md font-medium text-sm flex items-center justify-center space-x-2 active:scale-95 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span>AI Assistant</span>
+</button>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="fixed top-0 right-0 left-72 z-40 flex justify-between items-center px-12 h-20 bg-[#0C0B0A]/80 backdrop-blur-xl">
+<div class="flex items-center space-x-4">
+<span class="text-[#C5C0B8] text-sm font-light">People</span>
+<span class="text-[#8A8580] text-xs">/</span>
+<span class="text-[#F0EDE8] font-medium">Alexander Sterling</span>
+</div>
+<div class="flex items-center space-x-8">
+<div class="relative">
+<span class="absolute inset-y-0 left-3 flex items-center text-[#8A8580]">
+<span class="material-symbols-outlined">search</span>
+</span>
+<input class="bg-[#1D1B1A] border-none rounded-md pl-10 pr-4 py-2 text-sm text-[#F0EDE8] w-64 focus:ring-1 focus:ring-[#8B7AFF]" placeholder="Search entities..." type="text"/>
+</div>
+<div class="flex items-center space-x-4">
+<button class="text-[#C5C0B8] hover:text-[#C7BFFF] transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-[#C5C0B8] hover:text-[#C7BFFF] transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-[#474554]/30">
+<img class="w-full h-full object-cover" data-alt="professional portrait of a senior real estate executive with sharp lighting and dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtoCE1ZO-tgACSIzevnXYQFIMCk6hQZ5pxy3y18179ToZLwKJtlues987jCPDC5HeDJvX4Vu4hdWZxwUGesYh-3OPyTz9hzEPp07gEhjzhj-9gRZyWMmp-cbpWDCA67PMT0MQJSrQveydndPSAcp78lYi74vlp23PCu1qzOvXnojGLz7WXfrQcHVmR4mT9O_Lf4uZcgZpTzOC-hE8OIEizXz2lDzDCpg5PsYpD-llwuxP8Yxnbc08pIf8NIaAHF9LAIY3TppwDpno"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-72 pt-32 pb-20 px-12 max-w-[1600px]">
+<!-- Header Section -->
+<section class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
+<div class="flex items-center space-x-8">
+<div class="relative">
+<div class="w-32 h-32 rounded-xl overflow-hidden bg-[#1D1B1A]">
+<img class="w-full h-full object-cover opacity-90" data-alt="close-up portrait of Alexander Sterling, a professional male in a tailored suit with a confident expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMOHtkGmO9S1GBiD1_ukQ38vWZ_y76hCIr034HUwUB8XFhlzNDEZDfmHtXvRlfy5G5CLKmFmYfReickCLQGVytfhhR0jym46sWzsN14Nef6reMTDRDBaiuK1oN2ORdypZyfjUQN5snr2ROgFBdS3b6zmju0jxXj_AeuAajMSBSejy3eMCPH1gu9i2UUTx_ePbFGl4AebYU56ehlLyg8_rjxkSjbNdMTkV-NzumnqItaVuJiXsTlUepMI99EiE1_6z-8chWia1Wmsc"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-[#0C0B0A] p-1 rounded-full">
+<span class="material-symbols-outlined text-[#8B7AFF]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex items-center space-x-4">
+<h1 class="text-5xl font-light tracking-tight text-[#F0EDE8]">Alexander Sterling</h1>
+<span class="px-3 py-1 bg-[#1D1B1A] text-[#8B7AFF] text-[10px] tracking-widest uppercase rounded-full border border-[#8B7AFF]/20">Verified</span>
+</div>
+<div class="flex items-center space-x-4 text-[#C5C0B8]">
+<span class="font-light text-lg">Seller</span>
+<span class="w-1 h-1 bg-[#8A8580] rounded-full"></span>
+<span class="font-light text-lg">Sterling Real Estate Group</span>
+</div>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<button class="px-6 py-3 border border-[#474554]/30 text-[#F0EDE8] rounded-md text-sm hover:bg-[#1D1B1A] transition-all active:scale-95">Send Message</button>
+<button class="px-6 py-3 border border-[#474554]/30 text-[#F0EDE8] rounded-md text-sm hover:bg-[#1D1B1A] transition-all active:scale-95">Schedule Call</button>
+<button class="px-8 py-3 bg-gradient-to-r from-[#8F7FFF] to-[#C7BFFF] text-[#25008B] rounded-md text-sm font-semibold active:scale-95 transition-all shadow-lg shadow-[#8B7AFF]/10">New Deal</button>
+</div>
+</section>
+<!-- Three-Column Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+<!-- Left Column: Contact Info & Role -->
+<div class="lg:col-span-3 space-y-12">
+<div class="space-y-6">
+<h3 class="label-header">Contact Information</h3>
+<div class="space-y-4">
+<div class="group flex items-center space-x-3 text-[#C5C0B8] hover:text-[#F0EDE8] transition-colors">
+<span class="material-symbols-outlined text-[#8B7AFF]/60 group-hover:text-[#8B7AFF]">mail</span>
+<span class="text-sm font-light">a.sterling@sterlingreg.com</span>
+</div>
+<div class="group flex items-center space-x-3 text-[#C5C0B8] hover:text-[#F0EDE8] transition-colors">
+<span class="material-symbols-outlined text-[#8B7AFF]/60 group-hover:text-[#8B7AFF]">call</span>
+<span class="text-sm ledger-number">+1 (555) 294-1029</span>
+</div>
+<div class="group flex items-start space-x-3 text-[#C5C0B8] hover:text-[#F0EDE8] transition-colors">
+<span class="material-symbols-outlined text-[#8B7AFF]/60 group-hover:text-[#8B7AFF] mt-0.5">location_on</span>
+<span class="text-sm font-light leading-relaxed">450 Park Avenue, 12th Floor<br/>New York, NY 10022</span>
+</div>
+</div>
+</div>
+<div class="space-y-6">
+<h3 class="label-header">Social Connectivity</h3>
+<div class="flex space-x-4">
+<a class="w-10 h-10 rounded-md bg-[#1D1B1A] flex items-center justify-center text-[#C5C0B8] hover:text-[#8B7AFF] transition-all hover:scale-105" href="#">
+<span class="material-symbols-outlined">share</span>
+</a>
+<a class="w-10 h-10 rounded-md bg-[#1D1B1A] flex items-center justify-center text-[#C5C0B8] hover:text-[#8B7AFF] transition-all hover:scale-105" href="#">
+<span class="material-symbols-outlined">public</span>
+</a>
+<a class="w-10 h-10 rounded-md bg-[#1D1B1A] flex items-center justify-center text-[#C5C0B8] hover:text-[#8B7AFF] transition-all hover:scale-105" href="#">
+<span class="material-symbols-outlined">link</span>
+</a>
+</div>
+</div>
+<div class="p-6 bg-[#1D1B1A] rounded-xl space-y-4">
+<h3 class="label-header">Role Info</h3>
+<div class="space-y-4">
+<div>
+<p class="text-[10px] text-[#8A8580] uppercase mb-1">Specialization</p>
+<p class="text-[#F0EDE8] font-light">Institutional Multi-Family, Mixed-Use Developments</p>
+</div>
+<div>
+<p class="text-[10px] text-[#8A8580] uppercase mb-1">Experience</p>
+<p class="text-[#F0EDE8] font-light"><span class="ledger-number">15+</span> Years Industry Tenure</p>
+</div>
+<div>
+<p class="text-[10px] text-[#8A8580] uppercase mb-1">Portfolio focus</p>
+<p class="text-[#F0EDE8] font-light">Tri-State Core Plus Assets</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Middle Column: Communications & Linked Deals -->
+<div class="lg:col-span-6 space-y-12">
+<!-- Communications Log -->
+<div class="space-y-8">
+<div class="flex justify-between items-center">
+<h3 class="label-header">Communications Log</h3>
+<button class="text-[11px] text-[#8B7AFF] uppercase tracking-wider">View All</button>
+</div>
+<div class="relative pl-8 space-y-10">
+<!-- Timeline Line -->
+<div class="absolute left-[11px] top-2 bottom-2 w-[1px] bg-[#474554]/30"></div>
+<!-- Timeline Item 1 -->
+<div class="relative">
+<div class="absolute -left-10 top-1 w-6 h-6 rounded-full bg-[#1D1B1A] border border-[#8B7AFF]/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-[#8B7AFF]">mail</span>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between items-start">
+<h4 class="text-[#F0EDE8] text-sm font-medium">Email: Contract Addendum Sent</h4>
+<span class="ledger-number text-[10px] text-[#8A8580]">2H AGO</span>
+</div>
+<p class="text-[#C5C0B8] text-sm font-light">Sent revised closing documents for the Skyline project. Awaiting signature.</p>
+</div>
+</div>
+<!-- Timeline Item 2 -->
+<div class="relative">
+<div class="absolute -left-10 top-1 w-6 h-6 rounded-full bg-[#1D1B1A] border border-[#8B7AFF]/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-[#8B7AFF]">call</span>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between items-start">
+<h4 class="text-[#F0EDE8] text-sm font-medium">Call: Initial Discovery</h4>
+<span class="ledger-number text-[10px] text-[#8A8580]">MAY 12, 14:20</span>
+</div>
+<p class="text-[#C5C0B8] text-sm font-light">Discussed valuation expectations for 1523 Lincoln Ave. Client is firm on $1.2M.</p>
+</div>
+</div>
+<!-- Timeline Item 3 -->
+<div class="relative">
+<div class="absolute -left-10 top-1 w-6 h-6 rounded-full bg-[#1D1B1A] border border-[#8B7AFF]/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-[#8B7AFF]">calendar_today</span>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between items-start">
+<h4 class="text-[#F0EDE8] text-sm font-medium">Meeting: Site Inspection</h4>
+<span class="ledger-number text-[10px] text-[#8A8580]">MAY 10, 10:00</span>
+</div>
+<p class="text-[#C5C0B8] text-sm font-light">Met at 8240 Skyline. General condition is excellent, minor HVAC concerns noted.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Linked Deals -->
+<div class="space-y-6">
+<h3 class="label-header">Linked Deals</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Deal Card 1 -->
+<div class="group p-5 bg-[#141312] border border-[#474554]/10 rounded-xl hover:bg-[#1D1B1A] transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="text-[#F0EDE8] font-medium">8240 Skyline</h4>
+<p class="text-[11px] text-[#8A8580]">Active Listing</p>
+</div>
+<span class="ledger-number text-[#C7BFFF] text-sm">$3.1M</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full border border-[#0C0B0A] bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="avatar of team member" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5MN3RRl2xQjkuW6ggUIpSBEC4rZMIuLYPwk7RUhlAU85zfruWKNbKO_VbBTFOC1xelV5Oi2j0VU2qGvlBEeCE2lVhf_80JcsMNtouf1fLgSXoHKt4PoQad8DfuA7rWBn3fA_qT9jA6czmHSUzcdIhkUReUw31m_BBXBUzNbn8xQiV-ziYjoPGSh3mu0ujvAzDqCefdx-hxEY_-hUkcHCW0dqlII3EiFcFFdbfZYS6wlezwwJMBOlEv02uHXU6858VM0oDaDN_Mfg"/>
+</div>
+<div class="w-6 h-6 rounded-full border border-[#0C0B0A] bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="avatar of team member" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHrRNwQFnrSSsNRIfKDxghLTMrsZebn7bZfVFh6vnU1ueI4IERtjbckSALoqpQgEsvOX9A_zQ0QmAUTq4L8kKHWyTcTwyFpy0QXHjwnqW1Jz_z5EPU6a2FannBwQbigaY6Y62MNLw-3gXAH8gwE5pgWY4J8QU7VT-3IR9XnOhj7R9UnK8O50uD0R5384J_aaQ56iGsRrvKmHbE00TU6FB3smeJINvQLLJv0MfMhQzRs5_qAB10JcmFxz5ISg4_HV1Ki4qWj-Z23hs"/>
+</div>
+</div>
+<span class="material-symbols-outlined text-[#8A8580] group-hover:text-[#8B7AFF] transition-colors">arrow_forward</span>
+</div>
+</div>
+<!-- Deal Card 2 -->
+<div class="group p-5 bg-[#141312] border border-[#474554]/10 rounded-xl hover:bg-[#1D1B1A] transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="text-[#F0EDE8] font-medium">1523 Lincoln Ave</h4>
+<p class="text-[11px] text-[#8A8580]">Under Review</p>
+</div>
+<span class="ledger-number text-[#C7BFFF] text-sm">$1.1M</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full border border-[#0C0B0A] bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="avatar of team member" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbFZCbeS4og399juc2DWE-ejTuxN9WSvx9KVUDpJ708LzRJ0MVmEK_J6aTRzR21Cg7w3I1BpeRh246hSh9PEep-XsVws7yvk2djBQd_va5an9x47Ph5zHuE4d6ztmciFvqX5g2GYOamLNjFlb3e6Vui-ciVAVTzpjsNFqu0_00IrWWMpAEeO8vSCXfGNBO4TEOCSdUV-YKmdcdk_k9x0SIeXelzROTSr4Jh61TcG-kq39JtQOjyy36yRSV0ZuWykl7BYlbxkW69O4"/>
+</div>
+</div>
+<span class="material-symbols-outlined text-[#8A8580] group-hover:text-[#8B7AFF] transition-colors">arrow_forward</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Deal Metrics -->
+<div class="lg:col-span-3">
+<div class="bg-[#1D1B1A] rounded-2xl p-8 space-y-10">
+<h3 class="label-header">Deal Metrics</h3>
+<div class="space-y-8">
+<!-- Metric 1 -->
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<p class="text-xs text-[#C5C0B8] font-light">Deals Closed</p>
+<p class="ledger-number text-lg text-[#F0EDE8]">12</p>
+</div>
+<div class="w-full h-1.5 bg-[#0C0B0A] rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-[#8B7AFF] to-[#C7BFFF] w-[80%]"></div>
+</div>
+</div>
+<!-- Metric 2 -->
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<p class="text-xs text-[#C5C0B8] font-light">Avg. Response Time</p>
+<p class="ledger-number text-lg text-[#F0EDE8]">4.2h</p>
+</div>
+<div class="w-full h-1.5 bg-[#0C0B0A] rounded-full overflow-hidden">
+<div class="h-full bg-[#8B7AFF] w-[35%]"></div>
+</div>
+</div>
+<!-- Metric 3 -->
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<p class="text-xs text-[#C5C0B8] font-light">Total Deal Volume</p>
+<p class="ledger-number text-lg text-[#F0EDE8]">$4.2M</p>
+</div>
+<div class="w-full h-1.5 bg-[#0C0B0A] rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-[#8B7AFF] to-[#C7BFFF] w-[65%]"></div>
+</div>
+</div>
+</div>
+<div class="pt-8 border-t border-[#474554]/20 space-y-4">
+<div class="flex items-center justify-between text-sm">
+<span class="text-[#8A8580] font-light">Status</span>
+<span class="text-[#F0EDE8] font-medium">Premier Partner</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<span class="text-[#8A8580] font-light">Last Active</span>
+<span class="ledger-number text-[#F0EDE8]">Today, 10:14</span>
+</div>
+</div>
+<button class="w-full py-3 text-[#8B7AFF] text-xs font-medium uppercase tracking-[0.2em] border border-[#8B7AFF]/30 rounded hover:bg-[#8B7AFF10] transition-colors">
+            Generate Report
+          </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Nav Bar (Mobile only fallback) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#0C0B0A] border-t border-[#474554]/10 flex items-center justify-around px-4 z-50">
+<button class="flex flex-col items-center space-y-1 text-[#C5C0B8]">
+<span class="material-symbols-outlined">dashboard</span>
+</button>
+<button class="flex flex-col items-center space-y-1 text-[#C5C0B8]">
+<span class="material-symbols-outlined">analytics</span>
+</button>
+<button class="flex flex-col items-center space-y-1 text-[#8B7AFF]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+</button>
+<button class="flex flex-col items-center space-y-1 text-[#C5C0B8]">
+<span class="material-symbols-outlined">domain</span>
+</button>
+</nav>
+</body></html>

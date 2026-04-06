@@ -254,7 +254,9 @@ def _resolve_plan_from_subscription(stripe_sub) -> str:
     # Check subscription metadata first
     plan = stripe_sub.metadata.get("parcel_plan")
     if plan:
-        return plan
+        # Legacy mapping for subscriptions created before tier rename
+        _legacy = {"starter": "plus", "team": "business"}
+        return _legacy.get(plan, plan)
 
     # Fall back to price ID lookup
     if stripe_sub.items and stripe_sub.items.data:

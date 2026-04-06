@@ -4,6 +4,10 @@ import os
 from datetime import datetime, timedelta
 from typing import Optional
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import bcrypt
 from fastapi import Depends, HTTPException, Request, status
 from jose import JWTError, jwt
@@ -179,6 +183,33 @@ async def get_current_user(
                     if user and not user.clerk_user_id:
                         user.clerk_user_id = claims["sub"]
                         db.commit()
+                # JIT provisioning: create user on first Clerk sign-in
+                if not user:
+                    from core.security.clerk import fetch_clerk_user
+                    clerk_user = fetch_clerk_user(claims["sub"])
+                    if clerk_user:
+                        # Check by email one more time (Clerk API gives us the email)
+                        if clerk_user.get("email"):
+                            user = db.query(User).filter(
+                                User.email == clerk_user["email"]
+                            ).first()
+                            if user and not user.clerk_user_id:
+                                user.clerk_user_id = claims["sub"]
+                                db.commit()
+                        # Create if still not found
+                        if not user:
+                            from datetime import datetime as _dt, timedelta as _td
+                            user = User(
+                                email=clerk_user.get("email", f'{claims["sub"]}@clerk.local'),
+                                name=clerk_user.get("name") or clerk_user.get("email", "").split("@")[0] or "User",
+                                role="investor",
+                                clerk_user_id=claims["sub"],
+                                plan_tier="free",
+                                trial_ends_at=_dt.utcnow() + _td(days=7),
+                            )
+                            db.add(user)
+                            db.commit()
+                            db.refresh(user)
 
     # --- Mode 2: Legacy cookie JWT (fallback) ---
     if user is None:

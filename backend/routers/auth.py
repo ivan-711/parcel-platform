@@ -122,6 +122,10 @@ async def register(request: Request, body: RegisterRequest, response: Response, 
 
     _set_auth_cookies(response, str(user.id))
 
+    from core.telemetry import identify_user, track_event
+    identify_user(user.id, {"email": user.email, "name": user.name, "role": user.role})
+    track_event(user.id, "user_signup", {"role": user.role})
+
     return AuthSuccessResponse(user=UserResponse.model_validate(user))
 
 
@@ -135,13 +139,16 @@ async def login(request: Request, body: LoginRequest, response: Response, db: Se
     Returns 401 on invalid credentials.
     """
     user = db.query(User).filter(User.email == body.email).first()
-    if not user or not verify_password(body.password, user.password_hash):
+    if not user or not user.password_hash or not verify_password(body.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={"error": "Invalid email or password", "code": "INVALID_CREDENTIALS"},
         )
 
     _set_auth_cookies(response, str(user.id))
+
+    from core.telemetry import track_event
+    track_event(user.id, "user_login")
 
     return AuthSuccessResponse(user=UserResponse.model_validate(user))
 
@@ -228,6 +235,11 @@ async def update_profile(
         current_user.email = body.email
 
     if body.new_password is not None:
+        if not current_user.password_hash:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={"error": "Password login is not available for this account. Sign in with your SSO provider.", "code": "NO_PASSWORD_AUTH"},
+            )
         if not body.current_password:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

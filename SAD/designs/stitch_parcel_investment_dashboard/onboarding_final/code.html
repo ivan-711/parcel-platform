@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&amp;f[]=jetbrains-mono@400&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "surface-container-high": "#2b2a28",
+                  "outline-variant": "#474554",
+                  "surface-tint": "#c7bfff",
+                  "surface-container-highest": "#363433",
+                  "on-tertiary-fixed-variant": "#624000",
+                  "outline": "#928e9f",
+                  "on-surface": "#e6e1df",
+                  "tertiary-container": "#c48306",
+                  "tertiary-fixed-dim": "#ffb94f",
+                  "error": "#ffb4ab",
+                  "on-secondary-container": "#b6aee8",
+                  "primary-container": "#8f7fff",
+                  "inverse-primary": "#5b48cc",
+                  "secondary-fixed": "#e5deff",
+                  "on-error-container": "#ffdad6",
+                  "on-tertiary": "#452b00",
+                  "surface-bright": "#3b3937",
+                  "on-primary-container": "#25008b",
+                  "inverse-surface": "#e6e1df",
+                  "surface-container-low": "#1d1b1a",
+                  "on-primary": "#2b009e",
+                  "surface-container-lowest": "#0f0e0d",
+                  "on-secondary": "#302a5a",
+                  "primary-fixed": "#e5deff",
+                  "primary": "#c7bfff",
+                  "on-background": "#e6e1df",
+                  "secondary-container": "#464072",
+                  "error-container": "#93000a",
+                  "on-primary-fixed-variant": "#432cb3",
+                  "secondary-fixed-dim": "#c8c0fb",
+                  "secondary": "#c8c0fb",
+                  "background": "#0C0B0A",
+                  "surface-dim": "#141312",
+                  "on-tertiary-fixed": "#291800",
+                  "on-error": "#690005",
+                  "surface": "#141311",
+                  "on-primary-fixed": "#180064",
+                  "tertiary": "#ffb94f",
+                  "surface-container": "#211f1e",
+                  "surface-variant": "#363433",
+                  "on-surface-variant": "#c9c4d6",
+                  "on-secondary-fixed": "#1a1444",
+                  "on-tertiary-container": "#3c2500",
+                  "tertiary-fixed": "#ffddb3",
+                  "primary-fixed-dim": "#c7bfff",
+                  "inverse-on-surface": "#32302f",
+                  "on-secondary-fixed-variant": "#464072"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.125rem",
+                  "lg": "0.25rem",
+                  "xl": "0.5rem",
+                  "full": "0.75rem"
+          },
+          "fontFamily": {
+                  "headline": ["Satoshi", "sans-serif"],
+                  "body": ["Satoshi", "sans-serif"],
+                  "label": ["JetBrains Mono", "monospace"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+    .persona-card:hover {
+      box-shadow: 0 0 20px rgba(139, 122, 255, 0.15);
+      border-color: rgba(139, 122, 255, 0.4);
+    }
+    .persona-card.selected {
+      border-color: #8B7AFF;
+      background-color: rgba(139, 122, 255, 0.05);
+    }
+    body {
+      background-color: #0C0B0A;
+      color: #F0EDE8;
+      font-family: 'Satoshi', sans-serif;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center selection:bg-primary-container selection:text-on-primary-container">
+<!-- Suppression of Navigation Shell as per task: Transactional/Onboarding page -->
+<main class="flex-1 w-full max-w-5xl px-6 py-12 flex flex-col items-center">
+<!-- Wordmark Logo -->
+<header class="mb-20">
+<h1 class="text-xl font-light tracking-[0.2em] text-[#F0EDE8] uppercase">Parcel</h1>
+</header>
+<!-- Heading Section -->
+<div class="text-center mb-12 max-w-2xl">
+<h2 class="text-4xl md:text-5xl font-light tracking-tight text-[#F0EDE8] mb-4">What best describes you?</h2>
+<p class="text-lg font-normal text-[#C5C0B8] opacity-80">This helps us personalize your experience</p>
+</div>
+<!-- 2x4 Bento/Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mb-16">
+<!-- Card 1 -->
+<button class="persona-card group flex items-center p-6 bg-[#141311] border border-[#474554]/15 rounded-xl transition-all duration-300 text-left">
+<div class="mr-5 w-12 h-12 flex items-center justify-center rounded-lg bg-[#1D1B1A] text-[#8B7AFF] group-hover:bg-[#8B7AFF]/10 transition-colors">
+<span class="material-symbols-outlined text-2xl" data-icon="handshake">handshake</span>
+</div>
+<span class="text-lg font-normal text-[#F0EDE8]">I wholesale deals</span>
+</button>
+<!-- Card 2 -->
+<button class="persona-card group flex items-center p-6 bg-[#141311] border border-[#474554]/15 rounded-xl transition-all duration-300 text-left">
+<div class="mr-5 w-12 h-12 flex items-center justify-center rounded-lg bg-[#1D1B1A] text-[#8B7AFF] group-hover:bg-[#8B7AFF]/10 transition-colors">
+<span class="material-symbols-outlined text-2xl" data-icon="home">home</span>
+</div>
+<span class="text-lg font-normal text-[#F0EDE8]">I flip houses</span>
+</button>
+<!-- Card 3 -->
+<button class="persona-card group flex items-center p-6 bg-[#141311] border border-[#474554]/15 rounded-xl transition-all duration-300 text-left">
+<div class="mr-5 w-12 h-12 flex items-center justify-center rounded-lg bg-[#1D1B1A] text-[#8B7AFF] group-hover:bg-[#8B7AFF]/10 transition-colors">
+<span class="material-symbols-outlined text-2xl" data-icon="key">key</span>
+</div>
+<span class="text-lg font-normal text-[#F0EDE8]">I buy and hold rentals</span>
+</button>
+<!-- Card 4 -->
+<button class="persona-card group flex items-center p-6 bg-[#141311] border border-[#474554]/15 rounded-xl transition-all duration-300 text-left">
+<div class="mr-5 w-12 h-12 flex items-center justify-center rounded-lg bg-[#1D1B1A] text-[#8B7AFF] group-hover:bg-[#8B7AFF]/10 transition-colors">
+<span class="material-symbols-outlined text-2xl" data-icon="layers">layers</span>
+</div>
+<span class="text-lg font-normal text-[#F0EDE8]">I use creative financing</span>
+</button>
+<!-- Card 5 -->
+<button class="persona-card group flex items-center p-6 bg-[#141311] border border-[#474554]/15 rounded-xl transition-all duration-300 text-left">
+<div class="mr-5 w-12 h-12 flex items-center justify-center rounded-lg bg-[#1D1B1A] text-[#8B7AFF] group-hover:bg-[#8B7AFF]/10 transition-colors">
+<span class="material-symbols-outlined text-2xl" data-icon="refresh">refresh</span>
+</div>
+<span class="text-lg font-normal text-[#F0EDE8]">I use BRRRR strategy</span>
+</button>
+<!-- Card 6 -->
+<button class="persona-card group flex items-center p-6 bg-[#141311] border border-[#474554]/15 rounded-xl transition-all duration-300 text-left">
+<div class="mr-5 w-12 h-12 flex items-center justify-center rounded-lg bg-[#1D1B1A] text-[#8B7AFF] group-hover:bg-[#8B7AFF]/10 transition-colors">
+<span class="material-symbols-outlined text-2xl" data-icon="dashboard">dashboard</span>
+</div>
+<span class="text-lg font-normal text-[#F0EDE8]">I use multiple strategies</span>
+</button>
+<!-- Card 7 -->
+<button class="persona-card group flex items-center p-6 bg-[#141311] border border-[#474554]/15 rounded-xl transition-all duration-300 text-left">
+<div class="mr-5 w-12 h-12 flex items-center justify-center rounded-lg bg-[#1D1B1A] text-[#8B7AFF] group-hover:bg-[#8B7AFF]/10 transition-colors">
+<span class="material-symbols-outlined text-2xl" data-icon="badge">badge</span>
+</div>
+<span class="text-lg font-normal text-[#F0EDE8]">I'm an agent serving investors</span>
+</button>
+<!-- Card 8 -->
+<button class="persona-card group flex items-center p-6 bg-[#141311] border border-[#474554]/15 rounded-xl transition-all duration-300 text-left">
+<div class="mr-5 w-12 h-12 flex items-center justify-center rounded-lg bg-[#1D1B1A] text-[#8B7AFF] group-hover:bg-[#8B7AFF]/10 transition-colors">
+<span class="material-symbols-outlined text-2xl" data-icon="rocket_launch">rocket_launch</span>
+</div>
+<span class="text-lg font-normal text-[#F0EDE8]">I'm just getting started</span>
+</button>
+</div>
+<!-- Actions Section -->
+<footer class="flex flex-col items-center gap-4">
+<button class="bg-[#1D1B1A] text-[#8A8580] opacity-50 cursor-not-allowed font-medium py-3 px-12 rounded-xl transition-all duration-500 border border-[#474554]/20" disabled="">
+        Continue
+      </button>
+<p class="text-xs text-[#8A8580]/60 italic">Please select an option to continue</p>
+<a class="text-[#8A8580] hover:text-[#F0EDE8] transition-colors text-sm tracking-wide mt-2" href="#">
+        Skip for now
+      </a>
+</footer>
+</main>
+<!-- Background Tonal Bloom Details -->
+<div class="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
+<!-- Subtle radial glow for atmosphere -->
+<div class="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-[#8B7AFF]/5 blur-[120px]"></div>
+<div class="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] rounded-full bg-[#8B7AFF]/3 blur-[100px]"></div>
+</div>
+<script>
+    // Visual logic for demonstration of the active state behavior
+    const cards = document.querySelectorAll('.persona-card');
+    const continueBtn = document.querySelector('button[disabled]');
+    const hint = document.querySelector('footer p');
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        cards.forEach(c => c.classList.remove('selected', 'border-[#8B7AFF]'));
+        card.classList.add('selected', 'border-[#8B7AFF]');
+        
+        // Visual "activation" of button
+        continueBtn.disabled = false;
+        continueBtn.className = "bg-[#8B7AFF] text-[#25008B] font-medium py-3 px-12 rounded-xl hover:shadow-[0_0_25px_rgba(139,122,255,0.3)] transition-all duration-500 cursor-pointer";
+        continueBtn.style.opacity = "1";
+        hint.style.visibility = "hidden";
+      });
+    });
+  </script>
+</body></html>

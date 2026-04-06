@@ -1,7 +1,8 @@
 // frontend/src/pages/transactions/TransactionsPage.tsx
 import { useState, useMemo } from 'react'
 import { DollarSign, Plus, Pencil, Trash2 } from 'lucide-react'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Line, ComposedChart } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Line, ComposedChart, CartesianGrid } from 'recharts'
+import { CHART_ANIMATION } from '@/lib/chart-theme'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
@@ -242,16 +243,17 @@ export default function TransactionsPage() {
 
         {/* Monthly Summary Chart */}
         {summary && summary.by_month.length > 0 && (
-          <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
-            <h3 className="text-[11px] text-[#8A8580] uppercase tracking-wider font-medium mb-4">
+          <div className="bg-[var(--chart-bg)] border border-[var(--chart-border)] rounded-xl p-5">
+            <h3 className="text-[11px] text-[var(--chart-axis-text)] uppercase tracking-wider font-medium mb-4">
               Monthly Income vs Expenses
             </h3>
             <ResponsiveContainer width="100%" height={250}>
               <ComposedChart data={summary.by_month} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+                <CartesianGrid stroke="var(--chart-grid)" strokeDasharray="3 3" vertical={false} />
                 <XAxis
                   dataKey="month"
-                  tick={{ fill: '#8A8580', fontSize: 10 }}
-                  axisLine={{ stroke: '#1E1D1B' }}
+                  tick={{ fill: 'var(--chart-axis-text)', fontSize: 11 }}
+                  axisLine={false}
                   tickLine={false}
                   tickFormatter={(v) => {
                     const [y, m] = v.split('-')
@@ -259,18 +261,24 @@ export default function TransactionsPage() {
                   }}
                 />
                 <YAxis
-                  tick={{ fill: '#8A8580', fontSize: 10 }}
-                  axisLine={{ stroke: '#1E1D1B' }}
+                  tick={{ fill: 'var(--chart-axis-text)', fontSize: 11 }}
+                  axisLine={false}
                   tickLine={false}
                   tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
                 />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#141311', border: '1px solid #1E1D1B', borderRadius: '8px', fontSize: '12px' }}
+                  contentStyle={{
+                    backgroundColor: 'var(--chart-tooltip-bg)',
+                    border: '1px solid var(--chart-tooltip-border)',
+                    borderRadius: '8px',
+                    boxShadow: 'var(--chart-tooltip-shadow)',
+                    backdropFilter: 'blur(var(--chart-tooltip-blur))',
+                  }}
                   formatter={(v: number, name: string) => [`$${v.toLocaleString()}`, name === 'income' ? 'Income' : name === 'expenses' ? 'Expenses' : 'Net']}
                 />
-                <Bar dataKey="income" fill="#4ADE80" radius={[4, 4, 0, 0]} barSize={20} />
-                <Bar dataKey="expenses" fill="#F87171" radius={[4, 4, 0, 0]} barSize={20} />
-                <Line type="monotone" dataKey="net" stroke="#F0EDE8" strokeWidth={2} dot={false} />
+                <Bar dataKey="income" fill="var(--chart-positive)" radius={[4, 4, 0, 0]} barSize={20} {...CHART_ANIMATION} />
+                <Bar dataKey="expenses" fill="var(--chart-negative)" radius={[4, 4, 0, 0]} barSize={20} {...CHART_ANIMATION} />
+                <Line type="monotone" dataKey="net" stroke="var(--chart-tooltip-text)" strokeWidth={2} dot={false} {...CHART_ANIMATION} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>

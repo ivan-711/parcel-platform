@@ -46,9 +46,13 @@ function formatPrice(n: number | null | undefined): string {
   return `$${Math.round(n / 1000)}K`
 }
 
+function formatPropertyType(pt: string): string {
+  return pt.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+}
+
 function buyBoxSummary(box: BuyBox): string {
   const parts: string[] = []
-  if (box.property_types?.length) parts.push(box.property_types.join('/'))
+  if (box.property_types?.length) parts.push(box.property_types.map(formatPropertyType).join(' / '))
   if (box.min_price != null || box.max_price != null) {
     const lo = formatPrice(box.min_price)
     const hi = formatPrice(box.max_price)
@@ -56,7 +60,8 @@ function buyBoxSummary(box: BuyBox): string {
     else if (lo) parts.push(`${lo}+`)
     else if (hi) parts.push(`Up to ${hi}`)
   }
-  if (box.target_markets?.length) parts.push(box.target_markets[0])
+  const markets = box.target_markets ?? (box as unknown as Record<string, unknown>).markets as string[] | undefined
+  if (markets?.length) parts.push(markets[0])
   return parts.join(' \u00B7 ')
 }
 
@@ -218,7 +223,10 @@ export default function BuyersListPage() {
 // ── Buyer Card ────────────────────────────────────────────
 function BuyerCard({ buyer }: { buyer: BuyerListItem }) {
   const fullName = [buyer.first_name, buyer.last_name].filter(Boolean).join(' ')
-  const ft = buyer.funding_type?.toLowerCase().replace(/\s+/g, '_') ?? ''
+    || (buyer as unknown as Record<string, unknown>).name as string
+    || 'Unknown'
+  const ft = (buyer.funding_type ?? ((buyer as unknown as Record<string, unknown>).funding_types as string[] | undefined)?.[0] ?? '')
+    .toLowerCase().replace(/\s+/g, '_')
   const fundingCls = FUNDING_COLORS[ft] ?? 'bg-[#1E1D1B] text-[#8A8580] border-[#1E1D1B]'
   const firstBox = buyer.buy_boxes?.[0]
   const summary = firstBox ? buyBoxSummary(firstBox) : null
@@ -273,7 +281,9 @@ function BuyerCard({ buyer }: { buyer: BuyerListItem }) {
 
       {/* Row 4: Stats */}
       <div className="flex items-center gap-4 text-[11px] text-[#8A8580]">
-        <span>{buyer.deal_count} deal{buyer.deal_count !== 1 ? 's' : ''}</span>
+        {(buyer.deal_count ?? (buyer as unknown as Record<string, unknown>).total_deals) != null && (
+          <span>{buyer.deal_count ?? (buyer as unknown as Record<string, unknown>).total_deals as number} deal{(buyer.deal_count ?? (buyer as unknown as Record<string, unknown>).total_deals as number) !== 1 ? 's' : ''}</span>
+        )}
         {buyer.last_communication && (
           <span>Last contact {relativeTime(buyer.last_communication)}</span>
         )}

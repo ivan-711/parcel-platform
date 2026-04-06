@@ -15,7 +15,7 @@ export function PlanBadge({ planTier, trialActive }: PlanBadgeProps) {
     )
   }
 
-  if (planTier === 'pro' || planTier === 'team' || planTier === 'starter') {
+  if (planTier === 'pro' || planTier === 'business' || planTier === 'plus') {
     return (
       <span
         className={cn(
@@ -23,7 +23,7 @@ export function PlanBadge({ planTier, trialActive }: PlanBadgeProps) {
           'bg-[#8B7AFF]/15 text-[#A89FFF] ring-1 ring-[#8B7AFF]/20'
         )}
       >
-        {planTier === 'team' ? 'Team' : planTier === 'starter' ? 'Starter' : 'Pro'}
+        {planTier === 'business' ? 'Business' : planTier === 'plus' ? 'Plus' : 'Pro'}
       </span>
     )
   }

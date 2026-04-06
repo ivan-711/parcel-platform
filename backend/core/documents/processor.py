@@ -50,11 +50,11 @@ USER_PROMPT = (
 )
 
 
-def process_document(document_id: str, file_bytes: bytes, file_type: str) -> None:
-    """Background task: extract text or encode image, call Claude, store results.
+def run_metadata_extraction(document_id: str, file_bytes: bytes = None) -> None:
+    """Extract metadata from a document using Claude.
 
-    CRITICAL: Creates its own DB session — the request session is already closed
-    by the time this background task runs.
+    Core logic extracted for use by both BackgroundTasks and Dramatiq actors.
+    If file_bytes is None, downloads from S3 using the document's s3_key.
     """
     db = SessionLocal()
     try:
@@ -65,6 +65,13 @@ def process_document(document_id: str, file_bytes: bytes, file_type: str) -> Non
 
         doc.status = "processing"
         db.commit()
+
+        # Download from S3 if file_bytes not provided
+        if file_bytes is None:
+            from core.storage.s3_service import download_file
+            file_bytes = download_file(doc.s3_key)
+
+        file_type = doc.file_type
 
         # Build Claude messages based on file type
         if file_type in ("jpg", "jpeg", "png"):
@@ -93,16 +100,14 @@ def process_document(document_id: str, file_bytes: bytes, file_type: str) -> Non
             # PDF or DOCX — extract text
             if file_type == "pdf":
                 from core.documents.extractor import extract_text_from_pdf
-
-                text = extract_text_from_pdf(file_bytes)
+                text = extract_text_from_pdf(file_bytes).text
             elif file_type == "docx":
                 from core.documents.extractor import extract_text_from_docx
-
-                text = extract_text_from_docx(file_bytes)
+                text = extract_text_from_docx(file_bytes).text
             else:
                 text = ""
 
-            if not text.strip():
+            if not text or not text.strip():
                 doc.status = "failed"
                 doc.processing_error = "Could not extract text from document"
                 db.commit()
@@ -162,6 +167,11 @@ def process_document(document_id: str, file_bytes: bytes, file_type: str) -> Non
         _mark_failed(db, document_id, str(e))
     finally:
         db.close()
+
+
+def process_document(document_id: str, file_bytes: bytes, file_type: str) -> None:
+    """Legacy wrapper for BackgroundTasks compatibility."""
+    run_metadata_extraction(document_id, file_bytes=file_bytes)
 
 
 def _mark_failed(db, document_id: str, error_msg: str) -> None:

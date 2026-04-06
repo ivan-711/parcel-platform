@@ -84,12 +84,12 @@ export function SensitivityMatrix({ scenario }: Props) {
   if (!supportedStrategies.includes(strategy)) return null
 
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
+    <div className="bg-[var(--chart-bg)] border border-[var(--chart-border)] rounded-xl p-5">
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <h3 className="text-[11px] text-[#8A8580] uppercase tracking-wider font-medium">
+        <h3 className="text-[11px] text-[var(--chart-axis-text)] uppercase tracking-wider font-medium">
           Sensitivity Analysis
         </h3>
-        <div className="flex items-center gap-1 p-0.5 bg-[#0C0B0A] rounded-lg border border-[#1E1D1B]">
+        <div className="flex items-center gap-1 p-0.5 bg-app-bg rounded-lg border border-[var(--chart-border)]">
           {METRIC_OPTIONS.map(opt => (
             <button
               key={opt.value}
@@ -101,7 +101,7 @@ export function SensitivityMatrix({ scenario }: Props) {
                 'px-2 py-1 text-[10px] rounded transition-colors cursor-pointer',
                 activeMetric === opt.value
                   ? 'bg-[#8B7AFF]/15 text-[#8B7AFF]'
-                  : 'text-[#8A8580] hover:text-[#C5C0B8]'
+                  : 'text-[var(--chart-axis-text)] hover:text-[#C5C0B8]'
               )}
             >
               {opt.label}
@@ -114,9 +114,9 @@ export function SensitivityMatrix({ scenario }: Props) {
         <table className="w-full text-center text-sm">
           <thead>
             <tr>
-              <th className="text-[10px] text-[#8A8580] uppercase p-2">Price \ Rate</th>
+              <th className="text-[10px] text-[var(--chart-axis-text)] uppercase p-2">Price \ Rate</th>
               {rateDeltas.map((rd, i) => (
-                <th key={i} className="text-[10px] text-[#8A8580] uppercase p-2">
+                <th key={i} className="text-[10px] text-[var(--chart-axis-text)] uppercase p-2">
                   {rd === 0 ? `${baseRate.toFixed(1)}%` : `${rd > 0 ? '+' : ''}${rd.toFixed(1)}%`}
                 </th>
               ))}
@@ -125,7 +125,7 @@ export function SensitivityMatrix({ scenario }: Props) {
           <tbody>
             {matrix.map((row, ri) => (
               <tr key={ri}>
-                <td className="text-[10px] text-[#8A8580] p-2 text-left">{row.priceLabel}</td>
+                <td className="text-[10px] text-[var(--chart-axis-text)] p-2 text-left">{row.priceLabel}</td>
                 {row.cells.map((cell, ci) => {
                   const isCenter = ri === 2 && ci === 2
                   const positive = isPositive(cell.value)

@@ -33,7 +33,8 @@ import type {
   CancelResponse,
 } from '@/types'
 
-const API_URL = (import.meta.env.VITE_API_URL ?? 'https://api.parceldesk.io').replace('http://', 'https://')
+const _rawUrl = import.meta.env.VITE_API_URL ?? 'https://api.parceldesk.io'
+const API_URL = _rawUrl.includes('localhost') || _rawUrl.includes('127.0.0.1') ? _rawUrl : _rawUrl.replace('http://', 'https://')
 
 /** Track whether a refresh is in progress to avoid concurrent refresh attempts. */
 let refreshPromise: Promise<boolean> | null = null
@@ -466,6 +467,11 @@ export const api = {
       request<import('@/types').CompareResponse>('/api/analysis/compare', {
         method: 'POST',
         body: JSON.stringify({ inputs }),
+      }),
+    reverseCalculate: (strategy: string, targetMetric: string, targetValue: number, inputs: Record<string, number | string>) =>
+      request<import('@/types').ReverseCalculateResponse>('/api/analysis/reverse-calculate', {
+        method: 'POST',
+        body: JSON.stringify({ strategy, target_metric: targetMetric, target_value: targetValue, inputs }),
       }),
   },
   onboarding: {

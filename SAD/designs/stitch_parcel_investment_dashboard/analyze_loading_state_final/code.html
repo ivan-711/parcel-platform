@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Parcel | Analyzing Property</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&amp;f[]=jetbrains-mono@400,500&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#2b2a28",
+                        "outline-variant": "#474554",
+                        "surface-tint": "#c7bfff",
+                        "surface-container-highest": "#363433",
+                        "on-tertiary-fixed-variant": "#624000",
+                        "outline": "#928e9f",
+                        "on-surface": "#e6e1df",
+                        "tertiary-container": "#c48306",
+                        "tertiary-fixed-dim": "#ffb94f",
+                        "error": "#ffb4ab",
+                        "on-secondary-container": "#b6aee8",
+                        "primary-container": "#8f7fff",
+                        "inverse-primary": "#5b48cc",
+                        "secondary-fixed": "#e5deff",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary": "#452b00",
+                        "surface-bright": "#3b3937",
+                        "on-primary-container": "#25008b",
+                        "inverse-surface": "#e6e1df",
+                        "surface-container-low": "#1d1b1a",
+                        "on-primary": "#2b009e",
+                        "surface-container-lowest": "#0f0e0d",
+                        "on-secondary": "#302a5a",
+                        "primary-fixed": "#e5deff",
+                        "primary": "#c7bfff",
+                        "on-background": "#e6e1df",
+                        "secondary-container": "#464072",
+                        "error-container": "#93000a",
+                        "on-primary-fixed-variant": "#432cb3",
+                        "secondary-fixed-dim": "#c8c0fb",
+                        "secondary": "#c8c0fb",
+                        "background": "#0C0B0A",
+                        "surface-dim": "#0C0B0A",
+                        "on-tertiary-fixed": "#291800",
+                        "on-error": "#690005",
+                        "surface": "#0C0B0A",
+                        "on-primary-fixed": "#180064",
+                        "tertiary": "#ffb94f",
+                        "surface-container": "#141312",
+                        "surface-variant": "#1D1B1A",
+                        "on-surface-variant": "#c9c4d6",
+                        "on-secondary-fixed": "#1a1444",
+                        "on-tertiary-container": "#3c2500",
+                        "tertiary-fixed": "#ffddb3",
+                        "primary-fixed-dim": "#c7bfff",
+                        "inverse-on-surface": "#32302f",
+                        "on-secondary-fixed-variant": "#464072"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Satoshi", "sans-serif"],
+                        "body": ["Satoshi", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0C0B0A;
+            color: #F0EDE8;
+            font-family: 'Satoshi', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .loading-shimmer {
+            background: linear-gradient(90deg, #141312 0%, #1D1B1A 50%, #141312 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .active-dot {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="flex min-h-screen overflow-hidden selection:bg-[#C7BFFF] selection:text-[#25008b]">
+<!-- SideNavBar Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-[#0C0B0A] flex flex-col py-8 px-4 border-r border-[#474554]/15 z-40">
+<div class="mb-12">
+<h1 class="text-xl font-light tracking-[0.2em] text-[#F0EDE8]">Parcel</h1>
+<p class="text-[10px] tracking-[0.1em] text-[#8A8580] uppercase mt-1">Curated Ledger</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-[#8A8580] hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all group" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="text-[11px] font-normal tracking-widest uppercase">HOME</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#8B7AFF] bg-[#1D1B1A] border-r-2 border-[#8B7AFF] transition-all group" href="#">
+<span class="material-symbols-outlined text-[20px]">maps_home_work</span>
+<span class="text-[11px] font-normal tracking-widest uppercase">DEALS</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#8A8580] hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all group" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="text-[11px] font-normal tracking-widest uppercase">PEOPLE</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#8A8580] hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all group" href="#">
+<span class="material-symbols-outlined text-[20px]">account_balance</span>
+<span class="text-[11px] font-normal tracking-widest uppercase">ASSETS</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#8A8580] hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all group" href="#">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="text-[11px] font-normal tracking-widest uppercase">OUTPUTS</span>
+</a>
+</nav>
+<div class="mt-auto space-y-4 pt-8">
+<button class="w-full py-3 bg-gradient-to-r from-[#C7BFFF] to-[#8F7FFF] rounded-md text-[#25008b] text-[11px] font-bold tracking-widest uppercase flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[16px]">magic_button</span>
+            Ask AI
+        </button>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-[#8A8580] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined text-[18px]">help_outline</span>
+<span class="text-[11px] tracking-widest uppercase">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-[#8A8580] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined text-[18px]">person</span>
+<span class="text-[11px] tracking-widest uppercase">Account</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 flex flex-col min-h-screen bg-[#0C0B0A]">
+<!-- TopNavBar Shell -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-50 bg-[#0C0B0A]/80 backdrop-blur-xl h-16 flex justify-between items-center px-8 border-b border-[#474554]/10">
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-[#8A8580]">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</span>
+<input class="bg-[#1D1B1A] border-none rounded-md pl-10 pr-4 py-2 text-[13px] text-[#F0EDE8] focus:ring-1 focus:ring-[#8B7AFF] w-64 transition-all placeholder:text-[#474554]" placeholder="Search ledger..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-[#C5C0B8]">
+<button class="material-symbols-outlined hover:text-[#8B7AFF] transition-colors">notifications</button>
+<button class="material-symbols-outlined hover:text-[#8B7AFF] transition-colors">settings</button>
+</div>
+<div class="h-8 w-8 rounded-full overflow-hidden bg-[#1D1B1A] border border-[#474554]/30">
+<img alt="User profile" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGd0at5ItBwWCmy6BA-gKPrLLcuYlFlGZLxwv7F__AERx105VJ5v9fc3qwNDjLlcmhpeJJaYMrruvyWJsxjDRnYorhYguGuDzh9lGeYr3whKcPImYSj-VEGOsDKy4m8Nuo9QWittvbclUnO_R-LiHTIKyKBl2qKl4ftlo4wGAWXBsuDwA9bJY3riC7Je_svEYyG1y00jdM3_SPU-hU1xPdmInTFPyKzFrdcGU_CUJ9Fd4mWsWO70tzD2PTa_f2D92nG7pPsVpIP8o"/>
+</div>
+</div>
+</header>
+<!-- Focused Loading State Canvas -->
+<section class="flex-1 flex flex-col items-center justify-center p-8 max-w-5xl mx-auto w-full">
+<!-- Header Text -->
+<div class="text-center mb-16 space-y-4">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 bg-[#8B7AFF]/10 border border-[#8B7AFF]/20 rounded-full mb-4">
+<span class="w-2 h-2 rounded-full bg-[#8B7AFF] active-dot"></span>
+<span class="text-[10px] font-bold tracking-[0.2em] text-[#8B7AFF] uppercase">Analysis Engine Active</span>
+</div>
+<h2 class="text-5xl font-light text-[#F0EDE8] tracking-tighter leading-tight">Analyzing Property</h2>
+<p class="text-[#8A8580] text-lg font-light tracking-wide max-w-md mx-auto">613 N 14th St, Sheboygan, WI</p>
+</div>
+<!-- Progress Steps: Minimal, Linear & Editorial -->
+<div class="w-full max-w-xl">
+<div class="grid grid-cols-4 gap-4">
+<!-- Step 1: Address Parsed (Done) -->
+<div class="space-y-4">
+<div class="h-1 w-full bg-[#8B7AFF] rounded-full"></div>
+<div class="space-y-1">
+<p class="text-[11px] font-bold tracking-widest text-[#F0EDE8] uppercase">Address parsed</p>
+<p class="text-[10px] font-mono text-[#8B7AFF] uppercase">Completed</p>
+</div>
+</div>
+<!-- Step 2: Fetching Property Data (Active) -->
+<div class="space-y-4">
+<div class="h-1 w-full bg-[#1D1B1A] rounded-full overflow-hidden relative">
+<div class="absolute inset-0 bg-[#8B7AFF] w-1/2 loading-shimmer"></div>
+</div>
+<div class="space-y-1">
+<p class="text-[11px] font-bold tracking-widest text-[#F0EDE8] uppercase">Fetching data</p>
+<p class="text-[10px] font-mono text-[#F0EDE8]/50 uppercase">Active</p>
+</div>
+</div>
+<!-- Step 3: Running Analysis (Waiting) -->
+<div class="space-y-4 opacity-30">
+<div class="h-1 w-full bg-[#1D1B1A] rounded-full"></div>
+<div class="space-y-1">
+<p class="text-[11px] font-bold tracking-widest text-[#8A8580] uppercase">Running analysis</p>
+<p class="text-[10px] font-mono text-[#8A8580] uppercase">Waiting</p>
+</div>
+</div>
+<!-- Step 4: Generating AI Insights (Waiting) -->
+<div class="space-y-4 opacity-30">
+<div class="h-1 w-full bg-[#1D1B1A] rounded-full"></div>
+<div class="space-y-1">
+<p class="text-[11px] font-bold tracking-widest text-[#8A8580] uppercase">AI Insights</p>
+<p class="text-[10px] font-mono text-[#8A8580] uppercase">Waiting</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Terminal-like Log (Subtle) -->
+<div class="mt-20 w-full max-w-2xl bg-[#141312] border border-[#474554]/10 rounded-lg p-6 font-mono">
+<div class="flex items-center gap-2 mb-4 border-b border-[#474554]/10 pb-4">
+<div class="w-2 h-2 rounded-full bg-[#474554]"></div>
+<div class="w-2 h-2 rounded-full bg-[#474554]"></div>
+<div class="w-2 h-2 rounded-full bg-[#474554]"></div>
+<span class="text-[10px] text-[#474554] uppercase tracking-widest ml-2">Engine.log</span>
+</div>
+<div class="space-y-2 text-[11px]">
+<div class="flex gap-4">
+<span class="text-[#474554]">[14:22:01]</span>
+<span class="text-[#8A8580]">Initializing geolocation services...</span>
+</div>
+<div class="flex gap-4">
+<span class="text-[#474554]">[14:22:02]</span>
+<span class="text-[#8B7AFF]">Address verified: Sheboygan, WI 53081</span>
+</div>
+<div class="flex gap-4">
+<span class="text-[#474554]">[14:22:04]</span>
+<span class="text-[#F0EDE8]">Accessing parcel record API v2.4...</span>
+</div>
+<div class="flex gap-4 items-center">
+<span class="text-[#474554]">[14:22:05]</span>
+<span class="text-[#F0EDE8]">Downloading historical valuation data</span>
+<span class="text-[#8B7AFF] loading-pulse">...</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Decorative Subtle Bloom -->
+<div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#8B7AFF]/5 rounded-full blur-[160px] pointer-events-none -z-10"></div>
+</main>
+<!-- Floating Action Bar -->
+<div class="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-6 px-8 py-4 bg-[#0C0B0A] border border-[#474554]/30 rounded-full shadow-2xl z-50">
+<button class="text-[10px] font-bold text-[#8A8580] tracking-[0.2em] uppercase hover:text-white transition-colors">Cancel Analysis</button>
+<div class="w-[1px] h-4 bg-[#474554]/30"></div>
+<div class="flex items-center gap-3">
+<span class="text-[10px] font-bold text-[#8A8580] tracking-[0.2em] uppercase">Est. Time Remaining: 12s</span>
+</div>
+</div>
+</body></html>

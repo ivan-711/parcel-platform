@@ -29,11 +29,13 @@ load_dotenv(_BACKEND_DIR / ".env")
 try:
     from database import SessionLocal
     from models import (
+        AnalysisScenario,
         ChatMessage,
         Deal,
         Document,
         PipelineEntry,
         PortfolioEntry,
+        Property,
         User,
     )
     from core.security.jwt import hash_password
@@ -626,7 +628,9 @@ def _wipe_demo_data(db, user_id):
     counts["portfolio_entries"] = db.query(PortfolioEntry).filter(PortfolioEntry.user_id == user_id).delete()
     counts["pipeline_entries"] = db.query(PipelineEntry).filter(PipelineEntry.user_id == user_id).delete()
     counts["documents"] = db.query(Document).filter(Document.user_id == user_id).delete()
+    counts["scenarios"] = db.query(AnalysisScenario).filter(AnalysisScenario.created_by == user_id).delete()
     counts["deals"] = db.query(Deal).filter(Deal.user_id == user_id).delete()
+    counts["properties"] = db.query(Property).filter(Property.created_by == user_id).delete()
     db.flush()
     total = sum(counts.values())
     if total > 0:
@@ -635,8 +639,33 @@ def _wipe_demo_data(db, user_id):
         print("  No existing demo data to clear")
 
 
+def _parse_address(address):
+    """Split 'street, city state zip' into components."""
+    parts = address.rsplit(",", 1)
+    line1 = parts[0].strip()
+    rest = parts[1].strip() if len(parts) > 1 else ""
+    # rest is like "Milwaukee WI 53205"
+    tokens = rest.rsplit(" ", 2)
+    city = tokens[0] if len(tokens) >= 3 else rest
+    state = tokens[1] if len(tokens) >= 3 else ""
+    return line1, city, state
+
+
+def _extract_typed_columns(strategy, inputs):
+    """Extract typed columns from inputs dict for AnalysisScenario."""
+    return {
+        "purchase_price": inputs.get("purchase_price"),
+        "after_repair_value": inputs.get("arv") or inputs.get("arv_post_rehab"),
+        "repair_cost": inputs.get("repair_costs") or inputs.get("rehab_costs") or inputs.get("rehab_budget"),
+        "monthly_rent": inputs.get("monthly_rent") or inputs.get("monthly_rent_estimate"),
+        "down_payment_pct": inputs.get("down_payment_pct"),
+        "interest_rate": inputs.get("interest_rate") or inputs.get("existing_interest_rate"),
+        "loan_term_years": inputs.get("loan_term_years") or inputs.get("new_term_years"),
+    }
+
+
 def _create_deal(db, user_id, address, zip_code, property_type, strategy, inputs, status="saved", created_offset_days=0):
-    """Create a deal with calculator-generated outputs and risk score."""
+    """Create a deal with linked Property + AnalysisScenario."""
     calc_fn = CALC_MAP[strategy]
     outputs = calc_fn(inputs)
     risk_score = calculate_risk_score(strategy, inputs, outputs)
@@ -644,6 +673,23 @@ def _create_deal(db, user_id, address, zip_code, property_type, strategy, inputs
     now = datetime.utcnow()
     created_at = now - timedelta(days=created_offset_days) if created_offset_days else now
 
+    # Create Property
+    line1, city, state = _parse_address(address)
+    prop = Property(
+        created_by=user_id,
+        address_line1=line1,
+        city=city,
+        state=state[:2] if state else "WI",
+        zip_code=zip_code,
+        property_type=property_type,
+        status="under_analysis",
+    )
+    prop.created_at = created_at
+    prop.updated_at = created_at
+    db.add(prop)
+    db.flush()
+
+    # Create Deal linked to Property
     deal = Deal(
         user_id=user_id,
         address=address,
@@ -654,11 +700,30 @@ def _create_deal(db, user_id, address, zip_code, property_type, strategy, inputs
         outputs=outputs,
         risk_score=risk_score,
         status=status,
+        property_id=prop.id,
+        deal_type="acquisition",
     )
     deal.created_at = created_at
     deal.updated_at = created_at
     db.add(deal)
     db.flush()
+
+    # Create AnalysisScenario linked to both
+    typed = _extract_typed_columns(strategy, inputs)
+    scenario = AnalysisScenario(
+        property_id=prop.id,
+        deal_id=deal.id,
+        created_by=user_id,
+        strategy=strategy,
+        outputs=outputs,
+        risk_score=risk_score,
+        **{k: v for k, v in typed.items() if v is not None},
+    )
+    scenario.created_at = created_at
+    scenario.updated_at = created_at
+    db.add(scenario)
+    db.flush()
+
     return deal
 
 
@@ -791,10 +856,14 @@ def seed():
         # 10. Verification queries
         print("\n  --- Verification ---")
         deal_count = db.query(Deal).filter(Deal.user_id == user.id).count()
+        prop_count = db.query(Property).filter(Property.created_by == user.id).count()
+        scenario_count = db.query(AnalysisScenario).filter(AnalysisScenario.created_by == user.id).count()
         pipeline_count = db.query(PipelineEntry).filter(PipelineEntry.user_id == user.id).count()
         portfolio_count = db.query(PortfolioEntry).filter(PortfolioEntry.user_id == user.id).count()
         doc_count = db.query(Document).filter(Document.user_id == user.id).count()
         print(f"  Deals:            {deal_count} (12 active + 3 historical)")
+        print(f"  Properties:       {prop_count}")
+        print(f"  Scenarios:        {scenario_count}")
         print(f"  Pipeline entries: {pipeline_count}")
         print(f"  Portfolio entries: {portfolio_count}")
         print(f"  Documents:        {doc_count}")

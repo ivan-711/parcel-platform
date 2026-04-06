@@ -1,0 +1,89 @@
+/** Zustand onboarding store — tracks persona selection and sample data state. */
+
+import { create } from 'zustand'
+import { api } from '@/lib/api'
+import type { OnboardingPersona } from '@/types'
+
+interface OnboardingState {
+  completed: boolean
+  persona: OnboardingPersona | null
+  hasSampleData: boolean
+  hasRealData: boolean
+  realPropertyCount: number
+  loading: boolean
+  fetched: boolean
+
+  fetchStatus: () => Promise<void>
+  setPersona: (persona: OnboardingPersona) => Promise<void>
+  clearSampleData: () => Promise<void>
+  reset: () => void
+}
+
+export const useOnboardingStore = create<OnboardingState>()((set, get) => ({
+  completed: false,
+  persona: null,
+  hasSampleData: false,
+  hasRealData: false,
+  realPropertyCount: 0,
+  loading: false,
+  fetched: false,
+
+  fetchStatus: async () => {
+    if (get().loading) return
+    set({ loading: true })
+    try {
+      const status = await api.onboarding.status()
+      set({
+        completed: status.completed,
+        persona: status.persona,
+        hasSampleData: status.has_sample_data,
+        hasRealData: status.has_real_data,
+        realPropertyCount: status.real_property_count,
+        fetched: true,
+      })
+    } catch {
+      // If fetch fails, assume completed so we DON'T lock the user behind
+      // the onboarding wall. Keep fetched=false so we retry on next navigation.
+      set({ completed: true, fetched: true })
+    } finally {
+      set({ loading: false })
+    }
+  },
+
+  setPersona: async (persona: OnboardingPersona) => {
+    set({ loading: true })
+    try {
+      await api.onboarding.setPersona(persona)
+      set({
+        completed: true,
+        persona,
+        hasSampleData: true,
+        loading: false,
+      })
+    } catch {
+      set({ loading: false })
+      throw new Error('Failed to save persona')
+    }
+  },
+
+  clearSampleData: async () => {
+    try {
+      await api.onboarding.clearSampleData()
+      set({ hasSampleData: false })
+    } catch {
+      // non-critical
+    }
+  },
+
+  reset: () => {
+    set({
+      completed: false,
+      persona: null,
+      hasSampleData: false,
+      hasRealData: false,
+      realPropertyCount: 0,
+      loading: false,
+      fetched: false,
+    })
+  },
+}))

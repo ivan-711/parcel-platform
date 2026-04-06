@@ -5,8 +5,10 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  CartesianGrid,
   ResponsiveContainer,
 } from 'recharts'
+import { CHART_ANIMATION } from '@/lib/chart-theme'
 
 interface Props {
   data: { month: string; income: number; expenses: number; net: number }[]
@@ -25,13 +27,15 @@ function formatDollar(v: number) {
 }
 
 const tooltipStyle = {
-  backgroundColor: '#141311',
-  border: '1px solid #1E1D1B',
+  backgroundColor: 'var(--chart-tooltip-bg)',
+  border: '1px solid var(--chart-tooltip-border)',
   borderRadius: '8px',
   fontSize: '12px',
+  backdropFilter: 'blur(var(--chart-tooltip-blur))',
+  boxShadow: 'var(--chart-tooltip-shadow)',
 }
 
-const axisTick = { fill: '#8A8580', fontSize: 10 }
+const axisTick = { fill: 'var(--chart-axis-text)', fontSize: 11 }
 
 export default function IncomeExpenseChart({ data }: Props) {
   if (!data || data.length === 0) return null
@@ -42,17 +46,18 @@ export default function IncomeExpenseChart({ data }: Props) {
   }))
 
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
-      <h3 className="text-[11px] text-[#8A8580] uppercase tracking-wider font-medium mb-4">
+    <div className="bg-[var(--chart-bg)] border border-[var(--chart-border)] rounded-xl p-5">
+      <h3 className="text-[11px] text-[var(--chart-axis-text)] uppercase tracking-wider font-medium mb-4">
         Monthly Income vs Expenses
       </h3>
       <ResponsiveContainer width="100%" height={250}>
         <ComposedChart data={mapped}>
+          <CartesianGrid stroke="var(--chart-grid)" strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey="label" tick={axisTick} axisLine={false} tickLine={false} />
           <YAxis tick={axisTick} axisLine={false} tickLine={false} tickFormatter={formatDollar} />
           <Tooltip
             contentStyle={tooltipStyle}
-            labelStyle={{ color: '#F0EDE8' }}
+            labelStyle={{ color: 'var(--chart-tooltip-text)' }}
             formatter={(value: number, name: string) => {
               const labels: Record<string, string> = {
                 income: 'Income',
@@ -62,14 +67,15 @@ export default function IncomeExpenseChart({ data }: Props) {
               return [formatDollar(value), labels[name] ?? name]
             }}
           />
-          <Bar dataKey="income" fill="#4ADE80" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="expenses" fill="#F87171" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="income" fill="var(--chart-positive)" radius={[4, 4, 0, 0]} {...CHART_ANIMATION} />
+          <Bar dataKey="expenses" fill="var(--chart-negative)" radius={[4, 4, 0, 0]} {...CHART_ANIMATION} />
           <Line
             type="monotone"
             dataKey="net"
-            stroke="#F0EDE8"
+            stroke="var(--chart-tooltip-text)"
             strokeWidth={2}
             dot={false}
+            {...CHART_ANIMATION}
           />
         </ComposedChart>
       </ResponsiveContainer>

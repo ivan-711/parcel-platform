@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&amp;f[]=jetbrains-mono@400,500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#2b2a28",
+                    "outline-variant": "#474554",
+                    "surface-tint": "#c7bfff",
+                    "surface-container-highest": "#363433",
+                    "on-tertiary-fixed-variant": "#624000",
+                    "outline": "#928e9f",
+                    "on-surface": "#e6e1df",
+                    "tertiary-container": "#c48306",
+                    "tertiary-fixed-dim": "#ffb94f",
+                    "error": "#ffb4ab",
+                    "on-secondary-container": "#b6aee8",
+                    "primary-container": "#8f7fff",
+                    "inverse-primary": "#5b48cc",
+                    "secondary-fixed": "#e5deff",
+                    "on-error-container": "#ffdad6",
+                    "on-tertiary": "#452b00",
+                    "surface-bright": "#3b3937",
+                    "on-primary-container": "#25008b",
+                    "inverse-surface": "#e6e1df",
+                    "surface-container-low": "#1d1b1a",
+                    "on-primary": "#2b009e",
+                    "surface-container-lowest": "#0f0e0d",
+                    "on-secondary": "#302a5a",
+                    "primary-fixed": "#e5deff",
+                    "primary": "#c7bfff",
+                    "on-background": "#e6e1df",
+                    "secondary-container": "#464072",
+                    "error-container": "#93000a",
+                    "on-primary-fixed-variant": "#432cb3",
+                    "secondary-fixed-dim": "#c8c0fb",
+                    "secondary": "#c8c0fb",
+                    "background": "#141312",
+                    "surface-dim": "#141312",
+                    "on-tertiary-fixed": "#291800",
+                    "on-error": "#690005",
+                    "surface": "#141312",
+                    "on-primary-fixed": "#180064",
+                    "tertiary": "#ffb94f",
+                    "surface-container": "#211f1e",
+                    "surface-variant": "#363433",
+                    "on-surface-variant": "#c9c4d6",
+                    "on-secondary-fixed": "#1a1444",
+                    "on-tertiary-container": "#3c2500",
+                    "tertiary-fixed": "#ffddb3",
+                    "primary-fixed-dim": "#c7bfff",
+                    "inverse-on-surface": "#32302f",
+                    "on-secondary-fixed-variant": "#464072"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Satoshi", "sans-serif"],
+                    "body": ["Satoshi", "sans-serif"],
+                    "label": ["Satoshi", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0C0B0A;
+            font-family: 'Satoshi', sans-serif;
+            color: #F0EDE8;
+        }
+        .ledger-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .tonal-bloom {
+            background: radial-gradient(circle at top right, rgba(139, 122, 255, 0.05), transparent 40%);
+        }
+        .glass-header {
+            background: rgba(12, 11, 10, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation (Report Brand Anchor) -->
+<header class="fixed top-0 w-full z-50 glass-header">
+<div class="flex justify-between items-center px-8 h-16 w-full max-w-[1440px] mx-auto">
+<div class="flex items-center gap-4">
+<span class="text-xl font-light tracking-[0.2em] text-[#F0EDE8]">PARCEL</span>
+<div class="h-4 w-px bg-outline-variant/30"></div>
+<span class="text-on-surface-variant font-mono text-[10px] tracking-widest uppercase">Public Audit 04229</span>
+</div>
+<div class="flex items-center gap-6">
+<span class="text-on-surface-variant text-xs font-mono">EXPORT.PDF</span>
+<span class="text-on-surface-variant text-xs font-mono">SHARE.LINK</span>
+</div>
+</div>
+</header>
+<main class="pt-32 pb-24 px-8 max-w-[1440px] mx-auto space-y-16 tonal-bloom">
+<!-- Report Title Section -->
+<section class="max-w-4xl">
+<h1 class="text-4xl md:text-5xl lg:text-6xl font-light leading-tight tracking-tighter text-on-surface">
+                Analysis Report: <span class="text-primary font-medium">613 N 14th St, Sheboygan, WI</span>
+</h1>
+<div class="mt-8 flex flex-wrap gap-8">
+<div>
+<p class="text-xs font-mono text-on-surface-variant uppercase tracking-widest mb-1">Valuation Date</p>
+<p class="text-lg ledger-mono">2024.10.12</p>
+</div>
+<div>
+<p class="text-xs font-mono text-on-surface-variant uppercase tracking-widest mb-1">Asset Class</p>
+<p class="text-lg">Multi-Family Residential</p>
+</div>
+<div>
+<p class="text-xs font-mono text-on-surface-variant uppercase tracking-widest mb-1">Prepared By</p>
+<p class="text-lg">Ivan Petrov</p>
+</div>
+</div>
+</section>
+<!-- Key Metrics Row -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-1">
+<div class="bg-surface-container-low p-10 group transition-all duration-500 hover:bg-surface-container-high">
+<p class="text-xs font-mono text-on-surface-variant uppercase tracking-[0.2em] mb-4">Cash Flow (Annual)</p>
+<p class="text-5xl ledger-mono text-primary">$12,480.00</p>
+<div class="mt-4 flex items-center gap-2 text-tertiary">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-xs font-mono">+4.2% vs Neighborhood</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-10 group transition-all duration-500 hover:bg-surface-container-high">
+<p class="text-xs font-mono text-on-surface-variant uppercase tracking-[0.2em] mb-4">Cap Rate</p>
+<p class="text-5xl ledger-mono text-on-surface">6.82%</p>
+<div class="mt-4 flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">balance</span>
+<span class="text-xs font-mono">Market Weighted</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-10 group transition-all duration-500 hover:bg-surface-container-high">
+<p class="text-xs font-mono text-on-surface-variant uppercase tracking-[0.2em] mb-4">Projected ROI</p>
+<p class="text-5xl ledger-mono text-on-surface">14.2%</p>
+<div class="mt-4 flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">timer</span>
+<span class="text-xs font-mono">5 Year Hold Period</span>
+</div>
+</div>
+</section>
+<!-- AI Narrative Section -->
+<section class="bg-surface-container-lowest border border-outline-variant/10 p-12">
+<div class="flex items-start gap-12 flex-col lg:flex-row">
+<div class="lg:w-1/3">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h2 class="text-xs font-mono tracking-[0.3em] uppercase text-primary">Executive Summary</h2>
+</div>
+<p class="text-2xl font-light text-on-surface leading-snug">
+                        The Sheboygan property presents a low-risk yield play with significant upside in rental normalization.
+                    </p>
+</div>
+<div class="lg:w-2/3 space-y-6 text-on-surface-variant leading-relaxed">
+<p>
+                        Current market analysis indicates that <span class="text-on-surface font-medium">613 N 14th St</span> is currently under-rented by approximately 18% compared to recently renovated assets within a 2-mile radius. The structure appears sound with recent capital improvements to the HVAC systems (2021), reducing near-term maintenance liability.
+                    </p>
+<p>
+                        Our predictive model suggests a strong absorption rate for high-end residential units in this sub-market, driven by local workforce expansion. We recommend a phased renovation strategy targeting kitchen and bath updates to capture maximum lease delta.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Projection & Sensitivity Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+<!-- 30-Year Cash Flow Projection Chart -->
+<section class="space-y-8">
+<div class="flex justify-between items-end">
+<h3 class="text-xs font-mono tracking-[0.2em] uppercase text-on-surface-variant">30-Year Cash Flow Projection</h3>
+<p class="text-xs font-mono text-on-surface-variant">UNIT: USD (ESTIMATED)</p>
+</div>
+<div class="relative h-[400px] w-full bg-surface-container-low/30 overflow-hidden flex items-end px-4 pb-8">
+<!-- Faux Area Chart -->
+<svg class="w-full h-full preserve-3d" preserveaspectratio="none" viewbox="0 0 1000 400">
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#8B7AFF" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="#8B7AFF" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<!-- Area -->
+<path d="M0,400 L0,320 C100,310 200,280 300,250 C400,220 500,180 600,160 C700,140 800,110 900,90 L1000,70 L1000,400 Z" fill="url(#chartGradient)"></path>
+<!-- Line -->
+<path d="M0,320 C100,310 200,280 300,250 C400,220 500,180 600,160 C700,140 800,110 900,90 L1000,70" fill="none" stroke="#F0EDE8" stroke-width="1.5"></path>
+<!-- Highlighting points -->
+<circle cx="300" cy="250" fill="#8B7AFF" r="4"></circle>
+<circle cx="600" cy="160" fill="#8B7AFF" r="4"></circle>
+<circle cx="1000" cy="70" fill="#F0EDE8" r="4"></circle>
+</svg>
+<!-- Floating Data Labels -->
+<div class="absolute top-[200px] left-[28%] bg-surface-container-highest/80 backdrop-blur-md px-3 py-1.5 text-[10px] ledger-mono border border-outline-variant/20">
+                        YEAR 10: $28.4K
+                    </div>
+</div>
+<div class="grid grid-cols-4 gap-4">
+<div class="h-1 bg-surface-container-highest relative overflow-hidden">
+<div class="absolute inset-0 bg-primary w-1/4"></div>
+</div>
+<div class="h-1 bg-surface-container-highest"></div>
+<div class="h-1 bg-surface-container-highest"></div>
+<div class="h-1 bg-surface-container-highest"></div>
+</div>
+</section>
+<!-- Sensitivity Matrix -->
+<section class="space-y-8">
+<div class="flex justify-between items-end">
+<h3 class="text-xs font-mono tracking-[0.2em] uppercase text-on-surface-variant">Sensitivity Matrix: ROI vs Cap Rate</h3>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-[10px] font-mono uppercase text-on-surface-variant">Target</span>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left ledger-mono text-sm">
+<thead>
+<tr class="text-on-surface-variant">
+<th class="py-4 font-normal uppercase text-[10px] tracking-widest px-4 border-b border-outline-variant/10">Cap Rate</th>
+<th class="py-4 font-normal px-4 border-b border-outline-variant/10">4.0%</th>
+<th class="py-4 font-normal px-4 border-b border-outline-variant/10">5.0%</th>
+<th class="py-4 font-normal px-4 border-b border-outline-variant/10">6.0%</th>
+<th class="py-4 font-normal px-4 border-b border-outline-variant/10">7.0%</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/5">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-6 px-4 text-on-surface-variant uppercase text-[10px] tracking-widest">Entry: $1.2M</td>
+<td class="py-6 px-4">8.2%</td>
+<td class="py-6 px-4">10.4%</td>
+<td class="py-6 px-4">12.1%</td>
+<td class="py-6 px-4 text-primary font-medium">14.8%</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-6 px-4 text-on-surface-variant uppercase text-[10px] tracking-widest">Entry: $1.3M</td>
+<td class="py-6 px-4">7.1%</td>
+<td class="py-6 px-4">9.2%</td>
+<td class="py-6 px-4 text-primary font-medium">11.4%</td>
+<td class="py-6 px-4">13.2%</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-6 px-4 text-on-surface-variant uppercase text-[10px] tracking-widest">Entry: $1.4M</td>
+<td class="py-6 px-4">6.4%</td>
+<td class="py-6 px-4 text-primary font-medium">8.1%</td>
+<td class="py-6 px-4">9.8%</td>
+<td class="py-6 px-4">11.5%</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-6 px-4 text-on-surface-variant uppercase text-[10px] tracking-widest">Entry: $1.5M</td>
+<td class="py-6 px-4 text-error">5.2%</td>
+<td class="py-6 px-4">7.4%</td>
+<td class="py-6 px-4">8.7%</td>
+<td class="py-6 px-4">10.1%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-6 bg-surface-container-low flex items-center justify-between">
+<p class="text-xs text-on-surface-variant max-w-sm">This matrix assumes a fixed 25% down payment and 6.2% interest rate. Adjust primary variables in the full dashboard.</p>
+<span class="material-symbols-outlined text-outline-variant">info</span>
+</div>
+</section>
+</div>
+<!-- Property Visuals (Bento) -->
+<section class="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 h-[600px]">
+<div class="md:col-span-2 md:row-span-2 bg-surface-container-low relative group overflow-hidden">
+<img alt="Real estate exterior" class="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 opacity-60 hover:opacity-100" data-alt="Modern renovated multi-family residence exterior with clean architectural lines and professional landscaping in soft evening twilight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVpQp7NVvhNGQ2IjZ78b2222Txlpyr8_BM2DzYCQbrwXCyTu3d-KJb-DUcOAIg9n3oNGS1s4eS5_P9K88p0GLB63jrK8cS-V9GQKkKpyr3KWri0Y2t-hwtuH0iqyNBDLboAa1tK9tDykM7ZxIZ147Q-AvgYsm-i0P0OfZdBgRvr1DJq-vgF0kl_bBZ7U9xgkNhc5fDW8awJlkTI_FJbN0-kC8uUEAcCSHlrHeXrIUnBo-bQUT5wd8yZKWOWRhaebsPK9ahCYlU57M"/>
+<div class="absolute bottom-6 left-6 z-10">
+<p class="text-xs font-mono tracking-widest uppercase text-white drop-shadow-md">Exterior View</p>
+</div>
+</div>
+<div class="bg-surface-container-low relative overflow-hidden">
+<img alt="Interior kitchen" class="absolute inset-0 w-full h-full object-cover opacity-50 grayscale" data-alt="Sleek modern kitchen interior with dark cabinetry and minimalist design, soft natural light streaming through a window" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDneCqnxHDRVeO2NJvMKxO2FOfsZGRqJmd8UmGcjhX6s8EtPGU1VGH3CpkrnLw8L6GPDE9BL33IvBGcSkhzCr0HBCu_RDz6nMlabq4DAyfoQ0zt2JV0sqUTWWzKYaLzyiOqvWDeTMT3XTq5kpNUXzefWLeroYVD6ZQnjsZYU-Yd1SJ4-isS2O48mT2vqX6rt423Xib44NwvR4CSTznHD_CvxWeK86I5L0SRTF2WgqsMMFbiCBGhHTHi98vgZnN-tltJNHFR_udbVZ4"/>
+</div>
+<div class="bg-surface-container-low relative overflow-hidden">
+<img alt="Interior bedroom" class="absolute inset-0 w-full h-full object-cover opacity-50 grayscale" data-alt="Minimalist airy bedroom with neutral tones and clean linens, high-end editorial photography style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2ORGkprpoRIJRP8RqxqEbD8oaTUvq-ZXG-bGyusvpKZz8K78sFoAtpGROA72Vi6qUmvYjc-26OseVMa0vca_QYD6un7JWt7dAKV-ywHlb0lbLLt_YmqZDxJL3nH2nRwNGaY8XX2WXm9u5SSVvIA-sbWWTyjg1w-SQBNFzDvCWevLNwCnHlESlfH92d0sH5rjduQe1cuiOAkz-CAEwlzpwVyil6GHv2fqUsNaCJ6ICCMY_WSt7wvFK-Nf1K96DP8G_sMya_YS6Iv0"/>
+</div>
+<div class="md:col-span-2 bg-surface-container-low flex flex-col justify-center px-12 border border-outline-variant/10">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary">location_on</span>
+<h4 class="text-xs font-mono tracking-widest uppercase">Location Context</h4>
+</div>
+<p class="text-xl font-light text-on-surface">Walk Score: 84 / Transit: 42</p>
+<div class="mt-6 flex gap-4">
+<span class="bg-surface-container-high px-3 py-1 text-[10px] font-mono border border-outline-variant/20 uppercase tracking-tighter">Near Core District</span>
+<span class="bg-surface-container-high px-3 py-1 text-[10px] font-mono border border-outline-variant/20 uppercase tracking-tighter">Historical Zone</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="mt-24 border-t border-outline-variant/10 bg-surface-container-lowest py-16">
+<div class="max-w-[1440px] mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-12">
+<div class="space-y-4 text-center md:text-left">
+<p class="text-outline text-[10px] font-mono uppercase tracking-[0.3em]">Powered by <span class="text-on-surface-variant font-light ml-1">Parcel</span></p>
+<p class="text-xs text-outline/60 max-w-xs leading-relaxed">
+                    Precision real estate analysis and reporting infrastructure.
+                </p>
+</div>
+<a class="group flex items-center gap-4 bg-primary text-on-primary-container px-8 py-4 rounded-md transition-all hover:shadow-[0_0_40px_-10px_rgba(139,122,255,0.4)]" href="#">
+<span class="text-xs font-mono tracking-[0.2em] font-bold uppercase">Try Parcel Free</span>
+<span class="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
+</a>
+<div class="flex gap-8">
+<a class="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors" href="#">Legal</a>
+<a class="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors" href="#">Contact</a>
+</div>
+</div>
+<div class="max-w-[1440px] mx-auto px-8 mt-16 pt-8 border-t border-outline-variant/5 text-center">
+<p class="text-[10px] font-mono text-outline uppercase tracking-widest">© 2024 Parcel Real Estate Technologies INC. All rights reserved.</p>
+</div>
+</footer>
+</body></html>

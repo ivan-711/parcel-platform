@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts'
+import { CHART_ANIMATION } from '@/lib/chart-theme'
 import type { TodayPortfolioSummary } from '@/types'
 
 interface Props {
@@ -44,12 +45,12 @@ export function TodayCashFlowChart({ portfolio }: Props) {
 
   if (portfolio.total_cash_flow === 0) {
     return (
-      <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
-        <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium mb-4">
+      <div className="bg-[var(--chart-bg)] border border-[var(--chart-border)] rounded-xl p-5">
+        <h3 className="text-[11px] uppercase tracking-wider text-[var(--chart-axis-text)] font-medium mb-4">
           Monthly Cash Flow
         </h3>
         <div className="flex items-center justify-center py-12 text-center">
-          <p className="text-sm text-[#8A8580]">
+          <p className="text-sm text-[var(--chart-axis-text)]">
             Cash flow tracking starts when you close your first deal.
           </p>
         </div>
@@ -58,12 +59,12 @@ export function TodayCashFlowChart({ portfolio }: Props) {
   }
 
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
+    <div className="bg-[var(--chart-bg)] border border-[var(--chart-border)] rounded-xl p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium">
+        <h3 className="text-[11px] uppercase tracking-wider text-[var(--chart-axis-text)] font-medium">
           Monthly Cash Flow
         </h3>
-        <span className="text-[10px] text-[#8A8580]/60">
+        <span className="text-[10px] text-[var(--chart-axis-text)]/60">
           Actual vs Projected
         </span>
       </div>
@@ -72,33 +73,32 @@ export function TodayCashFlowChart({ portfolio }: Props) {
         <AreaChart data={data} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
           <defs>
             <linearGradient id="todayCfGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#8B7AFF" stopOpacity={0.2} />
-              <stop offset="100%" stopColor="#8B7AFF" stopOpacity={0} />
+              <stop offset="0%" stopColor="var(--chart-accent)" stopOpacity={0.2} />
+              <stop offset="100%" stopColor="var(--chart-accent)" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#1E1D1B" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
           <XAxis
             dataKey="month"
-            stroke="#8A8580"
-            fontSize={10}
+            tick={{ fill: 'var(--chart-axis-text)', fontSize: 11 }}
             tickLine={false}
             axisLine={false}
           />
           <YAxis
-            stroke="#8A8580"
-            fontSize={10}
+            tick={{ fill: 'var(--chart-axis-text)', fontSize: 11 }}
             tickLine={false}
             axisLine={false}
             tickFormatter={(v: number) => `$${v.toLocaleString()}`}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: '#141311',
-              border: '1px solid #1E1D1B',
-              borderRadius: 8,
-              fontSize: 12,
+              backgroundColor: 'var(--chart-tooltip-bg)',
+              border: '1px solid var(--chart-tooltip-border)',
+              borderRadius: '8px',
+              boxShadow: 'var(--chart-tooltip-shadow)',
+              backdropFilter: 'blur(var(--chart-tooltip-blur))',
             }}
-            labelStyle={{ color: '#8A8580' }}
+            labelStyle={{ color: 'var(--chart-tooltip-label)' }}
             formatter={(v: number, name: string) => [
               `$${v.toLocaleString()}`,
               name === 'projected' ? 'Projected' : 'Actual',
@@ -107,19 +107,21 @@ export function TodayCashFlowChart({ portfolio }: Props) {
           <Area
             type="monotone"
             dataKey="projected"
-            stroke="#F0EDE8"
+            stroke="var(--chart-tooltip-text)"
             strokeWidth={1.5}
             strokeDasharray="4 4"
             fill="none"
             dot={false}
+            {...CHART_ANIMATION}
           />
           <Area
             type="monotone"
             dataKey="actual"
-            stroke="#8B7AFF"
+            stroke="var(--chart-accent)"
             strokeWidth={2}
             fill="url(#todayCfGradient)"
             dot={false}
+            {...CHART_ANIMATION}
           />
         </AreaChart>
       </ResponsiveContainer>

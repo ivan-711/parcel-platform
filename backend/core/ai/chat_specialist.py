@@ -28,6 +28,34 @@ You only discuss real estate investing and directly related topics (finance, con
 </guardrails>"""
 
 
+def build_rag_context(chunks, doc) -> str:
+    """Build system context from retrieved RAG chunks with citation markers."""
+    from core.ai.sanitize import sanitize_for_prompt
+
+    lines = [
+        f'DOCUMENT CONTEXT: "{doc.original_filename}" ({doc.document_type or "document"})',
+        "",
+        "The following excerpts are from the uploaded document, ordered by relevance.",
+        "Reference them using [1], [2], etc. when answering.",
+        "Answer based ONLY on these excerpts and any property data provided.",
+        "If the excerpts don't contain enough information to answer, say so explicitly.",
+        "Never fabricate content that isn't in the provided excerpts.",
+        "",
+    ]
+    for i, chunk in enumerate(chunks, 1):
+        content = chunk.contextualized_content or chunk.content
+        # Sanitize but allow more length for chunk content
+        safe_content = sanitize_for_prompt(content, max_length=2000)
+        page_info = ""
+        if chunk.metadata and chunk.metadata.get("approx_page"):
+            page_info = f" (approx. page {chunk.metadata['approx_page']})"
+        lines.append(f"[{i}]{page_info}")
+        lines.append(safe_content)
+        lines.append("")
+
+    return "\n".join(lines)
+
+
 def stream_chat_response(
     message: str,
     history: list[dict],

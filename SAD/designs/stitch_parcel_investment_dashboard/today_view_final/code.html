@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;family=Manrope:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @font-face {
+            font-family: 'Satoshi';
+            src: url('https://api.fontshare.com/v2/fonts/satoshi?display=swap');
+        }
+        .Satoshi-300 { font-family: 'Satoshi', sans-serif; font-weight: 300; }
+        .Satoshi-400 { font-family: 'Satoshi', sans-serif; font-weight: 400; }
+        .Satoshi-500 { font-family: 'Satoshi', sans-serif; font-weight: 500; }
+        
+        body {
+            background-color: #0C0B0A;
+            color: #F0EDE8;
+            font-family: 'Satoshi', sans-serif;
+        }
+        .jetbrains { font-family: 'JetBrains Mono', monospace; }
+        .tonal-bloom {
+            background: linear-gradient(180deg, #1D1B1A 0%, #141312 100%);
+        }
+        .glass-header {
+            background: rgba(12, 11, 10, 0.8);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "background": "#141312",
+                        "on-tertiary": "#452b00",
+                        "outline": "#928e9f",
+                        "surface-container": "#211f1e",
+                        "secondary-container": "#464072",
+                        "secondary": "#c8c0fb",
+                        "surface-container-low": "#1d1b1a",
+                        "primary-fixed-dim": "#c7bfff",
+                        "surface": "#141312",
+                        "primary-container": "#8f7fff",
+                        "on-background": "#e6e1df",
+                        "tertiary": "#ffb94f",
+                        "error": "#ffb4ab",
+                        "surface-container-high": "#2b2a28",
+                        "on-surface": "#e6e1df",
+                        "primary": "#c7bfff",
+                        "surface-container-lowest": "#0f0e0d"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="antialiased">
+<!-- SideNavBar Shell -->
+<aside class="w-64 h-screen fixed left-0 top-0 overflow-y-auto bg-[#0C0B0A] flex flex-col py-8 space-y-6 z-50">
+<div class="px-8">
+<h1 class="text-2xl font-light tracking-tight text-[#F0EDE8] Satoshi-300">Parcel</h1>
+</div>
+<nav class="flex flex-col gap-y-6 px-4">
+<!-- Section: HOME -->
+<div>
+<h3 class="px-4 mb-2 text-[11px] uppercase tracking-[0.1em] font-medium text-[#8A8580]">Home</h3>
+<div class="flex flex-col gap-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-[#F0EDE8] font-medium border-l-2 border-[#8B7AFF] bg-[#1D1B1A] transition-all scale-98x" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="today">today</span>
+<span class="text-[13px] Satoshi-400">Today</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-[#C5C0B8] hover:text-[#F0EDE8] hover:bg-[#1D1B1A] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="text-[13px] Satoshi-400">Dashboard</span>
+</a>
+</div>
+</div>
+<!-- Section: DEALS -->
+<div>
+<h3 class="px-4 mb-2 text-[11px] uppercase tracking-[0.1em] font-medium text-[#8A8580]">Deals</h3>
+<div class="flex flex-col gap-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-[#C5C0B8] hover:text-[#F0EDE8] hover:bg-[#1D1B1A] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="analytics">analytics</span>
+<span class="text-[13px] Satoshi-400">Analyze</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-[#C5C0B8] hover:text-[#F0EDE8] hover:bg-[#1D1B1A] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="account_tree">account_tree</span>
+<span class="text-[13px] Satoshi-400">Pipeline</span>
+</a>
+</div>
+</div>
+<!-- Section: PEOPLE -->
+<div>
+<h3 class="px-4 mb-2 text-[11px] uppercase tracking-[0.1em] font-medium text-[#8A8580]">People</h3>
+<div class="flex flex-col gap-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-[#C5C0B8] hover:text-[#F0EDE8] hover:bg-[#1D1B1A] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="group">group</span>
+<span class="text-[13px] Satoshi-400">Contacts</span>
+</a>
+</div>
+</div>
+<!-- Section: ASSETS -->
+<div>
+<h3 class="px-4 mb-2 text-[11px] uppercase tracking-[0.1em] font-medium text-[#8A8580]">Assets</h3>
+<div class="flex flex-col gap-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-[#C5C0B8] hover:text-[#F0EDE8] hover:bg-[#1D1B1A] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="location_city">location_city</span>
+<span class="text-[13px] Satoshi-400">Properties</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-[#C5C0B8] hover:text-[#F0EDE8] hover:bg-[#1D1B1A] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="inventory_2">inventory_2</span>
+<span class="text-[13px] Satoshi-400">Portfolio</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-[#C5C0B8] hover:text-[#F0EDE8] hover:bg-[#1D1B1A] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="receipt_long">receipt_long</span>
+<span class="text-[13px] Satoshi-400">Transactions</span>
+</a>
+</div>
+</div>
+<!-- Section: OUTPUTS -->
+<div>
+<h3 class="px-4 mb-2 text-[11px] uppercase tracking-[0.1em] font-medium text-[#8A8580]">Outputs</h3>
+<div class="flex flex-col gap-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-[#C5C0B8] hover:text-[#F0EDE8] hover:bg-[#1D1B1A] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="assessment">assessment</span>
+<span class="text-[13px] Satoshi-400">Reports</span>
+</a>
+</div>
+</div>
+</nav>
+<div class="mt-auto pt-6 flex flex-col gap-y-1 px-4">
+<button class="mx-4 mb-4 flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-[#8B7AFF] text-white Satoshi-500 text-sm hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+<span>Ask AI</span>
+</button>
+<a class="flex items-center gap-3 px-4 py-2 text-[#C5C0B8] hover:text-[#F0EDE8] hover:bg-[#1D1B1A] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span class="text-[13px] Satoshi-400">Settings</span>
+</a>
+<div class="flex items-center gap-3 px-4 py-2 mt-4">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant/20">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnaY_rt8wC27nurUz_EbaGF7YsiQXJBzcfpyACjRCjYsU1K3OOf6VtM_uti9JiS3rUz_6QnkFoeZP5_vPuunQToSkfdY2W406zqSCm-oryx5eyOe3Jt_0zke1AU8r7376mgRpmR5j3TKpLoBStMU4kphHRYj7W3GU1EM45SLXsTA2X6FIGM18IIyUOkIFcioM39ejphkm3unXuFGYqwOjybwZGpmEZoSOwXW2dplxs232XYrtbYI6i09zXsg3raanra_pTXu_7QDk"/>
+</div>
+<div>
+<p class="text-[12px] font-medium text-[#F0EDE8]">Ivan Petrov</p>
+<p class="text-[10px] text-[#8A8580]">Senior Analyst</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 right-0 w-[calc(100%-256px)] z-40 bg-[#0C0B0A]/80 backdrop-blur-xl flex justify-between items-center px-8 h-16 ml-64 tonal-bloom">
+<div class="flex items-center gap-4">
+<h2 class="text-xl font-light text-[#F0EDE8] Satoshi-300 tracking-widest">Parcel</h2>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-[#C5C0B8] hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+<button class="text-[#C5C0B8] hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-24 px-12 pb-12 min-h-screen">
+<!-- Header Section -->
+<section class="flex justify-between items-end mb-12">
+<div>
+<h1 class="text-4xl Satoshi-300 text-[#F0EDE8] tracking-tight">Good morning, Ivan</h1>
+<p class="jetbrains text-[#8B7AFF] text-sm mt-2 uppercase tracking-widest">October 24, 2023</p>
+</div>
+<div class="flex gap-4">
+<button class="bg-[#1D1B1A] text-[#C5C0B8] px-6 py-2.5 rounded-md Satoshi-500 text-sm hover:bg-[#2B2A28] transition-colors border border-outline-variant/10">Log Activity</button>
+<button class="bg-[#1D1B1A] text-[#C5C0B8] px-6 py-2.5 rounded-md Satoshi-500 text-sm hover:bg-[#2B2A28] transition-colors border border-outline-variant/10">Add Contact</button>
+<button class="bg-gradient-to-r from-[#8F7FFF] to-[#C7BFFF] text-[#25008b] px-8 py-2.5 rounded-md Satoshi-500 text-sm shadow-lg shadow-violet-500/10 hover:opacity-90 transition-opacity">Analyze Property</button>
+</div>
+</section>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Briefing & Urgency (Span 8) -->
+<div class="col-span-8 flex flex-col gap-6">
+<!-- Briefing Cards -->
+<div class="grid grid-cols-3 gap-4">
+<div class="bg-[#1D1B1A] p-6 rounded-xl border-l-4 border-error/50 flex flex-col gap-3">
+<div class="flex items-center gap-2 text-error">
+<span class="material-symbols-outlined text-[20px]">priority_high</span>
+<span class="text-[11px] uppercase tracking-widest Satoshi-500">Urgent</span>
+</div>
+<p class="Satoshi-400 text-[15px] leading-snug">Balloon payment on Cedar St in <span class="jetbrains text-error">44</span> days</p>
+</div>
+<div class="bg-[#1D1B1A] p-6 rounded-xl border-l-4 border-tertiary/50 flex flex-col gap-3">
+<div class="flex items-center gap-2 text-tertiary">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+<span class="text-[11px] uppercase tracking-widest Satoshi-500">Warning</span>
+</div>
+<p class="Satoshi-400 text-[15px] leading-snug"><span class="jetbrains text-tertiary">2</span> deals stale for 7+ days — follow up</p>
+</div>
+<div class="bg-[#1D1B1A] p-6 rounded-xl border-l-4 border-primary/50 flex flex-col gap-3">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-[20px]">info</span>
+<span class="text-[11px] uppercase tracking-widest Satoshi-500">Notice</span>
+</div>
+<p class="Satoshi-400 text-[15px] leading-snug">New comp data available for 613 N 14th St</p>
+</div>
+</div>
+<!-- Main Visualization: Pipeline Progress -->
+<div class="bg-[#141312] p-8 rounded-xl border border-outline-variant/10">
+<div class="flex justify-between items-center mb-8">
+<h3 class="Satoshi-500 text-lg">Pipeline Velocity</h3>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-[10px] uppercase text-[#8A8580] jetbrains">Active Deals</span>
+</div>
+<span class="jetbrains text-[#F0EDE8] text-sm">34 TOTAL</span>
+</div>
+</div>
+<div class="space-y-8">
+<div>
+<div class="flex justify-between items-end mb-3">
+<span class="text-[11px] uppercase tracking-[0.2em] text-[#8A8580]">Prospecting → Due Diligence → Closing</span>
+<span class="jetbrains text-[#8B7AFF] text-lg">$14.2M</span>
+</div>
+<div class="h-[6px] w-full bg-[#1D1B1A] rounded-full overflow-hidden flex">
+<div class="h-full bg-[#302a5a] w-[40%] transition-all"></div>
+<div class="h-full bg-[#464072] w-[35%] transition-all"></div>
+<div class="h-full bg-[#8B7AFF] w-[15%] transition-all"></div>
+</div>
+<div class="grid grid-cols-3 mt-4 text-[11px] Satoshi-400 text-[#8A8580]">
+<div>14 Deals <span class="jetbrains text-[#C5C0B8] ml-1">41%</span></div>
+<div class="text-center">12 Deals <span class="jetbrains text-[#C5C0B8] ml-1">35%</span></div>
+<div class="text-right">8 Deals <span class="jetbrains text-[#C5C0B8] ml-1">24%</span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Cash Flow Tracker -->
+<div class="bg-[#1D1B1A] p-8 rounded-xl">
+<div class="flex justify-between items-center mb-10">
+<div>
+<h3 class="Satoshi-500 text-lg">Monthly Cash Flow</h3>
+<p class="text-[#8A8580] text-xs Satoshi-400 mt-1">Actual vs Projected Performance</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-0.5 bg-primary"></div>
+<span class="text-[10px] jetbrains uppercase text-[#8A8580]">Projected</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-0.5 bg-[#F0EDE8]"></div>
+<span class="text-[10px] jetbrains uppercase text-[#8A8580]">Actual</span>
+</div>
+</div>
+</div>
+<div class="h-48 flex items-end justify-between gap-4 px-2">
+<div class="flex-1 flex flex-col justify-end gap-1 group">
+<div class="h-[60%] w-full bg-[#2B2A28] rounded-t-sm group-hover:bg-[#363433] transition-colors relative">
+<div class="absolute -top-1 left-0 w-full h-[2px] bg-[#F0EDE8]/20"></div>
+</div>
+<span class="text-[10px] jetbrains text-center text-[#8A8580] mt-2">MAY</span>
+</div>
+<div class="flex-1 flex flex-col justify-end gap-1 group">
+<div class="h-[75%] w-full bg-[#2B2A28] rounded-t-sm relative">
+<div class="absolute -top-4 left-0 w-full h-[2px] bg-[#F0EDE8]/30"></div>
+</div>
+<span class="text-[10px] jetbrains text-center text-[#8A8580] mt-2">JUN</span>
+</div>
+<div class="flex-1 flex flex-col justify-end gap-1 group">
+<div class="h-[65%] w-full bg-[#2B2A28] rounded-t-sm relative">
+<div class="absolute top-4 left-0 w-full h-[2px] bg-primary"></div>
+</div>
+<span class="text-[10px] jetbrains text-center text-[#8A8580] mt-2">JUL</span>
+</div>
+<div class="flex-1 flex flex-col justify-end gap-1 group">
+<div class="h-[85%] w-full bg-[#2B2A28] rounded-t-sm relative">
+<div class="absolute -top-6 left-0 w-full h-[2px] bg-primary shadow-sm shadow-primary/20"></div>
+</div>
+<span class="text-[10px] jetbrains text-center text-[#8A8580] mt-2">AUG</span>
+</div>
+<div class="flex-1 flex flex-col justify-end gap-1 group">
+<div class="h-[90%] w-full bg-[#8B7AFF] rounded-t-sm relative">
+<div class="absolute -top-1 left-0 w-full h-[2px] bg-[#F0EDE8]"></div>
+</div>
+<span class="text-[10px] jetbrains text-center text-[#8B7AFF] mt-2">SEP</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Side Panels (Span 4) -->
+<div class="col-span-4 flex flex-col gap-6">
+<!-- Portfolio Summary with Fey Sparkline -->
+<div class="bg-[#1D1B1A] p-6 rounded-xl">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[11px] uppercase tracking-widest Satoshi-500 text-[#8A8580]">Total Portfolio Value</span>
+<div class="flex items-center text-primary gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span class="jetbrains text-[12px]">+4.2%</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<h2 class="text-3xl jetbrains tracking-tight text-[#F0EDE8]">$28,492,000</h2>
+<div class="flex items-end h-8 w-24 gap-[2px]">
+<div class="bg-[#8B7AFF]/20 w-full h-[20%]"></div>
+<div class="bg-[#8B7AFF]/30 w-full h-[40%]"></div>
+<div class="bg-[#8B7AFF]/40 w-full h-[35%]"></div>
+<div class="bg-[#8B7AFF]/60 w-full h-[60%]"></div>
+<div class="bg-[#8B7AFF]/80 w-full h-[55%]"></div>
+<div class="bg-[#8B7AFF] w-full h-[90%]"></div>
+</div>
+</div>
+</div>
+<!-- Recent Activity Feed -->
+<div class="bg-[#141312] border border-outline-variant/10 rounded-xl overflow-hidden flex flex-col flex-1">
+<div class="p-6 border-b border-outline-variant/5">
+<h3 class="Satoshi-500 text-sm uppercase tracking-widest text-[#8A8580]">Recent Activity</h3>
+</div>
+<div class="p-0 flex-1">
+<div class="flex items-start gap-4 p-6 hover:bg-[#1D1B1A] transition-colors cursor-pointer border-b border-outline-variant/5">
+<div class="w-8 h-8 rounded bg-[#8B7AFF]/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[18px]">analytics</span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="text-[13px] Satoshi-400">Analysis completed for <span class="text-[#F0EDE8]">942 Oak Terrace</span></p>
+<p class="text-[11px] jetbrains text-[#8A8580]">2 hours ago • cap rate 6.4%</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-6 hover:bg-[#1D1B1A] transition-colors cursor-pointer border-b border-outline-variant/5">
+<div class="w-8 h-8 rounded bg-primary-container/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-[18px]">move_up</span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="text-[13px] Satoshi-400">Deal moved to <span class="text-primary">Closing</span></p>
+<p class="text-[11px] jetbrains text-[#8A8580]">5 hours ago • Westside Multi-Family</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-6 hover:bg-[#1D1B1A] transition-colors cursor-pointer border-b border-outline-variant/5">
+<div class="w-8 h-8 rounded bg-tertiary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-tertiary text-[18px]">person_add</span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="text-[13px] Satoshi-400">New contact added: <span class="text-[#F0EDE8]">Sarah Jenkins</span></p>
+<p class="text-[11px] jetbrains text-[#8A8580]">Yesterday • Principal Investor</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-6 hover:bg-[#1D1B1A] transition-colors cursor-pointer">
+<div class="w-8 h-8 rounded bg-[#F0EDE8]/5 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[#8A8580] text-[18px]">mail</span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="text-[13px] Satoshi-400">Mail campaign "Summer Blast" sent</p>
+<p class="text-[11px] jetbrains text-[#8A8580]">Yesterday • 142 recipients</p>
+</div>
+</div>
+</div>
+<div class="p-4 bg-[#1D1B1A]/50 text-center">
+<button class="text-[11px] Satoshi-500 uppercase tracking-widest text-[#8A8580] hover:text-[#F0EDE8] transition-colors">View All Activity</button>
+</div>
+</div>
+<!-- Featured Property Card -->
+<div class="relative h-64 rounded-xl overflow-hidden group">
+<img alt="ultra-modern luxury villa with glass walls and minimalist landscaping during blue hour with warm interior lighting" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpOIa_MJT94V56bhT8kxfPEGi_qRlp_4wT7YIYo-NoKisvH3yfJ_135YJ90CsHVApnmlawPhmoVHOYnpjsPELdsoNhfFdcZB-QjuftRj9WznVY4EoZNfGKnb-sgxjKSdMOgKLsLZHnU4N9-h5RfCbrYA-nd5XfPtMf92LCXOe58mkRicmTOxKJF_PZg9ylK5LoyJly5Loq82W-1OgtKi9YVKZuiXYmJ9jn9OAkdBEta_uG9vh9TA_NLL2Z0JiutqKxvGjZGdUFMxA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#0C0B0A] via-[#0C0B0A]/20 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-6 w-full">
+<div class="bg-primary/20 backdrop-blur-md inline-block px-2 py-1 rounded text-[10px] jetbrains text-primary-fixed mb-2">HOT DEAL</div>
+<h4 class="text-xl Satoshi-400">The Obsidian Penthouse</h4>
+<div class="flex justify-between items-end mt-2">
+<p class="text-[12px] text-[#C5C0B8]">Los Angeles, CA</p>
+<p class="jetbrains text-primary">$4.2M</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center py-3 px-4 bg-[#0C0B0A]/90 backdrop-blur-md z-50 rounded-t-xl tonal-bloom">
+<a class="flex flex-col items-center text-[#C7BFFF] font-bold scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">today</span>
+<span class="Satoshi-400 text-[10px] uppercase tracking-tighter">Today</span>
+</a>
+<a class="flex flex-col items-center text-[#C5C0B8]" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="Satoshi-400 text-[10px] uppercase tracking-tighter">Analyze</span>
+</a>
+<a class="flex flex-col items-center text-[#C5C0B8]" href="#">
+<span class="material-symbols-outlined">account_tree</span>
+<span class="Satoshi-400 text-[10px] uppercase tracking-tighter">Pipeline</span>
+</a>
+<a class="flex flex-col items-center text-[#C5C0B8]" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="Satoshi-400 text-[10px] uppercase tracking-tighter">Chat</span>
+</a>
+<a class="flex flex-col items-center text-[#C5C0B8]" href="#">
+<span class="material-symbols-outlined">more_horiz</span>
+<span class="Satoshi-400 text-[10px] uppercase tracking-tighter">More</span>
+</a>
+</nav>
+</body></html>

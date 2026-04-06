@@ -68,7 +68,7 @@ function formatVolume(n: number | null | undefined): string {
 
 function buyBoxSummary(box: BuyBox): string {
   const parts: string[] = []
-  if (box.property_types?.length) parts.push(box.property_types.join('/'))
+  if (box.property_types?.length) parts.push(box.property_types.map(t => t.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())).join('/'))
   if (box.min_price != null || box.max_price != null) {
     const lo = formatPrice(box.min_price)
     const hi = formatPrice(box.max_price)
@@ -374,7 +374,7 @@ function BuyBoxCard({ contactId, box }: { contactId: string; box: BuyBox }) {
               />
             )}
             {box.property_types?.length ? (
-              <DetailField label="Property Types" value={box.property_types.join(', ')} />
+              <DetailField label="Property Types" value={box.property_types.map(t => t.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())).join(', ')} />
             ) : null}
             {box.strategies?.length ? (
               <DetailField

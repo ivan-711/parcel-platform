@@ -14,12 +14,15 @@ class Document(TimestampMixin, Base):
     __tablename__ = "documents"
 
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
+    property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id"), nullable=True, index=True)
     original_filename = Column(String(255), nullable=False)
     file_type = Column(String(10), nullable=False)
     file_size_bytes = Column(Integer, nullable=False)
     s3_key = Column(String(500), nullable=False)
     s3_bucket = Column(String(100), nullable=False)
     status = Column(String(20), nullable=False, default="pending")
+    embedding_status = Column(String(20), nullable=False, default="pending")
+    embedding_meta = Column(JSONB, nullable=True)
     document_type = Column(String(50), nullable=True)
     parties = Column(JSONB, nullable=True)
     ai_summary = Column(Text, nullable=True)
@@ -30,3 +33,4 @@ class Document(TimestampMixin, Base):
 
     # Relationships
     user = relationship("User", back_populates="documents", foreign_keys=[user_id])
+    chunks = relationship("DocumentChunk", back_populates="document", cascade="all, delete-orphan")

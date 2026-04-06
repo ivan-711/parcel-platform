@@ -12,10 +12,13 @@ class DocumentResponse(BaseModel):
 
     id: uuid.UUID
     user_id: uuid.UUID
+    property_id: Optional[uuid.UUID] = None
     original_filename: str
     file_type: str
     file_size_bytes: int
     status: str
+    embedding_status: str = "pending"
+    embedding_meta: Optional[dict[str, Any]] = None
     document_type: Optional[str]
     parties: Optional[list[dict[str, str]]]
     ai_summary: Optional[str]
@@ -30,6 +33,15 @@ class DocumentResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class DocumentStatusResponse(BaseModel):
+    """Lightweight status check for polling during processing."""
+
+    status: str
+    embedding_status: str
+    embedding_meta: Optional[dict[str, Any]] = None
+    chunks_count: int = 0
+
+
 class DocumentListItem(BaseModel):
     """Compact document summary for GET /documents list responses."""
 
@@ -38,6 +50,7 @@ class DocumentListItem(BaseModel):
     file_type: str
     file_size_bytes: int
     status: str
+    embedding_status: str = "pending"
     document_type: Optional[str]
     ai_summary: Optional[str]
     created_at: datetime

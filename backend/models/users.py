@@ -4,14 +4,14 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, String
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
 
 from database import Base
 from models.base import TimestampMixin
 
 UserRole = Enum("wholesaler", "investor", "agent", name="userrole")
-PlanTier = Enum("free", "starter", "pro", "team", name="plantier")
+PlanTier = Enum("free", "plus", "pro", "business", name="plantier")
 
 
 class User(TimestampMixin, Base):
@@ -21,8 +21,9 @@ class User(TimestampMixin, Base):
 
     name = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False, index=True)
-    password_hash = Column(String, nullable=False)
+    password_hash = Column(String, nullable=True)  # nullable for Clerk-only users
     role = Column(UserRole, nullable=False, default="investor")
+    clerk_user_id = Column(String, unique=True, nullable=True, index=True)
     team_id = Column(UUID(as_uuid=True), ForeignKey("teams.id"), nullable=True)
     email_notifications = Column(
         Boolean, nullable=False, default=True, server_default="true"
@@ -30,6 +31,13 @@ class User(TimestampMixin, Base):
     stripe_customer_id = Column(String, unique=True, nullable=True, index=True)
     plan_tier = Column(PlanTier, nullable=False, default="free", server_default="free")
     trial_ends_at = Column(DateTime, nullable=True)
+
+    # Onboarding
+    onboarding_persona = Column(String, nullable=True)
+    onboarding_completed_at = Column(DateTime, nullable=True)
+
+    # Brand kit for reports
+    brand_kit = Column(JSONB, nullable=True)
 
     # Relationships
     deals = relationship("Deal", back_populates="user", foreign_keys="Deal.user_id")

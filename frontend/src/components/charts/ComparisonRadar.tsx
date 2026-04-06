@@ -148,7 +148,15 @@ function RadarTooltipContent({
   if (!active || !payload || payload.length === 0) return null
 
   return (
-    <div className="rounded-lg border border-border-default bg-[#22211D]/95 px-3 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.55)]">
+    <div
+      className="rounded-lg border px-3 py-2"
+      style={{
+        background: 'var(--chart-tooltip-bg)',
+        borderColor: 'var(--chart-tooltip-border)',
+        backdropFilter: 'blur(12px)',
+        boxShadow: 'var(--chart-tooltip-shadow)',
+      }}
+    >
       <p className="mb-1.5 text-xs font-medium text-text-secondary">{label}</p>
       {payload.map((entry) => {
         const rawKey = `${entry.name}_raw`
@@ -302,6 +310,9 @@ export function ComparisonRadar({ deals }: ComparisonRadarProps) {
               fill={DEAL_COLORS[i % DEAL_COLORS.length]}
               fillOpacity={0.15}
               strokeWidth={2}
+              isAnimationActive
+              animationDuration={500}
+              animationEasing="ease-out"
             />
           ))}
           <Legend content={<RadarLegendContent />} />

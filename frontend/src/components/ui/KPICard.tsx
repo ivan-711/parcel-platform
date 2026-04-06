@@ -49,7 +49,7 @@ export function KPICard({ label, value, format, delta, loading, className, spark
     return <SkeletonCard className={className} lines={2} />
   }
 
-  const strokeColor = '#8B7AFF'
+  const strokeColor = 'var(--chart-accent)'
 
   return (
     <div

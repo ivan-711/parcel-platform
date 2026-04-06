@@ -113,7 +113,7 @@ export default function SkipTracingPage() {
 
   function handleTrace() {
     skipTrace.mutate(
-      { address: street || undefined, city: city || undefined, state: state || undefined, zip_code: zip || undefined },
+      { address: street || undefined, city: city || undefined, state: state || undefined, zip_code: zip || undefined, compliance_acknowledged: true },
       {
         onSuccess: (result) => {
           setInlineResult(result as SkipTraceResult)

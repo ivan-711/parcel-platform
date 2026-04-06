@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.cdnfonts.com/css/satoshi" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#c7bfff",
+                        "surface-container": "#211f1e",
+                        "secondary-container": "#464072",
+                        "on-background": "#e6e1df",
+                        "inverse-on-surface": "#32302f",
+                        "outline": "#928e9f",
+                        "on-primary-container": "#25008b",
+                        "surface-dim": "#141312",
+                        "inverse-surface": "#e6e1df",
+                        "surface-container-lowest": "#0f0e0d",
+                        "surface-container-high": "#2b2a28",
+                        "background": "#141312",
+                        "surface-bright": "#3b3937",
+                        "on-tertiary-fixed-variant": "#624000",
+                        "on-primary": "#2b009e",
+                        "on-secondary": "#302a5a",
+                        "on-error": "#690005",
+                        "outline-variant": "#474554",
+                        "tertiary-fixed": "#ffddb3",
+                        "surface": "#141312",
+                        "on-surface-variant": "#c9c4d6",
+                        "primary-fixed": "#e5deff",
+                        "on-tertiary": "#452b00",
+                        "surface-container-highest": "#363433",
+                        "secondary-fixed": "#e5deff",
+                        "primary-fixed-dim": "#c7bfff",
+                        "inverse-primary": "#5b48cc",
+                        "tertiary": "#ffb94f",
+                        "surface-container-low": "#1d1b1a",
+                        "primary-container": "#8f7fff",
+                        "on-secondary-container": "#b6aee8",
+                        "error": "#ffb4ab",
+                        "surface-container-lowest": "#0f0e0d",
+                        "error-container": "#93000a",
+                        "tertiary-container": "#c48306",
+                        "surface-tint": "#c7bfff",
+                        "on-surface": "#e6e1df",
+                        "on-secondary-fixed": "#1a1444",
+                        "on-tertiary-container": "#3c2500",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#291800",
+                        "tertiary-fixed-dim": "#ffb94f",
+                        "secondary-fixed-dim": "#c8c0fb",
+                        "on-secondary-fixed-variant": "#464072"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Satoshi", "sans-serif"],
+                        "body": ["Satoshi", "sans-serif"],
+                        "label": ["JetBrains Mono", "monospace"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-bloom {
+            background: radial-gradient(circle at 50% 0%, rgba(199, 191, 255, 0.08) 0%, rgba(12, 11, 10, 0) 70%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-[#0C0B0A] text-on-surface font-body min-h-screen pb-32">
+<!-- Top Navigation Shell -->
+<header class="fixed top-0 w-full z-50 bg-[#0C0B0A]/80 backdrop-blur-xl flex justify-between items-center px-6 h-16">
+<div class="text-xl font-medium tracking-tight text-[#F0EDE8] font-headline">The Ledger</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#C5C0B8] hover:opacity-80 transition-opacity cursor-pointer" data-icon="notifications">notifications</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="professional headshot of a man with short hair in soft studio lighting with a neutral dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCb15GRljX40ngOC26ETe9et4EI6KpdEDKVyjiL3W5YP3_bItOTJNi2EdJLVtKmxLRg8qUu5NPj1X7CMlj_pMPBuy2TMXrSPdCgftjE8Y0bwo8XioAcNe2FUkp8SC-0WCc0nBru6RyioK4-PTqVIPcHo3bN1QSFCvTq_-rFZ3qSfsiow6XhwXYf5TcqzqPhXyiVrJ5Th1bf--x1TBusVzjoAPuyCH-r4t6P9H1ulIEXkk3u-nHg--YDEZe0zdDP6TL2VEQgNMOXp9I"/>
+</div>
+</div>
+</header>
+<main class="pt-24 px-6 space-y-8 tonal-bloom">
+<!-- Header Greeting -->
+<section class="space-y-1">
+<h1 class="text-4xl font-headline font-light tracking-tight text-[#F0EDE8]">Good morning, Ivan</h1>
+<p class="text-sm font-headline font-medium text-[#C5C0B8] uppercase tracking-[0.2em]">OCTOBER 24, 2024</p>
+</section>
+<!-- Portfolio Summary Card -->
+<section class="bg-surface-container-low p-6 rounded-xl relative overflow-hidden group transition-all duration-300 hover:bg-surface-container-high">
+<div class="flex justify-between items-start mb-4">
+<p class="text-[10px] font-label text-[#C5C0B8] uppercase tracking-widest">TOTAL AUM</p>
+<div class="flex items-center gap-1 text-[#8B7AFF]">
+<span class="material-symbols-outlined text-xs" data-icon="trending_up">trending_up</span>
+<span class="font-label text-xs">+4.2%</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2 mb-6">
+<span class="text-5xl font-label font-medium text-[#F0EDE8] tracking-tighter">$28.4M</span>
+</div>
+<div class="h-16 w-full flex items-end gap-[2px]">
+<!-- Mock Sparkline -->
+<div class="flex-1 bg-[#8B7AFF]/20 h-[30%] rounded-t-sm"></div>
+<div class="flex-1 bg-[#8B7AFF]/20 h-[45%] rounded-t-sm"></div>
+<div class="flex-1 bg-[#8B7AFF]/20 h-[35%] rounded-t-sm"></div>
+<div class="flex-1 bg-[#8B7AFF]/20 h-[60%] rounded-t-sm"></div>
+<div class="flex-1 bg-[#8B7AFF]/20 h-[55%] rounded-t-sm"></div>
+<div class="flex-1 bg-[#8B7AFF]/20 h-[80%] rounded-t-sm"></div>
+<div class="flex-1 bg-[#8B7AFF]/40 h-[70%] rounded-t-sm"></div>
+<div class="flex-1 bg-[#8B7AFF]/60 h-[90%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary h-[100%] rounded-t-sm shadow-[0_0_15px_rgba(139,122,255,0.3)]"></div>
+</div>
+</section>
+<!-- Briefing Cards -->
+<section class="space-y-3">
+<h2 class="text-[10px] font-label text-[#C5C0B8] uppercase tracking-widest ml-1">Priority Briefing</h2>
+<!-- Urgent (Red) -->
+<div class="bg-surface-container-low p-4 rounded-xl flex items-start gap-4 border-l-2 border-error">
+<div class="p-2 bg-error-container/20 rounded-lg">
+<span class="material-symbols-outlined text-error" data-icon="event_busy">event_busy</span>
+</div>
+<div class="space-y-1">
+<p class="text-sm font-headline text-[#F0EDE8]">Balloon payment on Cedar St in 44 days</p>
+<p class="text-[11px] font-label text-outline uppercase tracking-wider">ACTION REQUIRED</p>
+</div>
+</div>
+<!-- Warning (Orange) -->
+<div class="bg-surface-container-low p-4 rounded-xl flex items-start gap-4 border-l-2 border-tertiary">
+<div class="p-2 bg-tertiary-container/10 rounded-lg">
+<span class="material-symbols-outlined text-tertiary" data-icon="history">history</span>
+</div>
+<div class="space-y-1">
+<p class="text-sm font-headline text-[#F0EDE8]">2 deals stale for 7+ days — follow up</p>
+<p class="text-[11px] font-label text-outline uppercase tracking-wider">PIPELINE STALLED</p>
+</div>
+</div>
+<!-- Notice (Blue) -->
+<div class="bg-surface-container-low p-4 rounded-xl flex items-start gap-4 border-l-2 border-[#8B7AFF]">
+<div class="p-2 bg-[#8B7AFF]/10 rounded-lg">
+<span class="material-symbols-outlined text-[#8B7AFF]" data-icon="database">database</span>
+</div>
+<div class="space-y-1">
+<p class="text-sm font-headline text-[#F0EDE8]">New comp data available for 613 N 14th St</p>
+<p class="text-[11px] font-label text-outline uppercase tracking-wider">MARKET INSIGHT</p>
+</div>
+</div>
+</section>
+<!-- Pipeline Velocity -->
+<section class="bg-surface-container-low p-6 rounded-xl space-y-4">
+<div class="flex justify-between items-center">
+<h3 class="text-sm font-headline font-medium text-[#F0EDE8]">Pipeline Velocity</h3>
+<span class="font-label text-xs text-[#8B7AFF]">Active: 12</span>
+</div>
+<div class="space-y-2">
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden flex">
+<div class="h-full bg-[#8B7AFF] w-[20%] rounded-r-sm"></div>
+<div class="h-full bg-[#8B7AFF]/70 w-[35%] rounded-r-sm"></div>
+<div class="h-full bg-[#8B7AFF]/40 w-[25%] rounded-r-sm"></div>
+</div>
+<div class="flex justify-between text-[10px] font-label text-[#C5C0B8] tracking-tighter">
+<span>UNDERWRITING</span>
+<span>LOI</span>
+<span>PSA</span>
+</div>
+</div>
+</section>
+<!-- Quick Action -->
+<button class="w-full h-14 bg-gradient-to-r from-primary to-primary-container rounded-lg flex items-center justify-center gap-2 group active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-on-primary" data-icon="search_insights" style="font-variation-settings: 'FILL' 1;">search_insights</span>
+<span class="text-on-primary font-headline font-medium tracking-tight">Analyze Property</span>
+</button>
+<!-- Recent Activity -->
+<section class="space-y-4">
+<div class="flex justify-between items-center px-1">
+<h3 class="text-[10px] font-label text-[#C5C0B8] uppercase tracking-widest">Recent Activity</h3>
+<span class="text-[10px] font-label text-[#8B7AFF] cursor-pointer">VIEW ALL</span>
+</div>
+<div class="space-y-4">
+<div class="flex gap-4 items-center">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-xs text-[#C5C0B8]" data-icon="attachment">attachment</span>
+</div>
+<div>
+<p class="text-sm text-[#F0EDE8] font-headline">Updated Rent Roll for <span class="text-primary">Oakwood Apts</span></p>
+<p class="text-[11px] font-label text-[#8A8580]">2 hours ago • Document Lab</p>
+</div>
+</div>
+<div class="flex gap-4 items-center">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-xs text-[#C5C0B8]" data-icon="chat_bubble">chat_bubble</span>
+</div>
+<div>
+<p class="text-sm text-[#F0EDE8] font-headline">Sarah left a comment on <span class="text-primary">PSA terms</span></p>
+<p class="text-[11px] font-label text-[#8A8580]">4 hours ago • Project Alpha</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- AI Assistant FAB -->
+<button class="fixed bottom-24 right-6 w-14 h-14 rounded-full bg-[#2B2A28]/90 backdrop-blur shadow-2xl flex items-center justify-center border border-primary/20 group hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="blur_on">blur_on</span>
+</button>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full bg-[#0C0B0A]/90 backdrop-blur-xl flex justify-around items-center px-4 pb-6 pt-3 z-50 rounded-t-xl shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-[#8B7AFF] font-medium bg-[#2B2A28]/50 rounded-xl px-3 py-1" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="today" style="font-variation-settings: 'FILL' 1;">today</span>
+<span class="font-['Satoshi'] font-regular text-[10px] tracking-wider uppercase">Today</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#C5C0B8] px-3 py-1 hover:text-[#F0EDE8] transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="analytics">analytics</span>
+<span class="font-['Satoshi'] font-regular text-[10px] tracking-wider uppercase">Analyze</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#C5C0B8] px-3 py-1 hover:text-[#F0EDE8] transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="account_tree">account_tree</span>
+<span class="font-['Satoshi'] font-regular text-[10px] tracking-wider uppercase">Pipeline</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#C5C0B8] px-3 py-1 hover:text-[#F0EDE8] transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-['Satoshi'] font-regular text-[10px] tracking-wider uppercase">Chat</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#C5C0B8] px-3 py-1 hover:text-[#F0EDE8] transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="more_horiz">more_horiz</span>
+<span class="font-['Satoshi'] font-regular text-[10px] tracking-wider uppercase">More</span>
+</a>
+</nav>
+</body></html>

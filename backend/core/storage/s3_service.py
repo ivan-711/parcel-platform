@@ -6,13 +6,20 @@ import boto3
 
 
 def _get_client():
-    """Create a boto3 S3 client from environment variables."""
-    return boto3.client(
-        "s3",
-        region_name=os.getenv("AWS_REGION"),
-        aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
-    )
+    """Create a boto3 S3 client from environment variables.
+
+    When S3_ENDPOINT_URL is set (e.g. to a Cloudflare R2 endpoint), the client
+    targets that provider instead of AWS S3.  All API calls are identical.
+    """
+    kwargs = {
+        "region_name": os.getenv("AWS_REGION", "auto"),
+        "aws_access_key_id": os.getenv("AWS_ACCESS_KEY_ID"),
+        "aws_secret_access_key": os.getenv("AWS_SECRET_ACCESS_KEY"),
+    }
+    endpoint_url = os.getenv("S3_ENDPOINT_URL")
+    if endpoint_url:
+        kwargs["endpoint_url"] = endpoint_url
+    return boto3.client("s3", **kwargs)
 
 
 def _get_bucket() -> str:
@@ -38,6 +45,12 @@ def generate_presigned_url(s3_key: str, expires_in: int = 3600) -> str:
         Params={"Bucket": _get_bucket(), "Key": s3_key},
         ExpiresIn=expires_in,
     )
+
+
+def download_file(s3_key: str) -> bytes:
+    """Download file bytes from S3/R2."""
+    response = _get_client().get_object(Bucket=_get_bucket(), Key=s3_key)
+    return response["Body"].read()
 
 
 def delete_file(s3_key: str) -> bool:

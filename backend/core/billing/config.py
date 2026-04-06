@@ -19,11 +19,11 @@ class StripeSettings(BaseSettings):
     STRIPE_PRICE_PRO_MONTHLY: str = ""
     STRIPE_PRICE_PRO_ANNUAL: str = ""
 
-    # Future tiers (not enforced yet)
-    STRIPE_PRICE_STARTER_MONTHLY: str = ""
-    STRIPE_PRICE_STARTER_ANNUAL: str = ""
-    STRIPE_PRICE_TEAM_MONTHLY: str = ""
-    STRIPE_PRICE_TEAM_ANNUAL: str = ""
+    # Plus ($29) and Business ($149) tiers
+    STRIPE_PRICE_PLUS_MONTHLY: str = ""
+    STRIPE_PRICE_PLUS_ANNUAL: str = ""
+    STRIPE_PRICE_BUSINESS_MONTHLY: str = ""
+    STRIPE_PRICE_BUSINESS_ANNUAL: str = ""
 
     ENVIRONMENT: str = "development"
     FRONTEND_URL: str = "http://localhost:5173"
@@ -69,7 +69,7 @@ class StripeSettings(BaseSettings):
     def price_to_plan_map(self) -> dict[str, str]:
         """Reverse mapping from Stripe Price ID to plan name."""
         mapping: dict[str, str] = {}
-        for plan in ("starter", "pro", "team"):
+        for plan in ("plus", "pro", "business"):
             for interval in ("monthly", "annual"):
                 pid = getattr(self, f"STRIPE_PRICE_{plan.upper()}_{interval.upper()}", "")
                 if pid:

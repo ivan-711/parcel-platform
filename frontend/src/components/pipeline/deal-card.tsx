@@ -4,6 +4,7 @@ import { memo, useState, useRef, useEffect, useCallback } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, MoreHorizontal, Trash2, CheckCircle2, ArrowRight } from 'lucide-react'
+import { SampleBadge } from '@/components/SampleBadge'
 import { STAGES, STRATEGY_COLORS, STRATEGY_LABELS } from './constants'
 import type { PipelineCard, Stage } from './constants'
 
@@ -43,9 +44,30 @@ interface DealCardProps {
   onRemove?: (pipelineId: string, stage: Stage) => void
   onCloseDeal?: (card: PipelineCard) => void
   onMoveStage?: (pipelineId: string, fromStage: Stage, toStage: Stage) => void
+  onCardClick?: (card: PipelineCard) => void
 }
 
-export const DealCard = memo(function DealCard({ card, isDragging = false, isFocused = false, onRemove, onCloseDeal, onMoveStage }: DealCardProps) {
+export const DealCard = memo(function DealCard({ card: rawCard, isDragging = false, isFocused = false, onRemove, onCloseDeal, onMoveStage, onCardClick }: DealCardProps) {
+  // Normalize cards that arrive with a nested `deal` object (e.g. from pipeline API
+  // responses where deal fields are nested) into the flat PipelineCard shape.
+  const deal = (rawCard as Record<string, unknown>).deal as Record<string, unknown> | undefined
+  const card: PipelineCard = deal
+    ? {
+        pipeline_id: rawCard.pipeline_id || (rawCard as Record<string, unknown>).id as string,
+        deal_id: rawCard.deal_id || (deal.id as string),
+        address: rawCard.address || deal.address as string || '',
+        city: rawCard.city ?? (deal.city as string | null) ?? null,
+        state: rawCard.state ?? (deal.state as string | null) ?? null,
+        strategy: rawCard.strategy || deal.strategy as string || '',
+        asking_price: rawCard.asking_price ?? (deal.purchase_price as number | null) ?? (deal.arv as number | null) ?? null,
+        stage: rawCard.stage,
+        days_in_stage: rawCard.days_in_stage ?? 0,
+        entered_stage_at: rawCard.entered_stage_at ?? (rawCard as Record<string, unknown>).created_at as string ?? '',
+        property_type: rawCard.property_type ?? null,
+        is_sample: rawCard.is_sample ?? false,
+      }
+    : rawCard
+
   const [menuOpen, setMenuOpen] = useState(false)
   const [showMoveMenu, setShowMoveMenu] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -82,13 +104,27 @@ export const DealCard = memo(function DealCard({ card, isDragging = false, isFoc
           : isFocused
             ? 'ring-2 ring-[#8B7AFF]/40 ring-offset-2 ring-offset-app-bg border-[#8B7AFF]/40'
             : 'border-border-default hover:border-border-emphasis hover:-translate-y-px',
+        onCardClick && !isDragging ? 'cursor-pointer' : '',
       ].join(' ')}
+      onClick={() => {
+        if (onCardClick && !isDragging && !menuOpen) onCardClick(card)
+      }}
     >
       {/* Address + Actions */}
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[13px] font-medium text-text-primary leading-snug line-clamp-2">
-          {card.address}
-        </p>
+        <div className="min-w-0">
+          <div className="flex items-center gap-1.5">
+            <p className="text-[13px] font-medium text-text-primary leading-snug line-clamp-2">
+              {card.address}
+            </p>
+            {card.is_sample && <SampleBadge />}
+          </div>
+          {(card.city || card.state) && (
+            <p className="text-[11px] text-[#8A8580] mt-0.5">
+              {[card.city, card.state].filter(Boolean).join(', ')}
+            </p>
+          )}
+        </div>
         <div className="flex items-center gap-1 flex-shrink-0 mt-0.5">
           {(onRemove || onCloseDeal) && (
             <button
@@ -221,12 +257,13 @@ interface SortableDealCardProps {
   isFocused?: boolean
   onRemove?: (pipelineId: string, stage: Stage) => void
   onCloseDeal?: (card: PipelineCard) => void
+  onCardClick?: (card: PipelineCard) => void
   /** Callback to register this card's DOM element for keyboard focus management. */
   registerRef?: (el: HTMLDivElement | null) => void
 }
 
 /** SortableDealCard — wraps DealCard with @dnd-kit/sortable for drag-and-drop. */
-export function SortableDealCard({ card, isFocused = false, onRemove, onCloseDeal, registerRef }: SortableDealCardProps) {
+export function SortableDealCard({ card, isFocused = false, onRemove, onCloseDeal, onCardClick, registerRef }: SortableDealCardProps) {
   const {
     attributes: { tabIndex: _tabIndex, role: _role, ...restAttributes },
     listeners,
@@ -263,7 +300,7 @@ export function SortableDealCard({ card, isFocused = false, onRemove, onCloseDea
       aria-selected={isFocused}
       className="outline-none"
     >
-      <DealCard card={card} isDragging={isDragging} isFocused={isFocused} onRemove={onRemove} onCloseDeal={onCloseDeal} />
+      <DealCard card={card} isDragging={isDragging} isFocused={isFocused} onRemove={onRemove} onCloseDeal={onCloseDeal} onCardClick={onCardClick} />
     </div>
   )
 }

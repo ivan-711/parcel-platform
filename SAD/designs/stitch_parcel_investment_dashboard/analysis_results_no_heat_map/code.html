@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Analysis Results | Parcel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;family=Manrope:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @font-face {
+            font-family: 'Satoshi';
+            src: url('https://api.fontshare.com/v2/fonts/download/satoshi?f[]=300,400,500,700') format('woff2');
+        }
+        body {
+            font-family: 'Satoshi', sans-serif;
+            background-color: #0C0B0A;
+            color: #F0EDE8;
+        }
+        .jetbrains-mono { font-family: 'JetBrains Mono', monospace; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .Satoshi-300 { font-weight: 300; }
+        .Satoshi-400 { font-weight: 400; }
+        .Satoshi-500 { font-weight: 500; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "background": "#141312",
+                        "on-tertiary": "#452b00",
+                        "outline": "#928e9f",
+                        "surface-container": "#211f1e",
+                        "secondary-container": "#464072",
+                        "on-surface-variant": "#c9c4d6",
+                        "secondary": "#c8c0fb",
+                        "surface-container-low": "#1d1b1a",
+                        "primary-fixed-dim": "#c7bfff",
+                        "surface": "#141312",
+                        "primary-container": "#8f7fff",
+                        "on-background": "#e6e1df",
+                        "tertiary": "#ffb94f",
+                        "surface-container-high": "#2b2a28",
+                        "on-surface": "#e6e1df",
+                        "surface-container-highest": "#363433",
+                        "on-primary": "#2b009e",
+                        "surface-tint": "#c7bfff",
+                        "on-primary-container": "#25008b",
+                        "surface-variant": "#363433",
+                        "outline-variant": "#474554",
+                        "on-secondary-container": "#b6aee8",
+                        "surface-container-lowest": "#0f0e0d",
+                        "primary": "#c7bfff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#0C0B0A] selection:bg-primary/30 Satoshi-400">
+<!-- SideNavBar Shell -->
+<aside class="w-[240px] h-screen fixed left-0 top-0 overflow-y-auto flex flex-col py-6 px-4 gap-y-2 bg-[#0C0B0A] border-r border-outline-variant/10">
+<div class="mb-8 px-2">
+<h1 class="text-2xl Satoshi-500 tracking-tighter text-[#F0EDE8]">Parcel</h1>
+<p class="text-[11px] tracking-widest font-medium uppercase text-[#8A8580] mt-1">Investment Gallery</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-[#F0EDE8] border-l-2 border-[#8B7AFF] bg-[#1D1B1A] transition-all" href="#">
+<span class="material-symbols-outlined text-[#8B7AFF]">search</span>
+<span class="text-[11px] tracking-widest font-medium uppercase">Analyze</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#8A8580] hover:text-[#F0EDE8] hover:bg-[#1D1B1A] transition-colors" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="text-[11px] tracking-widest font-medium uppercase">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#8A8580] hover:text-[#F0EDE8] hover:bg-[#1D1B1A] transition-colors" href="#">
+<span class="material-symbols-outlined">apartment</span>
+<span class="text-[11px] tracking-widest font-medium uppercase">Properties</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#8A8580] hover:text-[#F0EDE8] hover:bg-[#1D1B1A] transition-colors" href="#">
+<span class="material-symbols-outlined">view_kanban</span>
+<span class="text-[11px] tracking-widest font-medium uppercase">Pipeline</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#8A8580] hover:text-[#F0EDE8] hover:bg-[#1D1B1A] transition-colors" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-[11px] tracking-widest font-medium uppercase">Portfolio</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant/10 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-[#8A8580] hover:text-[#F0EDE8] hover:bg-[#1D1B1A] transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[11px] tracking-widest font-medium uppercase">Settings</span>
+</a>
+<div class="px-3 py-4 flex items-center gap-3">
+<div class="w-8 h-8 bg-surface-container-high rounded-full overflow-hidden border border-outline-variant/20">
+<img alt="Investor profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDrh4XHAdL6UFrqML6lRruE1AkPBlBNPTGAR9i4oB_L5ruXo0_PWZip6uuUbeMPJTkaQV8CJZ68ElFmfmPFAQ72qrT2Ht-AXayIV9M5WlpuvS8jEpp5-tUp2zAnlc8owoihldig-6mVhjWKrYpVIhfgLakBTEAQCRw8qEVTPNjS-S5Y0vlrO2nyVmfD9nFv8mNPPGPg75csTROvTWBG4wdxfM9iKy_4E7UQ9b1vv69Ou4koi7MboMjcCCI0rplZHWMBmVxCUE-bkU"/>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] Satoshi-500 text-[#F0EDE8]">Alex Vance</span>
+<span class="text-[8px] text-[#8A8580]">PRINCIPAL</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[240px] min-h-screen relative">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-240px)] z-40 flex justify-between items-center px-8 h-16 bg-[#0C0B0A]/80 backdrop-blur-md border-b border-outline-variant/5">
+<div class="flex items-baseline gap-4">
+<h2 class="text-lg Satoshi-300 text-[#F0EDE8]">613 N 14th St, Sheboygan, WI 53081</h2>
+<span class="text-[12px] text-[#C5C0B8] Satoshi-400 opacity-60">3BR / 2BA · 1,450 sqft · SFH</span>
+</div>
+<div class="flex items-center gap-4">
+<!-- Action Bar -->
+<div class="flex items-center gap-2 border-r border-outline-variant/20 pr-4 mr-2">
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] uppercase tracking-wider text-[#8A8580] hover:text-[#F0EDE8] hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined text-[18px]">bookmark</span> Save
+                </button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] uppercase tracking-wider text-[#8A8580] hover:text-[#F0EDE8] hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined text-[18px]">add_to_photos</span> Pipeline
+                </button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] uppercase tracking-wider text-[#8A8580] hover:text-[#F0EDE8] hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined text-[18px]">description</span> Report
+                </button>
+</div>
+<div class="flex items-center bg-surface-container-lowest px-4 py-1.5 rounded-lg border border-outline-variant/10">
+<span class="material-symbols-outlined text-[18px] text-[#8B7AFF] mr-2">search</span>
+<span class="text-[12px] text-[#8A8580]">Quick Search</span>
+</div>
+</div>
+</header>
+<div class="pt-24 px-8 pb-12">
+<!-- AI Narrative Card -->
+<div class="w-full bg-surface-container-low p-6 mb-8 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 flex gap-1 items-center">
+<span class="text-[10px] text-[#F0EDE8] tracking-widest uppercase mr-2 Satoshi-500">Confidence Indicator</span>
+<div class="flex gap-1 items-center">
+<div class="w-2 h-2 rounded-full bg-[#F0EDE8]"></div>
+<div class="w-2 h-2 rounded-full bg-[#F0EDE8]"></div>
+<div class="w-2 h-2 rounded-full bg-[#F0EDE8]"></div>
+<div class="w-2 h-2 rounded-full border border-[#F0EDE8]/40"></div>
+</div>
+</div>
+<div class="max-w-4xl">
+<h3 class="text-primary text-[11px] tracking-widest uppercase mb-3 Satoshi-500">AI Narrative Assessment</h3>
+<p class="text-xl Satoshi-300 leading-relaxed text-[#F0EDE8]">
+                    The property at 14th St presents a rare <span class="text-primary Satoshi-400">low-volatility opportunity</span> within the Sheboygan sub-market. While current yields are conservative, the structural integrity and neighborhood velocity suggest a 14.2% equity gain over the next 36 months. Recommended strategy: <span class="italic underline decoration-primary/40 underline-offset-4 Satoshi-400">Buy &amp; Hold</span> with minor cosmetic updates to maximize NOI.
+                </p>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-8">
+<!-- Left Sidebar: Calculator Inputs -->
+<div class="col-span-3 space-y-6">
+<div class="bg-surface-container-low p-6">
+<h4 class="text-[11px] tracking-widest uppercase text-[#8A8580] mb-6 Satoshi-500">Strategy Selection</h4>
+<div class="space-y-1">
+<button class="w-full text-left px-4 py-3 text-[12px] uppercase tracking-wider text-[#8A8580] hover:bg-surface-container-high transition-all">Wholesale</button>
+<button class="w-full text-left px-4 py-3 text-[12px] uppercase tracking-wider text-[#8A8580] hover:bg-surface-container-high transition-all">BRRRR</button>
+<button class="w-full text-left px-4 py-3 text-[12px] uppercase tracking-wider bg-surface-container-high border-l-2 border-primary text-white transition-all">Buy &amp; Hold</button>
+<button class="w-full text-left px-4 py-3 text-[12px] uppercase tracking-wider text-[#8A8580] hover:bg-surface-container-high transition-all">Flip</button>
+<button class="w-full text-left px-4 py-3 text-[12px] uppercase tracking-wider text-[#8A8580] hover:bg-surface-container-high transition-all">Creative</button>
+</div>
+</div>
+<div class="bg-surface-container-low p-6">
+<h4 class="text-[11px] tracking-widest uppercase text-[#8A8580] mb-6 Satoshi-500">Financial Inputs</h4>
+<div class="space-y-5">
+<div>
+<div class="flex justify-between items-center mb-1">
+<label class="text-[10px] text-[#8A8580] uppercase tracking-wider Satoshi-500">Purchase Price</label>
+<span class="text-[8px] bg-[#2D2B2A] text-[#8A8580] px-1.5 py-0.5 rounded Satoshi-500 uppercase">Your Input</span>
+</div>
+<div class="jetbrains-mono text-lg border-b border-outline-variant/30 py-1 text-[#F0EDE8]">$245,000</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1">
+<label class="text-[10px] text-[#8A8580] uppercase tracking-wider Satoshi-500">Down Payment (%)</label>
+<span class="text-[8px] bg-[#2D2B2A] text-[#8A8580] px-1.5 py-0.5 rounded Satoshi-500 uppercase">Your Input</span>
+</div>
+<div class="jetbrains-mono text-lg border-b border-outline-variant/30 py-1 text-[#F0EDE8]">20.00</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1">
+<label class="text-[10px] text-[#8A8580] uppercase tracking-wider Satoshi-500">Interest Rate</label>
+<span class="text-[8px] bg-[#2D2B2A] text-[#8A8580] px-1.5 py-0.5 rounded Satoshi-500 uppercase">Your Input</span>
+</div>
+<div class="jetbrains-mono text-lg border-b border-outline-variant/30 py-1 text-[#F0EDE8]">6.850</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1">
+<label class="text-[10px] text-[#8A8580] uppercase tracking-wider Satoshi-500">Gross Monthly Rent</label>
+<span class="text-[8px] bg-emerald-500/10 text-emerald-500 px-1.5 py-0.5 rounded Satoshi-500 uppercase">Verified</span>
+</div>
+<div class="jetbrains-mono text-lg border-b border-outline-variant/30 py-1 text-[#F0EDE8]">$2,150</div>
+</div>
+<!-- Expandable Section -->
+<div class="pt-4 mt-2 border-t border-outline-variant/10 space-y-4">
+<div class="flex items-center justify-between group cursor-pointer">
+<span class="text-[10px] uppercase tracking-widest text-[#8A8580] group-hover:text-[#F0EDE8] transition-colors">Edit Advanced Expenses</span>
+<span class="material-symbols-outlined text-[16px] text-[#8A8580] group-hover:text-primary transition-colors">expand_more</span>
+</div>
+<div class="space-y-4 opacity-70">
+<div class="flex justify-between items-center">
+<span class="text-[10px] text-[#8A8580] uppercase tracking-wider">Property Taxes</span>
+<span class="text-[8px] border border-red-500/40 text-red-500 px-1.5 py-0.5 rounded uppercase">Needed</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-[10px] text-[#8A8580] uppercase tracking-wider">Insurance</span>
+<span class="text-[8px] bg-yellow-500/10 text-yellow-500 px-1.5 py-0.5 rounded uppercase">Estimated</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Analysis Results -->
+<div class="col-span-9 space-y-8">
+<!-- Cash Flow Highlight & Metrics -->
+<div class="grid grid-cols-3 gap-8">
+<div class="col-span-1 bg-surface-container-low p-8 border border-primary/10 flex flex-col justify-between">
+<div>
+<h4 class="text-[11px] tracking-widest uppercase text-[#8A8580] mb-2 Satoshi-500">Net Cash Flow</h4>
+<div class="flex items-baseline gap-2">
+<span class="jetbrains-mono text-6xl text-primary">$187</span>
+<span class="text-xs text-[#8A8580] Satoshi-400">/mo</span>
+</div>
+</div>
+<div>
+<div class="h-12 w-full mt-6 flex items-end gap-1.5">
+<div class="bg-primary/10 w-full h-4 rounded-t-sm"></div>
+<div class="bg-primary/20 w-full h-6 rounded-t-sm"></div>
+<div class="bg-primary/40 w-full h-8 rounded-t-sm"></div>
+<div class="bg-primary/60 w-full h-10 rounded-t-sm"></div>
+<div class="bg-primary w-full h-12 rounded-t-sm"></div>
+</div>
+<p class="text-[10px] text-primary/60 mt-2 uppercase tracking-widest Satoshi-500">5-yr Trend Growth: +22.4%</p>
+</div>
+</div>
+<div class="col-span-2 bg-surface-container-low p-8 grid grid-cols-3 gap-y-10 gap-x-6">
+<div class="space-y-1">
+<span class="text-[10px] text-[#8A8580] uppercase tracking-widest Satoshi-500">Cap Rate</span>
+<div class="jetbrains-mono text-2xl text-[#F0EDE8]">6.12%</div>
+<div class="w-1.5 h-1.5 rounded-full bg-yellow-500"></div>
+</div>
+<div class="space-y-1">
+<span class="text-[10px] text-[#8A8580] uppercase tracking-widest Satoshi-500">CoC Return</span>
+<div class="jetbrains-mono text-2xl text-[#F0EDE8]">8.45%</div>
+<div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+</div>
+<div class="space-y-1">
+<span class="text-[10px] text-[#8A8580] uppercase tracking-widest Satoshi-500">Total ROI</span>
+<div class="jetbrains-mono text-2xl text-[#F0EDE8]">14.2%</div>
+<div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+</div>
+<div class="space-y-1">
+<span class="text-[10px] text-[#8A8580] uppercase tracking-widest Satoshi-500">DSCR</span>
+<div class="jetbrains-mono text-2xl text-[#F0EDE8]">1.25</div>
+<div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+</div>
+<div class="space-y-1">
+<span class="text-[10px] text-[#8A8580] uppercase tracking-widest Satoshi-500">Monthly NOI</span>
+<div class="jetbrains-mono text-2xl text-[#F0EDE8]">$1,452</div>
+<div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+</div>
+<div class="space-y-1">
+<span class="text-[10px] text-[#8A8580] uppercase tracking-widest Satoshi-500">GRM</span>
+<div class="jetbrains-mono text-2xl text-[#F0EDE8]">9.5</div>
+<div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+</div>
+</div>
+</div>
+<!-- 30-Year Cash Flow Projection Area Chart -->
+<div class="bg-surface-container-low p-8">
+<div class="flex justify-between items-center mb-12">
+<h4 class="text-[11px] tracking-widest uppercase text-[#8A8580] Satoshi-500">30-Year Cash Flow Projection</h4>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-[10px] text-[#8A8580] Satoshi-500 uppercase tracking-widest">Cumulative Cash Flow</span>
+</div>
+</div>
+</div>
+<div class="h-64 relative flex items-end w-full">
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none">
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#8B7AFF" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#8B7AFF" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0 240 Q 200 220, 400 160 T 800 120 L 1200 40 L 1200 256 L 0 256 Z" fill="url(#chartGradient)"></path>
+<path d="M0 240 Q 200 220, 400 160 T 800 120 L 1200 40" fill="none" stroke="#8B7AFF" stroke-width="1.5"></path>
+</svg>
+<div class="absolute left-0 top-0 h-full flex flex-col justify-between text-[9px] jetbrains-mono text-[#8A8580] opacity-50">
+<span>$500k</span>
+<span>$250k</span>
+<span>$0</span>
+</div>
+<div class="absolute bottom-[-24px] w-full flex justify-between text-[9px] jetbrains-mono text-[#8A8580] opacity-50">
+<span>Year 1</span>
+<span>Year 10</span>
+<span>Year 20</span>
+<span>Year 30</span>
+</div>
+</div>
+</div>
+<!-- Bottom Grid -->
+<div class="grid grid-cols-2 gap-8">
+<!-- High-Fidelity Sensitivity Matrix Ledger -->
+<div class="bg-surface-container-low p-8 flex flex-col">
+<div class="flex justify-between items-baseline mb-8">
+<h4 class="text-[11px] tracking-widest uppercase text-[#8A8580] Satoshi-500">Sensitivity Analysis</h4>
+<span class="text-[9px] text-primary/60 Satoshi-500 uppercase tracking-widest">Monthly Cash Flow</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/20">
+<th class="pb-4 text-[9px] Satoshi-500 uppercase tracking-widest text-[#8A8580]">Basis / Rate</th>
+<th class="pb-4 text-center text-[9px] Satoshi-500 uppercase tracking-widest text-[#8A8580]">6.0%</th>
+<th class="pb-4 text-center text-[9px] Satoshi-500 uppercase tracking-widest text-[#8A8580]">6.5%</th>
+<th class="pb-4 text-center text-[9px] Satoshi-500 uppercase tracking-widest text-[#8A8580]">7.0%</th>
+<th class="pb-4 text-center text-[9px] Satoshi-500 uppercase tracking-widest text-[#8A8580]">7.5%</th>
+<th class="pb-4 text-center text-[9px] Satoshi-500 uppercase tracking-widest text-[#8A8580]">8.0%</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="group hover:bg-white/5 transition-colors">
+<td class="py-4 text-[10px] Satoshi-500 uppercase text-[#8A8580] group-hover:text-[#F0EDE8]">$230,000</td>
+<td class="py-4 text-center jetbrains-mono text-[11px] text-[#F0EDE8]">$312</td>
+<td class="py-4 text-center jetbrains-mono text-[11px] text-[#F0EDE8]">$256</td>
+<td class="py-4 text-center jetbrains-mono text-[11px] text-[#F0EDE8]">$198</td>
+<td class="py-4 text-center jetbrains-mono text-[11px] text-[#F0EDE8]">$142</td>
+<td class="py-4 text-center jetbrains-mono text-[11px] text-[#F0EDE8]">$88</td>
+</tr>
+<tr class="group hover:bg-white/5 transition-colors bg-white/[0.02]">
+<td class="py-4 text-[10px] Satoshi-500 uppercase text-primary">$245,000</td>
+<td class="py-4 text-center jetbrains-mono text-[11px] text-[#F0EDE8]">$244</td>
+<td class="py-4 text-center jetbrains-mono text-[11px] text-[#F0EDE8]">$187</td>
+<td class="py-4 text-center jetbrains-mono text-[11px] text-[#F0EDE8]">$128</td>
+<td class="py-4 text-center jetbrains-mono text-[11px] text-[#F0EDE8]">$72</td>
+<td class="py-4 text-center jetbrains-mono text-[11px] text-[#F0EDE8]">$18</td>
+</tr>
+<tr class="group hover:bg-white/5 transition-colors">
+<td class="py-4 text-[10px] Satoshi-500 uppercase text-[#8A8580] group-hover:text-[#F0EDE8]">$260,000</td>
+<td class="py-4 text-center jetbrains-mono text-[11px] text-[#F0EDE8]">$176</td>
+<td class="py-4 text-center jetbrains-mono text-[11px] text-[#F0EDE8]">$118</td>
+<td class="py-4 text-center jetbrains-mono text-[11px] text-[#F0EDE8]">$58</td>
+<td class="py-4 text-center jetbrains-mono text-[11px] text-[#F0EDE8]">$2</td>
+<td class="py-4 text-center jetbrains-mono text-[11px] text-red-400/80">($54)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Strategy Alpha Comparison -->
+<div class="bg-surface-container-low p-8 flex flex-col items-center justify-center relative overflow-hidden">
+<h4 class="text-[11px] tracking-widest uppercase text-[#8A8580] absolute top-8 left-8 Satoshi-500">Strategy Alpha Comparison</h4>
+<div class="w-48 h-48 relative flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-18" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="none" r="45" stroke="#474554" stroke-dasharray="2 2" stroke-width="0.5"></circle>
+<circle cx="50" cy="50" fill="none" r="30" stroke="#474554" stroke-dasharray="2 2" stroke-width="0.5"></circle>
+<circle cx="50" cy="50" fill="none" r="15" stroke="#474554" stroke-dasharray="2 2" stroke-width="0.5"></circle>
+<path d="M50 5 L50 95 M5 50 L95 50 M15 15 L85 85" stroke="#474554" stroke-width="0.2"></path>
+<polygon fill="rgba(139, 122, 255, 0.2)" points="50,15 80,40 70,80 30,80 20,40" stroke="#8B7AFF" stroke-width="1.5"></polygon>
+</svg>
+<span class="absolute top-[-20px] text-[8px] uppercase tracking-widest text-[#8A8580] Satoshi-500">Yield</span>
+<span class="absolute right-[-30px] text-[8px] uppercase tracking-widest text-[#8A8580] Satoshi-500">Stability</span>
+<span class="absolute bottom-[-20px] text-[8px] uppercase tracking-widest text-[#8A8580] Satoshi-500">Equity</span>
+<span class="absolute left-[-30px] text-[8px] uppercase tracking-widest text-[#8A8580] Satoshi-500">Tax Eff.</span>
+</div>
+<div class="mt-12 flex gap-4 flex-wrap justify-center">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 bg-primary"></div>
+<span class="text-[9px] uppercase tracking-widest text-[#F0EDE8] Satoshi-500">Buy &amp; Hold</span>
+</div>
+<div class="flex items-center gap-2 opacity-40">
+<div class="w-1.5 h-1.5 bg-[#8A8580]"></div>
+<span class="text-[9px] uppercase tracking-widest text-[#8A8580] Satoshi-500">Market Avg.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Sparkle Button -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform active:scale-95 z-50">
+<span class="material-symbols-outlined text-[28px] font-light">auto_awesome</span>
+</button>
+</main>
+</body></html>

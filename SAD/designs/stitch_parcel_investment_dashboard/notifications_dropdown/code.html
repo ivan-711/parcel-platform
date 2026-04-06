@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "tertiary-fixed-dim": "#ffb94f",
+                  "surface-tint": "#c7bfff",
+                  "surface-container-lowest": "#0f0e0d",
+                  "primary-container": "#8f7fff",
+                  "primary": "#c7bfff",
+                  "inverse-surface": "#e6e1df",
+                  "secondary-fixed-dim": "#c8c0fb",
+                  "on-secondary-fixed-variant": "#464072",
+                  "error-container": "#93000a",
+                  "tertiary": "#ffb94f",
+                  "surface-dim": "#141312",
+                  "on-primary": "#2b009e",
+                  "on-error": "#690005",
+                  "on-surface": "#e6e1df",
+                  "error": "#ffb4ab",
+                  "tertiary-fixed": "#ffddb3",
+                  "on-background": "#e6e1df",
+                  "on-tertiary": "#452b00",
+                  "on-surface": "#e6e1df",
+                  "inverse-primary": "#5b48cc",
+                  "surface-container": "#211f1e",
+                  "on-tertiary-container": "#3c2500",
+                  "on-secondary-fixed": "#1a1444",
+                  "on-primary-container": "#25008b",
+                  "outline-variant": "#474554",
+                  "secondary-container": "#464072",
+                  "inverse-on-surface": "#32302f",
+                  "tertiary-container": "#c48306",
+                  "primary-fixed-dim": "#c7bfff",
+                  "on-tertiary-fixed": "#291800",
+                  "outline": "#928e9f",
+                  "on-tertiary-fixed-variant": "#624000",
+                  "surface-container-highest": "#363433",
+                  "surface-bright": "#3b3937",
+                  "surface": "#141312",
+                  "on-primary-fixed-variant": "#432cb3",
+                  "background": "#141312",
+                  "surface-container-high": "#2b2a28",
+                  "surface-container-low": "#1d1b1a",
+                  "on-secondary-container": "#b6aee8",
+                  "secondary-fixed": "#e5deff",
+                  "primary-fixed": "#e5deff",
+                  "on-error-container": "#ffdad6",
+                  "on-primary-fixed": "#180064",
+                  "surface-variant": "#363433",
+                  "secondary": "#c8c0fb",
+                  "on-surface-variant": "#c9c4d6"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.125rem",
+                  "lg": "0.25rem",
+                  "xl": "0.5rem",
+                  "full": "0.75rem"
+          },
+          "fontFamily": {
+                  "headline": ["Satoshi", "sans-serif"],
+                  "body": ["Satoshi", "sans-serif"],
+                  "label": ["JetBrains Mono", "monospace"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body { font-family: 'Satoshi', sans-serif; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+    .tonal-bloom {
+      transition: background-color 0.3s ease;
+    }
+    .mono-data {
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Side Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 overflow-y-auto z-50 bg-[#0C0B0A] flex flex-col py-8 gap-y-6">
+<div class="px-8 mb-4">
+<div class="font-medium text-[#F0EDE8] tracking-[0.2em] uppercase text-sm">Parcel</div>
+<div class="text-[#8A8580] text-[10px] tracking-widest mt-1">Ledger v1.0</div>
+</div>
+<nav class="flex flex-col gap-y-1">
+<div class="text-[#F0EDE8] font-medium border-l-2 border-[#8B7AFF] pl-4 py-2 flex items-center gap-x-3 cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-light text-sm tracking-wider">Home</span>
+</div>
+<div class="text-[#8A8580] pl-4 py-2 hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all flex items-center gap-x-3 cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">handshake</span>
+<span class="font-light text-sm tracking-wider">Deals</span>
+</div>
+<div class="text-[#8A8580] pl-4 py-2 hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all flex items-center gap-x-3 cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="font-light text-sm tracking-wider">People</span>
+</div>
+<div class="text-[#8A8580] pl-4 py-2 hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all flex items-center gap-x-3 cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">location_city</span>
+<span class="font-light text-sm tracking-wider">Assets</span>
+</div>
+<div class="text-[#8A8580] pl-4 py-2 hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all flex items-center gap-x-3 cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="font-light text-sm tracking-wider">Outputs</span>
+</div>
+</nav>
+<div class="mt-auto px-8 flex flex-col gap-y-4">
+<button class="bg-gradient-to-r from-[#C7BFFF] to-[#8F7FFF] text-[#180064] py-3 rounded-lg text-xs font-bold tracking-widest uppercase shadow-[0_4px_12px_rgba(139,122,255,0.2)]">
+        New Investment
+      </button>
+<div class="flex flex-col gap-y-3 pt-6 border-t border-outline-variant/10">
+<div class="flex items-center gap-x-3 text-[#8A8580] hover:text-[#F0EDE8] cursor-pointer">
+<span class="material-symbols-outlined text-[18px]">help_outline</span>
+<span class="text-xs tracking-wider">Support</span>
+</div>
+<div class="flex items-center gap-x-3 text-[#8A8580] hover:text-[#F0EDE8] cursor-pointer">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+<span class="text-xs tracking-wider">AI Assistant</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="fixed top-0 right-0 left-64 z-40 bg-[#0C0B0A]/80 backdrop-blur-xl border-b border-transparent shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+<div class="flex justify-between items-center px-8 h-16">
+<div class="flex items-center gap-x-6">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-0 text-[#C5C0B8]">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm font-light text-[#F0EDE8] pl-8 w-64 placeholder:text-[#8A8580]" placeholder="Search ledger..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-x-6">
+<div class="relative group">
+<button class="text-[#8B7AFF] flex items-center relative transition-colors duration-300">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-1.5 h-1.5 bg-[#8B7AFF] rounded-full"></span>
+</button>
+<!-- NOTIFICATION DROPDOWN -->
+<div class="absolute right-0 top-10 w-96 bg-[#141311] rounded-xl shadow-[0_20px_40px_rgba(0,0,0,0.6)] overflow-hidden z-50 ring-1 ring-outline-variant/10">
+<div class="px-6 py-5 flex justify-between items-center bg-surface-container-low">
+<h3 class="text-[#F0EDE8] text-sm font-medium tracking-tight">Recent Alerts</h3>
+<span class="mono-data text-[10px] text-[#8B7AFF] tracking-wider uppercase cursor-pointer hover:underline">Mark all read</span>
+</div>
+<div class="flex flex-col">
+<!-- Item 1: Urgent -->
+<div class="px-6 py-5 hover:bg-[#1D1B1A] transition-colors border-b border-outline-variant/5">
+<div class="flex gap-x-4">
+<div class="flex-shrink-0 mt-1">
+<span class="material-symbols-outlined text-error text-[20px]" data-icon="error">error</span>
+</div>
+<div class="flex flex-col gap-y-1">
+<p class="text-[#F0EDE8] text-sm leading-snug">Urgent: Balloon payment on Cedar St</p>
+<p class="mono-data text-[10px] text-[#8A8580]">2m ago • Portfolio Alpha</p>
+</div>
+</div>
+</div>
+<!-- Item 2: Buy Analysis -->
+<div class="px-6 py-5 hover:bg-[#1D1B1A] transition-colors border-b border-outline-variant/5">
+<div class="flex gap-x-4">
+<div class="flex-shrink-0 mt-1">
+<span class="material-symbols-outlined text-[#8B7AFF] text-[20px]" data-icon="insights">insights</span>
+</div>
+<div class="flex flex-col gap-y-1">
+<p class="text-[#F0EDE8] text-sm leading-snug">New Analysis: 613 N 14th St is a strong buy</p>
+<p class="mono-data text-[10px] text-[#8A8580]">45m ago • Market Watch</p>
+</div>
+</div>
+</div>
+<!-- Item 3: Report Viewed -->
+<div class="px-6 py-5 hover:bg-[#1D1B1A] transition-colors">
+<div class="flex gap-x-4">
+<div class="flex-shrink-0 mt-1">
+<span class="material-symbols-outlined text-[#C5C0B8] text-[20px]" data-icon="visibility">visibility</span>
+</div>
+<div class="flex flex-col gap-y-1">
+<p class="text-[#F0EDE8] text-sm leading-snug">Report Viewed: James Miller opened the Sheboygan report</p>
+<p class="mono-data text-[10px] text-[#8A8580]">2h ago • Activity Log</p>
+</div>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-surface-container-low/50 text-center border-t border-outline-variant/5">
+<button class="text-xs text-[#C5C0B8] hover:text-[#F0EDE8] transition-colors tracking-wide">View all activity history</button>
+</div>
+</div>
+</div>
+<button class="text-[#C5C0B8] hover:text-[#F0EDE8] transition-colors duration-300">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden ring-1 ring-[#8B7AFF]/30">
+<img alt="User avatar" data-alt="professional portrait of a confident investment banker in a tailored suit with a neutral studio background and soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPourvVwNQKE5JeGfiG2H7krN7Upm3H4EwkOrdXre1VB0ucq2BOGuX3bgSdl5ELSMNMdgVC9BwXbXCb9keYWYQcapQ7pPhVloQ51wB_T5cwMc8OfCZABLIxVGVElt2-kUjl-MuJez8MIe-SBlWJ4I-sQM5WJjKyHNob8wzbea46dV8HQnnhJKg1n12SeROuQE9-_wUpXa-gi7GitYZRE9BhxteumVDwSMgWYKr2n0yZUWYt8ZFz185K99Z4r5fQrA1-TWoXgn6G2A"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pl-64 pt-16 min-h-screen bg-surface-dim">
+<div class="p-10 max-w-[1400px] mx-auto">
+<!-- Editorial Header -->
+<header class="mb-12">
+<h1 class="text-4xl font-light text-[#F0EDE8] tracking-tight mb-2">Portfolio Overview</h1>
+<p class="text-[#C5C0B8] font-light max-w-xl">A consolidated view of your private equity holdings, debt obligations, and active acquisition targets.</p>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Main Stats (Asymmetric focal point) -->
+<div class="col-span-8 grid grid-cols-3 gap-8">
+<div class="col-span-1 bg-surface-container-low p-8 rounded-xl tonal-bloom hover:bg-surface-container">
+<p class="text-xs text-[#8A8580] tracking-widest uppercase mb-4">Net Asset Value</p>
+<p class="mono-data text-2xl text-[#F0EDE8]">$14,280,000</p>
+<div class="mt-4 flex items-center gap-x-2 text-xs text-[#8B7AFF]">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="mono-data">+2.4% vs last month</span>
+</div>
+</div>
+<div class="col-span-1 bg-surface-container-low p-8 rounded-xl tonal-bloom hover:bg-surface-container">
+<p class="text-xs text-[#8A8580] tracking-widest uppercase mb-4">Active Assets</p>
+<p class="mono-data text-2xl text-[#F0EDE8]">34</p>
+<div class="mt-4 flex items-center gap-x-2 text-xs text-[#C5C0B8]">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="mono-data">9 markets tracked</span>
+</div>
+</div>
+<div class="col-span-1 bg-surface-container-low p-8 rounded-xl tonal-bloom hover:bg-surface-container">
+<p class="text-xs text-[#8A8580] tracking-widest uppercase mb-4">Target IRR</p>
+<p class="mono-data text-2xl text-[#F0EDE8]">18.4%</p>
+<div class="mt-4 flex items-center gap-x-2 text-xs text-[#C5C0B8]">
+<span class="material-symbols-outlined text-sm">flag</span>
+<span class="mono-data">Stable projections</span>
+</div>
+</div>
+<!-- Featured Visualization -->
+<div class="col-span-3 bg-surface-container-low rounded-xl overflow-hidden min-h-[300px] relative group">
+<div class="absolute inset-0 opacity-40 bg-gradient-to-t from-[#0C0B0A] to-transparent z-10"></div>
+<img alt="data visualization background" class="absolute inset-0 w-full h-full object-cover grayscale opacity-20 group-hover:scale-105 transition-transform duration-700" data-alt="abstract architectural sketch of a modern minimalist city layout with sleek lines and high-contrast lighting in a dark palette" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpXBmqDSw8c_XgXpY66R1RSerkEfw8UYINvqMsjoP2Dv2dHqBH8wSGDaiVfZMDijtxWdVmDnHqZSCTvoUI08vCWdIHPVCgloNrh8L805q9ihsb-etyPTnBZT7ZoQHbKPOOpxjRSizXFU4tWPeSw_J7_Vbdspj4YF6fDuEOjfz2xbk1b1O82xt5WUxui42iIEjLxoCHuaan4zc0Ykqx4q4ruvRNNPi4-O-WFU4TTwXqSkWSI6E6YDOe5ZgS8lF_N9qDJxTqpRjzyI8"/>
+<div class="relative z-20 p-8 h-full flex flex-col justify-end">
+<h2 class="text-xl font-medium text-[#F0EDE8] mb-2">Quarterly Yield Analysis</h2>
+<p class="text-[#C5C0B8] text-sm font-light max-w-md">Performance across the midwest multi-family sector has exceeded projections by 115bps this quarter.</p>
+<div class="mt-6 flex gap-x-4">
+<button class="bg-[#2B2A28] hover:bg-[#363433] px-4 py-2 rounded text-xs text-[#F0EDE8] transition-colors border border-outline-variant/10">Full Report</button>
+<button class="text-xs text-[#8B7AFF] hover:text-[#F0EDE8] transition-colors">Export .XLSX</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar Activity (The "Ledger" sidebar) -->
+<div class="col-span-4 flex flex-col gap-y-8">
+<div class="bg-surface-container-low rounded-xl p-8">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-sm font-medium tracking-tight text-[#F0EDE8]">Asset Locations</h3>
+<span class="material-symbols-outlined text-[#8A8580] text-sm">map</span>
+</div>
+<div class="rounded-lg h-48 bg-surface-container-high relative overflow-hidden mb-6 grayscale border border-outline-variant/5">
+<img class="w-full h-full object-cover" data-alt="stylized map view" data-location="Chicago" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAI-NqJtZUXy84a1ISc6qtMgMjMXltKie3nyIwYfv9bewdtvj1FR76r2p71mpbgRq849cOZeHo58gfe2quEVZJQFhHfNYxbQfCvSuDtqMM3n5l7BxJ9jm2JhByPyppvkH_jpFhYT5KtWJVYSzum9Z66l2GZoOQM-lIuEeQzdigtnaHW2YL2kSThAs0724sGoe7vNXEtW_6MF0uFcNvqrsLRUznSEiykq9xiTMG6jwpWZaN_Gb8IKSa7k4WUNtd4-WKiXKhCYZiZnPQ"/>
+<div class="absolute inset-0 bg-[#8B7AFF]/10 pointer-events-none"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-[#8B7AFF] rounded-full border-2 border-white animate-pulse"></div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center group cursor-pointer">
+<span class="text-xs text-[#C5C0B8] group-hover:text-[#F0EDE8] transition-colors">Sheboygan Commercial</span>
+<span class="mono-data text-[10px] text-[#8A8580] tracking-tighter">WI, USA</span>
+</div>
+<div class="flex justify-between items-center group cursor-pointer">
+<span class="text-xs text-[#C5C0B8] group-hover:text-[#F0EDE8] transition-colors">Cedar St Residential</span>
+<span class="mono-data text-[10px] text-[#8A8580] tracking-tighter">NY, USA</span>
+</div>
+<div class="flex justify-between items-center group cursor-pointer">
+<span class="text-xs text-[#C5C0B8] group-hover:text-[#F0EDE8] transition-colors">N 14th St Logistics</span>
+<span class="mono-data text-[10px] text-[#8A8580] tracking-tighter">OH, USA</span>
+</div>
+</div>
+</div>
+<div class="bg-[#8B7AFF]/5 rounded-xl p-8 border border-[#8B7AFF]/10">
+<h3 class="text-sm font-medium text-[#F0EDE8] mb-2">Liquidity Score</h3>
+<p class="text-xs text-[#8A8580] mb-6">Current portfolio readiness for immediate capital calls.</p>
+<div class="relative h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="absolute left-0 top-0 h-full bg-gradient-to-r from-[#C7BFFF] to-[#8F7FFF] w-[72%]"></div>
+</div>
+<div class="mt-4 flex justify-between">
+<span class="mono-data text-[10px] text-[#8A8580]">Optimal: 85%</span>
+<span class="mono-data text-[10px] text-[#F0EDE8]">72%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Overlay for focus (Optional UI flair to highlight dropdown) -->
+<div class="fixed inset-0 bg-black/20 pointer-events-none z-30"></div>
+</body></html>

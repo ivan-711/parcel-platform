@@ -38,8 +38,16 @@ class Deal(TimestampMixin, Base):
     status = Column(DealStatus, nullable=False, default="draft")
     deleted_at = Column(DateTime, nullable=True)
 
+    # Wave 0 additions — link to Property (nullable for backward compat)
+    property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id"), nullable=True)
+    deal_type = Column(String, nullable=True)  # acquisition | disposition
+
+    # DEPRECATED: inputs/outputs will migrate to AnalysisScenario. Remove in Wave 2.
+
     # Relationships
     user = relationship("User", back_populates="deals", foreign_keys=[user_id])
     team = relationship("Team", back_populates="deals", foreign_keys=[team_id])
+    property = relationship("Property", back_populates="deals", foreign_keys=[property_id])
     pipeline_entries = relationship("PipelineEntry", back_populates="deal")
     portfolio_entries = relationship("PortfolioEntry", back_populates="deal")
+    financing_instruments = relationship("FinancingInstrument", back_populates="deal")

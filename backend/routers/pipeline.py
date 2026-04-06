@@ -1,9 +1,11 @@
 """Pipeline router — Kanban board endpoints for moving deals through stages."""
 
 from datetime import datetime
+from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from core.billing.tier_gate import require_feature
@@ -12,12 +14,14 @@ from database import get_db
 from limiter import limiter
 from models.deals import Deal
 from models.pipeline_entries import PipelineEntry
+from models.properties import Property
 from models.users import User
 from schemas.pipeline import (
     PipelineBoardResponse,
     PipelineCardResponse,
     PipelineCreateRequest,
     PipelineStageUpdateRequest,
+    PipelineStatsResponse,
 )
 
 router = APIRouter(prefix="/pipeline", tags=["pipeline"])
@@ -36,10 +40,17 @@ def _asking_price(inputs: dict) -> float | None:
     return None
 
 
-def _build_card(entry: PipelineEntry, deal: Deal) -> PipelineCardResponse:
-    """Build a PipelineCardResponse from a pipeline entry and its associated deal."""
+def _build_card(
+    entry: PipelineEntry,
+    deal: Deal,
+    prop: Property | None = None,
+) -> PipelineCardResponse:
+    """Build a PipelineCardResponse from a pipeline entry and its deal."""
     now = datetime.utcnow()
-    days = (now - entry.entered_stage_at).days if entry.entered_stage_at else 0
+    days = (
+        (now - entry.entered_stage_at).days
+        if entry.entered_stage_at else 0
+    )
     return PipelineCardResponse(
         pipeline_id=entry.id,
         deal_id=deal.id,
@@ -49,6 +60,10 @@ def _build_card(entry: PipelineEntry, deal: Deal) -> PipelineCardResponse:
         stage=entry.stage,
         days_in_stage=days,
         entered_stage_at=entry.entered_stage_at,
+        city=prop.city if prop else None,
+        state=prop.state if prop else None,
+        property_type=prop.property_type if prop else None,
+        is_sample=prop.is_sample if prop else False,
     )
 
 
@@ -56,28 +71,49 @@ def _build_card(entry: PipelineEntry, deal: Deal) -> PipelineCardResponse:
 @limiter.limit("60/minute")
 async def get_pipeline_board(
     request: Request,
+    strategy: Optional[str] = Query(None),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
     _gate: None = Depends(require_feature("pipeline_enabled")),
 ) -> PipelineBoardResponse:
-    """Return all pipeline entries for the current user grouped by stage.
+    """Return pipeline entries grouped by stage.
 
-    All 7 stage keys are always present in the response (empty list if no cards).
+    Optional strategy filter. All 7 stage keys always present.
     """
-    entries = (
+    q = (
         db.query(PipelineEntry, Deal)
         .join(Deal, PipelineEntry.deal_id == Deal.id)
+        .outerjoin(Property, Deal.property_id == Property.id)
         .filter(
             PipelineEntry.user_id == current_user.id,
             Deal.deleted_at.is_(None),
         )
+    )
+
+    if strategy:
+        q = q.filter(Deal.strategy == strategy)
+
+    # Also fetch Property in the result set
+    rows = (
+        db.query(PipelineEntry, Deal, Property)
+        .join(Deal, PipelineEntry.deal_id == Deal.id)
+        .outerjoin(Property, Deal.property_id == Property.id)
+        .filter(
+            PipelineEntry.user_id == current_user.id,
+            Deal.deleted_at.is_(None),
+            *([Deal.strategy == strategy] if strategy else []),
+        )
         .all()
     )
 
-    board: dict[str, list[PipelineCardResponse]] = {stage: [] for stage in _ALL_STAGES}
-    for entry, deal in entries:
+    board: dict[str, list[PipelineCardResponse]] = {
+        stage: [] for stage in _ALL_STAGES
+    }
+    for entry, deal, prop in rows:
         if entry.stage in board:
-            board[entry.stage].append(_build_card(entry, deal))
+            board[entry.stage].append(
+                _build_card(entry, deal, prop)
+            )
 
     return PipelineBoardResponse(**board)
 
@@ -108,6 +144,17 @@ async def add_to_pipeline(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={"error": "Deal not found", "code": "DEAL_NOT_FOUND"},
+        )
+
+    # Prevent duplicate pipeline entries for the same deal
+    existing = db.query(PipelineEntry).filter(
+        PipelineEntry.deal_id == deal.id,
+        PipelineEntry.user_id == current_user.id,
+    ).first()
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={"error": "Deal is already in the pipeline", "code": "DUPLICATE_ENTRY"},
         )
 
     entry = PipelineEntry(
@@ -181,3 +228,44 @@ async def remove_from_pipeline(
     db.delete(entry)
     db.commit()
     return {"message": "Removed from pipeline"}
+
+
+@router.get("/stats", response_model=PipelineStatsResponse)
+async def get_pipeline_stats(
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> PipelineStatsResponse:
+    """Pipeline analytics: counts by stage/strategy, total value."""
+    rows = (
+        db.query(PipelineEntry.stage, Deal.strategy)
+        .join(Deal, PipelineEntry.deal_id == Deal.id)
+        .filter(
+            PipelineEntry.user_id == current_user.id,
+            Deal.deleted_at.is_(None),
+        )
+        .all()
+    )
+
+    by_stage: dict[str, int] = {}
+    by_strategy: dict[str, int] = {}
+    active_stages = {
+        "lead", "analyzing", "offer_sent",
+        "under_contract", "due_diligence",
+    }
+    total_active = 0
+
+    for stage, strategy in rows:
+        by_stage[stage] = by_stage.get(stage, 0) + 1
+        by_strategy[strategy] = (
+            by_strategy.get(strategy, 0) + 1
+        )
+        if stage in active_stages:
+            total_active += 1
+
+    return PipelineStatsResponse(
+        by_stage=by_stage,
+        by_strategy=by_strategy,
+        total_value=0,
+        total_active=total_active,
+    )

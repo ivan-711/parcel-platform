@@ -10,6 +10,12 @@ import { useOnboardingStore } from '@/stores/onboardingStore'
 import { api } from '@/lib/api'
 import { ClerkProviderWrapper } from '@/components/auth/ClerkProviderWrapper'
 
+// ── Dev Preview Mode ──
+// Dynamic import ensures mock code is fully tree-shaken from production builds.
+if (import.meta.env.VITE_DEV_PREVIEW === 'true') {
+  import('./dev/devPreview').then(m => m.installMockApi())
+}
+
 // Lazy-loaded pages
 const Landing = lazy(() => import('@/components/landing/LandingPage'))
 const Login = lazy(() => import('@/pages/Login'))

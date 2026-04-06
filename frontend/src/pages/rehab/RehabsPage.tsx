@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Plus, Hammer, Calendar } from 'lucide-react'
@@ -40,8 +40,21 @@ function formatDate(iso: string): string {
 export default function RehabsPage() {
   const [showCreate, setShowCreate] = useState(false)
   const { data, isLoading } = useRehabProjects()
+  const { data: propData } = useProperties({})
 
   const projects: RehabProject[] = data?.items ?? data ?? []
+
+  // Build a property address lookup for cards that don't have property_address joined
+  const propertyMap = useMemo(() => {
+    const map = new Map<string, string>()
+    const props = propData?.properties ?? propData?.data ?? []
+    for (const p of props as Array<Record<string, unknown>>) {
+      const addr = (p.address_line1 ?? p.address ?? '') as string
+      const parts = [addr, p.city, p.state].filter(Boolean)
+      if (p.id && parts.length) map.set(p.id as string, parts.join(', '))
+    }
+    return map
+  }, [propData])
 
   // PostHog
   useEffect(() => {
@@ -99,7 +112,7 @@ export default function RehabsPage() {
         {projects.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {projects.map((project, i) => (
-              <ProjectCard key={project.id} project={project} index={i} />
+              <ProjectCard key={project.id} project={project} index={i} propertyMap={propertyMap} />
             ))}
           </div>
         )}
@@ -113,13 +126,17 @@ export default function RehabsPage() {
 
 /* ─── Project Card ─── */
 
-function ProjectCard({ project, index }: { project: RehabProject; index: number }) {
+function ProjectCard({ project, index, propertyMap }: { project: RehabProject; index: number; propertyMap: Map<string, string> }) {
   const status = STATUS_STYLES[project.status] ?? STATUS_STYLES.planning
   const estimated = project.total_estimated || project.estimated_budget || 0
   const actual = project.total_actual || project.actual_spent || 0
   const overBudget = estimated > 0 && actual > estimated
   const budgetPct = estimated > 0 ? Math.min((actual / estimated) * 100, 100) : 0
   const completedCount = Math.round((project.completion_pct ?? 0) / 100 * (project.item_count ?? 0))
+  // Resolve property address: prefer backend-joined field, fall back to local lookup
+  const propertyAddress = (project as Record<string, unknown>).property_address as string
+    || propertyMap.get(project.property_id)
+    || null
 
   return (
     <motion.div
@@ -135,7 +152,7 @@ function ProjectCard({ project, index }: { project: RehabProject; index: number 
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="min-w-0">
             <p className="text-sm text-[#F0EDE8] font-medium truncate">
-              {project.property_address || 'No address'}
+              {propertyAddress || project.name}
             </p>
             <p className="text-xs text-[#8A8580] mt-0.5 truncate">{project.name}</p>
           </div>

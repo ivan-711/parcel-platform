@@ -97,6 +97,49 @@ function DetailPanel({
             </div>
           </div>
         </div>
+        {/* Embedding status indicator */}
+        {doc.embedding_status === 'processing' && (
+          <div className="mt-3 flex items-center gap-2 text-xs text-text-secondary">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#8B7AFF] animate-pulse shrink-0" />
+            {doc.embedding_meta?.total_chunks
+              ? `Indexing for AI chat... (chunk ${doc.embedding_meta.processed_chunks ?? 0} of ${doc.embedding_meta.total_chunks})`
+              : 'Analyzing document structure...'}
+            <div className="flex-1 h-1 bg-layer-3 rounded-full overflow-hidden max-w-[120px]">
+              <div
+                className="h-full bg-[#8B7AFF] rounded-full transition-all duration-500"
+                style={{
+                  width: doc.embedding_meta?.total_chunks
+                    ? `${Math.round(((doc.embedding_meta.processed_chunks ?? 0) / doc.embedding_meta.total_chunks) * 100)}%`
+                    : '10%',
+                }}
+              />
+            </div>
+          </div>
+        )}
+        {doc.embedding_status === 'failed' && (
+          <div className="mt-3 flex items-center gap-1.5 text-xs text-text-secondary">
+            <AlertCircle size={12} className="text-[#D4A867]" />
+            AI chat indexing failed — basic document chat still available
+          </div>
+        )}
+        {doc.embedding_status === 'complete' && (
+          <div className="mt-3 flex items-center gap-1.5 text-xs text-[#4ADE80]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#4ADE80] shrink-0" />
+            Ready for AI chat
+          </div>
+        )}
+        {doc.embedding_meta?.truncated && (
+          <div className="mt-3 flex items-start gap-1.5 text-xs text-[#D4A867]">
+            <AlertCircle size={12} className="mt-0.5 shrink-0" />
+            <span>
+              This document was partially processed (first{' '}
+              {(doc.embedding_meta.extracted_chars ?? 0).toLocaleString()} of{' '}
+              {(doc.embedding_meta.total_chars ?? 0).toLocaleString()} characters).
+              AI answers may not cover the full document.
+            </span>
+          </div>
+        )}
+
         <div className="flex items-center gap-2 mt-3">
           {doc.presigned_url && (
             <a href={doc.presigned_url} target="_blank" rel="noopener noreferrer">
@@ -263,9 +306,11 @@ export function RightPanelContent({
     queryFn: () => api.documents.get(selectedId!),
     enabled: !!selectedId,
     refetchInterval: (query) => {
-      const status = query.state.data?.status
-      if (!status) return false
-      return status === 'pending' || status === 'processing' ? 3000 : false
+      const d = query.state.data
+      if (!d) return false
+      const metadataPending = d.status === 'pending' || d.status === 'processing'
+      const embeddingPending = d.embedding_status === 'pending' || d.embedding_status === 'processing'
+      return metadataPending || embeddingPending ? 3000 : false
     },
   })
 

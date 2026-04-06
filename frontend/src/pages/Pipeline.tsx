@@ -6,7 +6,7 @@
  * Route: /pipeline
  */
 import { useState, useCallback, useMemo } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   DndContext,
@@ -22,6 +22,7 @@ import {
 } from '@dnd-kit/core'
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { Plus } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { api } from '@/lib/api'
 import { AppShell } from '@/components/layout/AppShell'
 import { PageHeader } from '@/components/layout/PageHeader'
@@ -46,6 +47,7 @@ import { PipelineEmpty } from '@/components/pipeline/pipeline-empty'
 import { PipelineError } from '@/components/pipeline/pipeline-error'
 import { useKanbanKeyboard } from '@/hooks/useKanbanKeyboard'
 import { FeatureGate } from '@/components/billing/FeatureGate'
+import { DealSidePanel } from '@/components/pipeline/DealSidePanel'
 
 /** Strategy badge used inside the drag overlay. */
 function OverlayStrategyBadge({ strategy }: { strategy: string }) {
@@ -60,16 +62,37 @@ function OverlayStrategyBadge({ strategy }: { strategy: string }) {
   )
 }
 
+const STRATEGY_FILTERS = [
+  { value: '', label: 'All Strategies' },
+  { value: 'wholesale', label: 'Wholesale' },
+  { value: 'buy_and_hold', label: 'Buy & Hold' },
+  { value: 'flip', label: 'Fix & Flip' },
+  { value: 'brrrr', label: 'BRRRR' },
+  { value: 'creative_finance', label: 'Creative' },
+]
+
 export default function PipelinePage() {
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
   const [activeCard, setActiveCard] = useState<PipelineCard | null>(null)
   const [overColumnKey, setOverColumnKey] = useState<Stage | null>(null)
   const [closeDealCard, setCloseDealCard] = useState<PipelineCard | null>(null)
   const [removeTarget, setRemoveTarget] = useState<{ pipelineId: string; stage: Stage } | null>(null)
+  const [strategyFilter, setStrategyFilter] = useState('')
+  const [selectedCard, setSelectedCard] = useState<PipelineCard | null>(null)
 
   const handleCloseDeal = useCallback((card: PipelineCard) => {
     setCloseDealCard(card)
+  }, [])
+
+  const handleCardClick = useCallback((card: PipelineCard) => {
+    setSelectedCard(card)
+    try {
+      (window as any).posthog?.capture?.('deal_card_clicked', {
+        deal_id: card.deal_id,
+        stage: card.stage,
+        strategy: card.strategy,
+      })
+    } catch { /* ignore */ }
   }, [])
 
   const sensors = useSensors(
@@ -83,8 +106,8 @@ export default function PipelinePage() {
 
   // ── Data fetching ──────────────────────────────────────────────────────
   const { data: pipelineData, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ['pipeline'],
-    queryFn: () => api.pipeline.list(),
+    queryKey: ['pipeline', strategyFilter],
+    queryFn: () => api.pipeline.list(strategyFilter || undefined),
   })
 
   // Local board state — derived from server, mutated optimistically
@@ -109,10 +132,10 @@ export default function PipelinePage() {
       const cards = board[stageKey] ?? []
       const card = cards[cardIndex]
       if (card) {
-        navigate(`/analyze/results/${card.deal_id}`)
+        handleCardClick(card)
       }
     },
-    [board, navigate]
+    [board, handleCardClick]
   )
 
   const {
@@ -298,6 +321,29 @@ export default function PipelinePage() {
         }
       />
 
+      {/* Strategy filter pills */}
+      <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-luxury px-4 md:px-6 lg:px-8 pb-3">
+        {STRATEGY_FILTERS.map(opt => (
+          <button
+            key={opt.value}
+            onClick={() => {
+              setStrategyFilter(opt.value)
+              try {
+                (window as any).posthog?.capture?.('pipeline_strategy_filtered', { strategy: opt.value || 'all' })
+              } catch { /* ignore */ }
+            }}
+            className={cn(
+              'text-xs px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors cursor-pointer',
+              strategyFilter === opt.value
+                ? 'bg-[#8B7AFF]/15 text-[#A89FFF] border border-[#8B7AFF]/30'
+                : 'bg-[#141311] text-[#8A8580] border border-[#1E1D1B] hover:text-[#C5C0B8]'
+            )}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+
       <PageContent>
         {/* Mobile — tabbed stage view (below md breakpoint) */}
         <div className="block md:hidden">
@@ -340,6 +386,7 @@ export default function PipelinePage() {
                   registerCardRef={registerCardRef}
                   onRemove={handleRemoveCard}
                   onCloseDeal={handleCloseDeal}
+                  onCardClick={handleCardClick}
                 />
               ))}
             </div>
@@ -466,6 +513,13 @@ export default function PipelinePage() {
           .shimmer-dark { animation: none; }
         }
       `}</style>
+
+      {/* Deal side panel */}
+      <DealSidePanel
+        card={selectedCard}
+        isOpen={!!selectedCard}
+        onClose={() => setSelectedCard(null)}
+      />
       </FeatureGate>
     </AppShell>
   )

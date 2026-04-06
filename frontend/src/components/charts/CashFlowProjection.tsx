@@ -246,7 +246,15 @@ function ChartTooltip({
   if (!active || !payload || payload.length === 0) return null
 
   return (
-    <div className="rounded-lg border border-border-default bg-[#22211D]/95 px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.55)]">
+    <div
+      className="rounded-lg border px-4 py-3"
+      style={{
+        background: 'var(--chart-tooltip-bg)',
+        borderColor: 'var(--chart-tooltip-border)',
+        backdropFilter: 'blur(12px)',
+        boxShadow: 'var(--chart-tooltip-shadow)',
+      }}
+    >
       <p className="text-xs font-medium text-text-secondary mb-2">{label}</p>
       {payload.map((entry) => (
         <div key={entry.dataKey} className="flex items-center gap-2 mb-1 last:mb-0">

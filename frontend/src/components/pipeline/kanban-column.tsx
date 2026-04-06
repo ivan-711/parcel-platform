@@ -24,6 +24,7 @@ interface KanbanColumnProps {
   registerCardRef?: (colIndex: number, cardIndex: number, el: HTMLDivElement | null) => void
   onRemove?: (pipelineId: string, stage: Stage) => void
   onCloseDeal?: (card: PipelineCard) => void
+  onCardClick?: (card: PipelineCard) => void
 }
 
 export function KanbanColumn({
@@ -37,6 +38,7 @@ export function KanbanColumn({
   registerCardRef,
   onRemove,
   onCloseDeal,
+  onCardClick,
 }: KanbanColumnProps) {
   /** Create a stable ref registration callback for a specific card index. */
   const makeRegisterRef = useCallback(
@@ -135,6 +137,7 @@ export function KanbanColumn({
                     isFocused={isKeyboardActive && focusedCardIndex === i}
                     onRemove={onRemove}
                     onCloseDeal={onCloseDeal}
+                    onCardClick={onCardClick}
                     registerRef={makeRegisterRef(i)}
                   />
                 </motion.div>

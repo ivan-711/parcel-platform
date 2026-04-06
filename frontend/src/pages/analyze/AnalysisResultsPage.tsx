@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Save, GitBranch, FileText, Loader2, Check, Users } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Save, GitBranch, FileText, Loader2, Check, Users, ChevronDown, Calculator } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { CreateReportModal } from '@/components/reports/CreateReportModal'
+import { VerdictBadge } from './components/VerdictBadge'
 import { NarrativeCard } from './components/NarrativeCard'
 import { KeyMetrics } from './components/KeyMetrics'
 import { FinancialInputs } from './components/FinancialInputs'
@@ -11,7 +12,9 @@ import { CashFlowChart } from './components/CashFlowChart'
 import { BreakEvenChart } from './components/BreakEvenChart'
 import { SensitivityMatrix } from './components/SensitivityMatrix'
 import { StrategyComparison } from './components/StrategyComparison'
+import { CashFlowBreakdown } from './components/CashFlowBreakdown'
 import { CompsCard } from '@/components/analysis/CompsCard'
+import { ReverseCalculatorModal } from './components/ReverseCalculatorModal'
 import { api } from '@/lib/api'
 import { useOnboardingStore } from '@/stores/onboardingStore'
 import type { PropertyDetail, ScenarioDetail, Strategy } from '@/types'
@@ -43,6 +46,8 @@ export default function AnalysisResultsPage() {
   const [inputsChanged, setInputsChanged] = useState(false)
   const [recalculating, setRecalculating] = useState(false)
   const [reportModalOpen, setReportModalOpen] = useState(false)
+  const [sensitivityOpen, setSensitivityOpen] = useState(false)
+  const [reverseModalOpen, setReverseModalOpen] = useState(false)
 
   const activeScenario = scenarios.find(s => s.strategy === activeStrategy) || null
 
@@ -158,6 +163,13 @@ export default function AnalysisResultsPage() {
     navigate('/pipeline')
   }
 
+  const handleApplyReversePrice = useCallback(async (price: number) => {
+    if (!activeScenario) return
+    // Trigger recalculation with the new price
+    const priceField = activeStrategy === 'creative_finance' ? 'existing_loan_balance' : 'purchase_price'
+    await handleInputsChange({ [priceField]: price })
+  }, [activeScenario, activeStrategy, handleInputsChange])
+
   // --- Loading / Error ---
 
   if (loading) {
@@ -231,6 +243,15 @@ export default function AnalysisResultsPage() {
               <GitBranch size={14} />
               Pipeline
             </button>
+            {activeStrategy !== 'wholesale' && (
+              <button
+                onClick={() => setReverseModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-all cursor-pointer"
+              >
+                <Calculator size={14} />
+                <span className="hidden sm:inline">Max Price</span>
+              </button>
+            )}
             <button
               onClick={() => setReportModalOpen(true)}
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-all cursor-pointer"
@@ -250,6 +271,13 @@ export default function AnalysisResultsPage() {
             </button>
           </div>
         </motion.div>
+
+        {/* Verdict + Hero metric */}
+        {activeScenario && (
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+            <VerdictBadge scenario={activeScenario} />
+          </div>
+        )}
 
         {/* AI Narrative */}
         <NarrativeCard
@@ -302,7 +330,14 @@ export default function AnalysisResultsPage() {
           </div>
         </div>
 
-        {/* Chart */}
+        {/* Waterfall — monthly cash flow breakdown */}
+        {activeScenario && ['buy_and_hold', 'brrrr', 'creative_finance'].includes(activeStrategy) && (
+          <div className="mb-6">
+            <CashFlowBreakdown scenario={activeScenario} />
+          </div>
+        )}
+
+        {/* 30-year cash flow projection */}
         {activeScenario && (activeStrategy === 'buy_and_hold' || activeStrategy === 'brrrr') && (
           <div className="mb-6">
             <CashFlowChart scenario={activeScenario} />
@@ -323,15 +358,46 @@ export default function AnalysisResultsPage() {
           </div>
         )}
 
-        {/* Financial inputs + Sensitivity in 2-col */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {activeScenario && (
+        {/* Financial inputs (full width) */}
+        {activeScenario && (
+          <div className="mb-6">
             <FinancialInputs scenario={activeScenario} onInputsChange={handleInputsChange} />
-          )}
-          {activeScenario && (
-            <SensitivityMatrix scenario={activeScenario} />
-          )}
-        </div>
+          </div>
+        )}
+
+        {/* Sensitivity matrix (collapsed by default) */}
+        {activeScenario && ['buy_and_hold', 'brrrr', 'creative_finance'].includes(activeStrategy) && (
+          <div className="mb-6">
+            <button
+              type="button"
+              onClick={() => setSensitivityOpen(!sensitivityOpen)}
+              className="flex w-full items-center justify-between py-3 text-left cursor-pointer group"
+            >
+              <span className="text-[11px] text-[#8A8580] uppercase tracking-wider font-medium">
+                Sensitivity Analysis
+              </span>
+              <ChevronDown
+                size={16}
+                className={`shrink-0 transition-transform duration-200 ${
+                  sensitivityOpen ? 'text-[#8B7AFF] rotate-180' : 'text-[#8A8580]'
+                }`}
+              />
+            </button>
+            <AnimatePresence initial={false}>
+              {sensitivityOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="overflow-hidden"
+                >
+                  <SensitivityMatrix scenario={activeScenario} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
 
         {/* Strategy comparison */}
         {propertyId && activeScenario && (
@@ -353,6 +419,16 @@ export default function AnalysisResultsPage() {
         scenarioId={activeScenario?.id}
         defaultTitle={property ? `Analysis Report — ${property.address_line1}` : 'Analysis Report'}
       />
+
+      {activeScenario && activeStrategy !== 'wholesale' && (
+        <ReverseCalculatorModal
+          open={reverseModalOpen}
+          onOpenChange={setReverseModalOpen}
+          scenario={activeScenario}
+          strategy={activeStrategy}
+          onApplyPrice={handleApplyReversePrice}
+        />
+      )}
     </AppShell>
   )
 }

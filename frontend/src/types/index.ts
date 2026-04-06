@@ -529,6 +529,14 @@ export interface CalculateResponse {
   risk_score: number
 }
 
+export interface ReverseCalculateResponse {
+  max_purchase_price: number | null
+  scenario_at_max: Record<string, number | string | null> | null
+  risk_score: number | null
+  feasible: boolean
+  message: string
+}
+
 export type Strategy = 'wholesale' | 'creative_finance' | 'brrrr' | 'buy_and_hold' | 'flip'
 
 export interface DealCreateRequest {
@@ -1606,6 +1614,7 @@ export interface TraceAddressRequest {
   city?: string
   state?: string
   zip_code?: string
+  compliance_acknowledged: boolean
 }
 
 export interface SkipTraceUsage {

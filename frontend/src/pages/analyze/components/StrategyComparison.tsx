@@ -135,8 +135,10 @@ export function StrategyComparison({ propertyId, activeStrategy, scenarios, onSt
                   </td>
                   <td className="py-3 px-3 text-right">
                     <span className={cn(
-                      'text-xs tabular-nums',
-                      r.risk_score <= 33 ? 'text-[#4ADE80]' : r.risk_score <= 66 ? 'text-[#FBBF24]' : 'text-[#F87171]'
+                      'inline-flex items-center justify-center text-[10px] font-medium tabular-nums px-1.5 py-0.5 rounded',
+                      r.risk_score <= 33 ? 'bg-[#4ADE80]/10 text-[#4ADE80]' :
+                      r.risk_score <= 66 ? 'bg-[#FBBF24]/10 text-[#FBBF24]' :
+                      'bg-[#F87171]/10 text-[#F87171]'
                     )}>
                       {r.risk_score}
                     </span>

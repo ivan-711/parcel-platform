@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#ffb94f",
+                    "surface-tint": "#c7bfff",
+                    "surface-container-lowest": "#0f0e0d",
+                    "primary-container": "#8f7fff",
+                    "primary": "#c7bfff",
+                    "inverse-surface": "#e6e1df",
+                    "secondary-fixed-dim": "#c8c0fb",
+                    "on-secondary-fixed-variant": "#464072",
+                    "error-container": "#93000a",
+                    "tertiary": "#ffb94f",
+                    "surface-dim": "#141312",
+                    "on-primary": "#2b009e",
+                    "on-error": "#690005",
+                    "on-surface": "#e6e1df",
+                    "error": "#ffb4ab",
+                    "tertiary-fixed": "#ffddb3",
+                    "on-background": "#e6e1df",
+                    "on-tertiary": "#452b00",
+                    "on-secondary": "#302a5a",
+                    "inverse-primary": "#5b48cc",
+                    "surface-container": "#211f1e",
+                    "on-tertiary-container": "#3c2500",
+                    "on-secondary-fixed": "#1a1444",
+                    "on-primary-container": "#25008b",
+                    "outline-variant": "#474554",
+                    "secondary-container": "#464072",
+                    "inverse-on-surface": "#32302f",
+                    "tertiary-container": "#c48306",
+                    "primary-fixed-dim": "#c7bfff",
+                    "on-tertiary-fixed": "#291800",
+                    "outline": "#928e9f",
+                    "on-tertiary-fixed-variant": "#624000",
+                    "surface-container-highest": "#363433",
+                    "surface-bright": "#3b3937",
+                    "surface": "#141312",
+                    "on-primary-fixed-variant": "#432cb3",
+                    "background": "#141312",
+                    "surface-container-high": "#2b2a28",
+                    "surface-container-low": "#1d1b1a",
+                    "on-secondary-container": "#b6aee8",
+                    "secondary-fixed": "#e5deff",
+                    "primary-fixed": "#e5deff",
+                    "on-error-container": "#ffdad6",
+                    "on-primary-fixed": "#180064",
+                    "surface-variant": "#363433",
+                    "secondary": "#c8c0fb",
+                    "on-surface-variant": "#c9c4d6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Satoshi", "sans-serif"],
+                    "body": ["Satoshi", "sans-serif"],
+                    "label": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Satoshi', sans-serif; background-color: #0C0B0A; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+        .tonal-bloom { background: radial-gradient(circle at top left, #1D1B1A 0%, #0C0B0A 100%); }
+        .glass-header { backdrop-filter: blur(12px); background: rgba(12, 11, 10, 0.8); }
+        .ledger-font { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="text-on-surface antialiased overflow-x-hidden">
+<!-- SideNavBar (Shared Component) -->
+<aside class="h-screen w-64 fixed left-0 top-0 overflow-y-auto z-50 bg-[#0C0B0A] flex flex-col py-8 gap-y-6">
+<div class="px-8 flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container text-lg" style="font-variation-settings: 'FILL' 1;">package_2</span>
+</div>
+<div class="flex flex-col">
+<span class="font-medium text-[#F0EDE8] tracking-[0.2em] uppercase text-xs">Parcel</span>
+<span class="font-['Satoshi'] font-light text-[10px] tracking-wider text-outline">Ledger v1.0</span>
+</div>
+</div>
+<nav class="flex flex-col mt-4">
+<a class="flex items-center gap-4 py-3 text-[#8A8580] pl-4 hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all font-['Satoshi'] font-light text-sm tracking-wider" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Home</span>
+</a>
+<a class="flex items-center gap-4 py-3 text-[#8A8580] pl-4 hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all font-['Satoshi'] font-light text-sm tracking-wider" href="#">
+<span class="material-symbols-outlined">handshake</span>
+<span>Deals</span>
+</a>
+<a class="flex items-center gap-4 py-3 text-[#F0EDE8] font-medium border-l-2 border-[#8B7AFF] pl-4 bg-[#1D1B1A] font-['Satoshi'] text-sm tracking-wider" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>People</span>
+</a>
+<a class="flex items-center gap-4 py-3 text-[#8A8580] pl-4 hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all font-['Satoshi'] font-light text-sm tracking-wider" href="#">
+<span class="material-symbols-outlined">location_city</span>
+<span>Assets</span>
+</a>
+<a class="flex items-center gap-4 py-3 text-[#8A8580] pl-4 hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all font-['Satoshi'] font-light text-sm tracking-wider" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span>Outputs</span>
+</a>
+</nav>
+<div class="mt-auto px-6">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary-container py-3 rounded-lg text-sm font-medium shadow-[0_0_20px_rgba(143,127,255,0.15)] hover:shadow-[0_0_25px_rgba(143,127,255,0.25)] transition-all">
+                New Investment
+            </button>
+</div>
+<div class="flex flex-col gap-1 mt-6 border-t border-outline-variant/10 pt-6">
+<a class="flex items-center gap-4 py-2 text-[#8A8580] pl-4 hover:text-[#F0EDE8] transition-all font-['Satoshi'] font-light text-xs tracking-wider" href="#">
+<span class="material-symbols-outlined text-sm">help_outline</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-4 py-2 text-[#8A8580] pl-4 hover:text-[#F0EDE8] transition-all font-['Satoshi'] font-light text-xs tracking-wider" href="#">
+<span class="material-symbols-outlined text-sm">smart_toy</span>
+<span>AI Assistant</span>
+</a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 min-h-screen bg-[#0C0B0A]">
+<!-- TopAppBar (Shared Component Style) -->
+<header class="fixed top-0 right-0 left-64 z-40 glass-header h-16 flex justify-between items-center px-8 tonal-bloom">
+<div class="flex items-center gap-6 flex-1">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
+<input class="w-full bg-surface-container-low border-none text-sm text-on-surface placeholder:text-outline/50 rounded-lg pl-10 pr-4 py-2 focus:ring-1 focus:ring-primary/40 transition-all" placeholder="Search contacts, entities, or labels..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-5">
+<button class="text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/20">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="close-up portrait of a professional man with a friendly expression in a modern office environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1bp-fV34EiTE5KC_x-CfjY27IPhr1vQhdaa-r393wjhPqfAW5gas6Mb2bXoP9j9FPJJRphdju6pDY8Hpn-dfiOXKSBqgHgeuxh3yqD1Ho_LrMynw_alxXhmsanLLK8Tib_8kGOAt1-31dzsjer0kCpUpY_MO1IA1JH7UCrpt2fjqHvqkjInkz3sDTzg5xowhMKDVIdg8I0PocBCW7tQNtEjhWENZq2uViurek1Yt1gSSj922_vDX487m_6hqwokfMaxs2AiucwNA"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="pt-24 px-12 pb-12">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-12">
+<div>
+<h1 class="text-4xl font-light text-[#F0EDE8] tracking-tight mb-2">Contacts</h1>
+<p class="text-outline text-sm font-light tracking-wide">Manage your network of stakeholders and investment partners.</p>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-6 py-3 rounded-lg text-sm font-medium flex items-center gap-2 hover:opacity-90 transition-all">
+<span class="material-symbols-outlined text-sm">person_add</span>
+                    Add Contact
+                </button>
+</div>
+<!-- Bento Filter Bar (Asymmetric Layout) -->
+<div class="grid grid-cols-12 gap-6 mb-8">
+<div class="col-span-8 bg-surface-container-low p-4 rounded-xl flex items-center justify-between">
+<div class="flex gap-2">
+<button class="px-4 py-1.5 rounded-full bg-secondary-container text-on-secondary-container text-xs font-medium">All People</button>
+<button class="px-4 py-1.5 rounded-full hover:bg-surface-container-high text-outline text-xs font-medium transition-colors">Favorites</button>
+<button class="px-4 py-1.5 rounded-full hover:bg-surface-container-high text-outline text-xs font-medium transition-colors">Recent</button>
+</div>
+<div class="flex items-center gap-4 text-outline/40">
+<span class="material-symbols-outlined text-lg cursor-pointer hover:text-primary transition-colors">filter_list</span>
+<span class="material-symbols-outlined text-lg cursor-pointer hover:text-primary transition-colors">sort</span>
+</div>
+</div>
+<div class="col-span-4 bg-surface-container-low p-4 rounded-xl flex items-center justify-center gap-8">
+<div class="text-center">
+<p class="ledger-font text-xl text-primary">1,284</p>
+<p class="text-[10px] text-outline uppercase tracking-widest mt-1">Total</p>
+</div>
+<div class="w-[1px] h-8 bg-outline-variant/20"></div>
+<div class="text-center">
+<p class="ledger-font text-xl text-[#F0EDE8]">42</p>
+<p class="text-[10px] text-outline uppercase tracking-widest mt-1">New</p>
+</div>
+</div>
+</div>
+<!-- Main Table Ledger -->
+<div class="bg-surface-container-low rounded-2xl overflow-hidden shadow-2xl border border-outline-variant/5">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/10">
+<th class="px-8 py-5 text-[11px] font-medium text-outline uppercase tracking-[0.15em]">Name</th>
+<th class="px-6 py-5 text-[11px] font-medium text-outline uppercase tracking-[0.15em]">Type</th>
+<th class="px-6 py-5 text-[11px] font-medium text-outline uppercase tracking-[0.15em]">Contact Info</th>
+<th class="px-6 py-5 text-[11px] font-medium text-outline uppercase tracking-[0.15em]">Last Contact</th>
+<th class="px-6 py-5 text-[11px] font-medium text-outline uppercase tracking-[0.15em] text-center">Deals</th>
+<th class="px-8 py-5 text-right"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/5">
+<!-- Contact Row 1 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group">
+<td class="px-8 py-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/20 shadow-lg">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="professional headshot of an executive in a dark tailored suit against a muted grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB88vUzB_4d5pRelWLzIpomsNuvi5Qj5nIEG_3Z1SqMttbkQkevEZBj8wypjwG3IpHI71pz5vMdeHHNe3GJRkN43Qj41qcTzcf7PVOSL5G6nc1iUOWRQm70MleUZflYCCTtvGYEGFiW8jRwLyIpeJTPTt5XClhw_hw3dCSNuDbU3_NXeqTby7SbXnAtAR3dcoTqKIOPQpntBO2_-BTC1phzr85U204uAM68yp8t3t_H089XPdZPSPDcnT2dpeoLn24mYfld09wyIW0"/>
+</div>
+<div>
+<p class="text-[#F0EDE8] font-medium text-sm">Alexander Sterling</p>
+<p class="text-outline text-[11px] font-light">Sterling Real Estate Group</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">SELLER</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col gap-0.5">
+<p class="ledger-font text-xs text-on-surface-variant">+1 (555) 012-9983</p>
+<p class="text-outline text-[11px] font-light">a.sterling@sregroup.com</p>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="ledger-font text-xs text-on-surface-variant">24 OCT 2023</p>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="ledger-font text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">04</span>
+</td>
+<td class="px-8 py-4 text-right">
+<button class="p-2 text-outline opacity-0 group-hover:opacity-100 hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Contact Row 2 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group">
+<td class="px-8 py-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/20 shadow-lg">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="professional portrait of a confident woman in business attire with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdwtLryeJ8Wb_vCB4DS5luGNVIqjXbT1N6MFnGBG9z6Tir2tvWTB9f1knP8qKD8E6aNg1G4z3tMTIvaw7r6DQbuf5DMugDxZ8_2Qm0E7eL9DrXmoUj1D7HXfOtK4iSyT55cioJBzIpQkhzL7cgsrekFpr5o8n9xLe4DhNS9WUAPgDGAj6uscRa51TN7LW0bKuxPGCY5VH00WkMo83cZRLQovohYVorhCqs6XcYJWdnNaqHFUjMCpbCjcFEgAKRtp2N0JvHyOOsRbE"/>
+</div>
+<div>
+<p class="text-[#F0EDE8] font-medium text-sm">Elena Rodriguez</p>
+<p class="text-outline text-[11px] font-light">Blue Horizon Lending</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full text-[10px] font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">LENDER</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col gap-0.5">
+<p class="ledger-font text-xs text-on-surface-variant">+1 (555) 098-4432</p>
+<p class="text-outline text-[11px] font-light">elena.r@bluehorizon.co</p>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="ledger-font text-xs text-on-surface-variant">19 OCT 2023</p>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="ledger-font text-xs text-[#F0EDE8] bg-surface-container-high px-2 py-0.5 rounded">12</span>
+</td>
+<td class="px-8 py-4 text-right">
+<button class="p-2 text-outline opacity-0 group-hover:opacity-100 hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Contact Row 3 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group">
+<td class="px-8 py-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/20 shadow-lg">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="minimalist close-up portrait of a man with clean studio lighting on a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQZQZvaOAaMfIDMJCdUzCfWkgVyt8vqAOIOORbGSdb5IDwATXalwuI468m9FxJIkK8yRG1a4UZ4e6wSEpHjPJblsXiIlXfgqG503xtCWGAYmUWBFLUhjNaYAvgQQ3rChJ84mL2HpRFKTwY0-ikTjDDm1_MbDgzSIgkblOoqgVckC_0XPo1QsUB2Lt2WQmlky_NnLmNT7cs5biFfDeN70CdOrNjjG2gSbVw1E6vpoJVAN8O3MexABBlRl2c0ukdoFiVte53w35YSiE"/>
+</div>
+<div>
+<p class="text-[#F0EDE8] font-medium text-sm">Marcus Thorne</p>
+<p class="text-outline text-[11px] font-light">Thorne Architecture &amp; Dev</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full text-[10px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">AGENT</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col gap-0.5">
+<p class="ledger-font text-xs text-on-surface-variant">+1 (555) 772-0012</p>
+<p class="text-outline text-[11px] font-light">m.thorne@t-arch.dev</p>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="ledger-font text-xs text-on-surface-variant">15 OCT 2023</p>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="ledger-font text-xs text-[#F0EDE8] bg-surface-container-high px-2 py-0.5 rounded">02</span>
+</td>
+<td class="px-8 py-4 text-right">
+<button class="p-2 text-outline opacity-0 group-hover:opacity-100 hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Contact Row 4 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group">
+<td class="px-8 py-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/20 shadow-lg">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="high fashion editorial style portrait of a creative professional woman with soft shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl3A2LakGk4lY5oPijn8WuaNllsZwCL3GD7iHhMAMShlOxpBd-LY3O5XpcwMLvlLSpS7lSZiapuVaXTGVsPMqaubMv6uhHTe768y2bv2liupLb_dOGZmKxBySFqpfZfbsqnbOHY6Qm892P_WS3azXgXMR9lbxtXEWl46GWn0g5cVUQYVbaUJU2MkE8h90vgl0GZT2mkOfeZQE0fAdOQLhHgMT7NpX-GcKKSbHIRWgAXMqNIQMFdtT6KwLtpMGWrs4sdEA0EeFfWOo"/>
+</div>
+<div>
+<p class="text-[#F0EDE8] font-medium text-sm">Sarah Jenkins</p>
+<p class="text-outline text-[11px] font-light">Independent Contractor</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full text-[10px] font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20">CONTRACTOR</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col gap-0.5">
+<p class="ledger-font text-xs text-on-surface-variant">+1 (555) 344-9901</p>
+<p class="text-outline text-[11px] font-light">s.jenkins@builder.io</p>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="ledger-font text-xs text-on-surface-variant">08 OCT 2023</p>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="ledger-font text-xs text-[#F0EDE8] bg-surface-container-high px-2 py-0.5 rounded">07</span>
+</td>
+<td class="px-8 py-4 text-right">
+<button class="p-2 text-outline opacity-0 group-hover:opacity-100 hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Contact Row 5 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group">
+<td class="px-8 py-4 border-none">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/20 shadow-lg">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="close-up soft lighting portrait of a professional woman with a calm and focused look" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBEiaOICRLdblpAzq3uFrMrn4-2k86n1RgXUFeDtRz8yrFoH7ZoEQKpZWqHsrtcnLpL-GDjlG4JTSMHaAw3kaR6LSRoHVIRdRTLcYpaDy8VhMpSTLUSJmokmoSNkYQAyPthSDLpB-6XNLuCbxZbcqchRu9niHUhYueO1Zp5ZpDELJLcgxNfI_LAuP15YOCW6A8GpIR4ZY0wr7iVbbsuFH_nYl1HbPXMR-SysBfoMk-f43V3i90WCwrpTXsxKcVtbX59M-U-rGw-oY"/>
+</div>
+<div>
+<p class="text-[#F0EDE8] font-medium text-sm">Clara Vane</p>
+<p class="text-outline text-[11px] font-light">Vane Acquisitions</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 border-none">
+<span class="px-3 py-1 rounded-full text-[10px] font-medium bg-sky-500/10 text-sky-400 border border-sky-500/20">BUYER</span>
+</td>
+<td class="px-6 py-4 border-none">
+<div class="flex flex-col gap-0.5">
+<p class="ledger-font text-xs text-on-surface-variant">+1 (555) 212-3344</p>
+<p class="text-outline text-[11px] font-light">cvane@vane-acq.com</p>
+</div>
+</td>
+<td class="px-6 py-4 border-none">
+<p class="ledger-font text-xs text-on-surface-variant">02 OCT 2023</p>
+</td>
+<td class="px-6 py-4 text-center border-none">
+<span class="ledger-font text-xs text-[#F0EDE8] bg-surface-container-high px-2 py-0.5 rounded">01</span>
+</td>
+<td class="px-8 py-4 text-right border-none">
+<button class="p-2 text-outline opacity-0 group-hover:opacity-100 hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Table Footer / Pagination -->
+<div class="px-8 py-5 flex items-center justify-between border-t border-outline-variant/10 bg-surface-container-lowest/50">
+<p class="text-outline text-xs font-light">Showing <span class="ledger-font text-on-surface">1-5</span> of <span class="ledger-font text-on-surface">1,284</span> contacts</p>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg border border-outline-variant/10 text-outline hover:text-on-surface hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="px-4 rounded-lg border border-primary text-primary text-xs font-medium">1</button>
+<button class="px-4 rounded-lg border border-outline-variant/10 text-outline hover:text-on-surface hover:bg-surface-container-high transition-all text-xs">2</button>
+<button class="px-4 rounded-lg border border-outline-variant/10 text-outline hover:text-on-surface hover:bg-surface-container-high transition-all text-xs">3</button>
+<span class="text-outline/40 flex items-center px-1">...</span>
+<button class="px-4 rounded-lg border border-outline-variant/10 text-outline hover:text-on-surface hover:bg-surface-container-high transition-all text-xs">128</button>
+<button class="p-2 rounded-lg border border-outline-variant/10 text-outline hover:text-on-surface hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Quick Action Floating Section -->
+<div class="mt-12 grid grid-cols-3 gap-6">
+<div class="bg-surface-container-low p-6 rounded-2xl border border-outline-variant/5 flex items-start gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">mail</span>
+</div>
+<div>
+<h3 class="text-[#F0EDE8] font-medium text-sm mb-1">Bulk Messaging</h3>
+<p class="text-outline text-xs font-light leading-relaxed">Reach out to all Sellers with active deals via automated workflow.</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl border border-outline-variant/5 flex items-start gap-4">
+<div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">ios_share</span>
+</div>
+<div>
+<h3 class="text-[#F0EDE8] font-medium text-sm mb-1">Export Directory</h3>
+<p class="text-outline text-xs font-light leading-relaxed">Generate a CSV or PDF ledger of your current stakeholder list.</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl border border-outline-variant/5 flex items-start gap-4">
+<div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">database</span>
+</div>
+<div>
+<h3 class="text-[#F0EDE8] font-medium text-sm mb-1">Sync Ledger</h3>
+<p class="text-outline text-xs font-light leading-relaxed">Refresh contact data with integrated ERP and public registries.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Ambient Shadow for depth -->
+<div class="fixed inset-0 pointer-events-none shadow-[inset_0_0_150px_rgba(0,0,0,0.6)] z-10"></div>
+</body></html>

@@ -82,6 +82,7 @@ def calculate_creative_finance(inputs: dict) -> dict:
         loan_amount=existing_loan_balance,
         interest_rate=new_rate,
         loan_term_years=new_term_years,
+        monthly_other=monthly_expenses,
     )
 
     result = {

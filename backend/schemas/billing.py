@@ -9,9 +9,9 @@ class PlanTierEnum(str, Enum):
     """Available billing plans."""
 
     FREE = "free"
-    STARTER = "starter"
+    PLUS = "plus"
     PRO = "pro"
-    TEAM = "team"
+    BUSINESS = "business"
 
 
 class IntervalEnum(str, Enum):

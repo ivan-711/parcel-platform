@@ -207,6 +207,19 @@ async def create_deal(
     record_usage(current_user.id, "analyses_per_month", db)
     db.commit()
     db.refresh(deal)
+
+    # Dual-write: create linked Property + AnalysisScenario
+    try:
+        from core.sync.deal_scenario_sync import auto_create_property, sync_deal_to_scenario
+        auto_create_property(deal, db)
+        sync_deal_to_scenario(deal, db)
+        db.commit()
+    except Exception:
+        pass  # logged inside sync functions, never block deal creation
+
+    from core.telemetry import track_event
+    track_event(current_user.id, "deal_created", {"strategy": body.strategy, "address": body.address})
+
     return DealResponse.model_validate(deal)
 
 
@@ -339,6 +352,15 @@ async def update_deal(
     deal.updated_at = datetime.utcnow()
     db.commit()
     db.refresh(deal)
+
+    # Dual-write: sync changes to AnalysisScenario
+    try:
+        from core.sync.deal_scenario_sync import sync_deal_to_scenario
+        sync_deal_to_scenario(deal, db)
+        db.commit()
+    except Exception:
+        pass  # logged inside sync function
+
     return DealResponse.model_validate(deal)
 
 
@@ -352,6 +374,14 @@ async def delete_deal(
     deal = _get_owned_deal(deal_id, current_user, db)
     deal.deleted_at = datetime.utcnow()
     deal.updated_at = datetime.utcnow()
+
+    # Dual-write: soft-delete linked AnalysisScenario
+    try:
+        from core.sync.deal_scenario_sync import soft_delete_linked_scenario
+        soft_delete_linked_scenario(deal, db)
+    except Exception:
+        pass  # logged inside sync function
+
     db.commit()
 
 
@@ -406,6 +436,10 @@ async def get_shared_deal(
     Only deals with status 'shared' are accessible. Sensitive fields like
     user_id and team_id are excluded from the response.
     """
+    # Bypass RLS — this is a public endpoint, no authenticated user
+    from core.security.rls import bypass_rls
+    bypass_rls(db)
+
     deal = db.query(Deal).filter(
         Deal.id == deal_id,
         Deal.status == "shared",

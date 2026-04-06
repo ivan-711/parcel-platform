@@ -80,7 +80,7 @@
     --app-recessed: #131210;
 
     /* ---- CTA text on accent gradient ---- */
-    --accent-text-on-accent: #0C0B0A;
+    --accent-text-on-accent: #F0EDE8;
 
     /* ---- Accent Surfaces ---- */
     --accent-surface:       rgba(139, 122, 255, 0.08);
@@ -109,6 +109,27 @@
     --strategy-flip-bg:          rgba(212, 118, 106, 0.08);
     --strategy-flip-text:        #D4766A;
     --strategy-flip-border:      rgba(212, 118, 106, 0.20);
+
+    /* ---- Chart Theme ---- */
+    --chart-bg: #141311;
+    --chart-border: rgba(255, 255, 255, 0.06);
+    --chart-grid: rgba(255, 255, 255, 0.04);
+    --chart-axis-text: #7A7872;
+    --chart-label-text: #A09D98;
+    --chart-line-width: 1.5;
+    --chart-gradient-from: 0.30;
+    --chart-gradient-to: 0;
+    --chart-tooltip-bg: rgba(30, 29, 27, 0.85);
+    --chart-tooltip-border: rgba(255, 255, 255, 0.08);
+    --chart-tooltip-blur: 12px;
+    --chart-tooltip-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --chart-tooltip-text: #F0EDE8;
+    --chart-tooltip-label: #8A8580;
+    --chart-cursor-stroke: #8B7AFF;
+    --chart-cursor-opacity: 0.25;
+    --chart-positive: #6DBEA3;
+    --chart-negative: #D4766A;
+    --chart-accent: #8B7AFF;
 
     /* ---- Easing (canonical — BLOCK-04 resolution) ---- */
     --ease-luxury: cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -213,6 +234,27 @@
     --strategy-flip-bg:          #FFE4E6;
     --strategy-flip-text:        #9F1239;
     --strategy-flip-border:      rgba(159, 18, 57, 0.20);
+
+    /* ---- Chart Theme (light) ---- */
+    --chart-bg: #FFFFFF;
+    --chart-border: rgba(0, 0, 0, 0.06);
+    --chart-grid: rgba(0, 0, 0, 0.05);
+    --chart-axis-text: #667085;
+    --chart-label-text: #98A2B3;
+    --chart-line-width: 2;
+    --chart-gradient-from: 0.12;
+    --chart-gradient-to: 0;
+    --chart-tooltip-bg: rgba(255, 255, 255, 0.85);
+    --chart-tooltip-border: rgba(0, 0, 0, 0.08);
+    --chart-tooltip-blur: 12px;
+    --chart-tooltip-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    --chart-tooltip-text: #1D2939;
+    --chart-tooltip-label: #667085;
+    --chart-cursor-stroke: #8B7AFF;
+    --chart-cursor-opacity: 0.2;
+    --chart-positive: #16a34a;
+    --chart-negative: #dc2626;
+    --chart-accent: #7B6AEF;
 
     /* ---- Easing (same in both themes — included for completeness) ---- */
     --ease-luxury: cubic-bezier(0.25, 0.1, 0.25, 1);

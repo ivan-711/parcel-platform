@@ -32,6 +32,10 @@ class PipelineCardResponse(BaseModel):
     stage: str
     days_in_stage: int
     entered_stage_at: datetime
+    city: Optional[str] = None
+    state: Optional[str] = None
+    property_type: Optional[str] = None
+    is_sample: bool = False
 
     model_config = {"from_attributes": True}
 
@@ -46,3 +50,12 @@ class PipelineBoardResponse(BaseModel):
     due_diligence: list[PipelineCardResponse]
     closed: list[PipelineCardResponse]
     dead: list[PipelineCardResponse]
+
+
+class PipelineStatsResponse(BaseModel):
+    """Pipeline analytics summary."""
+
+    by_stage: dict[str, int] = {}
+    by_strategy: dict[str, int] = {}
+    total_value: float = 0
+    total_active: int = 0

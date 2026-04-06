@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#ffb94f",
+                    "surface-tint": "#c7bfff",
+                    "surface-container-lowest": "#0f0e0d",
+                    "primary-container": "#8f7fff",
+                    "primary": "#c7bfff",
+                    "inverse-surface": "#e6e1df",
+                    "secondary-fixed-dim": "#c8c0fb",
+                    "on-secondary-fixed-variant": "#464072",
+                    "error-container": "#93000a",
+                    "tertiary": "#ffb94f",
+                    "surface-dim": "#141312",
+                    "on-primary": "#2b009e",
+                    "on-error": "#690005",
+                    "on-surface": "#e6e1df",
+                    "error": "#ffb4ab",
+                    "tertiary-fixed": "#ffddb3",
+                    "on-background": "#e6e1df",
+                    "on-tertiary": "#452b00",
+                    "on-secondary": "#302a5a",
+                    "inverse-primary": "#5b48cc",
+                    "surface-container": "#211f1e",
+                    "on-tertiary-container": "#3c2500",
+                    "on-secondary-fixed": "#1a1444",
+                    "on-primary-container": "#25008b",
+                    "outline-variant": "#474554",
+                    "secondary-container": "#464072",
+                    "inverse-on-surface": "#32302f",
+                    "tertiary-container": "#c48306",
+                    "primary-fixed-dim": "#c7bfff",
+                    "on-tertiary-fixed": "#291800",
+                    "outline": "#928e9f",
+                    "on-tertiary-fixed-variant": "#624000",
+                    "surface-container-highest": "#363433",
+                    "surface-bright": "#3b3937",
+                    "surface": "#141312",
+                    "on-primary-fixed-variant": "#432cb3",
+                    "background": "#141312",
+                    "surface-container-high": "#2b2a28",
+                    "surface-container-low": "#1d1b1a",
+                    "on-secondary-container": "#b6aee8",
+                    "secondary-fixed": "#e5deff",
+                    "primary-fixed": "#e5deff",
+                    "on-error-container": "#ffdad6",
+                    "on-primary-fixed": "#180064",
+                    "surface-variant": "#363433",
+                    "secondary": "#c8c0fb",
+                    "on-surface-variant": "#c9c4d6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Satoshi", "sans-serif"],
+                    "body": ["Satoshi", "sans-serif"],
+                    "label": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        @import url('https://api.fontshare.com/v2/fonts?f[]=satoshi@300,400,500,700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        body {
+            background-color: #0C0B0A;
+            font-family: 'Satoshi', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-bloom {
+            background: radial-gradient(circle at top right, rgba(143, 127, 255, 0.05), transparent 40%);
+        }
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            background: rgba(29, 27, 26, 0.6);
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 overflow-y-auto z-50 bg-[#0C0B0A] flex flex-col py-8 gap-y-6">
+<div class="px-8 mb-4">
+<h1 class="font-medium text-[#F0EDE8] tracking-[0.2em] uppercase text-sm">Parcel</h1>
+<p class="font-['Satoshi'] font-light text-xs tracking-wider text-outline">Ledger v1.0</p>
+</div>
+<nav class="flex flex-col gap-y-1">
+<a class="flex items-center gap-x-4 py-3 text-[#8A8580] pl-4 hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-['Satoshi'] font-light text-sm tracking-wider">Home</span>
+</a>
+<a class="flex items-center gap-x-4 py-3 text-[#8A8580] pl-4 hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="handshake">handshake</span>
+<span class="font-['Satoshi'] font-light text-sm tracking-wider">Deals</span>
+</a>
+<a class="flex items-center gap-x-4 py-3 text-[#8A8580] pl-4 hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-['Satoshi'] font-light text-sm tracking-wider">People</span>
+</a>
+<a class="flex items-center gap-x-4 py-3 text-[#8A8580] pl-4 hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="location_city">location_city</span>
+<span class="font-['Satoshi'] font-light text-sm tracking-wider">Assets</span>
+</a>
+<a class="flex items-center gap-x-4 py-3 text-[#8A8580] pl-4 hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-['Satoshi'] font-light text-sm tracking-wider">Outputs</span>
+</a>
+<!-- Settings Active State -->
+<a class="flex items-center gap-x-4 py-3 text-[#F0EDE8] font-medium border-l-2 border-[#8B7AFF] pl-4 bg-[#1D1B1A]/50" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Satoshi'] font-light text-sm tracking-wider">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-4 flex flex-col gap-y-2">
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary py-3 rounded-lg text-sm font-medium transition-all hover:shadow-[0_0_20px_rgba(143,127,255,0.2)]">
+                New Investment
+            </button>
+<a class="flex items-center gap-x-4 py-3 text-[#8A8580] pl-4 hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-['Satoshi'] font-light text-sm tracking-wider">Support</span>
+</a>
+<a class="flex items-center gap-x-4 py-3 text-[#8A8580] pl-4 hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span>
+<span class="font-['Satoshi'] font-light text-sm tracking-wider">AI Assistant</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen tonal-bloom">
+<!-- Top App Bar -->
+<header class="fixed top-0 right-0 left-64 z-40 glass-panel h-16 flex justify-between items-center px-8 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+<div class="flex items-center gap-x-8">
+<h2 class="text-[#F0EDE8] text-xl font-light tracking-tight">Account Settings</h2>
+</div>
+<div class="flex items-center gap-x-6">
+<span class="material-symbols-outlined text-outline hover:text-[#F0EDE8] transition-colors cursor-pointer" data-icon="notifications">notifications</span>
+<div class="h-8 w-8 rounded-full bg-surface-container-high border border-outline-variant/20 overflow-hidden">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="close-up portrait of a professional man in a minimalist grey studio setting with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNeOXDo-5ujRCezIY9ZI3lOxHpyhPDZbUkBuXPCzEyGM_z9qKuH4cNzdvtvYrnKIqtvyJqOVzkqMkpSw8ZiD8srnpPZ8F5aYtaqVzzx4KfVEKRBSl7liZCxf-qDmnfqwMz2fvxi6H8tZo0pxLjygzgKo5RKjyrIZf0LIXSIngzKKj0x9o0GiReqHVvFUVy9VPv7ZSYhswLdpDBIR2KVcNINlvRvuVBSdzgSPJZo0AQiUoN9O7Kv9Bfi6VTYLzxj9vPd5pgEIzH4mo"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="pt-24 pb-16 px-12 max-w-6xl mx-auto space-y-12">
+<!-- Tier Management Section -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+<div class="md:col-span-4 pt-2">
+<h3 class="text-[#F0EDE8] text-lg font-medium">Tier Management</h3>
+<p class="text-outline text-sm leading-relaxed mt-2">Manage your service level and billing preferences for the Parcel ledger.</p>
+</div>
+<div class="md:col-span-8">
+<div class="bg-surface-container-low rounded-xl p-8 flex justify-between items-center relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl transition-all group-hover:bg-primary/10"></div>
+<div>
+<span class="text-primary font-label text-[10px] tracking-widest uppercase mb-2 block">Active Subscription</span>
+<h4 class="text-2xl font-light text-[#F0EDE8]">Pro Plan</h4>
+<p class="text-outline text-xs mt-1 font-label">Next billing date: <span class="text-[#F0EDE8]">Oct 12, 2024</span></p>
+</div>
+<button class="bg-transparent border border-outline-variant/30 text-[#F0EDE8] px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-surface-container-high transition-colors">
+                            Manage Subscription
+                        </button>
+</div>
+</div>
+</section>
+<!-- Brand Kit Section -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start pt-8 border-t border-outline-variant/5">
+<div class="md:col-span-4 pt-2">
+<h3 class="text-[#F0EDE8] text-lg font-medium">Brand Kit</h3>
+<p class="text-outline text-sm leading-relaxed mt-2">Personalize reports and dashboards with your organization's visual identity.</p>
+</div>
+<div class="md:col-span-8 space-y-6">
+<div class="bg-surface-container-low rounded-xl p-8 space-y-8">
+<!-- Upload Logo -->
+<div class="flex items-center gap-x-8">
+<div class="w-20 h-20 bg-surface-container-lowest rounded-lg border border-dashed border-outline-variant/30 flex items-center justify-center group cursor-pointer hover:border-primary/50 transition-colors">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="upload_file">upload_file</span>
+</div>
+<div>
+<h5 class="text-[#F0EDE8] text-sm font-medium mb-1">Organization Logo</h5>
+<p class="text-outline text-xs mb-3">SVG or PNG. Maximum size 2MB.</p>
+<button class="text-primary text-xs font-medium hover:underline">Upload new logo</button>
+</div>
+</div>
+<!-- Accent Color -->
+<div class="flex items-center justify-between py-4 border-y border-outline-variant/10">
+<div>
+<h5 class="text-[#F0EDE8] text-sm font-medium">Secondary Accent</h5>
+<p class="text-outline text-xs">Used for secondary data visualization and reports.</p>
+</div>
+<div class="flex items-center gap-x-3">
+<div class="w-8 h-8 rounded-full bg-tertiary shadow-lg ring-2 ring-offset-2 ring-offset-surface-container-low ring-transparent hover:ring-outline-variant transition-all cursor-pointer"></div>
+<span class="font-label text-xs text-outline">#FFB94F</span>
+</div>
+</div>
+<!-- Toggle -->
+<div class="flex items-center justify-between">
+<div>
+<h5 class="text-[#F0EDE8] text-sm font-medium">Branded Header</h5>
+<p class="text-outline text-xs">Display organization logo on generated PDF exports.</p>
+</div>
+<button class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary-container/20 group">
+<span class="inline-block h-4 w-4 transform rounded-full bg-primary transition translate-x-6"></span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Data Management Section -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start pt-8 border-t border-outline-variant/5">
+<div class="md:col-span-4 pt-2">
+<h3 class="text-[#F0EDE8] text-lg font-medium">Data Management</h3>
+<p class="text-outline text-sm leading-relaxed mt-2">Control the lifecycle of your ledger data and sample environments.</p>
+</div>
+<div class="md:col-span-8">
+<div class="bg-surface-container-low rounded-xl p-8 border border-error/5 group">
+<div class="flex items-start justify-between">
+<div>
+<h5 class="text-[#F0EDE8] text-sm font-medium mb-1">Clear Sample Data</h5>
+<p class="text-outline text-sm leading-relaxed max-w-md">This will permanently remove all demonstration entries, synthetic transactions, and mock entities from your ledger. This action cannot be undone.</p>
+</div>
+<button class="flex items-center gap-x-2 text-error text-sm font-medium bg-error/5 hover:bg-error/10 px-4 py-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="delete_sweep">delete_sweep</span>
+                                Clear Sample Data
+                            </button>
+</div>
+<div class="mt-8 flex items-center gap-x-4 bg-surface-container-lowest/50 p-4 rounded-lg">
+<span class="material-symbols-outlined text-tertiary-fixed-dim" data-icon="info">info</span>
+<p class="text-xs text-outline leading-tight">Last cleared on <span class="font-label text-[#F0EDE8]">2024.08.15</span>. System is currently running on <span class="text-[#F0EDE8]">Production Node v1.4.2</span>.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer Visual Hint -->
+<footer class="px-12 py-8 flex justify-between items-center border-t border-outline-variant/5 max-w-6xl mx-auto opacity-40">
+<div class="flex items-center gap-x-4">
+<span class="text-[10px] font-label tracking-tighter text-outline uppercase">Security Protocol: AES-256</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="text-[10px] font-label tracking-tighter text-outline uppercase">Region: US-East-1</span>
+</div>
+<p class="text-[10px] font-label text-outline uppercase">© 2024 Parcel Financial Group</p>
+</footer>
+</main>
+</body></html>

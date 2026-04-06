@@ -32,6 +32,7 @@ class ChatMessageResponse(BaseModel):
     role: str
     content: str
     context_type: Optional[str]
+    citations: Optional[list[dict]] = None
     created_at: str
 
     model_config = {"from_attributes": True}
@@ -41,3 +42,18 @@ class ChatHistoryResponse(BaseModel):
     """Response wrapper for GET /chat/history/."""
 
     messages: list[ChatMessageResponse]
+
+
+class ChatSessionItem(BaseModel):
+    """A single chat session summary."""
+
+    session_id: str
+    title: str
+    last_message_at: str
+    message_count: int
+
+
+class ChatSessionsResponse(BaseModel):
+    """Response wrapper for GET /chat/sessions/."""
+
+    sessions: list[ChatSessionItem]

@@ -1,7 +1,7 @@
 """ChatMessage model — stores conversation history for the AI deal specialist."""
 
 from sqlalchemy import Column, Enum, ForeignKey, String, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -23,6 +23,7 @@ class ChatMessage(TimestampMixin, Base):
     content = Column(Text, nullable=False)
     context_type = Column(ContextType, nullable=True)
     context_id = Column(UUID(as_uuid=True), nullable=True)
+    citations = Column(JSONB, nullable=True)
 
     # Relationships
     user = relationship("User", back_populates="chat_messages")

@@ -18,6 +18,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
+# Register RLS enforcement listener
+from core.security.rls import register_rls_listener
+register_rls_listener(SessionLocal)
+
+
 def get_db():
     """Dependency to get a database session."""
     db = SessionLocal()

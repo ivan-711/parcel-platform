@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.cdnfonts.com/css/satoshi" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "background": "#0C0B0A",
+                        "surface": "#141312",
+                        "surface-container-low": "#1D1B1A",
+                        "surface-container-high": "#2B2A28",
+                        "surface-container-lowest": "#0F0E0D",
+                        "primary": "#c7bfff",
+                        "primary-container": "#8f7fff",
+                        "on-primary": "#2b009e",
+                        "on-background": "#e6e1df",
+                        "on-surface": "#e6e1df",
+                        "outline-variant": "#474554",
+                        "secondary": "#c8c0fb",
+                        "secondary-container": "#464072",
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    fontFamily: {
+                        "headline": ["Satoshi", "sans-serif"],
+                        "body": ["Satoshi", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0C0B0A;
+            color: #F0EDE8;
+            font-family: 'Satoshi', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-bloom {
+            background: radial-gradient(circle at center, #1D1B1A 0%, #0C0B0A 100%);
+        }
+        .glass-header {
+            background: rgba(12, 11, 10, 0.8);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- SideNavBar (from JSON Anchor) -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col h-full py-8 px-4 bg-[#0C0B0A] dark:bg-[#0C0B0A] z-50">
+<div class="mb-10 px-4">
+<h1 class="text-2xl font-light tracking-widest text-[#F0EDE8]">Parcel</h1>
+<p class="text-[10px] uppercase tracking-[0.3em] text-[#C5C0B8] opacity-50 mt-1">Premium Assets</p>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Portfolio Active -->
+<a class="group flex items-center px-4 py-3 text-[#C7BFFF] font-medium border-r-2 border-[#8B7AFF] transition-colors duration-300" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+<span class="text-sm tracking-wide">Portfolio</span>
+</a>
+<a class="group flex items-center px-4 py-3 text-[#C5C0B8] opacity-70 hover:bg-[#1D1B1A] transition-colors duration-300" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="analytics">analytics</span>
+<span class="text-sm tracking-wide">Market Insights</span>
+</a>
+<a class="group flex items-center px-4 py-3 text-[#C5C0B8] opacity-70 hover:bg-[#1D1B1A] transition-colors duration-300" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="calculate">calculate</span>
+<span class="text-sm tracking-wide">Deal Analyzer</span>
+</a>
+<a class="group flex items-center px-4 py-3 text-[#C5C0B8] opacity-70 hover:bg-[#1D1B1A] transition-colors duration-300" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="description">description</span>
+<span class="text-sm tracking-wide">Documents</span>
+</a>
+<a class="group flex items-center px-4 py-3 text-[#C5C0B8] opacity-70 hover:bg-[#1D1B1A] transition-colors duration-300" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+<span class="text-sm tracking-wide">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-4 space-y-6">
+<button class="w-full py-3 bg-gradient-to-tr from-[#8B7AFF] to-[#C7BFFF] text-[#0C0B0A] text-xs font-bold uppercase tracking-widest rounded-sm hover:shadow-[0_0_20px_rgba(139,122,255,0.3)] transition-all">
+                Analyze New Deal
+            </button>
+<div class="pt-6 border-t border-white/5">
+<a class="flex items-center text-[#C5C0B8] opacity-70 hover:text-[#F0EDE8] transition-colors" href="#">
+<span class="material-symbols-outlined mr-3 text-sm" data-icon="help">help</span>
+<span class="text-xs tracking-wide">Help Center</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- TopAppBar (from JSON Anchor) -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 glass-header flex justify-between items-center h-16 px-8">
+<div class="flex items-center space-x-8">
+<div class="flex space-x-6">
+<a class="text-xs font-medium tracking-widest text-[#F0EDE8] border-b border-[#8B7AFF] pb-1" href="#">Overview</a>
+<a class="text-xs font-medium tracking-widest text-[#C5C0B8] hover:text-[#F0EDE8] transition-all" href="#">Live Feed</a>
+<a class="text-xs font-medium tracking-widest text-[#C5C0B8] hover:text-[#F0EDE8] transition-all" href="#">Advisory</a>
+</div>
+</div>
+<div class="flex items-center space-x-6">
+<div class="relative group">
+<span class="material-symbols-outlined text-[#C5C0B8] group-hover:text-[#F0EDE8] cursor-pointer transition-colors" data-icon="search">search</span>
+</div>
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined text-[#C5C0B8] cursor-pointer hover:text-[#F0EDE8]" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-[#C5C0B8] cursor-pointer hover:text-[#F0EDE8]" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-16 h-screen relative bg-[#0C0B0A]">
+<!-- Background Bloom Decor -->
+<div class="absolute inset-0 pointer-events-none overflow-hidden">
+<div class="absolute -top-[10%] -right-[5%] w-[40%] h-[40%] bg-[#8B7AFF]/5 blur-[120px] rounded-full"></div>
+<div class="absolute -bottom-[10%] -left-[5%] w-[30%] h-[30%] bg-[#C7BFFF]/3 blur-[100px] rounded-full"></div>
+</div>
+<!-- Empty State Container -->
+<div class="h-full w-full flex flex-col items-center justify-center px-6">
+<div class="max-w-2xl w-full text-center space-y-12 relative z-10">
+<!-- Icon Assembly -->
+<div class="relative inline-block">
+<!-- Tonal layer below icon -->
+<div class="absolute inset-0 bg-surface-container-low scale-150 blur-3xl opacity-20 rounded-full"></div>
+<div class="relative w-32 h-32 flex items-center justify-center">
+<!-- Abstract Geometric Frame -->
+<div class="absolute inset-0 border border-outline-variant/10 rounded-full rotate-45"></div>
+<div class="absolute inset-4 border border-outline-variant/20 rounded-full -rotate-12"></div>
+<span class="material-symbols-outlined text-6xl text-primary opacity-80" data-icon="domain" style="font-variation-settings: 'FILL' 0, 'wght' 100;">domain</span>
+<!-- Floating Decorative Dots -->
+<div class="absolute top-0 right-4 w-1.5 h-1.5 bg-primary/40 rounded-full"></div>
+<div class="absolute bottom-8 -left-2 w-1 h-1 bg-secondary/30 rounded-full"></div>
+</div>
+</div>
+<!-- Text Content -->
+<div class="space-y-4">
+<h2 class="text-4xl font-light tracking-tight text-[#F0EDE8] font-headline">
+                        No property records found.
+                    </h2>
+<p class="text-[#C5C0B8] text-lg font-light leading-relaxed max-w-md mx-auto font-body">
+                        Analyze a property or add an existing asset to your portfolio to see it here.
+                    </p>
+</div>
+<!-- Action Section -->
+<div class="flex flex-col items-center space-y-6">
+<button class="group relative px-10 py-4 bg-gradient-to-r from-primary to-primary-container text-on-primary text-sm font-bold tracking-[0.15em] uppercase rounded-sm transition-all duration-500 hover:shadow-[0_10px_40px_-10px_rgba(139,122,255,0.5)] active:scale-95 overflow-hidden">
+<span class="relative z-10">Analyze a Property</span>
+<div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+</button>
+<div class="flex items-center space-x-3 text-xs font-mono tracking-tighter text-[#8A8580]">
+<span class="material-symbols-outlined text-sm" data-icon="bolt">bolt</span>
+<span>AVERAGE ANALYSIS TIME: 12.4s</span>
+</div>
+</div>
+<!-- Asymmetric "Secondary" Discovery Options -->
+<div class="grid grid-cols-2 gap-4 mt-16 text-left max-w-xl mx-auto">
+<div class="p-6 bg-surface-container-low/40 border-l border-primary/20 group hover:bg-surface-container-low transition-colors cursor-pointer">
+<p class="text-[10px] font-mono text-primary/60 mb-2 uppercase tracking-widest">Guidance</p>
+<h4 class="text-[#F0EDE8] font-medium text-sm mb-1 group-hover:text-primary transition-colors">Portfolio Templates</h4>
+<p class="text-[#8A8580] text-xs leading-relaxed">Start with predefined commercial or residential structures.</p>
+</div>
+<div class="p-6 bg-surface-container-low/40 border-l border-white/5 group hover:bg-surface-container-low transition-colors cursor-pointer">
+<p class="text-[10px] font-mono text-primary/60 mb-2 uppercase tracking-widest">Tutorial</p>
+<h4 class="text-[#F0EDE8] font-medium text-sm mb-1 group-hover:text-primary transition-colors">Importing Records</h4>
+<p class="text-[#8A8580] text-xs leading-relaxed">Learn how to bulk upload CSV or specialized data formats.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Metric Ticker (Footer-style detail) -->
+<div class="absolute bottom-8 right-8 flex space-x-12">
+<div class="flex flex-col items-end">
+<span class="text-[10px] text-[#8A8580] font-mono uppercase tracking-widest">System Status</span>
+<span class="text-xs text-primary font-mono mt-1 flex items-center">
+<span class="w-1 h-1 bg-primary rounded-full mr-2 animate-pulse"></span>
+                    SYNCED
+                </span>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-[10px] text-[#8A8580] font-mono uppercase tracking-widest">Market Latency</span>
+<span class="text-xs text-[#F0EDE8] font-mono mt-1">42 MS</span>
+</div>
+</div>
+</main>
+</body></html>

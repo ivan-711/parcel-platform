@@ -4,11 +4,14 @@ import json
 import uuid
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import StreamingResponse
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from core.ai.chat_specialist import stream_chat_response
+from core.ai.chat_specialist import build_rag_context, stream_chat_response
+from core.ai.rag_retrieval import retrieve_relevant_chunks
+from core.ai.sanitize import sanitize_for_prompt
 from core.billing.tier_gate import require_feature, require_quota, record_usage
 from core.demo import is_demo_user
 from core.demo.chat_service import get_seeded_history
@@ -19,7 +22,13 @@ from models.chat_messages import ChatMessage
 from models.deals import Deal
 from models.documents import Document
 from models.users import User
-from schemas.chat import ChatRequest, ChatHistoryResponse, ChatMessageResponse
+from schemas.chat import (
+    ChatRequest,
+    ChatHistoryResponse,
+    ChatMessageResponse,
+    ChatSessionItem,
+    ChatSessionsResponse,
+)
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -47,12 +56,17 @@ def _build_context_block(
             status_code=404,
             detail={"error": "Deal not found", "code": "DEAL_NOT_FOUND"},
         )
+    # Sanitize all user-sourced fields to prevent prompt injection
+    safe_address = sanitize_for_prompt(deal.address or "", max_length=300)
+    safe_strategy = sanitize_for_prompt(deal.strategy or "", max_length=100)
+    safe_inputs = sanitize_for_prompt(json.dumps(deal.inputs or {}), max_length=2000)
+    safe_outputs = sanitize_for_prompt(json.dumps(deal.outputs or {}), max_length=2000)
     return (
         f"\n\n[DEAL CONTEXT]\n"
-        f"Address: {deal.address}\n"
-        f"Strategy: {deal.strategy}\n"
-        f"Inputs: {json.dumps(deal.inputs)}\n"
-        f"Outputs: {json.dumps(deal.outputs)}\n"
+        f"Address: {safe_address}\n"
+        f"Strategy: {safe_strategy}\n"
+        f"Inputs: {safe_inputs}\n"
+        f"Outputs: {safe_outputs}\n"
         f"Risk Score: {deal.risk_score}\n"
         f"[/DEAL CONTEXT]\n"
     )
@@ -111,15 +125,15 @@ async def chat(
       - general: No context injection. General real estate Q&A.
       - deal: Loads the Deal record and appends inputs/outputs/risk_score
         to the user message as a [DEAL CONTEXT] block.
-      - document: Loads the Document record (must be status='complete') and
-        injects ai_summary, risk_flags, key_terms, and extracted_numbers
-        into the system prompt. Returns a graceful SSE error if the document
-        is not found or not yet processed.
+      - document: Loads the Document record. If RAG embeddings are ready,
+        retrieves relevant chunks with citations. Otherwise falls back to
+        metadata summary injection.
     """
     sse_headers = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
 
-    # --- Document context: early validation + graceful SSE error -----------
+    # --- Document context: early validation + RAG retrieval -----------------
     document_system_context: str | None = None
+    citation_data: list[dict] | None = None
 
     if body.context_type == "document" and body.context_id:
         doc = db.query(Document).filter(
@@ -127,7 +141,7 @@ async def chat(
             Document.user_id == current_user.id,
         ).first()
 
-        if not doc or doc.status != "complete":
+        if not doc or doc.status not in ("complete", "processing"):
             def _doc_error_stream():
                 msg = (
                     "This document hasn't finished processing yet, or "
@@ -142,7 +156,44 @@ async def chat(
                 headers=sse_headers,
             )
 
-        document_system_context = _build_document_system_context(doc)
+        # Try RAG first (if embeddings are ready)
+        if doc.embedding_status == "complete":
+            try:
+                chunks = retrieve_relevant_chunks(
+                    query=body.message,
+                    user_id=current_user.id,
+                    db=db,
+                    document_ids=[doc.id],
+                )
+                if chunks:
+                    document_system_context = build_rag_context(chunks, doc)
+                    citation_data = [
+                        {
+                            "chunk_id": str(c.chunk_id),
+                            "document_id": str(c.document_id),
+                            "document_name": c.source_filename,
+                            "content_preview": c.content[:200],
+                            "relevance_score": round(c.relevance_score, 3),
+                            "page_number": (c.metadata or {}).get("approx_page"),
+                        }
+                        for c in chunks
+                    ]
+            except Exception:
+                import logging
+                logging.getLogger(__name__).exception(
+                    "RAG retrieval failed for document %s, falling back to metadata",
+                    body.context_id,
+                )
+
+        # Fall back to metadata summary if RAG not available or failed
+        if not document_system_context and doc.status == "complete":
+            document_system_context = _build_document_system_context(doc)
+            if doc.embedding_status == "complete":
+                # RAG was available but failed — note this in context
+                document_system_context += (
+                    "\n\nNote: Using document summary — "
+                    "full search temporarily unavailable."
+                )
 
     # --- Deal context: appended to user message ----------------------------
     context_block = _build_context_block(
@@ -167,6 +218,9 @@ async def chat(
         db.add(user_msg)
         db.commit()
 
+    # Capture citation_data in closure for the generator
+    _citation_data = citation_data
+
     def event_generator():
         full_reply: list[str] = []
         try:
@@ -187,11 +241,17 @@ async def chat(
                     content="".join(full_reply),
                     context_type=body.context_type if body.context_type != "general" else None,
                     context_id=body.context_id,
+                    citations=_citation_data,
                 )
                 db.add(assistant_msg)
                 record_usage(current_user.id, "ai_messages_per_month", db)
                 db.commit()
-        yield 'data: {"done": true}\n\n'
+
+        # Include citations in the done event
+        done_payload: dict = {"done": True}
+        if _citation_data:
+            done_payload["citations"] = _citation_data
+        yield f"data: {json.dumps(done_payload)}\n\n"
 
     return StreamingResponse(
         event_generator(),
@@ -204,19 +264,39 @@ async def chat(
 @limiter.limit("30/minute")
 async def get_chat_history(
     request: Request,
+    session_id: Optional[str] = Query(None),
+    context_type: Optional[str] = Query(None),
+    context_id: Optional[uuid.UUID] = Query(None),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> ChatHistoryResponse:
     """Return last 50 chat messages for the current user in chronological order.
 
+    Optionally filter by session_id and/or context_type + context_id.
     Demo users receive fixture-based seeded history instead of a DB query.
     """
     if is_demo_user(current_user):
         return get_seeded_history()
 
+    query = db.query(ChatMessage).filter(ChatMessage.user_id == current_user.id)
+    if session_id:
+        query = query.filter(ChatMessage.session_id == session_id)
+
+    # Context isolation: scope messages to the requested context.
+    # - "general" (or None): only messages with no context_type set
+    # - "deal"/"document": must match both context_type AND context_id
+    if context_type and context_type != "general":
+        query = query.filter(ChatMessage.context_type == context_type)
+        if context_id:
+            query = query.filter(ChatMessage.context_id == context_id)
+    else:
+        # General chat: exclude deal/document messages
+        query = query.filter(
+            (ChatMessage.context_type == None) | (ChatMessage.context_type == "general")  # noqa: E711
+        )
+
     messages = (
-        db.query(ChatMessage)
-        .filter(ChatMessage.user_id == current_user.id)
+        query
         .order_by(ChatMessage.created_at.desc())
         .limit(50)
         .all()
@@ -229,8 +309,47 @@ async def get_chat_history(
                 role=m.role,
                 content=m.content,
                 context_type=m.context_type,
+                citations=m.citations,
                 created_at=m.created_at.isoformat(),
             )
             for m in messages_asc
         ]
     )
+
+
+@router.get("/sessions/", response_model=ChatSessionsResponse)
+@limiter.limit("30/minute")
+async def get_chat_sessions(
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> ChatSessionsResponse:
+    """List chat sessions grouped by session_id with metadata."""
+    rows = (
+        db.query(
+            ChatMessage.session_id,
+            func.min(ChatMessage.content).label("first_message"),
+            func.max(ChatMessage.created_at).label("last_message_at"),
+            func.count(ChatMessage.id).label("message_count"),
+        )
+        .filter(
+            ChatMessage.user_id == current_user.id,
+            ChatMessage.role == "user",
+        )
+        .group_by(ChatMessage.session_id)
+        .order_by(func.max(ChatMessage.created_at).desc())
+        .limit(50)
+        .all()
+    )
+
+    sessions = [
+        ChatSessionItem(
+            session_id=row.session_id,
+            title=row.first_message[:80] if row.first_message else "New conversation",
+            last_message_at=row.last_message_at.isoformat(),
+            message_count=row.message_count,
+        )
+        for row in rows
+    ]
+
+    return ChatSessionsResponse(sessions=sessions)

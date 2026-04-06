@@ -13,8 +13,16 @@ depends_on = None
 
 
 def upgrade() -> None:
+    # Deduplicate any existing active enrollments before adding constraint
     op.execute(
-        "CREATE UNIQUE INDEX uq_active_enrollment "
+        "DELETE FROM sequence_enrollments a USING sequence_enrollments b "
+        "WHERE a.id > b.id AND a.sequence_id = b.sequence_id "
+        "AND a.contact_id = b.contact_id "
+        "AND a.status = 'active' AND a.deleted_at IS NULL "
+        "AND b.status = 'active' AND b.deleted_at IS NULL"
+    )
+    op.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS uq_active_enrollment "
         "ON sequence_enrollments (sequence_id, contact_id) "
         "WHERE status = 'active' AND deleted_at IS NULL"
     )

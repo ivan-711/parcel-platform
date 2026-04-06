@@ -1,4 +1,4 @@
-"""Documents router — upload, list, get, and delete documents."""
+"""Documents router — upload, list, get, status, and delete documents."""
 
 import os
 import uuid
@@ -6,17 +6,22 @@ from uuid import UUID
 
 import math
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, UploadFile, status
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, status
 from sqlalchemy.orm import Session
 
 from core.billing.tier_gate import require_quota, record_usage
-from core.documents.processor import process_document
 from core.security.jwt import get_current_user
 from core.storage.s3_service import delete_file, generate_presigned_url, upload_file
 from database import get_db
 from models.documents import Document
+from models.document_chunks import DocumentChunk
 from models.users import User
-from schemas.documents import DocumentListItem, DocumentResponse, PaginatedDocuments
+from schemas.documents import (
+    DocumentListItem,
+    DocumentResponse,
+    DocumentStatusResponse,
+    PaginatedDocuments,
+)
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 
@@ -35,7 +40,7 @@ CONTENT_TYPE_MAP = {
 @router.post("/", response_model=DocumentResponse, status_code=status.HTTP_201_CREATED)
 async def upload_document(
     file: UploadFile,
-    background_tasks: BackgroundTasks,
+    property_id: UUID = Query(None, description="Optional property to link the document to"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
     _quota: None = Depends(require_quota("document_uploads_per_month")),
@@ -43,7 +48,7 @@ async def upload_document(
     """Upload a document for AI processing.
 
     Accepts PDF, DOCX, JPG, JPEG, PNG up to 10 MB.
-    Stores in S3, creates DB record, queues background AI analysis.
+    Stores in S3, creates DB record, queues Dramatiq background processing.
     """
     # Validate file type by extension
     ext = ""
@@ -57,6 +62,20 @@ async def upload_document(
                 "code": "INVALID_FILE_TYPE",
             },
         )
+
+    # Validate property ownership if property_id is provided
+    if property_id:
+        from models.properties import Property
+        prop = db.query(Property).filter(
+            Property.id == property_id,
+            Property.created_by == current_user.id,
+            Property.is_deleted == False,  # noqa: E712
+        ).first()
+        if not prop:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={"error": "Invalid property_id", "code": "INVALID_PROPERTY"},
+            )
 
     # Read file bytes BEFORE background task (UploadFile closes after response)
     file_bytes = await file.read()
@@ -76,20 +95,29 @@ async def upload_document(
     # Create DB record
     doc = Document(
         user_id=current_user.id,
+        property_id=property_id,
         original_filename=file.filename or "unnamed",
         file_type=ext,
         file_size_bytes=len(file_bytes),
         s3_key=s3_key,
         s3_bucket=os.getenv("AWS_S3_BUCKET_NAME", ""),
         status="pending",
+        embedding_status="pending",
     )
     db.add(doc)
     record_usage(current_user.id, "document_uploads_per_month", db)
     db.commit()
     db.refresh(doc)
 
-    # Queue background AI processing (pass document_id as string + file bytes)
-    background_tasks.add_task(process_document, str(doc.id), file_bytes, ext)
+    # Dispatch Dramatiq task for background processing
+    from core.tasks.document_processing import process_document_metadata
+    process_document_metadata.send(str(doc.id))
+
+    from core.telemetry import track_event
+    track_event(current_user.id, "document_uploaded", {
+        "file_type": ext,
+        "property_id": str(property_id) if property_id else None,
+    })
 
     # Return with presigned URL
     result = DocumentResponse.model_validate(doc)
@@ -130,6 +158,34 @@ async def list_documents(
         page=page,
         per_page=per_page,
         pages=pages,
+    )
+
+
+@router.get("/{document_id}/status", response_model=DocumentStatusResponse)
+async def get_document_status(
+    document_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> DocumentStatusResponse:
+    """Lightweight status check for polling during document processing."""
+    doc = db.query(Document).filter(Document.id == document_id).first()
+    if not doc or doc.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "Document not found", "code": "DOC_NOT_FOUND"},
+        )
+
+    chunks_count = (
+        db.query(DocumentChunk)
+        .filter(DocumentChunk.document_id == document_id)
+        .count()
+    )
+
+    return DocumentStatusResponse(
+        status=doc.status,
+        embedding_status=doc.embedding_status,
+        embedding_meta=doc.embedding_meta,
+        chunks_count=chunks_count,
     )
 
 

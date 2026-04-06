@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&amp;f[]=jetbrains-mono@400,500&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#2b2a28",
+                    "outline-variant": "#474554",
+                    "surface-tint": "#c7bfff",
+                    "surface-container-highest": "#363433",
+                    "on-tertiary-fixed-variant": "#624000",
+                    "outline": "#928e9f",
+                    "on-surface": "#e6e1df",
+                    "tertiary-container": "#c48306",
+                    "tertiary-fixed-dim": "#ffb94f",
+                    "error": "#ffb4ab",
+                    "on-secondary-container": "#b6aee8",
+                    "primary-container": "#8f7fff",
+                    "inverse-primary": "#5b48cc",
+                    "secondary-fixed": "#e5deff",
+                    "on-error-container": "#ffdad6",
+                    "on-tertiary": "#452b00",
+                    "surface-bright": "#3b3937",
+                    "on-primary-container": "#25008b",
+                    "inverse-surface": "#e6e1df",
+                    "surface-container-low": "#1d1b1a",
+                    "on-primary": "#2b009e",
+                    "surface-container-lowest": "#0f0e0d",
+                    "on-secondary": "#302a5a",
+                    "primary-fixed": "#e5deff",
+                    "primary": "#c7bfff",
+                    "on-background": "#e6e1df",
+                    "secondary-container": "#464072",
+                    "error-container": "#93000a",
+                    "on-primary-fixed-variant": "#432cb3",
+                    "secondary-fixed-dim": "#c8c0fb",
+                    "secondary": "#c8c0fb",
+                    "background": "#141312",
+                    "surface-dim": "#141312",
+                    "on-tertiary-fixed": "#291800",
+                    "on-error": "#690005",
+                    "surface": "#141312",
+                    "on-primary-fixed": "#180064",
+                    "tertiary": "#ffb94f",
+                    "surface-container": "#211f1e",
+                    "surface-variant": "#363433",
+                    "on-surface-variant": "#c9c4d6",
+                    "on-secondary-fixed": "#1a1444",
+                    "on-tertiary-container": "#3c2500",
+                    "tertiary-fixed": "#ffddb3",
+                    "primary-fixed-dim": "#c7bfff",
+                    "inverse-on-surface": "#32302f",
+                    "on-secondary-fixed-variant": "#464072"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Satoshi", "sans-serif"],
+                    "body": ["Satoshi", "sans-serif"],
+                    "label": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Satoshi', sans-serif;
+            background-color: #0C0B0A;
+            color: #F0EDE8;
+        }
+        .ledger-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .tonal-bloom {
+            background: radial-gradient(circle at top right, rgba(139, 122, 255, 0.05), transparent);
+        }
+        .signature-gradient {
+            background: linear-gradient(45deg, #c7bfff, #8f7fff);
+        }
+    </style>
+</head>
+<body class="bg-[#0C0B0A] text-[#F0EDE8] overflow-hidden">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-[#0C0B0A] flex flex-col py-8 px-4 border-r border-[#474554]/15 z-40">
+<div class="mb-12 px-2">
+<h1 class="text-xl font-light tracking-[0.2em] text-[#F0EDE8]">Parcel</h1>
+</div>
+<nav class="flex-1 space-y-8 overflow-y-auto">
+<!-- HOME Section -->
+<div>
+<p class="text-[11px] font-normal uppercase tracking-[0.2em] text-[#8A8580] mb-4 px-2">HOME</p>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-[#8B7AFF] bg-[#1D1B1A] border-r-2 border-[#8B7AFF] transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="text-[11px] tracking-widest">TODAY</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#8A8580] hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">grid_view</span>
+<span class="text-[11px] tracking-widest">DASHBOARD</span>
+</a>
+</div>
+</div>
+<!-- DEALS Section -->
+<div>
+<p class="text-[11px] font-normal uppercase tracking-[0.2em] text-[#8A8580] mb-4 px-2">DEALS</p>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-[#8A8580] hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="text-[11px] tracking-widest">ANALYZE</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#8A8580] hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">account_tree</span>
+<span class="text-[11px] tracking-widest">PIPELINE</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#8A8580] hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">maps_home_work</span>
+<span class="text-[11px] tracking-widest">PROPERTIES</span>
+</a>
+</div>
+</div>
+<!-- PEOPLE Section -->
+<div>
+<p class="text-[11px] font-normal uppercase tracking-[0.2em] text-[#8A8580] mb-4 px-2">PEOPLE</p>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-[#8A8580] hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="text-[11px] tracking-widest">CONTACTS</span>
+</a>
+</div>
+</div>
+<!-- ASSETS Section -->
+<div>
+<p class="text-[11px] font-normal uppercase tracking-[0.2em] text-[#8A8580] mb-4 px-2">ASSETS</p>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-[#8A8580] hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">account_balance</span>
+<span class="text-[11px] tracking-widest">PORTFOLIO</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#8A8580] hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span class="text-[11px] tracking-widest">TRANSACTIONS</span>
+</a>
+</div>
+</div>
+<!-- OUTPUTS Section -->
+<div>
+<p class="text-[11px] font-normal uppercase tracking-[0.2em] text-[#8A8580] mb-4 px-2">OUTPUTS</p>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-[#8A8580] hover:bg-[#1D1B1A] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<span class="text-[11px] tracking-widest">REPORTS</span>
+</a>
+</div>
+</div>
+</nav>
+<div class="mt-auto pt-8 border-t border-[#474554]/15 space-y-1">
+<button class="w-full flex items-center justify-center gap-2 py-3 bg-[#1D1B1A] text-[#8B7AFF] rounded-lg text-[11px] tracking-[0.2em] uppercase font-medium hover:bg-[#2B2A28] transition-all">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+                Ask AI
+            </button>
+<div class="flex flex-col gap-1 mt-4">
+<a class="flex items-center gap-3 px-3 py-2 text-[#8A8580] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+<span class="text-[11px] tracking-widest uppercase">Support</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#8A8580] hover:text-[#F0EDE8] transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">person</span>
+<span class="text-[11px] tracking-widest uppercase">Account</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen tonal-bloom flex flex-col relative">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-64 right-0 h-16 bg-[#0C0B0A]/80 backdrop-blur-xl z-50 flex justify-between items-center px-8">
+<div class="flex items-center gap-4">
+<span class="text-[#C5C0B8] text-sm ledger-mono">09:41 AM</span>
+<div class="h-4 w-[1px] bg-[#474554]/30"></div>
+<span class="text-[#C5C0B8] text-sm uppercase tracking-widest">Today View</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="text-[#C5C0B8] hover:text-[#8B7AFF] transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-[#C5C0B8] hover:text-[#8B7AFF] transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-[#474554]/30">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="professional portrait of a financial executive in a modern office setting with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC68iUT3Pf8B9KGbRxYum8Lc5MoFZDKJTYoD8ufIIfkc6aUC7dsPljNCbw_jOrcLlCCdcyhORpFnfCV_6XDtyQQZrm9iK_iDXXQByT8ZYG9CQhEsAfZO8uF-itjxlc5BD0zQyuair0F6IMsY_wX7IygSGSmnH-DQ_th5n34qRQU76otcVTyuDEYGLA9uhouQnFB6BNrlbYoJhu4IgLnHi6Fx6-xQksQ3DVKC-wYhRClP7Ph9IL5pRH9u_vaiqVCk3fXoN01NBXDRFs"/>
+</div>
+</div>
+</header>
+<!-- Empty State Content -->
+<section class="mt-16 flex-1 flex flex-col items-center justify-center px-8 text-center max-w-4xl mx-auto w-full">
+<div class="mb-12">
+<div class="w-20 h-20 bg-[#1D1B1A] rounded-full flex items-center justify-center mx-auto mb-8 border border-[#474554]/15">
+<span class="material-symbols-outlined text-[#8B7AFF] text-4xl" data-weight="fill">account_balance_wallet</span>
+</div>
+<h2 class="text-5xl font-light tracking-tighter text-[#F0EDE8] mb-4">Welcome to Parcel</h2>
+<p class="text-[#C5C0B8] text-lg font-normal max-w-md mx-auto">Analyze your first property to start building your briefing.</p>
+<button class="mt-8 px-10 py-4 signature-gradient text-[#0C0B0A] rounded-lg font-medium tracking-wide text-sm hover:opacity-90 transition-all shadow-xl shadow-primary/10">
+                    Analyze a Property
+                </button>
+</div>
+<!-- Sample Feed -->
+<div class="w-full mt-12 opacity-40">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-[11px] uppercase tracking-[0.3em] text-[#8A8580]">Preview: Your Briefing</h3>
+<div class="h-[1px] flex-1 mx-6 bg-[#474554]/20"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+<!-- Property Card 1 -->
+<div class="bg-[#1D1B1A] p-6 rounded-xl border border-[#474554]/10">
+<div class="flex justify-between items-start mb-6">
+<span class="text-[10px] ledger-mono text-[#8B7AFF]">WHOLESALE</span>
+<span class="material-symbols-outlined text-[#8A8580] text-sm">more_horiz</span>
+</div>
+<h4 class="text-lg font-medium text-[#F0EDE8] mb-1">2847 W Maple St</h4>
+<p class="text-xs text-[#8A8580] mb-4">Pending Analysis • Potential Lead</p>
+<div class="space-y-3">
+<div class="flex justify-between items-end border-b border-[#474554]/10 pb-2">
+<span class="text-[10px] text-[#8A8580] uppercase tracking-widest">Assignment Fee</span>
+<span class="text-sm ledger-mono text-[#F0EDE8]">$8,500</span>
+</div>
+<div class="flex justify-between items-end border-b border-[#474554]/10 pb-2">
+<span class="text-[10px] text-[#8A8580] uppercase tracking-widest">Est. ARV</span>
+<span class="text-sm ledger-mono text-[#F0EDE8]">$145k</span>
+</div>
+</div>
+</div>
+<!-- Property Card 2 -->
+<div class="bg-[#1D1B1A] p-6 rounded-xl border border-[#474554]/10">
+<div class="flex justify-between items-start mb-6">
+<span class="text-[10px] ledger-mono text-[#8B7AFF]">BUY &amp; HOLD</span>
+<span class="material-symbols-outlined text-[#8A8580] text-sm">more_horiz</span>
+</div>
+<h4 class="text-lg font-medium text-[#F0EDE8] mb-1">114 S Maple Dr</h4>
+<p class="text-xs text-[#8A8580] mb-4">Rental Portfolio • Long-term</p>
+<div class="space-y-3">
+<div class="flex justify-between items-end border-b border-[#474554]/10 pb-2">
+<span class="text-[10px] text-[#8A8580] uppercase tracking-widest">Purchase Price</span>
+<span class="text-sm ledger-mono text-[#F0EDE8]">$215k</span>
+</div>
+<div class="flex justify-between items-end border-b border-[#474554]/10 pb-2">
+<span class="text-[10px] text-[#8A8580] uppercase tracking-widest">Yield</span>
+<span class="text-sm ledger-mono text-[#F0EDE8]">8.2%</span>
+</div>
+</div>
+</div>
+<!-- Property Card 3 -->
+<div class="bg-[#1D1B1A] p-6 rounded-xl border border-[#474554]/10">
+<div class="flex justify-between items-start mb-6">
+<span class="text-[10px] ledger-mono text-[#8B7AFF]">FIX &amp; FLIP</span>
+<span class="material-symbols-outlined text-[#8A8580] text-sm">more_horiz</span>
+</div>
+<h4 class="text-lg font-medium text-[#F0EDE8] mb-1">552 Highland View</h4>
+<p class="text-xs text-[#8A8580] mb-4">Active Project • Under Reno</p>
+<div class="space-y-3">
+<div class="flex justify-between items-end border-b border-[#474554]/10 pb-2">
+<span class="text-[10px] text-[#8A8580] uppercase tracking-widest">Est. Profit</span>
+<span class="text-sm ledger-mono text-[#F0EDE8]">$88k</span>
+</div>
+<div class="flex justify-between items-end border-b border-[#474554]/10 pb-2">
+<span class="text-[10px] text-[#8A8580] uppercase tracking-widest">Status</span>
+<span class="text-sm ledger-mono text-[#F0EDE8]">IN PROGRESS</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Floating AI Button -->
+<button class="fixed bottom-12 right-12 w-14 h-14 signature-gradient rounded-full flex items-center justify-center shadow-2xl shadow-primary/40 z-50 hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[#0C0B0A] text-2xl" data-weight="fill">auto_awesome</span>
+</button>
+<!-- Background Accent -->
+<div class="absolute bottom-0 left-0 w-full h-[500px] bg-gradient-to-t from-[#8B7AFF]/5 to-transparent pointer-events-none -z-10"></div>
+</main>
+</body></html>

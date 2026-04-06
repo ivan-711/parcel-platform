@@ -37,4 +37,4 @@ class Communication(TimestampMixin, Base):
     status_updated_at = Column(DateTime, nullable=True)
     error_message = Column(String, nullable=True)
     cost_cents = Column(Integer, nullable=True)  # SMS cost in cents
-    metadata = Column(JSONB, nullable=True)  # delivery details, open/click tracking
+    delivery_metadata = Column("metadata", JSONB, nullable=True)  # delivery details, open/click tracking

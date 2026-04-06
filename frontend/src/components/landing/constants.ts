@@ -96,20 +96,26 @@ export const STATS: StatItem[] = [
 export const PRICING: PricingTier[] = [
   {
     name: 'Free', price: '$0', period: 'forever',
-    description: '5 deals/month. Full pipeline. PDF exports.',
-    features: ['5 deal analyses / month', 'Pipeline (up to 10 deals)', 'Basic AI chat', 'PDF exports'],
+    description: '3 analyses/month. AI chat. Get started instantly.',
+    features: ['3 deal analyses / month', '5 AI chat messages / month', '5 saved deals', 'Basic risk scoring'],
     highlighted: false, cta: 'Start free',
   },
   {
-    name: 'Pro', price: '$69', period: 'per month',
+    name: 'Plus', price: '$29', period: 'per month',
+    description: 'For getting serious. Pipeline, docs, and more analyses.',
+    features: ['25 deal analyses / month', 'Full pipeline (50 deals)', 'PDF exports', 'Document AI (5 uploads / mo)', '30 AI chat messages / month'],
+    highlighted: false, cta: 'Upgrade to Plus',
+  },
+  {
+    name: 'Pro', price: '$79', period: 'per month',
     description: 'For active investors and agents. 7-day free trial.',
-    features: ['Unlimited deal analyses', 'Unlimited pipeline', 'Document AI (10 uploads / mo)', 'Offer letter generator', 'Deal sharing links', 'Priority support'],
+    features: ['Unlimited deal analyses', 'Unlimited pipeline', 'Document AI (25 uploads / mo)', 'Offer letter generator', 'Deal comparison', 'Portfolio tracking', 'Skip tracing (25 / mo)'],
     highlighted: true, cta: 'Start 7-day free trial',
   },
   {
-    name: 'Team', price: '$99', period: 'per month',
+    name: 'Business', price: '$149', period: 'per month',
     description: 'For real estate teams and brokerages.',
-    features: ['Everything in Pro', 'Up to 10 team members', 'Shared pipeline & deals', 'Role-based access', 'Unlimited document AI', 'Team analytics'],
+    features: ['Everything in Pro', 'Up to 5 team members', 'Shared pipeline & deals', 'Role-based access', 'Unlimited document AI', 'Direct mail (100 pieces / mo)'],
     highlighted: false, cta: 'Contact sales',
   },
 ]

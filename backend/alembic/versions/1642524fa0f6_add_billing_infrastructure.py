@@ -19,12 +19,13 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
-# Enum types
-plantier = sa.Enum("free", "starter", "pro", "team", name="plantier")
-subscriptionstatus = sa.Enum(
+# Use postgresql.ENUM to control type creation explicitly
+plantier = postgresql.ENUM("free", "starter", "pro", "team", name="plantier", create_type=False)
+subscriptionstatus = postgresql.ENUM(
     "trialing", "active", "past_due", "canceled",
     "unpaid", "incomplete", "paused",
     name="subscriptionstatus",
+    create_type=False,
 )
 
 
@@ -67,7 +68,7 @@ def upgrade() -> None:
 
     # Partial unique index: only one active/trialing/past_due subscription per user
     op.execute(
-        "CREATE UNIQUE INDEX ix_subscriptions_one_active "
+        "CREATE UNIQUE INDEX IF NOT EXISTS ix_subscriptions_one_active "
         "ON subscriptions (user_id) "
         "WHERE status IN ('active', 'trialing', 'past_due')"
     )
