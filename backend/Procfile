@@ -1,2 +1,2 @@
-web: alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port $PORT
+web: bash scripts/migrate.sh && uvicorn main:app --host 0.0.0.0 --port $PORT
 worker: playwright install chromium && dramatiq core.tasks --processes 1 --threads 2
