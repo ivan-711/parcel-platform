@@ -21,7 +21,7 @@ export function useCreateDeal() {
   return useMutation({
     mutationFn: (data: DealCreateRequest) => api.deals.create(data),
     onSuccess: (deal) => {
-      navigate(`/analyze/results/${deal.id}`)
+      navigate(deal.property_id ? `/analyze/results/${deal.property_id}` : `/analyze/deal/${deal.id}`)
     },
     onError: (err) => {
       toast.error(err instanceof Error ? err.message : 'Failed to analyze deal — try again')

@@ -2,6 +2,7 @@
 
 import type { ChatRequest, Citation } from '@/types'
 import { useAuthStore } from '@/stores/authStore'
+import { getAuthHeaders } from '@/lib/api'
 
 const API_URL = (import.meta.env.VITE_API_URL ?? 'https://api.parceldesk.io').replace('http://', 'https://')
 
@@ -22,7 +23,7 @@ export async function* streamChatWithCitations(
   try {
     res = await fetch(`${API_URL}/api/v1/chat/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       credentials: 'include',
       body: JSON.stringify(params),
       signal,
@@ -92,7 +93,7 @@ export async function* streamChat(
   try {
     res = await fetch(`${API_URL}/api/v1/chat/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       credentials: 'include',
       body: JSON.stringify(params),
       signal,

@@ -42,12 +42,12 @@ export default function RehabsPage() {
   const { data, isLoading } = useRehabProjects()
   const { data: propData } = useProperties({})
 
-  const projects: RehabProject[] = data?.items ?? data ?? []
+  const projects: RehabProject[] = Array.isArray(data) ? data : (data as any)?.items ?? []
 
   // Build a property address lookup for cards that don't have property_address joined
   const propertyMap = useMemo(() => {
     const map = new Map<string, string>()
-    const props = propData?.properties ?? propData?.data ?? []
+    const props = propData?.properties ?? []
     for (const p of props as Array<Record<string, unknown>>) {
       const addr = (p.address_line1 ?? p.address ?? '') as string
       const parts = [addr, p.city, p.state].filter(Boolean)

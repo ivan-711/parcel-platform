@@ -100,7 +100,7 @@ export default function PropertyDetailPage() {
 
   function handleSkipTrace() {
     if (!propertyId) return
-    skipTrace.mutate({ property_id: propertyId }, {
+    skipTrace.mutate({ property_id: propertyId, compliance_acknowledged: true }, {
       onSuccess: (result) => setSkipTraceResult(result),
     })
     try { (window as any).posthog?.capture?.('skip_trace_single', { source: 'property_detail', had_property_id: true }) } catch {}

@@ -4,7 +4,7 @@
 
 import { motion } from 'framer-motion'
 import { Building2, Calculator, CheckCircle2 } from 'lucide-react'
-import { ease, duration } from '@/lib/motion'
+import { ease } from '@/lib/motion'
 import { useFadeInOnScroll } from './landing-utils'
 
 const STEPS = [

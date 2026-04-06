@@ -10,7 +10,6 @@ import { Command as CommandPrimitive } from 'cmdk'
 import { useQuery } from '@tanstack/react-query'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
-  LayoutDashboard,
   LayoutGrid,
   Calendar,
   KanbanSquare,
@@ -309,7 +308,7 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                         key={deal.id}
                         value={`deal ${deal.address} ${deal.zip_code}`}
                         keywords={[deal.strategy, deal.address, deal.zip_code]}
-                        onSelect={() => handleSelect(`/analyze/results/${deal.id}`)}
+                        onSelect={() => handleSelect(deal.property_id ? `/analyze/results/${deal.property_id}` : `/analyze/deal/${deal.id}`)}
                         forceMount
                         className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-text-secondary cursor-pointer transition-colors data-[selected=true]:bg-[#8B7AFF]/[0.08] data-[selected=true]:border-l-2 data-[selected=true]:border-l-[#8B7AFF] data-[selected=true]:pl-[calc(0.75rem-2px)] data-[selected=true]:text-text-primary"
                       >

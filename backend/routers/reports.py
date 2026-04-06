@@ -349,17 +349,30 @@ async def get_shared_report(
     if _is_bot(user_agent):
         should_count = False
 
-    # Check if the viewer is the report owner (optional auth token present)
+    # Check if the viewer is the report owner (via cookie or Bearer token)
     if should_count:
+        viewer_id = None
         try:
             from core.security.jwt import verify_token
             token = request.cookies.get("access_token")
             if token:
                 payload = verify_token(token)
-                if payload and str(payload.get("sub")) == str(report.created_by):
-                    should_count = False
+                if payload:
+                    viewer_id = str(payload.get("sub"))
         except Exception:
-            pass  # no valid auth — treat as anonymous viewer
+            pass
+        if not viewer_id:
+            try:
+                from core.security.clerk import verify_clerk_token
+                auth_header = request.headers.get("authorization", "")
+                if auth_header.startswith("Bearer "):
+                    claims = verify_clerk_token(auth_header[7:])
+                    if claims:
+                        viewer_id = claims.get("sub")
+            except Exception:
+                pass
+        if viewer_id and viewer_id == str(report.created_by):
+            should_count = False
 
     # Deduplicate: same IP within last 5 minutes
     if should_count:

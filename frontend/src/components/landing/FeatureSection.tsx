@@ -5,7 +5,7 @@
 
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { ease, duration } from '@/lib/motion'
+import { ease } from '@/lib/motion'
 import { useFadeInOnScroll } from './landing-utils'
 
 interface FeatureSectionProps {

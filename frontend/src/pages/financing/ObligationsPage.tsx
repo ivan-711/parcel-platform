@@ -14,7 +14,6 @@ import {
   ChevronDown,
   ChevronRight,
 } from 'lucide-react'
-import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
 import { cn } from '@/lib/utils'

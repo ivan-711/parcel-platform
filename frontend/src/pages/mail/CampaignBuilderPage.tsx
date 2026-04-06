@@ -30,8 +30,6 @@ const MAIL_TYPES = [
   { value: 'letter',        label: 'Letter',         size: '8.5" × 11"', costCents: 105 },
 ] as const
 
-type MailTypeValue = typeof MAIL_TYPES[number]['value']
-
 const SAMPLE_DATA: Record<string, string> = {
   recipient_name:    'John Smith',
   property_address:  '123 Main St, Milwaukee, WI',

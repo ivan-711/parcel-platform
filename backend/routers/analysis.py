@@ -406,7 +406,7 @@ async def quick_analysis_stream(
             yield _sse("status", {"stage": "parsing_address"})
 
             from core.property_data.address_parser import parse_address
-            parsed = parse_address(address)
+            parsed = await asyncio.to_thread(parse_address, address)
             if not parsed.address_line1:
                 yield _sse("error", {"error": "Could not parse address", "code": "ADDRESS_PARSE_FAILED"})
                 return
@@ -414,6 +414,9 @@ async def quick_analysis_stream(
             # Stage 2: Fetch property data (RentCast — fast, 2-5s)
             yield _sse("status", {"stage": "fetching_property_data"})
 
+            # TODO: enrich_property and enrich_with_bricked are sync and block the event
+            # loop, but they use the shared DB session so asyncio.to_thread is unsafe.
+            # Future: refactor providers to async or use a separate DB session per thread.
             from core.property_data.service import enrich_property, enrich_with_bricked
             enrichment = enrich_property(
                 address=address,

@@ -2,14 +2,13 @@ import { useState, useMemo, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  ArrowRight, GitBranch, FileText, MessageSquare, AlertCircle, X,
-  Calculator, CheckCircle2, MapPin, Search, Plus, Clock,
+  ArrowRight, GitBranch, FileText, AlertCircle, X,
+  Calculator, CheckCircle2, MapPin, Search,
 } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { KPICard } from '@/components/ui/KPICard'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
-import { SampleBadge } from '@/components/SampleBadge'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useDashboard } from '@/hooks/useDashboard'
 import { usePortfolioOverview } from '@/hooks/usePortfolio'

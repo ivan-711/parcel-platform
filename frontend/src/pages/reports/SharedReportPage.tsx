@@ -8,14 +8,14 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { ArrowRight, Download, Link2, ChevronDown, ChevronUp } from 'lucide-react'
+import { ArrowRight, Link2, ChevronDown, ChevronUp } from 'lucide-react'
 import { toast } from 'sonner'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { Button } from '@/components/ui/button'
 import { CashFlowProjection } from '@/components/charts/CashFlowProjection'
-import type { Strategy, SharedReportResponse } from '@/types'
+import type { Strategy } from '@/types'
 
 // ---------------------------------------------------------------------------
 // Formatting helpers
@@ -252,7 +252,6 @@ export default function SharedReportPage() {
   const accentColor = brandKit?.primary_color || '#8B7AFF'
   const outputs = scenario.outputs || {}
   const kpis = STRATEGY_KPIS[scenario.strategy] || []
-  const address = `${prop.address_line1}, ${prop.city}, ${prop.state}`
   const createdDate = new Date(report.created_at).toLocaleDateString('en-US', {
     month: 'long', day: 'numeric', year: 'numeric',
   })

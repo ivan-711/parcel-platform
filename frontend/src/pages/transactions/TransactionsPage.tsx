@@ -1,9 +1,8 @@
 // frontend/src/pages/transactions/TransactionsPage.tsx
-import { useState, useMemo } from 'react'
-import { DollarSign, Plus, Pencil, Trash2 } from 'lucide-react'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Line, ComposedChart, CartesianGrid } from 'recharts'
+import { useState } from 'react'
+import { DollarSign, Plus, Trash2 } from 'lucide-react'
+import { Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Line, ComposedChart, CartesianGrid } from 'recharts'
 import { CHART_ANIMATION } from '@/lib/chart-theme'
-import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal'

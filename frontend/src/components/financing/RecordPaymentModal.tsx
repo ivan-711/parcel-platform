@@ -5,7 +5,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { cn } from '@/lib/utils'
 import { useRecordPayment } from '@/hooks/useFinancing'
 import type { CreatePaymentRequest } from '@/types/financing'
 

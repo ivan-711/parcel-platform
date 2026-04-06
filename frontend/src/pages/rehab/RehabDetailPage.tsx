@@ -54,8 +54,6 @@ const PROJECT_STATUSES = [
   { value: 'on_hold', label: 'On Hold' },
 ]
 
-const ITEM_STATUSES = ['planned', 'in_progress', 'completed', 'skipped']
-
 const CATEGORIES = [
   'kitchen',
   'bathroom',

@@ -8,7 +8,6 @@ import {
   ArrowLeft,
   DollarSign,
   FileText,
-  Shield,
   Key,
   Landmark,
   Layers,

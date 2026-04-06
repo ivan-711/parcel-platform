@@ -2,7 +2,7 @@
  * Landing page utilities — scroll hooks, intersection observer, count-up animation.
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 // ── Scroll Position ─────────────────────────────────────────────────────────
 

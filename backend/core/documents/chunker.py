@@ -88,8 +88,26 @@ def chunk_text(
                     current_chunk = overlap_sents
                     current_len = ol
 
-                current_chunk.append(sentence)
-                current_len += sent_len
+                # If a single sentence exceeds chunk_size, hard-split on word boundaries
+                if sent_len > chunk_size and not current_chunk:
+                    remaining = sentence
+                    while len(remaining) > chunk_size:
+                        split_at = remaining[:chunk_size].rfind(' ')
+                        if split_at <= 0:
+                            split_at = chunk_size
+                        chunks.append({
+                            "content": remaining[:split_at].strip(),
+                            "chunk_index": len(chunks),
+                            "metadata": {"approx_page": _estimate_page(char_offset, len(text))},
+                        })
+                        char_offset += split_at
+                        remaining = remaining[split_at:].strip()
+                    if remaining:
+                        current_chunk.append(remaining)
+                        current_len = len(remaining)
+                else:
+                    current_chunk.append(sentence)
+                    current_len += sent_len
         else:
             current_chunk.append(para)
             current_len += para_len

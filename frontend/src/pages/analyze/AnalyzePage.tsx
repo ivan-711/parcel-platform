@@ -17,6 +17,7 @@ export default function AnalyzePage() {
   const [error, setError] = useState('')
   const [steps, setSteps] = useState<LoadingStep[]>(initialSteps())
   const [partialResult, setPartialResult] = useState<Record<string, unknown> | null>(null)
+  const partialResultRef = useRef<Record<string, unknown> | null>(null)
   const abortRef = useRef<AbortController | null>(null)
   const navigate = useNavigate()
 
@@ -25,6 +26,9 @@ export default function AnalyzePage() {
       (window as any).posthog?.capture?.('analyze_page_viewed', { mode: state })
     } catch { /* ignore */ }
   }, [])
+
+  // Keep ref in sync with state so SSE handlers read the latest value
+  useEffect(() => { partialResultRef.current = partialResult }, [partialResult])
 
   // Client-side validation
   const validate = (addr: string): string | null => {
@@ -120,7 +124,7 @@ export default function AnalyzePage() {
     }
   }, [navigate])
 
-  const handleSSEEvent = (event: string, rawData: string, addr: string) => {
+  const handleSSEEvent = (event: string, rawData: string, _addr: string) => {
     try {
       const data = JSON.parse(rawData)
 
@@ -151,10 +155,11 @@ export default function AnalyzePage() {
 
         case 'complete':
           updateStep(3, 'success')
-          // Navigate to results after a beat to show completion
+          // Navigate to results after a beat — read from ref to avoid stale closure
           setTimeout(() => {
-            if (partialResult) navigateToResults(partialResult)
-            else setState('input') // fallback
+            const result = partialResultRef.current
+            if (result) navigateToResults(result)
+            else setState('input')
           }, 600)
           break
 

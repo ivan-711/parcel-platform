@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Loader2, ArrowUpDown, ChevronDown, ChevronRight } from 'lucide-react'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
-import type { ScenarioDetail, StrategyResult, CompareResponse } from '@/types'
+import type { ScenarioDetail, CompareResponse } from '@/types'
 
 const STRATEGY_LABELS: Record<string, string> = {
   wholesale: 'Wholesale', brrrr: 'BRRRR', buy_and_hold: 'Buy & Hold',
@@ -18,7 +18,7 @@ interface Props {
   onStrategySwitch: (strategy: string) => void
 }
 
-export function StrategyComparison({ propertyId, activeStrategy, scenarios, onStrategySwitch }: Props) {
+export function StrategyComparison({ propertyId: _propertyId, activeStrategy, scenarios, onStrategySwitch }: Props) {
   const [comparison, setComparison] = useState<CompareResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [sortBy, setSortBy] = useState<SortKey | null>(null)

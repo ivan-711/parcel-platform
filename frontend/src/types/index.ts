@@ -549,6 +549,7 @@ export interface DealCreateRequest {
 
 export interface DealResponse {
   id: string
+  property_id: string | null
   user_id: string
   team_id: string | null
   address: string
@@ -613,6 +614,7 @@ export interface DashboardStats {
 
 export interface DealListItem {
   id: string
+  property_id: string | null
   address: string
   zip_code: string
   strategy: Strategy
@@ -753,7 +755,7 @@ export interface DocumentResponse {
   file_size_bytes: number
   status: 'pending' | 'processing' | 'complete' | 'failed'
   embedding_status: 'pending' | 'processing' | 'complete' | 'failed'
-  embedding_meta: { total_chunks?: number; processed_chunks?: number; error?: string } | null
+  embedding_meta: { total_chunks?: number; processed_chunks?: number; error?: string; truncated?: boolean; extracted_chars?: number; total_chars?: number } | null
   document_type: string | null
   ai_summary: string | null
   parties: DocumentParty[]
@@ -769,7 +771,7 @@ export interface DocumentResponse {
 export interface DocumentStatusResponse {
   status: string
   embedding_status: string
-  embedding_meta: { total_chunks?: number; processed_chunks?: number; error?: string } | null
+  embedding_meta: { total_chunks?: number; processed_chunks?: number; error?: string; truncated?: boolean; extracted_chars?: number; total_chars?: number } | null
   chunks_count: number
 }
 

@@ -13,7 +13,7 @@ import {
 } from 'recharts'
 import type { Strategy } from '@/types'
 import { formatOutputValue } from '@/lib/format'
-import { CHART_COLORS, CHART_SERIES, CHART_POLAR } from '@/lib/chart-theme'
+import { CHART_SERIES, CHART_POLAR } from '@/lib/chart-theme'
 
 /** Deal shape passed into the radar chart. */
 interface RadarDeal {

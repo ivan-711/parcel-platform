@@ -56,22 +56,6 @@ async function attemptRefresh(): Promise<boolean> {
   }
 }
 
-/**
- * Get Clerk session token if Clerk is active. Returns null when Clerk is
- * not configured or no active session exists.
- */
-async function getClerkToken(): Promise<string | null> {
-  if (!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY) return null
-  try {
-    const { useAuth } = await import('@clerk/clerk-react')
-    // This won't work outside of React — Clerk tokens are fetched in components.
-    // Instead, we use a module-level token cache set by the auth store.
-    return _clerkTokenCache
-  } catch {
-    return null
-  }
-}
-
 /** Module-level Clerk token cache — set by authStore when Clerk is active. */
 let _clerkTokenCache: string | null = null
 

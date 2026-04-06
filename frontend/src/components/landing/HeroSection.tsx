@@ -156,7 +156,7 @@ function useScrollHijack() {
 // ── Main Hero ───────────────────────────────────────────────────────────────
 
 export function HeroSection({ onSkipHijack }: { onSkipHijack?: (cb: () => void) => void }) {
-  const { scrollProgress, mediaFullyExpanded, isMobile, skipHijack } = useScrollHijack()
+  const { scrollProgress, mediaFullyExpanded: _mediaFullyExpanded, isMobile, skipHijack } = useScrollHijack()
 
   // Expose skipHijack to parent (LandingPage → Navbar)
   useEffect(() => {

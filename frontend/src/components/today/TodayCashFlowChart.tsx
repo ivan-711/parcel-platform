@@ -7,7 +7,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from 'recharts'
 import { CHART_ANIMATION } from '@/lib/chart-theme'
 import type { TodayPortfolioSummary } from '@/types'

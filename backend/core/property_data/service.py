@@ -197,19 +197,26 @@ def enrich_property(
             strategy=default_strategy,
             outputs={},
         )
-        # Pre-fill from existing property data where available
-        if existing.data_sources:
-            for field_name, src in existing.data_sources.items():
-                if isinstance(src, dict) and "value" in src:
-                    val = src["value"]
-                    if field_name == "estimated_value" and val:
-                        scenario.purchase_price = val
-                    elif field_name == "monthly_rent" and val:
-                        scenario.monthly_rent = val
-                    elif field_name == "after_repair_value" and val:
-                        scenario.after_repair_value = val
-                    elif field_name == "repair_cost" and val:
-                        scenario.repair_cost = val
+        # Pre-fill from the most recent existing scenario for this property
+        prev_scenario = (
+            db.query(AnalysisScenario)
+            .filter(
+                AnalysisScenario.property_id == existing.id,
+                AnalysisScenario.is_deleted == False,
+            )
+            .order_by(AnalysisScenario.created_at.desc())
+            .first()
+        )
+        if prev_scenario:
+            scenario.purchase_price = prev_scenario.purchase_price
+            scenario.monthly_rent = prev_scenario.monthly_rent
+            scenario.after_repair_value = prev_scenario.after_repair_value
+            scenario.repair_cost = prev_scenario.repair_cost
+            scenario.down_payment_pct = prev_scenario.down_payment_pct
+            scenario.interest_rate = prev_scenario.interest_rate
+            scenario.loan_term_years = prev_scenario.loan_term_years
+            if prev_scenario.inputs_extended:
+                scenario.inputs_extended = dict(prev_scenario.inputs_extended)
         db.add(scenario)
         db.flush()
         result.scenario = scenario

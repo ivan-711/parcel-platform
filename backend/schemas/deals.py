@@ -141,6 +141,7 @@ class DealResponse(BaseModel):
     """Full deal object returned for GET /deals/:id and POST /deals."""
 
     id: uuid.UUID
+    property_id: Optional[uuid.UUID] = None
     user_id: uuid.UUID
     team_id: Optional[uuid.UUID]
     address: str
@@ -163,6 +164,7 @@ class DealListItem(BaseModel):
     """Compact deal summary used in GET /deals list responses."""
 
     id: uuid.UUID
+    property_id: Optional[uuid.UUID] = None
     address: str
     zip_code: str
     strategy: str

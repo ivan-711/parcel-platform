@@ -131,7 +131,7 @@ export function DealCard({
 
   return (
     <Link
-      to={`/analyze/results/${deal.id}`}
+      to={deal.property_id ? `/analyze/results/${deal.property_id}` : `/analyze/deal/${deal.id}`}
       className="relative block p-5 rounded-xl border border-border-subtle bg-app-surface shadow-xs hover:border-border-default hover:shadow-card-hover transition-all space-y-3 group edge-highlight"
     >
       {cardContent}

@@ -119,7 +119,7 @@ export function SkipTraceResultCard({ result, onCreateContact }: Props) {
   const createContact = useCreateContactFromTrace()
   const [createdContactId, setCreatedContactId] = useState<string | null>(result.contact_id)
   const [createdContactName, setCreatedContactName] = useState<string | null>(null)
-  const [createdContactType, setCreatedContactType] = useState<string | null>(null)
+  const [createdContactType, _setCreatedContactType] = useState<string | null>(null)
 
   const ownerName = [result.owner_first_name, result.owner_last_name].filter(Boolean).join(' ') || 'Unknown Owner'
 
