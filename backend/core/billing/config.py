@@ -15,15 +15,11 @@ class StripeSettings(BaseSettings):
     STRIPE_SECRET_KEY: str = ""
     STRIPE_WEBHOOK_SECRET: str = ""
 
-    # Price IDs — MVP: Pro only
-    STRIPE_PRICE_PRO_MONTHLY: str = ""
-    STRIPE_PRICE_PRO_ANNUAL: str = ""
-
-    # Plus ($29) and Business ($149) tiers
-    STRIPE_PRICE_PLUS_MONTHLY: str = ""
-    STRIPE_PRICE_PLUS_ANNUAL: str = ""
-    STRIPE_PRICE_BUSINESS_MONTHLY: str = ""
-    STRIPE_PRICE_BUSINESS_ANNUAL: str = ""
+    # Stripe Price IDs — display names: Steel (free) / Carbon ($79) / Titanium ($149)
+    STRIPE_PRICE_CARBON_MONTHLY: str = ""
+    STRIPE_PRICE_CARBON_ANNUAL: str = ""
+    STRIPE_PRICE_TITANIUM_MONTHLY: str = ""
+    STRIPE_PRICE_TITANIUM_ANNUAL: str = ""
 
     ENVIRONMENT: str = "development"
     FRONTEND_URL: str = "http://localhost:5173"
@@ -55,9 +51,13 @@ class StripeSettings(BaseSettings):
         """Whether both required Stripe credentials are set."""
         return bool(self.STRIPE_SECRET_KEY and self.STRIPE_WEBHOOK_SECRET)
 
+    # Internal plan name → Stripe display name mapping
+    _PLAN_TO_STRIPE = {"pro": "CARBON", "business": "TITANIUM", "carbon": "CARBON", "titanium": "TITANIUM"}
+
     def get_price_id(self, plan: str, interval: str) -> str:
         """Look up the Stripe Price ID for a given plan and interval."""
-        key = f"STRIPE_PRICE_{plan.upper()}_{interval.upper()}"
+        stripe_name = self._PLAN_TO_STRIPE.get(plan.lower(), plan.upper())
+        key = f"STRIPE_PRICE_{stripe_name}_{interval.upper()}"
         price_id: str = getattr(self, key, "")
         if not price_id:
             raise ValueError(
@@ -67,13 +67,14 @@ class StripeSettings(BaseSettings):
 
     @property
     def price_to_plan_map(self) -> dict[str, str]:
-        """Reverse mapping from Stripe Price ID to plan name."""
+        """Reverse mapping from Stripe Price ID to internal plan name."""
         mapping: dict[str, str] = {}
-        for plan in ("plus", "pro", "business"):
-            for interval in ("monthly", "annual"):
-                pid = getattr(self, f"STRIPE_PRICE_{plan.upper()}_{interval.upper()}", "")
+        # Maps Stripe display names back to internal plan names
+        for stripe_name, internal in (("CARBON", "pro"), ("TITANIUM", "business")):
+            for interval in ("MONTHLY", "ANNUAL"):
+                pid = getattr(self, f"STRIPE_PRICE_{stripe_name}_{interval}", "")
                 if pid:
-                    mapping[pid] = plan
+                    mapping[pid] = internal
         return mapping
 
 

@@ -1,6 +1,13 @@
 import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
+const DISPLAY_NAMES: Record<string, string> = {
+  free: 'Steel',
+  pro: 'Carbon',
+  business: 'Titanium',
+  plus: 'Carbon', // legacy
+}
+
 interface PlanBadgeProps {
   planTier: string
   trialActive: boolean
@@ -23,7 +30,7 @@ export function PlanBadge({ planTier, trialActive }: PlanBadgeProps) {
           'bg-[#8B7AFF]/15 text-[#A89FFF] ring-1 ring-[#8B7AFF]/20'
         )}
       >
-        {planTier === 'business' ? 'Business' : planTier === 'plus' ? 'Plus' : 'Pro'}
+        {DISPLAY_NAMES[planTier] ?? planTier}
       </span>
     )
   }
@@ -32,7 +39,7 @@ export function PlanBadge({ planTier, trialActive }: PlanBadgeProps) {
   return (
     <span className="inline-flex items-center gap-1.5">
       <span className="bg-layer-2 text-[#F0EDE8]/40 ring-1 ring-white/[0.06] px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide">
-        Free
+        Steel
       </span>
       <Link
         to="/settings"

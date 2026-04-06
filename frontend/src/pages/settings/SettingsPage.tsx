@@ -372,7 +372,7 @@ export default function SettingsPage() {
   useEffect(() => {
     const billingParam = searchParams.get('billing')
     if (billingParam === 'success') {
-      toast.success('Welcome to Pro! Your subscription is active.')
+      toast.success('Welcome! Your subscription is active.')
       queryClient.invalidateQueries({ queryKey: ['billing'] })
       queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
       queryClient.invalidateQueries({ queryKey: ['session-check'] })

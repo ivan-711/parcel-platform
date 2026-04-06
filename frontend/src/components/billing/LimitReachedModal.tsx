@@ -45,7 +45,7 @@ export function LimitReachedModal({ open, onClose, metric }: LimitReachedModalPr
             </h3>
             <p className="text-sm text-text-secondary text-center mt-2 mb-5">
               You've used all {limitLabel} {metric.display_name.toLowerCase()} for this
-              month. Upgrade to Pro for unlimited access.
+              month. Upgrade to Carbon for higher limits.
             </p>
 
             {/* Usage meter */}
@@ -58,7 +58,7 @@ export function LimitReachedModal({ open, onClose, metric }: LimitReachedModalPr
               disabled={checkout.isPending}
               className="w-full h-11 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-accent-text-on-accent text-sm font-medium transition-all disabled:opacity-50 cursor-pointer"
             >
-              {checkout.isPending ? 'Redirecting...' : 'Upgrade to Pro'}
+              {checkout.isPending ? 'Redirecting...' : 'Upgrade to Carbon'}
             </button>
 
             <button

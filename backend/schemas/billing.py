@@ -6,10 +6,9 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class PlanTierEnum(str, Enum):
-    """Available billing plans."""
+    """Available billing plans. Display: Steel (free) / Carbon (pro) / Titanium (business)."""
 
     FREE = "free"
-    PLUS = "plus"
     PRO = "pro"
     BUSINESS = "business"
 

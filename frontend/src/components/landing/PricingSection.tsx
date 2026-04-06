@@ -1,6 +1,6 @@
 /**
  * PricingSection — dark-themed pricing cards with monthly/annual toggle.
- * Two tiers: Free and Pro. Pro highlighted with subtle violet border.
+ * Three tiers: Steel (free), Carbon ($79), Titanium ($149).
  */
 
 import { useState } from 'react'
@@ -12,30 +12,38 @@ import { useFadeInOnScroll } from './landing-utils'
 
 type Interval = 'monthly' | 'annual'
 
-const FREE_FEATURES = [
+const STEEL_FEATURES = [
+  '3 deal analyses / month',
   '5 AI messages / month',
-  '3 saved deals',
-  'Basic calculators',
-  'Community support',
+  '5 saved deals',
+  'All 5 strategy calculators',
 ]
 
-const PRO_FEATURES = [
-  'Unlimited AI chat',
-  'Unlimited deals',
-  'All 5 strategy calculators',
-  'Deal pipeline',
+const CARBON_FEATURES = [
+  'Unlimited analyses',
+  '150 AI messages / month',
+  'Full deal pipeline',
   'Portfolio tracking',
-  'Document storage',
-  'PDF reports',
-  'Priority support',
+  'Document AI & PDF reports',
+  'Skip tracing (25 / mo)',
+]
+
+const TITANIUM_FEATURES = [
+  'Everything in Carbon',
+  '500 AI messages / month',
+  'Up to 5 team members',
+  'Unlimited document AI',
+  'Direct mail (50 / mo)',
 ]
 
 export function PricingSection() {
   const [interval, setInterval] = useState<Interval>('monthly')
   const { ref, isVisible } = useFadeInOnScroll({ threshold: 0.15 })
 
-  const proPrice = interval === 'annual' ? '$55' : '$69'
-  const proPeriod = interval === 'annual' ? '/mo, billed annually' : '/month'
+  const carbonPrice = interval === 'annual' ? '$63' : '$79'
+  const carbonPeriod = interval === 'annual' ? '/mo, billed annually' : '/month'
+  const titaniumPrice = interval === 'annual' ? '$119' : '$149'
+  const titaniumPeriod = interval === 'annual' ? '/mo, billed annually' : '/month'
 
   return (
     <section id="pricing" className="py-16 md:py-32" ref={ref}>
@@ -85,21 +93,21 @@ export function PricingSection() {
         </motion.div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-          {/* Free tier */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {/* Steel tier */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isVisible ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 0.6, ease: ease.vercel }}
             className="bg-app-surface border border-border-default rounded-xl p-8"
           >
-            <h3 className="font-brand text-2xl font-light text-text-primary">Free</h3>
+            <h3 className="font-brand text-2xl font-light text-text-primary">Steel</h3>
             <div className="mt-4">
               <span className="font-brand text-4xl font-light text-text-primary">$0</span>
               <span className="text-sm text-text-secondary ml-1">/month</span>
             </div>
             <ul className="mt-8 space-y-3">
-              {FREE_FEATURES.map((f) => (
+              {STEEL_FEATURES.map((f) => (
                 <li key={f} className="flex items-start gap-3">
                   <Check className="w-4 h-4 text-text-secondary mt-0.5 shrink-0" />
                   <span className="text-sm text-text-primary/80">{f}</span>
@@ -114,7 +122,7 @@ export function PricingSection() {
             </Link>
           </motion.div>
 
-          {/* Pro tier */}
+          {/* Carbon tier */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isVisible ? { opacity: 1, y: 0 } : undefined}
@@ -124,26 +132,26 @@ export function PricingSection() {
             <span className="absolute top-4 right-4 bg-[#8B7AFF]/[0.08] text-[#8B7AFF] text-[11px] uppercase tracking-[0.08em] font-medium rounded-full px-3 py-1">
               Popular
             </span>
-            <h3 className="font-brand text-2xl font-light text-text-primary">Pro</h3>
+            <h3 className="font-brand text-2xl font-light text-text-primary">Carbon</h3>
             <div className="mt-4 flex items-baseline">
               <AnimatePresence mode="wait">
                 <motion.span
-                  key={proPrice}
+                  key={carbonPrice}
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 8 }}
                   transition={{ duration: 0.2 }}
                   className="font-brand text-4xl font-light text-text-primary"
                 >
-                  {proPrice}
+                  {carbonPrice}
                 </motion.span>
               </AnimatePresence>
-              <span className="text-sm text-text-secondary ml-1">{proPeriod}</span>
+              <span className="text-sm text-text-secondary ml-1">{carbonPeriod}</span>
             </div>
             <ul className="mt-8 space-y-3">
-              {PRO_FEATURES.map((f) => (
+              {CARBON_FEATURES.map((f) => (
                 <li key={f} className="flex items-start gap-3">
-                  <Check className="w-4 h-4 text-text-secondary mt-0.5 shrink-0" />
+                  <Check className="w-4 h-4 text-[#8B7AFF] mt-0.5 shrink-0" />
                   <span className="text-sm text-text-primary/80">{f}</span>
                 </li>
               ))}
@@ -154,6 +162,45 @@ export function PricingSection() {
               style={{ background: 'linear-gradient(to right, #8B7AFF, #6C5CE7)' }}
             >
               Start 7-Day Free Trial
+            </Link>
+          </motion.div>
+
+          {/* Titanium tier */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : undefined}
+            transition={{ duration: 0.6, delay: 0.2, ease: ease.vercel }}
+            className="bg-app-surface border border-border-default rounded-xl p-8"
+          >
+            <h3 className="font-brand text-2xl font-light text-text-primary">Titanium</h3>
+            <div className="mt-4 flex items-baseline">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={titaniumPrice}
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  transition={{ duration: 0.2 }}
+                  className="font-brand text-4xl font-light text-text-primary"
+                >
+                  {titaniumPrice}
+                </motion.span>
+              </AnimatePresence>
+              <span className="text-sm text-text-secondary ml-1">{titaniumPeriod}</span>
+            </div>
+            <ul className="mt-8 space-y-3">
+              {TITANIUM_FEATURES.map((f) => (
+                <li key={f} className="flex items-start gap-3">
+                  <Check className="w-4 h-4 text-text-secondary mt-0.5 shrink-0" />
+                  <span className="text-sm text-text-primary/80">{f}</span>
+                </li>
+              ))}
+            </ul>
+            <Link
+              to="/register"
+              className="mt-8 block text-center border border-border-strong text-text-primary rounded-full py-3 text-sm font-medium hover:bg-border-subtle transition-colors duration-200"
+            >
+              Get Started
             </Link>
           </motion.div>
         </div>

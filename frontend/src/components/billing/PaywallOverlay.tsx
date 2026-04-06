@@ -109,12 +109,12 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
           disabled={checkout.isPending}
           className="w-full h-11 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-accent-text-on-accent text-sm font-medium transition-all disabled:opacity-50 cursor-pointer"
         >
-          {checkout.isPending ? 'Redirecting...' : 'Upgrade to Pro'}
+          {checkout.isPending ? 'Redirecting...' : 'Upgrade to Carbon'}
         </button>
 
         <div className="flex items-center justify-center gap-4 mt-4">
           <Link
-            to="/settings"
+            to="/pricing"
             className="text-sm text-[#8B7AFF] hover:text-[#A89FFF] transition-colors"
           >
             Compare plans &rarr;

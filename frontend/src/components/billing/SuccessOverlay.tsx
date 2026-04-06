@@ -137,10 +137,10 @@ export function SuccessOverlay() {
             </div>
 
             <h2 className="text-2xl font-bold text-text-primary text-center">
-              Welcome to Pro!
+              Welcome to Parcel!
             </h2>
             <p className="text-base text-text-secondary text-center mt-2 mb-6">
-              You now have full access to all Parcel features.
+              Your subscription is active. You have full access to all features.
             </p>
 
             {/* Feature list */}

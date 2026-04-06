@@ -31,23 +31,15 @@ const staggerItem = {
 
 /* ─── Plan Data ─── */
 
-const FREE_FEATURES = [
+const STEEL_FEATURES = [
   '3 analyses per month',
   '5 AI chat messages per month',
   '5 saved deals',
+  'All 5 strategy calculators',
   'Basic risk scoring',
 ]
 
-const PLUS_FEATURES = [
-  '25 analyses per month',
-  '30 AI chat messages per month',
-  '50 saved deals',
-  'Full deal pipeline',
-  'PDF deal reports',
-  'Document AI (5/month)',
-]
-
-const PRO_FEATURES = [
+const CARBON_FEATURES = [
   'Unlimited analyses',
   '150 AI chat messages per month',
   'Unlimited saved deals',
@@ -57,27 +49,30 @@ const PRO_FEATURES = [
   'AI document analysis (25/month)',
   'Offer letter generator',
   'Deal comparison',
+  'Comp analysis (50/month)',
   'Skip tracing (25/month)',
 ]
 
-const BUSINESS_FEATURES = [
-  'Everything in Pro',
+const TITANIUM_FEATURES = [
+  'Everything in Carbon',
+  '500 AI chat messages per month',
+  'Unlimited document AI',
   'Up to 5 team members',
   'Shared deal pipeline',
-  'Team analytics dashboard',
+  'Skip tracing (200/month)',
+  'Direct mail (50 pieces/month)',
   'Role-based permissions',
-  'Direct mail (100 pieces/month)',
   'Priority support',
 ]
 
 const FAQ_ITEMS = [
   {
     q: 'What happens after my trial ends?',
-    a: "You'll be downgraded to the Free plan. Your data stays, but Pro features will be locked.",
+    a: "You'll be downgraded to Steel (free). Your data stays, but Carbon features will be locked.",
   },
   {
     q: 'Can I cancel anytime?',
-    a: "Yes. Cancel in Settings > Billing. You'll keep Pro access until the end of your billing period.",
+    a: "Yes. Cancel in Settings > Billing. You'll keep access until the end of your billing period.",
   },
   {
     q: 'What payment methods do you accept?',
@@ -93,7 +88,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'Will my data be deleted if I downgrade?',
-    a: "No. Your deals, documents, and chat history are preserved. You just can't access Pro features until you upgrade again.",
+    a: "No. Your deals, documents, and chat history are preserved. You just can't access Carbon features until you upgrade again.",
   },
 ]
 
@@ -204,13 +199,15 @@ export default function PricingPage() {
   const portal = usePortal()
 
   const currentPlan = billing?.plan ?? user?.plan_tier ?? 'free'
-  const isProActive = currentPlan === 'pro' && (billing?.status === 'active' || billing?.status === 'trialing')
+  const isCarbonActive = (currentPlan === 'pro') && (billing?.status === 'active' || billing?.status === 'trialing')
+  const isTitaniumActive = (currentPlan === 'business') && (billing?.status === 'active' || billing?.status === 'trialing')
+  const isPaidActive = isCarbonActive || isTitaniumActive
 
   // Handle ?billing=success / ?billing=canceled query params
   useEffect(() => {
     const billingParam = searchParams.get('billing')
     if (billingParam === 'success') {
-      toast.success('Welcome to Pro! Your subscription is active.')
+      toast.success('Welcome! Your subscription is active.')
       queryClient.invalidateQueries({ queryKey: ['billing'] })
       queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
       queryClient.invalidateQueries({ queryKey: ['session-check'] })
@@ -221,13 +218,22 @@ export default function PricingPage() {
     }
   }, [searchParams, setSearchParams, queryClient])
 
-  const proPrice = interval === 'annual' ? '$63' : '$79'
+  const carbonPrice = interval === 'annual' ? '$63' : '$79'
+  const titaniumPrice = interval === 'annual' ? '$119' : '$149'
 
-  function handleProCta() {
-    if (isProActive) {
+  function handleCarbonCta() {
+    if (isPaidActive) {
       portal.mutate()
     } else {
       checkout.mutate({ plan: 'pro', interval })
+    }
+  }
+
+  function handleTitaniumCta() {
+    if (isPaidActive) {
+      portal.mutate()
+    } else {
+      checkout.mutate({ plan: 'business', interval })
     }
   }
 
@@ -243,7 +249,7 @@ export default function PricingPage() {
             Choose Your Plan
           </h1>
           <p className="text-base text-text-secondary">
-            Start with a 7-day Pro trial. No credit card required.
+            Start with a 7-day Carbon trial. No credit card required.
           </p>
           <BillingToggle interval={interval} onChange={setInterval} />
         </div>
@@ -255,14 +261,14 @@ export default function PricingPage() {
           animate="visible"
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {/* Free Card */}
+          {/* Steel Card (Free) */}
           <motion.div
             variants={staggerItem}
             className="bg-white/[0.03] rounded-lg border border-border-default p-6 flex flex-col order-2 md:order-1"
           >
             <div className="space-y-4 flex-1">
               <div>
-                <h3 className="text-lg font-semibold text-text-primary">Free</h3>
+                <h3 className="text-lg font-semibold text-text-primary">Steel</h3>
                 <div className="mt-2 flex items-baseline gap-1">
                   <span className="text-4xl font-bold text-text-primary tabular-nums">$0</span>
                   <span className="text-text-secondary text-sm">/month</span>
@@ -271,7 +277,7 @@ export default function PricingPage() {
               </div>
 
               <ul className="space-y-3">
-                {FREE_FEATURES.map((f) => (
+                {STEEL_FEATURES.map((f) => (
                   <li key={f} className="flex items-start gap-2.5 text-sm text-text-secondary">
                     <Check size={16} className="text-text-disabled mt-0.5 shrink-0" />
                     {f}
@@ -281,7 +287,7 @@ export default function PricingPage() {
             </div>
 
             <div className="mt-6">
-              {currentPlan === 'free' ? (
+              {currentPlan === 'free' && !isCarbonActive ? (
                 <button
                   disabled
                   className="w-full h-11 rounded-lg text-sm font-medium bg-layer-2 text-text-muted cursor-not-allowed"
@@ -299,7 +305,7 @@ export default function PricingPage() {
             </div>
           </motion.div>
 
-          {/* Pro Card (emphasized) */}
+          {/* Carbon Card (emphasized) */}
           <motion.div
             variants={staggerItem}
             className="bg-white/[0.05] rounded-lg border border-[#8B7AFF]/20 shadow-[0_0_24px_rgba(139,122,255,0.08)] p-6 flex flex-col relative order-1 md:order-2 lg:py-8"
@@ -317,24 +323,24 @@ export default function PricingPage() {
 
             <div className="space-y-4 flex-1">
               <div>
-                <h3 className="text-lg font-semibold text-text-primary">Pro</h3>
+                <h3 className="text-lg font-semibold text-text-primary">Carbon</h3>
                 <div className="mt-2 flex items-baseline gap-1">
                   <AnimatePresence mode="wait">
                     <motion.span
-                      key={interval}
+                      key={`carbon-${interval}`}
                       initial={{ opacity: 0, y: -8 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 8 }}
                       transition={{ duration: 0.2 }}
                       className="text-4xl font-bold text-text-primary tabular-nums"
                     >
-                      {proPrice}
+                      {carbonPrice}
                     </motion.span>
                   </AnimatePresence>
                   <span className="text-text-secondary text-sm">/month</span>
                 </div>
                 {interval === 'annual' && (
-                  <p className="mt-0.5 text-xs text-text-secondary">billed annually</p>
+                  <p className="mt-0.5 text-xs text-text-secondary">$756/yr &middot; billed annually</p>
                 )}
                 <p className="mt-1 text-sm text-text-secondary">
                   Everything you need to analyze deals with confidence
@@ -342,7 +348,7 @@ export default function PricingPage() {
               </div>
 
               <ul className="space-y-3">
-                {PRO_FEATURES.map((f) => (
+                {CARBON_FEATURES.map((f) => (
                   <li key={f} className="flex items-start gap-2.5 text-sm text-text-secondary">
                     <Check size={16} className="text-[#8B7AFF] mt-0.5 shrink-0" />
                     {f}
@@ -352,11 +358,11 @@ export default function PricingPage() {
             </div>
 
             <div className="mt-6">
-              {isProActive ? (
+              {isCarbonActive ? (
                 <motion.button
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
-                  onClick={handleProCta}
+                  onClick={handleCarbonCta}
                   disabled={isCheckoutLoading}
                   className="w-full h-11 rounded-lg text-sm font-medium bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:from-[#7B6AEF] hover:to-[#6B5AD6] text-accent-text-on-accent transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                 >
@@ -373,7 +379,7 @@ export default function PricingPage() {
                 <motion.button
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
-                  onClick={handleProCta}
+                  onClick={handleCarbonCta}
                   disabled={isCheckoutLoading}
                   className="w-full h-11 rounded-lg text-sm font-medium bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:from-[#7B6AEF] hover:to-[#6B5AD6] text-accent-text-on-accent transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                 >
@@ -390,32 +396,39 @@ export default function PricingPage() {
             </div>
           </motion.div>
 
-          {/* Business Card (Coming Soon) */}
+          {/* Titanium Card */}
           <motion.div
             variants={staggerItem}
-            className="bg-layer-1 rounded-lg border border-border-subtle p-6 flex flex-col opacity-60 order-3"
+            className="bg-white/[0.03] rounded-lg border border-border-default p-6 flex flex-col order-3"
           >
-            {/* Coming Soon badge */}
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 relative mb-0">
-              <span className="bg-layer-3 text-text-secondary text-xs font-semibold px-3 py-1 rounded-full">
-                Coming Soon
-              </span>
-            </div>
-
-            <div className="space-y-4 flex-1 mt-2">
+            <div className="space-y-4 flex-1">
               <div>
-                <h3 className="text-lg font-semibold text-text-secondary">Business</h3>
+                <h3 className="text-lg font-semibold text-text-primary">Titanium</h3>
                 <div className="mt-2 flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-text-muted tabular-nums">$149</span>
-                  <span className="text-text-muted text-sm">/month</span>
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={`titanium-${interval}`}
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 8 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-4xl font-bold text-text-primary tabular-nums"
+                    >
+                      {titaniumPrice}
+                    </motion.span>
+                  </AnimatePresence>
+                  <span className="text-text-secondary text-sm">/month</span>
                 </div>
-                <p className="mt-1 text-sm text-text-secondary">Collaborate with your entire team</p>
+                {interval === 'annual' && (
+                  <p className="mt-0.5 text-xs text-text-secondary">$1,428/yr &middot; billed annually</p>
+                )}
+                <p className="mt-1 text-sm text-text-secondary">For teams and high-volume investors</p>
               </div>
 
               <ul className="space-y-3">
-                {BUSINESS_FEATURES.map((f) => (
+                {TITANIUM_FEATURES.map((f) => (
                   <li key={f} className="flex items-start gap-2.5 text-sm text-text-secondary">
-                    <Check size={16} className="text-[#3A3835] mt-0.5 shrink-0" />
+                    <Check size={16} className="text-text-secondary mt-0.5 shrink-0" />
                     {f}
                   </li>
                 ))}
@@ -423,12 +436,34 @@ export default function PricingPage() {
             </div>
 
             <div className="mt-6">
-              <button
-                disabled
-                className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-border-default text-text-muted cursor-not-allowed"
-              >
-                Notify Me
-              </button>
+              {isTitaniumActive ? (
+                <motion.button
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={handleTitaniumCta}
+                  disabled={isCheckoutLoading}
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-border-emphasis text-text-primary hover:bg-white/[0.04] transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                >
+                  Manage Subscription
+                </motion.button>
+              ) : (
+                <motion.button
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={handleTitaniumCta}
+                  disabled={isCheckoutLoading}
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-border-emphasis text-text-primary hover:bg-white/[0.04] transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                >
+                  {checkout.isPending ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Redirecting...
+                    </>
+                  ) : (
+                    'Get Started'
+                  )}
+                </motion.button>
+              )}
             </div>
           </motion.div>
         </motion.div>
@@ -455,11 +490,11 @@ export default function PricingPage() {
               Join investors who save hours on every deal.
             </p>
           </div>
-          {!isProActive && (
+          {!isPaidActive && (
             <motion.button
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
-              onClick={handleProCta}
+              onClick={handleCarbonCta}
               disabled={isCheckoutLoading}
               className="shrink-0 h-11 px-6 rounded-lg text-sm font-medium bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:from-[#7B6AEF] hover:to-[#6B5AD6] text-accent-text-on-accent transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
             >

@@ -95,27 +95,21 @@ export const STATS: StatItem[] = [
 
 export const PRICING: PricingTier[] = [
   {
-    name: 'Free', price: '$0', period: 'forever',
+    name: 'Steel', price: '$0', period: 'forever',
     description: '3 analyses/month. AI chat. Get started instantly.',
-    features: ['3 deal analyses / month', '5 AI chat messages / month', '5 saved deals', 'Basic risk scoring'],
+    features: ['3 deal analyses / month', '5 AI chat messages / month', '5 saved deals', 'All 5 strategy calculators', 'Basic risk scoring'],
     highlighted: false, cta: 'Start free',
   },
   {
-    name: 'Plus', price: '$29', period: 'per month',
-    description: 'For getting serious. Pipeline, docs, and more analyses.',
-    features: ['25 deal analyses / month', 'Full pipeline (50 deals)', 'PDF exports', 'Document AI (5 uploads / mo)', '30 AI chat messages / month'],
-    highlighted: false, cta: 'Upgrade to Plus',
-  },
-  {
-    name: 'Pro', price: '$79', period: 'per month',
+    name: 'Carbon', price: '$79', period: 'per month',
     description: 'For active investors and agents. 7-day free trial.',
-    features: ['Unlimited deal analyses', 'Unlimited pipeline', 'Document AI (25 uploads / mo)', 'Offer letter generator', 'Deal comparison', 'Portfolio tracking', 'Skip tracing (25 / mo)'],
+    features: ['Unlimited deal analyses', 'Full deal pipeline', 'Document AI (25 uploads / mo)', 'Offer letter generator', 'Deal comparison', 'Portfolio tracking', 'Comp analysis (50 / mo)', 'Skip tracing (25 / mo)'],
     highlighted: true, cta: 'Start 7-day free trial',
   },
   {
-    name: 'Business', price: '$149', period: 'per month',
-    description: 'For real estate teams and brokerages.',
-    features: ['Everything in Pro', 'Up to 5 team members', 'Shared pipeline & deals', 'Role-based access', 'Unlimited document AI', 'Direct mail (100 pieces / mo)'],
-    highlighted: false, cta: 'Contact sales',
+    name: 'Titanium', price: '$149', period: 'per month',
+    description: 'For real estate teams and high-volume investors.',
+    features: ['Everything in Carbon', '500 AI messages / month', 'Unlimited document AI', 'Up to 5 team members', 'Skip tracing (200 / mo)', 'Direct mail (50 pieces / mo)', 'Role-based access'],
+    highlighted: false, cta: 'Get started',
   },
 ]

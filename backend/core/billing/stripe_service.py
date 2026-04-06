@@ -101,8 +101,8 @@ def create_checkout_session(db: Session, user, plan: str, interval: str) -> str:
             },
         },
         allow_promotion_codes=True,
-        success_url=f"{settings.FRONTEND_URL}/settings?billing=success&session_id={{CHECKOUT_SESSION_ID}}",
-        cancel_url=f"{settings.FRONTEND_URL}/settings?billing=canceled",
+        success_url=f"{settings.FRONTEND_URL}/pricing?billing=success&session_id={{CHECKOUT_SESSION_ID}}",
+        cancel_url=f"{settings.FRONTEND_URL}/pricing",
     )
 
     logger.info(
@@ -254,8 +254,9 @@ def _resolve_plan_from_subscription(stripe_sub) -> str:
     # Check subscription metadata first
     plan = stripe_sub.metadata.get("parcel_plan")
     if plan:
-        # Legacy mapping for subscriptions created before tier rename
-        _legacy = {"starter": "plus", "team": "business"}
+        # Legacy mapping for subscriptions created before tier renames
+        _legacy = {"starter": "pro", "plus": "pro", "team": "business",
+                    "carbon": "pro", "titanium": "business"}
         return _legacy.get(plan, plan)
 
     # Fall back to price ID lookup

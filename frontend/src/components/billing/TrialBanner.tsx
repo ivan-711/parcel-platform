@@ -84,7 +84,7 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
           >
             {isUrgent
               ? `Trial ending soon: ${daysLeft} day${daysLeft === 1 ? '' : 's'} left`
-              : `Pro Trial: ${daysLeft} day${daysLeft === 1 ? '' : 's'} left`}
+              : `Carbon Trial: ${daysLeft} day${daysLeft === 1 ? '' : 's'} left`}
           </p>
 
           {isUrgent ? (

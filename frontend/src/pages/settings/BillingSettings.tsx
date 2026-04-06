@@ -144,7 +144,7 @@ export function BillingSettings() {
                 to="/pricing"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-accent-text-on-accent text-sm font-medium transition-all"
               >
-                Upgrade to Pro
+                Upgrade to Carbon
               </Link>
             ) : isPaid ? (
               <>
