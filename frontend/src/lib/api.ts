@@ -419,7 +419,7 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ strategy, inputs }),
       }),
-    saveAsProperty: (address: string, strategy: string, inputs: Record<string, number | string>) =>
+    saveAsProperty: (address: string, strategy: string, _inputs?: Record<string, number | string>) =>
       request<Record<string, unknown>>('/api/analysis/quick', {
         method: 'POST',
         body: JSON.stringify({ address, strategy }),

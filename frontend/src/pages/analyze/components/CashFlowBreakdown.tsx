@@ -35,7 +35,8 @@ interface BreakdownData {
 
 function extractBreakdown(scenario: ScenarioDetail): BreakdownData | null {
   const outputs = scenario.outputs || {}
-  const breakdown = outputs.monthly_expense_breakdown as Record<string, number> | undefined
+  const rawBreakdown = outputs.monthly_expense_breakdown
+  const breakdown = (typeof rawBreakdown === 'object' && rawBreakdown !== null ? rawBreakdown : undefined) as Record<string, number> | undefined
   if (!breakdown) return null
 
   const vacancyAmt = typeof breakdown.vacancy === 'number' ? breakdown.vacancy : 0

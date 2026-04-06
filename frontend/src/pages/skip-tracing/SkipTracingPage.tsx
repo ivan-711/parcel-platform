@@ -108,7 +108,8 @@ export default function SkipTracingPage() {
   const [inlineResult, setInlineResult] = useState<SkipTraceResult | null>(null)
 
   const skipTrace = useSkipTrace()
-  const { data: history, isLoading: historyLoading } = useSkipTraceHistory()
+  const { data: historyData, isLoading: historyLoading } = useSkipTraceHistory()
+  const history = historyData?.items
   const { data: usage } = useSkipTraceUsage()
 
   function handleTrace() {

@@ -1,7 +1,7 @@
 /** ConversationThread — iMessage-style SMS/email thread with compose area. */
 
 import { useState, useRef, useEffect, KeyboardEvent } from 'react'
-import { MessageSquare, Mail, Send, Loader2 } from 'lucide-react'
+import { MessageSquare, Mail, Send, Loader2, type LucideIcon } from 'lucide-react'
 import { useThread, useSendSMS, useSendEmail } from '@/hooks/useCommunications'
 import type { ThreadMessage } from '@/types'
 import { cn } from '@/lib/utils'
@@ -11,7 +11,7 @@ import { StatusBadge } from './StatusBadge'
 // Helpers
 // ---------------------------------------------------------------------------
 
-const CHANNEL_ICON: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+const CHANNEL_ICON: Record<string, LucideIcon> = {
   sms:   MessageSquare,
   email: Mail,
 }

@@ -699,7 +699,7 @@ export default function CampaignBuilderPage() {
   function buildFromAddress() {
     if (!fromAddress.line1.trim()) return undefined
     return {
-      name: fromAddress.name.trim() || undefined,
+      name: fromAddress.name.trim() || '',
       line1: fromAddress.line1.trim(),
       city: fromAddress.city.trim(),
       state: fromAddress.state.trim(),

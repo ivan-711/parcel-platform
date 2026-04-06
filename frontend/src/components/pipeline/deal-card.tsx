@@ -50,10 +50,11 @@ interface DealCardProps {
 export const DealCard = memo(function DealCard({ card: rawCard, isDragging = false, isFocused = false, onRemove, onCloseDeal, onMoveStage, onCardClick }: DealCardProps) {
   // Normalize cards that arrive with a nested `deal` object (e.g. from pipeline API
   // responses where deal fields are nested) into the flat PipelineCard shape.
-  const deal = (rawCard as Record<string, unknown>).deal as Record<string, unknown> | undefined
+  const raw = rawCard as unknown as Record<string, unknown>
+  const deal = raw.deal as Record<string, unknown> | undefined
   const card: PipelineCard = deal
     ? {
-        pipeline_id: rawCard.pipeline_id || (rawCard as Record<string, unknown>).id as string,
+        pipeline_id: rawCard.pipeline_id || raw.id as string,
         deal_id: rawCard.deal_id || (deal.id as string),
         address: rawCard.address || deal.address as string || '',
         city: rawCard.city ?? (deal.city as string | null) ?? null,
@@ -62,7 +63,7 @@ export const DealCard = memo(function DealCard({ card: rawCard, isDragging = fal
         asking_price: rawCard.asking_price ?? (deal.purchase_price as number | null) ?? (deal.arv as number | null) ?? null,
         stage: rawCard.stage,
         days_in_stage: rawCard.days_in_stage ?? 0,
-        entered_stage_at: rawCard.entered_stage_at ?? (rawCard as Record<string, unknown>).created_at as string ?? '',
+        entered_stage_at: rawCard.entered_stage_at ?? raw.created_at as string ?? '',
         property_type: rawCard.property_type ?? null,
         is_sample: rawCard.is_sample ?? false,
       }

@@ -1,11 +1,11 @@
 /** StatusBadge — inline delivery status indicator with icon + label. */
 
-import { Edit3, Clock, Check, CheckCheck, Eye, ExternalLink, AlertCircle, XCircle } from 'lucide-react'
+import { Edit3, Clock, Check, CheckCheck, Eye, ExternalLink, AlertCircle, XCircle, type LucideIcon } from 'lucide-react'
 import type { DeliveryStatus } from '@/types'
 import { cn } from '@/lib/utils'
 
 interface StatusConfig {
-  icon: React.ComponentType<{ size?: number; color?: string }>
+  icon: LucideIcon
   color: string
   label: string
 }

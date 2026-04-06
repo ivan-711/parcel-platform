@@ -48,10 +48,11 @@ export default function RehabsPage() {
   const propertyMap = useMemo(() => {
     const map = new Map<string, string>()
     const props = propData?.properties ?? []
-    for (const p of props as Array<Record<string, unknown>>) {
-      const addr = (p.address_line1 ?? p.address ?? '') as string
-      const parts = [addr, p.city, p.state].filter(Boolean)
-      if (p.id && parts.length) map.set(p.id as string, parts.join(', '))
+    for (const p of props) {
+      const pAny = p as unknown as Record<string, unknown>
+      const addr = (pAny.address_line1 ?? pAny.address ?? '') as string
+      const parts = [addr, pAny.city, pAny.state].filter(Boolean)
+      if (pAny.id && parts.length) map.set(pAny.id as string, parts.join(', '))
     }
     return map
   }, [propData])
@@ -134,7 +135,7 @@ function ProjectCard({ project, index, propertyMap }: { project: RehabProject; i
   const budgetPct = estimated > 0 ? Math.min((actual / estimated) * 100, 100) : 0
   const completedCount = Math.round((project.completion_pct ?? 0) / 100 * (project.item_count ?? 0))
   // Resolve property address: prefer backend-joined field, fall back to local lookup
-  const propertyAddress = (project as Record<string, unknown>).property_address as string
+  const propertyAddress = (project as unknown as Record<string, unknown>).property_address as string
     || propertyMap.get(project.property_id)
     || null
 
