@@ -592,7 +592,8 @@ class TestAmortization:
 class TestRLS:
     def test_user_cannot_see_others_instruments(self, client, db):
         """Create instrument as user A, try to access as user B."""
-        from core.security.jwt import create_access_token, hash_password
+        from core.security.jwt import get_current_user
+        from main import app
 
         # User A
         user_a = _make_user(db, "usera@test.com")
@@ -608,10 +609,9 @@ class TestRLS:
         db.add(inst)
         db.commit()
 
-        # User B
+        # User B — override get_current_user to return user B
         user_b = _make_user(db, "userb@test.com")
-        token_b = create_access_token({"sub": str(user_b.id)})
-        client.cookies.set("access_token", token_b)
+        app.dependency_overrides[get_current_user] = lambda: user_b
 
         resp = client.get(f"/api/financing/instruments/{inst.id}")
         assert resp.status_code == 404
@@ -619,17 +619,19 @@ class TestRLS:
         resp = client.get("/api/financing/instruments")
         assert resp.json()["total"] == 0
 
+        app.dependency_overrides.pop(get_current_user, None)
+
 
 def _make_user(db, email):
     from models.users import User
-    from core.security.jwt import hash_password
     user = User(
         id=uuid.uuid4(),
         name="Test",
         email=email,
-        password_hash=hash_password("password123"),
+        password_hash=None,
         role="investor",
         plan_tier="pro",
+        clerk_user_id=f"clerk_{email.replace('@', '_').replace('.', '_')}",
     )
     db.add(user)
     db.commit()

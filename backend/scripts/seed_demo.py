@@ -38,7 +38,7 @@ try:
         Property,
         User,
     )
-    from core.security.jwt import hash_password
+    # hash_password removed — Clerk handles authentication
     from core.calculators import (
         calculate_wholesale,
         calculate_buy_and_hold,
@@ -612,7 +612,7 @@ def _get_or_create_user(db):
     user = User(
         name=DEMO_NAME,
         email=DEMO_EMAIL,
-        password_hash=hash_password(DEMO_PASSWORD),
+        password_hash=None,  # Clerk handles authentication
         role=DEMO_ROLE,
     )
     db.add(user)

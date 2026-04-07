@@ -33,7 +33,7 @@ def _compile_jsonb_sqlite(type_, compiler, **kw):
     return "JSON"
 
 # The PostgreSQL UUID(as_uuid=True) bind_processor calls value.hex, which
-# fails when the value is a plain string (e.g. from verify_token).  Patch the
+# fails when the value is a plain string (e.g. from get_current_user).  Patch the
 # bind and result processors to handle both uuid.UUID and str transparently.
 _orig_uuid_bind = PG_UUID.bind_processor
 
@@ -67,7 +67,7 @@ PG_UUID.result_processor = _patched_uuid_result
 from database import Base, get_db
 from main import app
 from models import User, Deal, Team, PipelineEntry
-from core.security.jwt import create_access_token, hash_password
+from core.security.jwt import get_current_user
 
 # ---------------------------------------------------------------------------
 # Test database engine (SQLite in-memory, shared across a single test)
@@ -141,9 +141,10 @@ def test_user(db) -> User:
         id=uuid.uuid4(),
         name="Test User",
         email="test@parcel.dev",
-        password_hash=hash_password("password123"),
+        password_hash=None,  # Clerk handles authentication
         role="investor",
         plan_tier="pro",
+        clerk_user_id="clerk_test_user_001",
     )
     db.add(user)
     db.commit()
@@ -153,7 +154,13 @@ def test_user(db) -> User:
 
 @pytest.fixture()
 def auth_client(client, test_user):
-    """TestClient with a valid access_token cookie for the test user."""
-    token = create_access_token({"sub": str(test_user.id)})
-    client.cookies.set("access_token", token)
-    return client
+    """TestClient with get_current_user overridden to return the test user.
+
+    Replaces the old cookie-based auth: instead of forging a JWT and setting
+    it as a cookie, we override the FastAPI dependency to return the test
+    user directly.  This is the standard pattern for Clerk-authenticated
+    test suites where we can't mint real Clerk tokens.
+    """
+    app.dependency_overrides[get_current_user] = lambda: test_user
+    yield client
+    app.dependency_overrides.pop(get_current_user, None)

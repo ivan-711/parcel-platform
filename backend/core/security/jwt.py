@@ -1,226 +1,115 @@
-"""JWT utilities and the get_current_user FastAPI dependency."""
+"""Clerk-only authentication dependency for FastAPI.
 
-import os
-from datetime import datetime, timedelta
+All legacy JWT/cookie/password code has been removed. Authentication is
+handled exclusively by Clerk Bearer tokens verified via the clerk module.
+"""
+
+import logging
 from typing import Optional
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
-import bcrypt
 from fastapi import Depends, HTTPException, Request, status
-from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 
 from database import get_db
 from models.users import User
 
-_secret = os.getenv("SECRET_KEY", "")
-if not _secret and os.getenv("TESTING") != "1":
-    raise RuntimeError(
-        "SECRET_KEY environment variable must be set. "
-        "Generate one with: python -c \"import secrets; print(secrets.token_urlsafe(32))\""
-    )
-SECRET_KEY: str = _secret or "test-only-secret-key"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 15
-REFRESH_TOKEN_EXPIRE_DAYS = 7
-JWT_ISSUER = "parcel-platform"
+logger = logging.getLogger(__name__)
 
-
-# ---------------------------------------------------------------------------
-# Password utilities
-# ---------------------------------------------------------------------------
-
-def hash_password(plain: str) -> str:
-    """Return a bcrypt hash of the given plaintext password."""
-    return bcrypt.hashpw(plain.encode(), bcrypt.gensalt()).decode()
-
-
-def verify_password(plain: str, hashed: str) -> bool:
-    """Return True if the plaintext password matches the stored hash."""
-    return bcrypt.checkpw(plain.encode(), hashed.encode())
-
-
-# ---------------------------------------------------------------------------
-# JWT utilities
-# ---------------------------------------------------------------------------
-
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
-    """Create a signed JWT with the given payload and an expiry time.
-
-    Args:
-        data: Payload dict. Must include a ``sub`` claim (user id).
-        expires_delta: Optional custom TTL; defaults to 15 minutes.
-
-    Returns:
-        Encoded JWT string.
-    """
-    to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
-    to_encode["exp"] = expire
-    to_encode["type"] = "access"
-    to_encode["iss"] = JWT_ISSUER
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-
-
-def create_refresh_token(data: dict) -> str:
-    """Create a signed refresh JWT with a 7-day expiry.
-
-    Args:
-        data: Payload dict. Must include a ``sub`` claim (user id).
-
-    Returns:
-        Encoded JWT string with type=refresh.
-    """
-    to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
-    to_encode["exp"] = expire
-    to_encode["type"] = "refresh"
-    to_encode["iss"] = JWT_ISSUER
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-
-
-def verify_token(token: str) -> str:
-    """Decode a JWT and return the ``sub`` claim (user id).
-
-    Raises:
-        HTTPException 401 if the token is invalid or expired.
-    """
-    try:
-        payload = jwt.decode(
-            token, SECRET_KEY, algorithms=[ALGORITHM],
-            issuer=JWT_ISSUER,
-            options={"verify_iss": True},
-        )
-        # Reject refresh tokens used as access tokens
-        if payload.get("type") == "refresh":
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail={"error": "Invalid token type", "code": "INVALID_TOKEN"},
-            )
-        user_id: Optional[str] = payload.get("sub")
-        if user_id is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail={"error": "Invalid token", "code": "INVALID_TOKEN"},
-            )
-        return user_id
-    except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"error": "Invalid or expired token", "code": "INVALID_TOKEN"},
-        )
-
-
-def verify_refresh_token(token: str) -> str:
-    """Decode a refresh JWT and return the ``sub`` claim (user id).
-
-    Raises:
-        HTTPException 401 if the token is invalid, expired, or not a refresh token.
-    """
-    try:
-        payload = jwt.decode(
-            token, SECRET_KEY, algorithms=[ALGORITHM],
-            issuer=JWT_ISSUER,
-            options={"verify_iss": True},
-        )
-        if payload.get("type") != "refresh":
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail={"error": "Invalid token type", "code": "INVALID_TOKEN"},
-            )
-        user_id: Optional[str] = payload.get("sub")
-        if user_id is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail={"error": "Invalid token", "code": "INVALID_TOKEN"},
-            )
-        return user_id
-    except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"error": "Invalid or expired refresh token", "code": "INVALID_TOKEN"},
-        )
-
-
-# ---------------------------------------------------------------------------
-# FastAPI dependency
-# ---------------------------------------------------------------------------
 
 async def get_current_user(
     request: Request,
     db: Session = Depends(get_db),
 ) -> User:
-    """FastAPI dependency that resolves the authenticated user from the request.
+    """Resolve the authenticated user from a Clerk Bearer token.
 
-    Supports dual-mode auth:
-    1. Clerk JWT via Authorization: Bearer header (checked first)
-    2. Legacy custom JWT via access_token httpOnly cookie (fallback)
+    Supports:
+    1. Lookup by clerk_user_id (primary)
+    2. Fallback to email lookup + link clerk_user_id
+    3. JIT provisioning for first-time Clerk sign-ins
 
     Raises:
-        HTTPException 401 if no valid token is present or the user is not found.
+        HTTPException 401 if no valid Bearer token or user cannot be resolved.
+        HTTPException 503 if Clerk is not configured.
     """
-    user = None
-
-    # --- Mode 1: Clerk Bearer token ---
     auth_header = request.headers.get("authorization", "")
-    if auth_header.startswith("Bearer "):
-        bearer_token = auth_header[7:]
-        from core.security.clerk import verify_clerk_token, is_clerk_configured
-        if is_clerk_configured():
-            claims = verify_clerk_token(bearer_token)
-            if claims and claims.get("sub"):
-                user = db.query(User).filter(
-                    User.clerk_user_id == claims["sub"]
-                ).first()
-                # Fall back to email lookup if clerk_user_id not yet linked
-                if not user and claims.get("email"):
-                    user = db.query(User).filter(
-                        User.email == claims["email"]
-                    ).first()
-                    if user and not user.clerk_user_id:
-                        user.clerk_user_id = claims["sub"]
-                        db.commit()
-                # JIT provisioning: create user on first Clerk sign-in
-                if not user:
-                    from core.security.clerk import fetch_clerk_user
-                    clerk_user = fetch_clerk_user(claims["sub"])
-                    if clerk_user:
-                        # Check by email one more time (Clerk API gives us the email)
-                        if clerk_user.get("email"):
-                            user = db.query(User).filter(
-                                User.email == clerk_user["email"]
-                            ).first()
-                            if user and not user.clerk_user_id:
-                                user.clerk_user_id = claims["sub"]
-                                db.commit()
-                        # Create if still not found
-                        if not user:
-                            from datetime import datetime as _dt, timedelta as _td
-                            user = User(
-                                email=clerk_user.get("email", f'{claims["sub"]}@clerk.local'),
-                                name=clerk_user.get("name") or clerk_user.get("email", "").split("@")[0] or "User",
-                                role="investor",
-                                clerk_user_id=claims["sub"],
-                                plan_tier="free",
-                                trial_ends_at=_dt.utcnow() + _td(days=7),
-                            )
-                            db.add(user)
-                            db.commit()
-                            db.refresh(user)
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"error": "Not authenticated", "code": "NOT_AUTHENTICATED"},
+        )
 
-    # --- Mode 2: Legacy cookie JWT (fallback) ---
-    if user is None:
-        token: Optional[str] = request.cookies.get("access_token")
-        if not token:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail={"error": "Not authenticated", "code": "NOT_AUTHENTICATED"},
-            )
-        user_id = verify_token(token)
-        user = db.query(User).filter(User.id == user_id).first()
+    bearer_token = auth_header[7:]
+
+    from core.security.clerk import verify_clerk_token, is_clerk_configured
+
+    if not is_clerk_configured():
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail={
+                "error": "Authentication service not configured",
+                "code": "AUTH_NOT_CONFIGURED",
+            },
+        )
+
+    claims = verify_clerk_token(bearer_token)
+    if not claims or not claims.get("sub"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"error": "Invalid or expired token", "code": "INVALID_TOKEN"},
+        )
+
+    user: Optional[User] = None
+
+    # --- Primary lookup: clerk_user_id ---
+    user = (
+        db.query(User).filter(User.clerk_user_id == claims["sub"]).first()
+    )
+
+    # --- Fallback: email lookup + link ---
+    if not user and claims.get("email"):
+        user = db.query(User).filter(User.email == claims["email"]).first()
+        if user and not user.clerk_user_id:
+            user.clerk_user_id = claims["sub"]
+            db.commit()
+
+    # --- JIT provisioning: create user on first Clerk sign-in ---
+    if not user:
+        from core.security.clerk import fetch_clerk_user
+
+        clerk_user = fetch_clerk_user(claims["sub"])
+        if clerk_user:
+            # One more email check with the Clerk API email
+            if clerk_user.get("email"):
+                user = (
+                    db.query(User)
+                    .filter(User.email == clerk_user["email"])
+                    .first()
+                )
+                if user and not user.clerk_user_id:
+                    user.clerk_user_id = claims["sub"]
+                    db.commit()
+
+            # Create if still not found
+            if not user:
+                from datetime import datetime as _dt, timedelta as _td
+
+                user = User(
+                    email=clerk_user.get(
+                        "email", f'{claims["sub"]}@clerk.local'
+                    ),
+                    name=(
+                        clerk_user.get("name")
+                        or clerk_user.get("email", "").split("@")[0]
+                        or "User"
+                    ),
+                    role="investor",
+                    clerk_user_id=claims["sub"],
+                    plan_tier="free",
+                    trial_ends_at=_dt.utcnow() + _td(days=7),
+                )
+                db.add(user)
+                db.commit()
+                db.refresh(user)
 
     if user is None:
         raise HTTPException(
@@ -230,6 +119,7 @@ async def get_current_user(
 
     # Set RLS context so all subsequent queries in this request are scoped
     from core.security.rls import set_rls_context
+
     set_rls_context(db, user.id, user.team_id)
 
     return user

@@ -3,7 +3,6 @@
 import { useAuthStore } from '@/stores/authStore'
 import { useBillingStore } from '@/stores/billingStore'
 import type {
-  AuthResponse,
   User,
   DealCreateRequest,
   DealResponse,
@@ -35,26 +34,6 @@ import type {
 
 const _rawUrl = import.meta.env.VITE_API_URL ?? 'https://api.parceldesk.io'
 const API_URL = _rawUrl.includes('localhost') || _rawUrl.includes('127.0.0.1') ? _rawUrl : _rawUrl.replace('http://', 'https://')
-
-/** Track whether a refresh is in progress to avoid concurrent refresh attempts. */
-let refreshPromise: Promise<boolean> | null = null
-
-/** Attempt to refresh the access token using the refresh cookie. Returns true on success. */
-async function attemptRefresh(): Promise<boolean> {
-  try {
-    const res = await fetch(`${API_URL}/api/v1/auth/refresh`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-    })
-    if (!res.ok) return false
-    const data = await res.json() as { user: User }
-    useAuthStore.getState().setAuth(data.user)
-    return true
-  } catch {
-    return false
-  }
-}
 
 /** Module-level Clerk token cache — set by authStore when Clerk is active. */
 let _clerkTokenCache: string | null = null
@@ -93,37 +72,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   }
 
   if (res.status === 401) {
-    // Don't attempt refresh for the refresh endpoint itself
-    if (path === '/api/v1/auth/refresh') {
-      useAuthStore.getState().clearAuth()
-      throw new Error('Session expired')
-    }
-
-    // Deduplicate concurrent refresh attempts
-    if (!refreshPromise) {
-      refreshPromise = attemptRefresh().finally(() => { refreshPromise = null })
-    }
-    const refreshed = await refreshPromise
-
-    if (refreshed) {
-      // Retry the original request with the new access token
-      const retryRes = await fetch(`${API_URL}${path}`, {
-        credentials: 'include',
-        ...options,
-        headers,
-      })
-      if (retryRes.ok) {
-        if (retryRes.status === 204) return {} as T
-        return retryRes.json() as Promise<T>
-      }
-      if (retryRes.status === 401) {
-        useAuthStore.getState().clearAuth()
-        throw new Error('Session expired')
-      }
-      const retryError = await retryRes.json().catch(() => ({ error: 'Unknown error' }))
-      throw new Error((retryError as { error?: string }).error ?? `HTTP ${retryRes.status}`)
-    }
-
+    // Clerk handles token lifecycle — on 401, just clear local state
     useAuthStore.getState().clearAuth()
     throw new Error('Session expired')
   }
@@ -175,30 +124,6 @@ export const api = {
     check: () => request<{ status: string }>('/health'),
   },
   auth: {
-    login: (email: string, password: string) =>
-      requestPublic<AuthResponse>('/api/v1/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ email, password }),
-      }),
-    register: (name: string, email: string, password: string, role: string) =>
-      requestPublic<AuthResponse>('/api/v1/auth/register', {
-        method: 'POST',
-        body: JSON.stringify({ name, email, password, role }),
-      }),
-    logout: () =>
-      request<{ message: string }>('/api/v1/auth/logout', { method: 'POST' }),
-    refresh: () =>
-      request<AuthResponse>('/api/v1/auth/refresh', { method: 'POST' }),
-    forgotPassword: (email: string) =>
-      requestPublic<{ message: string }>('/api/v1/auth/forgot-password', {
-        method: 'POST',
-        body: JSON.stringify({ email }),
-      }),
-    resetPassword: (token: string, password: string) =>
-      requestPublic<{ message: string }>('/api/v1/auth/reset-password', {
-        method: 'POST',
-        body: JSON.stringify({ token, password }),
-      }),
     me: () => request<User>('/api/v1/auth/me'),
     updateMe: (data: UpdateProfileRequest) =>
       request<UserProfileResponse>('/api/v1/auth/me/', {

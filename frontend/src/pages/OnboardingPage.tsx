@@ -77,7 +77,7 @@ export default function OnboardingPage() {
           time_on_page_ms: Date.now() - mountTime.current,
         })
       } catch { /* ignore */ }
-      navigate('/dashboard', { replace: true })
+      navigate('/today', { replace: true })
     } catch {
       // error handled in store
     }
@@ -91,10 +91,10 @@ export default function OnboardingPage() {
     } catch { /* ignore */ }
     try {
       await setPersona('hybrid')
-      navigate('/dashboard', { replace: true })
+      navigate('/today', { replace: true })
     } catch {
       // still navigate — onboarding is non-blocking
-      navigate('/dashboard', { replace: true })
+      navigate('/today', { replace: true })
     }
   }
 

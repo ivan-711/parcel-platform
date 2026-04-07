@@ -1,14 +1,14 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { initTheme } from '@/lib/theme'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { Toaster } from '@/components/ui/sonner'
 import { ErrorBoundary, PageErrorBoundary } from '@/components/error-boundary'
 import { useAuthStore } from '@/stores/authStore'
 import { useOnboardingStore } from '@/stores/onboardingStore'
-import { api } from '@/lib/api'
 import { ClerkProviderWrapper } from '@/components/auth/ClerkProviderWrapper'
+import { AuthSyncProvider } from '@/components/auth/AuthSyncProvider'
 
 // ── Dev Preview Mode ──
 // Dynamic import ensures mock code is fully tree-shaken from production builds.
@@ -85,38 +85,17 @@ function PageFallback() {
   )
 }
 
-/** Validates the session cookie on mount when localStorage says we're authenticated. */
+/** Fetches onboarding status when the user is authenticated (Clerk session synced). */
 function useSessionValidation() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
-  const clearAuth = useAuthStore((s) => s.clearAuth)
-  const setAuth = useAuthStore((s) => s.setAuth)
   const fetchOnboardingStatus = useOnboardingStore((s) => s.fetchStatus)
   const onboardingFetched = useOnboardingStore((s) => s.fetched)
 
-  const { data, isError } = useQuery({
-    queryKey: ['session-check'],
-    queryFn: () => api.auth.me(),
-    enabled: isAuthenticated,
-    retry: false,
-    staleTime: 5 * 60_000,
-    refetchOnWindowFocus: false,
-  })
-
   useEffect(() => {
-    if (isError) {
-      clearAuth()
+    if (isAuthenticated && !onboardingFetched) {
+      fetchOnboardingStatus()
     }
-  }, [isError, clearAuth])
-
-  useEffect(() => {
-    if (data) {
-      setAuth(data)
-      // Fetch onboarding status once after session is validated
-      if (!onboardingFetched) {
-        fetchOnboardingStatus()
-      }
-    }
-  }, [data, setAuth, onboardingFetched, fetchOnboardingStatus])
+  }, [isAuthenticated, onboardingFetched, fetchOnboardingStatus])
 }
 
 /** Redirects unauthenticated users to /login. Redirects to /onboarding if not completed. */
@@ -224,10 +203,12 @@ export default function App() {
     <ErrorBoundary>
       <ClerkProviderWrapper>
         <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <AnimatedRoutes />
-            <Toaster />
-          </BrowserRouter>
+          <AuthSyncProvider>
+            <BrowserRouter>
+              <AnimatedRoutes />
+              <Toaster />
+            </BrowserRouter>
+          </AuthSyncProvider>
         </QueryClientProvider>
       </ClerkProviderWrapper>
     </ErrorBoundary>

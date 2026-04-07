@@ -361,14 +361,7 @@ async def get_shared_report(
                     viewer_id = claims.get("sub")
         except Exception:
             pass
-        if not viewer_id:
-            try:
-                from core.security.jwt import verify_token
-                token = request.cookies.get("access_token")
-                if token:
-                    viewer_id = verify_token(token)  # returns user_id string directly
-            except Exception:
-                pass
+        # Legacy cookie fallback removed — Clerk Bearer is the only auth path
         if viewer_id and viewer_id == str(report.created_by):
             should_count = False
 

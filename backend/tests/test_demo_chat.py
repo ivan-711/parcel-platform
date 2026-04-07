@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from core.demo import DEMO_EMAIL, is_demo_user, is_reserved_email
 from core.demo.chat_service import get_seeded_history, _FIXTURE_DATA
-from core.security.jwt import create_access_token, hash_password
+from core.security.jwt import get_current_user
 from models.users import User
 from models.chat_messages import ChatMessage
 
@@ -143,8 +143,9 @@ def demo_user(db) -> User:
         id=uuid.uuid4(),
         name="Alex Rivera",
         email=DEMO_EMAIL,
-        password_hash=hash_password("Demo1234!"),
+        password_hash=None,
         role="investor",
+        clerk_user_id="clerk_demo_user_001",
     )
     db.add(user)
     db.commit()
@@ -154,10 +155,11 @@ def demo_user(db) -> User:
 
 @pytest.fixture()
 def demo_auth_client(client, demo_user):
-    """TestClient with a valid access_token cookie for the demo user."""
-    token = create_access_token({"sub": str(demo_user.id)})
-    client.cookies.set("access_token", token)
-    return client
+    """TestClient with get_current_user overridden to return the demo user."""
+    from main import app
+    app.dependency_overrides[get_current_user] = lambda: demo_user
+    yield client
+    app.dependency_overrides.pop(get_current_user, None)
 
 
 class TestDemoChatHistoryEndpoint:
@@ -277,10 +279,13 @@ class TestDemoChatPersistence:
 # ---------------------------------------------------------------------------
 
 class TestReservedDemoEmail:
-    """Registration and profile update must reject the reserved demo email."""
+    """Profile update must reject the reserved demo email.
 
-    def test_register_rejects_demo_email(self, client):
-        """POST /auth/register with demo email returns 400."""
+    Registration is now handled by Clerk (no local register endpoint).
+    """
+
+    def test_register_endpoint_removed(self, client):
+        """POST /auth/register no longer exists (Clerk handles registration)."""
         resp = client.post(
             "/api/v1/auth/register",
             json={
@@ -290,31 +295,29 @@ class TestReservedDemoEmail:
                 "role": "investor",
             },
         )
-        assert resp.status_code == 400
-        data = resp.json()
-        assert data["detail"]["code"] == "EMAIL_RESERVED"
+        assert resp.status_code in (404, 405)
 
-    def test_register_rejects_demo_email_case_variant(self, client):
-        """POST /auth/register with a case-variant of the demo email returns 400."""
-        resp = client.post(
-            "/api/v1/auth/register",
-            json={
-                "name": "Attacker",
-                "email": "Demo@Parcel.App",
-                "password": "Hack1234!",
-                "role": "investor",
-            },
-        )
-        assert resp.status_code == 400
-        data = resp.json()
-        assert data["detail"]["code"] == "EMAIL_RESERVED"
-
-    def test_update_profile_rejects_demo_email(self, auth_client, test_user):
+    def test_update_profile_rejects_demo_email(self, client, db):
         """PUT /auth/me/ changing email to demo email returns 400."""
-        resp = auth_client.put(
+        from main import app
+        # Use a non-demo user so the reserved-email check triggers
+        user = User(
+            id=uuid.uuid4(),
+            name="Regular User",
+            email="regular@parcel.dev",
+            password_hash=None,
+            role="investor",
+            clerk_user_id="clerk_regular_001",
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        app.dependency_overrides[get_current_user] = lambda: user
+        resp = client.put(
             "/api/v1/auth/me/",
             json={"email": DEMO_EMAIL},
         )
         assert resp.status_code == 400
         data = resp.json()
         assert data["detail"]["code"] == "EMAIL_RESERVED"
+        app.dependency_overrides.pop(get_current_user, None)

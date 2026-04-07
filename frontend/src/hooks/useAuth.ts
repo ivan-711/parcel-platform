@@ -1,63 +1,29 @@
-/** Auth mutation hooks — wraps api.auth calls with React Query and Zustand store updates. */
+/** Auth hooks — Clerk handles login/register. Only logout needs a local hook. */
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { api } from '@/lib/api'
+import { useClerk } from '@clerk/clerk-react'
 import { useAuthStore } from '@/stores/authStore'
-
-export function useLogin() {
-  const navigate = useNavigate()
-  const setAuth = useAuthStore((s) => s.setAuth)
-
-  return useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      api.auth.login(email, password),
-    onSuccess: ({ user }) => {
-      setAuth(user)
-      navigate('/dashboard')
-    },
-  })
-}
-
-export function useRegister() {
-  const navigate = useNavigate()
-  const setAuth = useAuthStore((s) => s.setAuth)
-
-  return useMutation({
-    mutationFn: ({
-      name,
-      email,
-      password,
-      role,
-    }: {
-      name: string
-      email: string
-      password: string
-      role: string
-    }) => api.auth.register(name, email, password, role),
-    onSuccess: ({ user }) => {
-      setAuth(user)
-      navigate('/dashboard')
-    },
-  })
-}
+import { setClerkToken } from '@/lib/api'
 
 export function useLogout() {
   const navigate = useNavigate()
   const clearAuth = useAuthStore((s) => s.clearAuth)
   const queryClient = useQueryClient()
+  const { signOut } = useClerk()
 
-  return useMutation({
-    mutationFn: () => api.auth.logout(),
-    onSuccess: () => {
+  return {
+    mutate: async () => {
+      try {
+        await signOut()
+      } catch {
+        // Sign out from Clerk failed — clear local state anyway
+      }
+      setClerkToken(null)
       clearAuth()
       queryClient.clear()
       navigate('/login')
     },
-    onError: () => {
-      clearAuth()
-      queryClient.clear()
-      navigate('/login')
-    },
-  })
+    isPending: false,
+  }
 }

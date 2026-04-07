@@ -42,9 +42,9 @@ export const useOnboardingStore = create<OnboardingState>()((set, get) => ({
         fetched: true,
       })
     } catch {
-      // If fetch fails, assume completed so we DON'T lock the user behind
-      // the onboarding wall. Keep fetched=false so we retry on next navigation.
-      set({ completed: true, fetched: true })
+      // Don't assume completed on error — let the user see onboarding.
+      // Setting fetched: true prevents infinite retry loops.
+      set({ completed: false, fetched: true })
     } finally {
       set({ loading: false })
     }
