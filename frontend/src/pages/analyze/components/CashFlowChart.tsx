@@ -16,8 +16,9 @@ const HORIZONS: Horizon[] = [10, 20, 30]
  * Generate a 30-year cash flow projection using real compound growth math.
  *
  * Year N rent = Year 1 rent * (1 + rentGrowth)^(N-1)
- * Year N expenses = Year 1 expenses * (1 + expenseGrowth)^(N-1)
- * Mortgage payment stays constant (fixed rate assumed).
+ * Year N variable expenses = Year 1 variable expenses * (1 + expenseGrowth)^(N-1)
+ * Fixed payments (mortgage/debt service) stay constant — they are contractual
+ * obligations, not variable costs subject to inflation.
  */
 function generateProjection(scenario: ScenarioDetail): Array<{ year: number; annual: number; cumulative: number }> {
   const outputs = scenario.outputs || {}
@@ -27,26 +28,31 @@ function generateProjection(scenario: ScenarioDetail): Array<{ year: number; ann
   if (baseCashFlow === 0 && !outputs.annual_cash_flow) return []
 
   const rentGrowth = 0.02      // 2% annual rent growth
-  const expenseGrowth = 0.03   // 3% annual expense growth
+  const expenseGrowth = 0.03   // 3% annual expense growth (variable only)
 
-  // Decompose: cash_flow = rent - mortgage - expenses
-  // We approximate by scaling the positive and negative portions separately
+  // Decompose: cash_flow = rent - fixed_payment - variable_expenses
   const baseRent = typeof outputs.effective_gross_income === 'number'
     ? outputs.effective_gross_income
     : (typeof scenario.monthly_rent === 'number' ? Number(scenario.monthly_rent) : baseCashFlow * 2)
 
-  const baseMortgage = typeof outputs.monthly_pi === 'number'
+  // Fixed payment: mortgage P&I (or monthly_payment for creative finance).
+  // This does NOT grow — it's a contractual obligation.
+  const fixedPayment = typeof outputs.monthly_pi === 'number'
     ? outputs.monthly_pi
     : (typeof outputs.monthly_payment === 'number' ? outputs.monthly_payment : 0)
-  const baseExpenses = baseRent - baseMortgage - baseCashFlow
+
+  // Variable expenses: everything else (taxes, insurance, maintenance, etc.)
+  // These grow at the expense growth rate.
+  const baseVariableExpenses = baseRent - fixedPayment - baseCashFlow
 
   const data: Array<{ year: number; annual: number; cumulative: number }> = []
   let cumulative = 0
 
   for (let y = 1; y <= 30; y++) {
     const rent = baseRent * Math.pow(1 + rentGrowth, y - 1)
-    const expenses = baseExpenses * Math.pow(1 + expenseGrowth, y - 1)
-    const monthly = Math.round(rent - baseMortgage - expenses)
+    const variableExpenses = baseVariableExpenses * Math.pow(1 + expenseGrowth, y - 1)
+    // Fixed payment stays flat — no compounding
+    const monthly = Math.round(rent - fixedPayment - variableExpenses)
     const annual = monthly * 12
     cumulative += annual
     data.push({ year: y, annual, cumulative })

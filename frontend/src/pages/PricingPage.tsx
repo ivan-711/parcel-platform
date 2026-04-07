@@ -60,7 +60,7 @@ const TITANIUM_FEATURES = [
   'Up to 5 team members',
   'Shared deal pipeline',
   'Skip tracing (200/month)',
-  'Direct mail (50 pieces/month)',
+  'Direct mail (100 pieces/month)',
   'Role-based permissions',
   'Priority support',
 ]

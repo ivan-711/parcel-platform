@@ -81,6 +81,16 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
     },
   },
 
+  debt_yield: {
+    description: 'Annual NOI divided by total debt. Above 10% is typically safe for lenders. Higher = less risk for the lender.',
+    formula: 'Annual NOI / Total Loan Amount × 100',
+    compute: (o) => {
+      const result = num(o, 'debt_yield')
+      if (result == null) return null
+      return `Debt Yield = ${pct(result)}`
+    },
+  },
+
   annual_cash_flow: {
     description: 'Total net cash flow over a full year after all expenses and debt service.',
     formula: 'Monthly Cash Flow × 12',

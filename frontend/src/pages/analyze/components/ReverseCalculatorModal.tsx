@@ -55,6 +55,7 @@ export function ReverseCalculatorModal({ open, onOpenChange, scenario, strategy,
   const [loading, setLoading] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const requestIdRef = useRef(0)
 
   // Reset state when strategy changes or modal opens
   useEffect(() => {
@@ -72,6 +73,7 @@ export function ReverseCalculatorModal({ open, onOpenChange, scenario, strategy,
   const runCalculation = useCallback(async (metric: string, value: number) => {
     if (!scenario || !strategy) return
 
+    const thisRequestId = ++requestIdRef.current
     setLoading(true)
     setResult(null)
 
@@ -93,17 +95,24 @@ export function ReverseCalculatorModal({ open, onOpenChange, scenario, strategy,
 
     try {
       const res = await api.analysis.reverseCalculate(strategy, metric, value, inputs)
-      setResult(res)
+      // Only apply if this is still the latest request (prevents stale overwrites)
+      if (thisRequestId === requestIdRef.current) {
+        setResult(res)
+      }
     } catch {
-      setResult({
-        max_purchase_price: null,
-        scenario_at_max: null,
-        risk_score: null,
-        feasible: false,
-        message: 'Calculation failed. Check your inputs.',
-      })
+      if (thisRequestId === requestIdRef.current) {
+        setResult({
+          max_purchase_price: null,
+          scenario_at_max: null,
+          risk_score: null,
+          feasible: false,
+          message: 'Calculation failed. Check your inputs.',
+        })
+      }
     } finally {
-      setLoading(false)
+      if (thisRequestId === requestIdRef.current) {
+        setLoading(false)
+      }
     }
   }, [scenario, strategy])
 

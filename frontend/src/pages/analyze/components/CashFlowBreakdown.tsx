@@ -15,6 +15,9 @@ interface Deduction {
 
 const EXPENSE_LABELS: Record<string, string> = {
   mortgage: 'Mortgage',
+  monthly_payment: 'Debt Service',
+  monthly_piti: 'PITI',
+  monthly_expenses: 'Operating Expenses',
   taxes: 'Taxes',
   insurance: 'Insurance',
   vacancy: 'Vacancy',
@@ -25,7 +28,7 @@ const EXPENSE_LABELS: Record<string, string> = {
   other: 'Other',
 }
 
-const EXPENSE_ORDER = ['mortgage', 'taxes', 'insurance', 'vacancy', 'maintenance', 'management', 'capex', 'hoa', 'other']
+const EXPENSE_ORDER = ['mortgage', 'monthly_payment', 'monthly_piti', 'monthly_expenses', 'taxes', 'insurance', 'vacancy', 'maintenance', 'management', 'capex', 'hoa', 'other']
 
 interface BreakdownData {
   grossRent: number

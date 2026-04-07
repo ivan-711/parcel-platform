@@ -13,10 +13,21 @@ export function BreakEvenChart({ scenario }: Props) {
   const monthlyCashFlow = Number(outputs.monthly_cash_flow || 0)
   const breakEvenMonths = outputs.break_even_months as number | null
 
+  // Compute break-even month and chart horizon dynamically
+  const computedBreakEven = (totalInvestment > 0 && monthlyCashFlow > 0)
+    ? Math.ceil(totalInvestment / monthlyCashFlow)
+    : null
+  const effectiveBreakEven = breakEvenMonths ?? computedBreakEven
+
+  // Extend horizon to show break-even point + buffer, min 60
+  const horizon = effectiveBreakEven && effectiveBreakEven > 60
+    ? effectiveBreakEven + 12
+    : 60
+
   const data = useMemo(() => {
     if (!totalInvestment || !monthlyCashFlow) return []
     const points = []
-    for (let m = 0; m <= 60; m++) {
+    for (let m = 0; m <= horizon; m++) {
       const cumulative = Math.round(-totalInvestment + monthlyCashFlow * m)
       points.push({
         month: m,
@@ -26,7 +37,7 @@ export function BreakEvenChart({ scenario }: Props) {
       })
     }
     return points
-  }, [totalInvestment, monthlyCashFlow])
+  }, [totalInvestment, monthlyCashFlow, horizon])
 
   if (!totalInvestment || data.length === 0) return null
 
@@ -37,8 +48,8 @@ export function BreakEvenChart({ scenario }: Props) {
           Break-Even Timeline
         </h3>
         <div className="flex items-center justify-center py-8">
-          <p className="text-sm text-[var(--chart-axis-text)]">
-            Does not break even at current assumptions
+          <p className="text-sm text-[var(--chart-negative)]">
+            This deal never breaks even at current terms
           </p>
         </div>
       </div>
@@ -76,7 +87,10 @@ export function BreakEvenChart({ scenario }: Props) {
             tick={{ fill: 'var(--chart-axis-text)', fontSize: 11 }}
             axisLine={false}
             tickLine={false}
-            tickFormatter={(value: number) => value % 12 === 0 ? `${value}mo` : ''}
+            tickFormatter={(value: number) => {
+              const step = horizon > 120 ? 24 : 12
+              return value % step === 0 ? `${value}mo` : ''
+            }}
             interval={0}
           />
           <YAxis
@@ -121,7 +135,7 @@ export function BreakEvenChart({ scenario }: Props) {
             fill="none"
             {...CHART_ANIMATION}
           />
-          {breakEvenMonths != null && breakEvenMonths <= 60 && (
+          {breakEvenMonths != null && breakEvenMonths <= horizon && (
             <ReferenceDot
               x={breakEvenMonths}
               y={0}

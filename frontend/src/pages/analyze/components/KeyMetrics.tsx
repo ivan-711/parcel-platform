@@ -31,7 +31,8 @@ const SUPPORTING_METRICS: Record<string, MetricDef[]> = {
     { key: 'rent_to_price_ratio', label: '1% RULE', suffix: '%', threshold: { green: 1, yellow: 0.7 }, tier: 'primary' },
     { key: 'annual_cash_flow', label: 'ANNUAL CASH FLOW', prefix: '$', tier: 'primary' },
     { key: 'five_year_total_return', label: '5YR RETURN', prefix: '$', tier: 'primary' },
-    // Secondary (3)
+    // Secondary (4)
+    { key: 'debt_yield', label: 'DEBT YIELD', suffix: '%', threshold: { green: 10, yellow: 8 }, tier: 'secondary' },
     { key: 'monthly_pi', label: 'MONTHLY PMT', prefix: '$', tier: 'secondary' },
     { key: 'break_even_rent', label: 'BREAK-EVEN RENT', prefix: '$', tier: 'secondary' },
     { key: 'expense_ratio', label: 'EXPENSE RATIO', suffix: '%', tier: 'secondary' },
