@@ -176,10 +176,10 @@ export function ReverseCalculatorModal({ open, onOpenChange, scenario, strategy,
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[440px] max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-[#F0EDE8]" style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
+          <DialogTitle className="text-text-primary" style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
             Reverse Calculator
           </DialogTitle>
-          <DialogDescription className="text-[#A09D98]">
+          <DialogDescription className="text-text-secondary">
             What&rsquo;s the most I can pay to hit my target?
           </DialogDescription>
         </DialogHeader>
@@ -188,20 +188,20 @@ export function ReverseCalculatorModal({ open, onOpenChange, scenario, strategy,
           {/* Target metric selector */}
           {targets.length > 1 && (
             <div>
-              <label className="text-[10px] uppercase tracking-wider text-[#8A8580] font-medium mb-1.5 block">
+              <label className="text-[10px] uppercase tracking-wider text-text-muted font-medium mb-1.5 block">
                 Target Metric
               </label>
               <div className="relative">
                 <select
                   value={selectedMetric}
                   onChange={e => handleMetricChange(e.target.value)}
-                  className="w-full h-10 rounded-md bg-[#0C0B0A] border border-[#1E1D1B] text-[#F0EDE8] text-sm pl-3 pr-8 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/30"
+                  className="w-full h-10 rounded-md bg-app-bg border border-border-default text-text-primary text-sm pl-3 pr-8 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/30"
                 >
                   {targets.map(t => (
                     <option key={t.metric} value={t.metric}>{t.label}</option>
                   ))}
                 </select>
-                <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8A8580] pointer-events-none" />
+                <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
               </div>
             </div>
           )}
@@ -209,23 +209,23 @@ export function ReverseCalculatorModal({ open, onOpenChange, scenario, strategy,
           {/* Target value input */}
           {activeTarget && (
             <div>
-              <label className="text-[10px] uppercase tracking-wider text-[#8A8580] font-medium mb-1.5 block">
+              <label className="text-[10px] uppercase tracking-wider text-text-muted font-medium mb-1.5 block">
                 Target {activeTarget.label}
               </label>
               <div className="relative">
                 {activeTarget.unit === 'dollar' && (
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#8A8580]">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-text-muted">$</span>
                 )}
                 <input
                   type="number"
                   value={rawInput}
                   onChange={e => handleValueChange(e.target.value)}
                   step={activeTarget.unit === 'pct' ? '0.5' : '50'}
-                  className={`w-full h-10 rounded-md bg-[#0C0B0A] border border-[#1E1D1B] text-[#F0EDE8] text-lg font-light tabular-nums pr-12 focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/30 ${
+                  className={`w-full h-10 rounded-md bg-app-bg border border-border-default text-text-primary text-lg font-light tabular-nums pr-12 focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/30 ${
                     activeTarget.unit === 'dollar' ? 'pl-7' : 'pl-3'
                   }`}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#8A8580]">
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-muted">
                   {activeTarget.unit === 'pct' ? '%' : '/mo'}
                 </span>
               </div>
@@ -263,10 +263,10 @@ export function ReverseCalculatorModal({ open, onOpenChange, scenario, strategy,
               }>
                 {result.feasible && result.max_purchase_price ? (
                   <>
-                    <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1">
+                    <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">
                       {activeTarget?.priceLabel || 'Max Purchase Price'}
                     </p>
-                    <p className="text-2xl font-medium tabular-nums text-[#F0EDE8]" style={{ fontFamily: 'Satoshi, sans-serif' }}>
+                    <p className="text-2xl font-medium tabular-nums text-text-primary" style={{ fontFamily: 'Satoshi, sans-serif' }}>
                       {fmt(result.max_purchase_price)}
                     </p>
                   </>
@@ -279,7 +279,7 @@ export function ReverseCalculatorModal({ open, onOpenChange, scenario, strategy,
 
               {/* Defaulted assumptions label */}
               {result.feasible && defaultedAssumptions.length > 0 && (
-                <p className="text-xs text-[#8A8580] text-center -mt-2">
+                <p className="text-xs text-text-muted text-center -mt-2">
                   Based on: {defaultedAssumptions.join(' · ')}
                 </p>
               )}
@@ -287,7 +287,7 @@ export function ReverseCalculatorModal({ open, onOpenChange, scenario, strategy,
               {/* Forward calc metrics */}
               {result.feasible && Object.keys(scenarioAtMax).length > 0 && (
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-[#8A8580] font-medium mb-2">
+                  <p className="text-[10px] uppercase tracking-wider text-text-muted font-medium mb-2">
                     At this price
                   </p>
                   <div className="grid grid-cols-2 gap-2">
@@ -329,7 +329,7 @@ export function ReverseCalculatorModal({ open, onOpenChange, scenario, strategy,
 
               {/* Message */}
               {result.feasible && result.message && (
-                <p className="text-xs text-[#8A8580] text-center">
+                <p className="text-xs text-text-muted text-center">
                   {result.message}
                 </p>
               )}
@@ -361,10 +361,10 @@ export function ReverseCalculatorModal({ open, onOpenChange, scenario, strategy,
 
 function MetricPill({ label, value, suffix }: { label: string; value: string; suffix?: string }) {
   return (
-    <div className="bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg px-3 py-2">
-      <p className="text-[10px] text-[#8A8580] mb-0.5">{label}</p>
-      <p className="text-sm tabular-nums font-medium text-[#F0EDE8]">
-        {value}{suffix && <span className="text-[#8A8580] font-normal">{suffix}</span>}
+    <div className="bg-app-bg border border-border-default rounded-lg px-3 py-2">
+      <p className="text-[10px] text-text-muted mb-0.5">{label}</p>
+      <p className="text-sm tabular-nums font-medium text-text-primary">
+        {value}{suffix && <span className="text-text-muted font-normal">{suffix}</span>}
       </p>
     </div>
   )

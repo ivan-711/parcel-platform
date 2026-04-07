@@ -20,7 +20,7 @@ function confidenceDots(confidence: string) {
         <div
           key={i}
           className="w-1.5 h-1.5 rounded-full"
-          style={{ backgroundColor: i < filled ? color : '#1E1D1B' }}
+          style={{ backgroundColor: i < filled ? color : 'var(--border-default)' }}
         />
       ))}
       <span className="ml-1 text-[10px] uppercase tracking-wider" style={{ color }}>
@@ -88,12 +88,12 @@ export function NarrativeCard({ scenario, loading, onRefreshNarrative, refreshin
 
   if (loading || !scenario) {
     return (
-      <div className="bg-[#1A1918] border-l-[3px] border-l-[#8B7AFF] rounded-xl p-6 mb-6">
+      <div className="bg-app-surface border-l-[3px] border-l-[#8B7AFF] rounded-xl p-6 mb-6">
         <div className="space-y-3 animate-pulse">
-          <div className="h-3 bg-[#1E1D1B] rounded w-40" />
-          <div className="h-4 bg-[#1E1D1B] rounded w-full" />
-          <div className="h-4 bg-[#1E1D1B] rounded w-5/6" />
-          <div className="h-4 bg-[#1E1D1B] rounded w-4/6" />
+          <div className="h-3 bg-border-default rounded w-40" />
+          <div className="h-4 bg-border-default rounded w-full" />
+          <div className="h-4 bg-border-default rounded w-5/6" />
+          <div className="h-4 bg-border-default rounded w-4/6" />
         </div>
       </div>
     )
@@ -106,10 +106,10 @@ export function NarrativeCard({ scenario, loading, onRefreshNarrative, refreshin
   const isTruncatable = preview !== null
 
   return (
-    <div className="bg-[#1A1918] border-l-[3px] border-l-[#8B7AFF] rounded-xl p-6 mb-6">
+    <div className="bg-app-surface border-l-[3px] border-l-[#8B7AFF] rounded-xl p-6 mb-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <span className="text-[11px] text-[#8A8580] uppercase tracking-wider font-medium">
+        <span className="text-[11px] text-text-muted uppercase tracking-wider font-medium">
           AI Narrative Assessment
         </span>
         {confidenceDots(confidence)}
@@ -118,7 +118,7 @@ export function NarrativeCard({ scenario, loading, onRefreshNarrative, refreshin
       {/* Narrative text */}
       {narrative ? (
         <div>
-          <p className="text-[#F0EDE8] text-[15px] leading-[1.7] whitespace-pre-line">
+          <p className="text-text-primary text-[15px] leading-[1.7] whitespace-pre-line">
             {isTruncatable && !expanded ? `${preview}...` : plainText}
           </p>
           {isTruncatable && (
@@ -131,7 +131,7 @@ export function NarrativeCard({ scenario, loading, onRefreshNarrative, refreshin
           )}
         </div>
       ) : (
-        <p className="text-[#8A8580] text-sm italic">
+        <p className="text-text-muted text-sm italic">
           AI analysis unavailable. The numbers below are still accurate.
         </p>
       )}
@@ -152,7 +152,7 @@ export function NarrativeCard({ scenario, loading, onRefreshNarrative, refreshin
       {narrative && (!isTruncatable || expanded) && (
         <button
           onClick={() => setShowAssumptions(!showAssumptions)}
-          className="flex items-center gap-1 text-xs text-[#8A8580] hover:text-[#C5C0B8] mt-4 transition-colors"
+          className="flex items-center gap-1 text-xs text-text-muted hover:text-text-secondary mt-4 transition-colors"
         >
           <ChevronDown size={14} className={`transition-transform ${showAssumptions ? 'rotate-180' : ''}`} />
           {showAssumptions ? 'Hide assumptions' : 'View assumptions'}
@@ -166,9 +166,9 @@ export function NarrativeCard({ scenario, loading, onRefreshNarrative, refreshin
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-            className="overflow-hidden mt-3 pl-4 border-l border-[#1E1D1B]"
+            className="overflow-hidden mt-3 pl-4 border-l border-border-default"
           >
-            <p className="text-[#C5C0B8] text-sm leading-relaxed">
+            <p className="text-text-secondary text-sm leading-relaxed">
               Assumptions and risks are stated inline in the narrative above. All auto-filled values are labeled with their data source.
             </p>
           </motion.div>

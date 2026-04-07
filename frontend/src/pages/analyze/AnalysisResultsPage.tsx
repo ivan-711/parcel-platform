@@ -205,7 +205,7 @@ export default function AnalysisResultsPage() {
       <AppShell title="Analysis Results">
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
           <p className="text-[#F87171] text-sm mb-4">{error || 'Property not found'}</p>
-          <button onClick={() => navigate('/analyze')} className="text-sm text-[#8B7AFF] hover:text-[#A89FFF]">
+          <button onClick={() => navigate('/analyze')} className="text-sm text-accent-primary hover:text-accent-hover">
             ← Back to Analyze
           </button>
         </div>
@@ -232,13 +232,13 @@ export default function AnalysisResultsPage() {
           className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6"
         >
           <div>
-            <h1 className="text-2xl sm:text-3xl text-[#F0EDE8] font-light" style={{ fontFamily: 'Satoshi, sans-serif' }}>
+            <h1 className="text-2xl sm:text-3xl text-text-primary font-light" style={{ fontFamily: 'Satoshi, sans-serif' }}>
               {property.address_line1}
             </h1>
-            <p className="text-sm text-[#C5C0B8] mt-1">
+            <p className="text-sm text-text-secondary mt-1">
               {property.city}, {property.state} {property.zip_code}
             </p>
-            {propInfo && <p className="text-xs text-[#8A8580] mt-1">{propInfo}</p>}
+            {propInfo && <p className="text-xs text-text-muted mt-1">{propInfo}</p>}
           </div>
 
           {/* Action buttons */}
@@ -248,7 +248,7 @@ export default function AnalysisResultsPage() {
               className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border transition-all ${
                 saved
                   ? 'border-[#4ADE80]/30 text-[#4ADE80]'
-                  : 'border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30'
+                  : 'border-border-default text-text-secondary hover:border-[#8B7AFF]/30'
               }`}
             >
               {saved ? <Check size={14} /> : <Save size={14} />}
@@ -256,7 +256,7 @@ export default function AnalysisResultsPage() {
             </button>
             <button
               onClick={handlePipeline}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 transition-all"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-[#8B7AFF]/30 transition-all"
             >
               <GitBranch size={14} />
               Pipeline
@@ -264,7 +264,7 @@ export default function AnalysisResultsPage() {
             {activeStrategy !== 'wholesale' && (
               <button
                 onClick={() => setReverseModalOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-all cursor-pointer"
               >
                 <Calculator size={14} />
                 <span className="hidden sm:inline">Max Price</span>
@@ -282,7 +282,7 @@ export default function AnalysisResultsPage() {
                 try { ;(window as any).posthog?.capture?.('find_buyers_clicked', { source: 'analysis' }) } catch {}
                 navigate(`/dispositions/matches/${propertyId}`)
               }}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-all cursor-pointer"
             >
               <Users size={14} />
               Find Buyers
@@ -309,7 +309,7 @@ export default function AnalysisResultsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 mb-6">
           {/* Strategy selector */}
           <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
-            <p className="hidden lg:block text-[11px] text-[#8A8580] uppercase tracking-wider font-medium mb-2">
+            <p className="hidden lg:block text-[11px] text-text-muted uppercase tracking-wider font-medium mb-2">
               Strategy Selection
             </p>
             {(['wholesale', 'brrrr', 'buy_and_hold', 'flip', 'creative_finance'] as const).map(s => (
@@ -318,8 +318,8 @@ export default function AnalysisResultsPage() {
                 onClick={() => handleStrategySwitch(s)}
                 className={`flex-shrink-0 text-left px-3 py-2.5 rounded-lg text-sm transition-all ${
                   activeStrategy === s
-                    ? 'bg-[#1E1D1B] text-[#F0EDE8] border-l-[3px] border-l-[#8B7AFF]'
-                    : 'bg-[#141311] text-[#8A8580] hover:text-[#C5C0B8] border-l-[3px] border-l-transparent'
+                    ? 'bg-layer-3 text-text-primary border-l-[3px] border-l-[#8B7AFF]'
+                    : 'bg-layer-2 text-text-muted hover:text-text-secondary border-l-[3px] border-l-transparent'
                 }`}
               >
                 {STRATEGY_LABELS[s]}
@@ -340,8 +340,8 @@ export default function AnalysisResultsPage() {
             ) : (
               <div className="flex items-center justify-center py-12 text-center">
                 <div>
-                  <p className="text-sm text-[#8A8580] mb-2">No analysis for this strategy yet</p>
-                  <p className="text-xs text-[#8A8580]/60">Select a different strategy or run a new analysis</p>
+                  <p className="text-sm text-text-muted mb-2">No analysis for this strategy yet</p>
+                  <p className="text-xs text-text-muted/60">Select a different strategy or run a new analysis</p>
                 </div>
               </div>
             )}
@@ -391,13 +391,13 @@ export default function AnalysisResultsPage() {
               onClick={() => setSensitivityOpen(!sensitivityOpen)}
               className="flex w-full items-center justify-between py-3 text-left cursor-pointer group"
             >
-              <span className="text-[11px] text-[#8A8580] uppercase tracking-wider font-medium">
+              <span className="text-[11px] text-text-muted uppercase tracking-wider font-medium">
                 Sensitivity Analysis
               </span>
               <ChevronDown
                 size={16}
                 className={`shrink-0 transition-transform duration-200 ${
-                  sensitivityOpen ? 'text-[#8B7AFF] rotate-180' : 'text-[#8A8580]'
+                  sensitivityOpen ? 'text-[#8B7AFF] rotate-180' : 'text-text-muted'
                 }`}
               />
             </button>

@@ -56,12 +56,12 @@ const TABS = [
 type TabKey = (typeof TABS)[number]['key']
 
 const STATUS_COLORS: Record<string, string> = {
-  prospect: 'bg-[#8A8580]/20 text-[#C5C0B8] border-[#8A8580]/30',
+  prospect: 'bg-[#8A8580]/20 text-text-secondary border-[#8A8580]/30',
   under_analysis: 'bg-[#60A5FA]/15 text-[#93C5FD] border-[#60A5FA]/30',
   in_pipeline: 'bg-[#8B7AFF]/15 text-[#A89FFF] border-[#8B7AFF]/30',
   owned: 'bg-[#4ADE80]/15 text-[#6DBEA3] border-[#4ADE80]/30',
-  sold: 'bg-[#C5C0B8]/15 text-[#8A8580] border-[#C5C0B8]/30',
-  archived: 'bg-[#1E1D1B] text-[#8A8580] border-[#1E1D1B]',
+  sold: 'bg-[#C5C0B8]/15 text-text-muted border-[#C5C0B8]/30',
+  archived: 'bg-border-default text-text-muted border-border-default',
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -132,9 +132,9 @@ export default function PropertyDetailPage() {
     return (
       <AppShell title="Property">
         <div className="space-y-4">
-          <div className="h-8 w-64 bg-[#141311] rounded animate-pulse" />
-          <div className="h-40 bg-[#141311] rounded-xl animate-pulse" />
-          <div className="h-60 bg-[#141311] rounded-xl animate-pulse" />
+          <div className="h-8 w-64 bg-layer-2 rounded animate-pulse" />
+          <div className="h-40 bg-layer-2 rounded-xl animate-pulse" />
+          <div className="h-60 bg-layer-2 rounded-xl animate-pulse" />
         </div>
       </AppShell>
     )
@@ -175,14 +175,14 @@ export default function PropertyDetailPage() {
 
         {/* Skip Trace Results */}
         {skipTraceResult && skipTraceResult.status === 'found' && (
-          <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
-            <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium mb-4">Skip Trace Results</h3>
+          <div className="bg-layer-2 border border-border-default rounded-xl p-5">
+            <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium mb-4">Skip Trace Results</h3>
             <SkipTraceResultCard result={skipTraceResult} />
           </div>
         )}
 
         {/* Tabs */}
-        <div className="flex items-center gap-1 border-b border-[#1E1D1B] overflow-x-auto scrollbar-luxury">
+        <div className="flex items-center gap-1 border-b border-border-default overflow-x-auto scrollbar-luxury">
           {TABS.map((tab) => {
             const Icon = tab.icon
             const isActive = activeTab === tab.key
@@ -193,8 +193,8 @@ export default function PropertyDetailPage() {
                 className={cn(
                   'flex items-center gap-2 px-4 py-2.5 text-sm whitespace-nowrap transition-colors cursor-pointer border-b-2 -mb-px',
                   isActive
-                    ? 'text-[#F0EDE8] border-[#8B7AFF]'
-                    : 'text-[#8A8580] border-transparent hover:text-[#C5C0B8]'
+                    ? 'text-text-primary border-[#8B7AFF]'
+                    : 'text-text-muted border-transparent hover:text-text-secondary'
                 )}
               >
                 <Icon size={15} />
@@ -264,7 +264,7 @@ function PropertyHeader({
       <div>
         <div className="flex items-center gap-3 mb-1">
           <h1
-            className="text-xl sm:text-2xl text-[#F0EDE8]"
+            className="text-xl sm:text-2xl text-text-primary"
             style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
           >
             {property.address_line1}
@@ -272,40 +272,40 @@ function PropertyHeader({
           <StatusBadge status={property.status} />
           {property.is_sample && <SampleBadge />}
         </div>
-        <p className="text-sm text-[#8A8580]">
+        <p className="text-sm text-text-muted">
           {property.city}, {property.state} {property.zip_code}
           {property.county && ` · ${property.county} County`}
         </p>
 
         {/* Property specs */}
-        <div className="flex items-center gap-4 mt-2 text-xs text-[#C5C0B8]">
+        <div className="flex items-center gap-4 mt-2 text-xs text-text-secondary">
           {property.property_type && (
             <span className="flex items-center gap-1">
-              <Building size={12} className="text-[#8A8580]" />
+              <Building size={12} className="text-text-muted" />
               {property.property_type.toUpperCase()}
             </span>
           )}
           {property.bedrooms != null && (
             <span className="flex items-center gap-1">
-              <Bed size={12} className="text-[#8A8580]" />
+              <Bed size={12} className="text-text-muted" />
               {property.bedrooms} bd
             </span>
           )}
           {property.bathrooms != null && (
             <span className="flex items-center gap-1">
-              <Bath size={12} className="text-[#8A8580]" />
+              <Bath size={12} className="text-text-muted" />
               {property.bathrooms} ba
             </span>
           )}
           {property.sqft != null && (
             <span className="flex items-center gap-1">
-              <Ruler size={12} className="text-[#8A8580]" />
+              <Ruler size={12} className="text-text-muted" />
               {property.sqft.toLocaleString()} sqft
             </span>
           )}
           {property.year_built != null && (
             <span className="flex items-center gap-1">
-              <CalendarDays size={12} className="text-[#8A8580]" />
+              <CalendarDays size={12} className="text-text-muted" />
               {property.year_built}
             </span>
           )}
@@ -326,7 +326,7 @@ function PropertyHeader({
             try { ;(window as any).posthog?.capture?.('find_buyers_clicked', { source: 'property' }) } catch {}
             navigate(`/dispositions/matches/${propertyId}`)
           }}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-colors cursor-pointer"
         >
           <Users size={14} />
           Find Buyers
@@ -334,14 +334,14 @@ function PropertyHeader({
         <button
           onClick={onSkipTrace}
           disabled={isTracing}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-colors cursor-pointer disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-colors cursor-pointer disabled:opacity-50"
         >
           {isTracing ? <Loader2 size={14} className="animate-spin" /> : <Search size={14} />}
           Skip Trace
         </button>
         <Link
           to="/mail-campaigns/new"
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-colors"
         >
           <Mail size={14} />
           Send Mail
@@ -398,8 +398,8 @@ function OverviewTab({
         <Card title="Location">
           <div className="flex items-center justify-center py-12 text-center">
             <div className="flex flex-col items-center gap-2">
-              <MapPin size={24} className="text-[#8A8580]" />
-              <p className="text-sm text-[#8A8580]">Map view coming soon</p>
+              <MapPin size={24} className="text-text-muted" />
+              <p className="text-sm text-text-muted">Map view coming soon</p>
             </div>
           </div>
         </Card>
@@ -410,26 +410,26 @@ function OverviewTab({
         {/* Scenarios */}
         <Card title="Analysis Scenarios">
           {scenarios.length === 0 ? (
-            <p className="text-sm text-[#8A8580] py-4">No analyses yet.</p>
+            <p className="text-sm text-text-muted py-4">No analyses yet.</p>
           ) : (
             <div className="space-y-2">
               {scenarios.map((s) => (
                 <Link
                   key={s.id}
                   to={`/analyze/results/${propertyId}`}
-                  className="flex items-center justify-between p-3 rounded-lg bg-[#0C0B0A] hover:bg-[#141311] border border-[#1E1D1B] transition-colors"
+                  className="flex items-center justify-between p-3 rounded-lg bg-app-bg hover:bg-layer-2 border border-border-default transition-colors"
                 >
                   <div>
-                    <span className="text-sm text-[#F0EDE8] font-medium">
+                    <span className="text-sm text-text-primary font-medium">
                       {s.strategy.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                     </span>
-                    <p className="text-xs text-[#8A8580] mt-0.5">
+                    <p className="text-xs text-text-muted mt-0.5">
                       {s.created_at ? new Date(s.created_at).toLocaleDateString() : ''}
                     </p>
                   </div>
                   <div className="text-right">
                     {s.risk_score != null && (
-                      <span className="text-xs text-[#8A8580]">
+                      <span className="text-xs text-text-muted">
                         Risk: {s.risk_score.toFixed(1)}
                       </span>
                     )}
@@ -450,7 +450,7 @@ function OverviewTab({
         {/* Tasks */}
         <Card title="Tasks">
           {tasks.length === 0 ? (
-            <p className="text-sm text-[#8A8580] py-2">No tasks for this property.</p>
+            <p className="text-sm text-text-muted py-2">No tasks for this property.</p>
           ) : (
             <TaskList tasks={tasks} compact />
           )}
@@ -463,7 +463,7 @@ function OverviewTab({
         <Card title="Rehab Projects">
           {(!rehabProjects || rehabProjects.length === 0) ? (
             <div className="py-2">
-              <p className="text-sm text-[#8A8580]">No rehab projects.</p>
+              <p className="text-sm text-text-muted">No rehab projects.</p>
               <Link to="/rehabs" className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors mt-1 inline-block">
                 + Create Rehab Project
               </Link>
@@ -474,15 +474,15 @@ function OverviewTab({
                 const pct = proj.total_estimated > 0 ? Math.min((proj.total_actual / proj.total_estimated) * 100, 100) : 0
                 const overBudget = proj.total_actual > proj.total_estimated && proj.total_estimated > 0
                 return (
-                  <Link key={proj.id} to={`/rehabs/${proj.id}`} className="block p-3 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B] hover:border-[#8B7AFF]/20 transition-colors">
+                  <Link key={proj.id} to={`/rehabs/${proj.id}`} className="block p-3 rounded-lg bg-app-bg border border-border-default hover:border-[#8B7AFF]/20 transition-colors">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm text-[#F0EDE8]">{proj.name}</span>
-                      <span className="text-[10px] uppercase tracking-wider text-[#8A8580]">{proj.status.replace(/_/g, ' ')}</span>
+                      <span className="text-sm text-text-primary">{proj.name}</span>
+                      <span className="text-[10px] uppercase tracking-wider text-text-muted">{proj.status.replace(/_/g, ' ')}</span>
                     </div>
-                    <div className="h-1.5 bg-[#1E1D1B] rounded-full overflow-hidden mb-1">
+                    <div className="h-1.5 bg-border-default rounded-full overflow-hidden mb-1">
                       <div className={`h-full rounded-full ${overBudget ? 'bg-[#F87171]' : 'bg-[#4ADE80]'}`} style={{ width: `${Math.min(pct, 100)}%` }} />
                     </div>
-                    <div className="flex items-center justify-between text-[10px] text-[#8A8580]">
+                    <div className="flex items-center justify-between text-[10px] text-text-muted">
                       <span>${Number(proj.total_actual).toLocaleString()} of ${Number(proj.total_estimated).toLocaleString()}</span>
                       <span>{proj.completion_pct}% complete</span>
                     </div>
@@ -499,13 +499,13 @@ function OverviewTab({
             <div className="space-y-2">
               {Object.entries(property.data_sources).map(([field, info]) => (
                 <div key={field} className="flex items-center justify-between text-xs">
-                  <span className="text-[#C5C0B8]">{field}</span>
-                  <span className="text-[#8A8580]">{info.source}</span>
+                  <span className="text-text-secondary">{field}</span>
+                  <span className="text-text-muted">{info.source}</span>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-sm text-[#8A8580] py-4">No data sources recorded.</p>
+            <p className="text-sm text-text-muted py-4">No data sources recorded.</p>
           )}
         </Card>
       </div>
@@ -531,13 +531,13 @@ function FinancialsTab({
       {/* Scenario summaries */}
       <Card title="Analysis Scenarios">
         {scenarios.length === 0 ? (
-          <p className="text-sm text-[#8A8580] py-4">No analyses to show financial data.</p>
+          <p className="text-sm text-text-muted py-4">No analyses to show financial data.</p>
         ) : (
           <div className="space-y-4">
             {scenarios.map((s) => (
-              <div key={s.id} className="p-4 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B]">
+              <div key={s.id} className="p-4 rounded-lg bg-app-bg border border-border-default">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm text-[#F0EDE8] font-medium">
+                  <span className="text-sm text-text-primary font-medium">
                     {s.strategy.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                   </span>
                   <Link
@@ -571,8 +571,8 @@ function FinancialsTab({
       <Card title="Transactions">
         {recentTransactions.length === 0 ? (
           <div className="flex flex-col items-center gap-2 py-4">
-            <DollarSign size={24} className="text-[#8A8580]" />
-            <p className="text-sm text-[#8A8580]">No transactions recorded yet.</p>
+            <DollarSign size={24} className="text-text-muted" />
+            <p className="text-sm text-text-muted">No transactions recorded yet.</p>
             <button
               onClick={() => setShowAddTxn(true)}
               className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors cursor-pointer mt-1"
@@ -589,10 +589,10 @@ function FinancialsTab({
                 return (
                   <div key={txn.id} className="flex items-center justify-between py-1.5 text-xs">
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-[#8A8580] shrink-0">
+                      <span className="text-text-muted shrink-0">
                         {new Date(txn.occurred_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </span>
-                      <span className="text-[#C5C0B8] truncate">{txn.description || txn.transaction_type.replace(/_/g, ' ')}</span>
+                      <span className="text-text-secondary truncate">{txn.description || txn.transaction_type.replace(/_/g, ' ')}</span>
                     </div>
                     <span className={cn('tabular-nums font-medium shrink-0 ml-2', isPositive ? 'text-[#4ADE80]' : 'text-[#F87171]')}>
                       {isPositive ? '+' : ''}${Math.abs(amt).toLocaleString()}
@@ -628,7 +628,7 @@ const INSTRUMENT_TYPE_COLORS: Record<string, string> = {
   seller_finance: 'bg-[#8B7AFF]/15 text-[#A89FFF] border-[#8B7AFF]/30',
   wrap_mortgage: 'bg-[#60A5FA]/15 text-[#93C5FD] border-[#60A5FA]/30',
   lease_option: 'bg-[#2DD4BF]/15 text-[#2DD4BF] border-[#2DD4BF]/30',
-  conventional_mortgage: 'bg-[#8A8580]/15 text-[#C5C0B8] border-[#8A8580]/30',
+  conventional_mortgage: 'bg-[#8A8580]/15 text-text-secondary border-[#8A8580]/30',
   hard_money: 'bg-[#F87171]/15 text-[#F87171] border-[#F87171]/30',
   private_money: 'bg-[#C084FC]/15 text-[#C084FC] border-[#C084FC]/30',
   heloc: 'bg-[#34D399]/15 text-[#34D399] border-[#34D399]/30',
@@ -637,7 +637,7 @@ const INSTRUMENT_TYPE_COLORS: Record<string, string> = {
 
 const INSTRUMENT_STATUS_COLORS: Record<string, string> = {
   active: 'bg-[#4ADE80]/15 text-[#4ADE80] border-[#4ADE80]/30',
-  paid_off: 'bg-[#8A8580]/15 text-[#C5C0B8] border-[#8A8580]/30',
+  paid_off: 'bg-[#8A8580]/15 text-text-secondary border-[#8A8580]/30',
   defaulted: 'bg-[#F87171]/15 text-[#F87171] border-[#F87171]/30',
 }
 
@@ -691,23 +691,23 @@ function FinancingTab({
       {wrapInstrument && underlyingInstrument && wrapInstrument.wrap_spread && (
         <Card title="Wrap Flow">
           <div className="flex items-center justify-center gap-4 py-4 flex-wrap">
-            <div className="text-center p-3 bg-[#0C0B0A] rounded-lg border border-[#1E1D1B]">
-              <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1">Buyer Pays You</p>
-              <p className="text-lg text-[#F0EDE8] font-medium tabular-nums">
+            <div className="text-center p-3 bg-app-bg rounded-lg border border-border-default">
+              <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">Buyer Pays You</p>
+              <p className="text-lg text-text-primary font-medium tabular-nums">
                 ${Number(wrapInstrument.wrap_payment ?? 0).toLocaleString()}/mo
               </p>
             </div>
-            <div className="text-[#8A8580]">→</div>
+            <div className="text-text-muted">→</div>
             <div className="text-center p-3 bg-[#4ADE80]/5 rounded-lg border border-[#4ADE80]/20">
               <p className="text-[10px] uppercase tracking-wider text-[#4ADE80] mb-1">Your Spread</p>
               <p className="text-lg text-[#4ADE80] font-medium tabular-nums">
                 ${wrapInstrument.wrap_spread.monthly_spread.toLocaleString()}/mo
               </p>
             </div>
-            <div className="text-[#8A8580]">→</div>
-            <div className="text-center p-3 bg-[#0C0B0A] rounded-lg border border-[#1E1D1B]">
-              <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1">You Pay Lender</p>
-              <p className="text-lg text-[#F0EDE8] font-medium tabular-nums">
+            <div className="text-text-muted">→</div>
+            <div className="text-center p-3 bg-app-bg rounded-lg border border-border-default">
+              <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">You Pay Lender</p>
+              <p className="text-lg text-text-primary font-medium tabular-nums">
                 ${Number(underlyingInstrument.monthly_payment ?? 0).toLocaleString()}/mo
               </p>
             </div>
@@ -725,7 +725,7 @@ function FinancingTab({
             const typeLabel = inst.instrument_type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 
             return (
-              <div key={inst.id} className="bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg overflow-hidden">
+              <div key={inst.id} className="bg-app-bg border border-border-default rounded-lg overflow-hidden">
                 <button
                   onClick={() => {
                     setExpandedId(isExpanded ? null : inst.id)
@@ -736,12 +736,12 @@ function FinancingTab({
                       })
                     } catch { /* ignore */ }
                   }}
-                  className="w-full text-left p-4 hover:bg-[#141311] transition-colors cursor-pointer"
+                  className="w-full text-left p-4 hover:bg-layer-2 transition-colors cursor-pointer"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm text-[#F0EDE8] font-medium">{inst.name}</span>
+                        <span className="text-sm text-text-primary font-medium">{inst.name}</span>
                         <span className={cn('text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border', typeColor)}>
                           {typeLabel}
                         </span>
@@ -749,7 +749,7 @@ function FinancingTab({
                           {inst.status}
                         </span>
                       </div>
-                      <div className="flex items-center gap-3 mt-1.5 text-xs text-[#8A8580]">
+                      <div className="flex items-center gap-3 mt-1.5 text-xs text-text-muted">
                         <span>Position: {inst.position}{inst.position === 1 ? 'st' : inst.position === 2 ? 'nd' : 'rd'}</span>
                         {inst.interest_rate != null && <span>{Number(inst.interest_rate)}% rate</span>}
                         {inst.monthly_payment != null && <span>${Number(inst.monthly_payment).toLocaleString()}/mo</span>}
@@ -757,12 +757,12 @@ function FinancingTab({
                     </div>
                     <div className="text-right shrink-0">
                       {inst.current_balance != null && (
-                        <p className="text-base text-[#F0EDE8] font-medium tabular-nums">
+                        <p className="text-base text-text-primary font-medium tabular-nums">
                           ${Number(inst.current_balance).toLocaleString()}
                         </p>
                       )}
                       {inst.maturity_date && (
-                        <p className="text-xs text-[#8A8580] mt-0.5">
+                        <p className="text-xs text-text-muted mt-0.5">
                           Matures {new Date(inst.maturity_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                         </p>
                       )}
@@ -819,21 +819,21 @@ function InstrumentExpandedDetail({ instrumentId }: { instrumentId: string }) {
   const { data: detail, isLoading } = useInstrument(instrumentId)
 
   if (isLoading) {
-    return <div className="p-4 border-t border-[#1E1D1B]"><div className="h-20 bg-[#141311] rounded animate-pulse" /></div>
+    return <div className="p-4 border-t border-border-default"><div className="h-20 bg-layer-2 rounded animate-pulse" /></div>
   }
 
   if (!detail) return null
 
   return (
-    <div className="p-4 border-t border-[#1E1D1B] space-y-4">
+    <div className="p-4 border-t border-border-default space-y-4">
       {/* Amortization schedule (next 12 months) */}
       {detail.amortization_schedule.length > 0 && (
         <div>
-          <h4 className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-2">Amortization (Next 12 Months)</h4>
+          <h4 className="text-[10px] uppercase tracking-wider text-text-muted mb-2">Amortization (Next 12 Months)</h4>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="text-[10px] uppercase tracking-wider text-[#8A8580] border-b border-[#1E1D1B]">
+                <tr className="text-[10px] uppercase tracking-wider text-text-muted border-b border-border-default">
                   <th className="text-left py-1.5 pr-3">Month</th>
                   <th className="text-right py-1.5 px-3">Payment</th>
                   <th className="text-right py-1.5 px-3">Principal</th>
@@ -843,12 +843,12 @@ function InstrumentExpandedDetail({ instrumentId }: { instrumentId: string }) {
               </thead>
               <tbody>
                 {detail.amortization_schedule.slice(0, 12).map((row) => (
-                  <tr key={row.month} className="border-b border-[#1E1D1B]/30 last:border-0">
-                    <td className="py-1.5 pr-3 text-[#C5C0B8]">{row.month}</td>
-                    <td className="py-1.5 px-3 text-right text-[#F0EDE8] tabular-nums">${row.payment.toLocaleString()}</td>
-                    <td className="py-1.5 px-3 text-right text-[#C5C0B8] tabular-nums">${row.principal.toLocaleString()}</td>
-                    <td className="py-1.5 px-3 text-right text-[#C5C0B8] tabular-nums">${row.interest.toLocaleString()}</td>
-                    <td className="py-1.5 pl-3 text-right text-[#F0EDE8] tabular-nums">${row.balance.toLocaleString()}</td>
+                  <tr key={row.month} className="border-b border-border-default/30 last:border-0">
+                    <td className="py-1.5 pr-3 text-text-secondary">{row.month}</td>
+                    <td className="py-1.5 px-3 text-right text-text-primary tabular-nums">${row.payment.toLocaleString()}</td>
+                    <td className="py-1.5 px-3 text-right text-text-secondary tabular-nums">${row.principal.toLocaleString()}</td>
+                    <td className="py-1.5 px-3 text-right text-text-secondary tabular-nums">${row.interest.toLocaleString()}</td>
+                    <td className="py-1.5 pl-3 text-right text-text-primary tabular-nums">${row.balance.toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -860,14 +860,14 @@ function InstrumentExpandedDetail({ instrumentId }: { instrumentId: string }) {
       {/* Recent payments */}
       {detail.recent_payments.length > 0 && (
         <div>
-          <h4 className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-2">Recent Payments</h4>
+          <h4 className="text-[10px] uppercase tracking-wider text-text-muted mb-2">Recent Payments</h4>
           <div className="space-y-1">
             {detail.recent_payments.slice(0, 10).map((p) => (
               <div key={p.id} className="flex items-center justify-between py-1.5 text-xs">
-                <span className="text-[#C5C0B8]">
+                <span className="text-text-secondary">
                   {new Date(p.payment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </span>
-                <span className={cn('tabular-nums font-medium', p.direction === 'incoming' ? 'text-[#4ADE80]' : 'text-[#F0EDE8]')}>
+                <span className={cn('tabular-nums font-medium', p.direction === 'incoming' ? 'text-[#4ADE80]' : 'text-text-primary')}>
                   {p.direction === 'incoming' ? '+' : '-'}${Number(p.amount).toLocaleString()}
                 </span>
               </div>
@@ -879,12 +879,12 @@ function InstrumentExpandedDetail({ instrumentId }: { instrumentId: string }) {
       {/* Active obligations */}
       {detail.obligations.length > 0 && (
         <div>
-          <h4 className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-2">Active Obligations</h4>
+          <h4 className="text-[10px] uppercase tracking-wider text-text-muted mb-2">Active Obligations</h4>
           <div className="space-y-1">
             {detail.obligations.filter((o) => o.status === 'active').map((ob) => (
               <div key={ob.id} className="flex items-center justify-between py-1.5 text-xs">
-                <span className="text-[#C5C0B8]">{ob.title}</span>
-                <span className="text-[#8A8580]">
+                <span className="text-text-secondary">{ob.title}</span>
+                <span className="text-text-muted">
                   {ob.next_due ? new Date(ob.next_due).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}
                 </span>
               </div>
@@ -937,14 +937,14 @@ function ActivityTab({ events }: { events: PropertyActivityEvent[] }) {
         return (
           <div
             key={`${event.type}-${event.entity_id}-${i}`}
-            className="flex items-start gap-3 py-3 border-b border-[#1E1D1B] last:border-0"
+            className="flex items-start gap-3 py-3 border-b border-border-default last:border-0"
           >
-            <div className="w-8 h-8 rounded-lg bg-[#141311] flex items-center justify-center shrink-0 mt-0.5">
-              <Icon size={14} className="text-[#8A8580]" />
+            <div className="w-8 h-8 rounded-lg bg-layer-2 flex items-center justify-center shrink-0 mt-0.5">
+              <Icon size={14} className="text-text-muted" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-[#F0EDE8]">{event.description}</p>
-              <p className="text-xs text-[#8A8580] mt-0.5">
+              <p className="text-sm text-text-primary">{event.description}</p>
+              <p className="text-xs text-text-muted mt-0.5">
                 {event.timestamp ? formatRelativeTime(event.timestamp) : ''}
               </p>
             </div>
@@ -959,8 +959,8 @@ function ActivityTab({ events }: { events: PropertyActivityEvent[] }) {
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
-      <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium mb-4">
+    <div className="bg-layer-2 border border-border-default rounded-xl p-5">
+      <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium mb-4">
         {title}
       </h3>
       {children}
@@ -971,17 +971,17 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-0.5">{label}</p>
-      <p className="text-[#F0EDE8]">{value}</p>
+      <p className="text-[10px] uppercase tracking-wider text-text-muted mb-0.5">{label}</p>
+      <p className="text-text-primary">{value}</p>
     </div>
   )
 }
 
 function MetricBox({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-[#141311] rounded-lg p-3">
-      <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1">{label}</p>
-      <p className="text-sm text-[#F0EDE8] font-medium tabular-nums">{value}</p>
+    <div className="bg-layer-2 rounded-lg p-3">
+      <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">{label}</p>
+      <p className="text-sm text-text-primary font-medium tabular-nums">{value}</p>
     </div>
   )
 }

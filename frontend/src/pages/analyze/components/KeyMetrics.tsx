@@ -133,7 +133,7 @@ function MetricCard({ m, val, outputs }: { m: MetricDef; val: number | string | 
   if (val === undefined || val === null) return null
   const numVal = typeof val === 'number' ? val : null
   return (
-    <div className="bg-[#0C0B0A] rounded-lg p-3">
+    <div className="bg-app-bg rounded-lg p-3">
       <div className="flex items-center gap-1.5 mb-1">
         {m.threshold && (
           <div
@@ -141,10 +141,10 @@ function MetricCard({ m, val, outputs }: { m: MetricDef; val: number | string | 
             style={{ backgroundColor: dotColor(numVal, m.threshold) }}
           />
         )}
-        <p className="text-[10px] text-[#8A8580] uppercase tracking-wider flex-1">{m.label}</p>
+        <p className="text-[10px] text-text-muted uppercase tracking-wider flex-1">{m.label}</p>
         <MetricTooltipPopover metricKey={m.key} outputs={outputs} />
       </div>
-      <p className="text-lg text-[#F0EDE8] font-light">
+      <p className="text-lg text-text-primary font-light">
         {formatVal(val, m.prefix, m.suffix)}
       </p>
     </div>
@@ -172,18 +172,18 @@ export function KeyMetrics({ scenario }: Props) {
       {/* Primary metric */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-1">
-          <p className="text-[11px] text-[#8A8580] uppercase tracking-wider">{primary.label}</p>
+          <p className="text-[11px] text-text-muted uppercase tracking-wider">{primary.label}</p>
           <MetricTooltipPopover metricKey={primary.key} outputs={outputs} />
         </div>
         <div className="flex items-baseline gap-1">
           <span className={`text-4xl sm:text-5xl font-light ${
             typeof primaryVal === 'number' && primaryVal > 0 ? 'text-[#4ADE80]' :
             typeof primaryVal === 'number' && primaryVal < 0 ? 'text-[#F87171]' :
-            'text-[#F0EDE8]'
+            'text-text-primary'
           }`}>
             {formatVal(primaryVal, primary.prefix)}
           </span>
-          {primary.suffix && <span className="text-[#8A8580] text-sm">{primary.suffix}</span>}
+          {primary.suffix && <span className="text-text-muted text-sm">{primary.suffix}</span>}
         </div>
       </div>
 
@@ -200,7 +200,7 @@ export function KeyMetrics({ scenario }: Props) {
           <button
             type="button"
             onClick={() => setShowMore(!showMore)}
-            className="flex items-center gap-1.5 text-xs text-[#8A8580] hover:text-[#C5C0B8] transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text-secondary transition-colors cursor-pointer"
           >
             <ChevronDown
               size={14}
