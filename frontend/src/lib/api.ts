@@ -1,4 +1,5 @@
 /** API client — all backend calls go through this module. Never use fetch directly in components. */
+console.log('[Parcel] API URL:', import.meta.env.VITE_API_URL)
 
 import { useAuthStore } from '@/stores/authStore'
 import { useBillingStore } from '@/stores/billingStore'
