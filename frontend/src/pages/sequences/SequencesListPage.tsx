@@ -3,7 +3,9 @@
 import { Link } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { ErrorState } from '@/components/ui/ErrorState'
-import { Repeat, Plus, Pause, Play, Archive } from 'lucide-react'
+import { Repeat, Plus, Pause, Play, Archive, Lock } from 'lucide-react'
+import { useBillingStatus } from '@/hooks/useBilling'
+import { useAuthStore } from '@/stores/authStore'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
@@ -169,8 +171,39 @@ function SequenceCard({ seq }: { seq: SequenceListItem }) {
 export default function SequencesListPage() {
   const queryClient = useQueryClient()
   const { data: sequences, isLoading, isError, error } = useSequences()
+  const { data: billing } = useBillingStatus()
+  const user = useAuthStore((s) => s.user)
 
   const count = sequences?.length ?? 0
+
+  // Tier gate: Sequences require Carbon (pro) or higher
+  const userPlan = billing?.plan ?? user?.plan_tier ?? 'free'
+  const tierOrder: Record<string, number> = { free: 0, pro: 1, business: 2 }
+  if ((tierOrder[userPlan] ?? 0) < 1) {
+    return (
+      <AppShell title="Sequences">
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] px-4 text-center">
+          <div className="max-w-sm">
+            <div className="w-14 h-14 rounded-2xl bg-[#8B7AFF]/10 flex items-center justify-center mx-auto mb-6">
+              <Lock size={24} className="text-[#8B7AFF]" />
+            </div>
+            <h1 className="text-2xl text-text-primary mb-3" style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
+              Available on Carbon
+            </h1>
+            <p className="text-sm text-text-secondary mb-6">
+              Automated follow-up sequences are available on the Carbon plan. Set up multi-step outreach workflows.
+            </p>
+            <Link
+              to="/pricing"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
+            >
+              View Plans
+            </Link>
+          </div>
+        </div>
+      </AppShell>
+    )
+  }
 
   return (
     <AppShell title="Sequences">

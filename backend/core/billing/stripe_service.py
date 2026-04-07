@@ -95,11 +95,13 @@ def create_checkout_session(db: Session, user, plan: str, interval: str) -> str:
         client_reference_id=str(user.id),
         line_items=[{"price": price_id, "quantity": 1}],
         subscription_data={
+            "trial_period_days": 7,
             "metadata": {
                 "parcel_user_id": str(user.id),
                 "parcel_plan": plan,
             },
         },
+        payment_method_collection="if_required",
         allow_promotion_codes=True,
         success_url=f"{settings.FRONTEND_URL}/pricing?billing=success&session_id={{CHECKOUT_SESSION_ID}}",
         cancel_url=f"{settings.FRONTEND_URL}/pricing",

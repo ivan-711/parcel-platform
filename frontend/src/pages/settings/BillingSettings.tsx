@@ -115,7 +115,7 @@ export function BillingSettings() {
                 </div>
                 {billing.trial_active && billing.trial_ends_at && (
                   <p className="text-sm text-text-secondary mt-1">
-                    Your 7-day Pro trial ends on {formatDate(billing.trial_ends_at)}
+                    Your 7-day Carbon trial ends on {formatDate(billing.trial_ends_at)}
                   </p>
                 )}
                 {isPaid && !isCanceled && billing.current_period_end && (
@@ -145,6 +145,13 @@ export function BillingSettings() {
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-accent-text-on-accent text-sm font-medium transition-all"
               >
                 Upgrade to Carbon
+              </Link>
+            ) : billing.trial_active ? (
+              <Link
+                to="/pricing"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-accent-text-on-accent text-sm font-medium transition-all"
+              >
+                Upgrade to Carbon — Keep Full Access
               </Link>
             ) : isPaid ? (
               <>

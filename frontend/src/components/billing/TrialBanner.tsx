@@ -25,7 +25,8 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
   const daysLeft = useMemo(() => {
     if (!trialEndsAt) return null
     const diff = new Date(trialEndsAt).getTime() - Date.now()
-    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)))
+    if (diff <= 0) return 0
+    return Math.floor(diff / (1000 * 60 * 60 * 24))
   }, [trialEndsAt])
 
   // Hide for paid users or users with no trial
@@ -97,7 +98,7 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
             </button>
           ) : (
             <Link
-              to="/settings"
+              to="/pricing"
               className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] mt-1 inline-block transition-colors"
             >
               Upgrade

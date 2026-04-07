@@ -111,7 +111,14 @@ if dramatiq:
                 # H2: Pace Lob API calls — 500ms between requests
                 time.sleep(0.5)
 
-            campaign.status = "sent"
+            # Determine final status based on send results
+            total_recipients = sent + sum(1 for r in campaign.recipients if r.status == "failed")
+            if sent == 0:
+                campaign.status = "failed"
+            elif sent < total_recipients:
+                campaign.status = "partial"
+            else:
+                campaign.status = "sent"
             campaign.sent_at = datetime.utcnow()
             campaign.total_sent = sent
             campaign.total_cost_cents = total_cost

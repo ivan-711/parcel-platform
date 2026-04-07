@@ -42,7 +42,7 @@ export function PlanBadge({ planTier, trialActive }: PlanBadgeProps) {
         Steel
       </span>
       <Link
-        to="/settings"
+        to="/pricing"
         className="text-[10px] text-[#8B7AFF] hover:text-[#A89FFF] font-medium transition-colors"
       >
         Upgrade

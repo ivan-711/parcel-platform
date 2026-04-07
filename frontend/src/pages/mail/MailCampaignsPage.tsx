@@ -2,8 +2,10 @@
 
 import { Link } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
-import { Mail, Plus, Trash2, BarChart2, Edit2 } from 'lucide-react'
+import { Mail, Plus, Trash2, BarChart2, Edit2, Lock } from 'lucide-react'
 import { ErrorState } from '@/components/ui/ErrorState'
+import { useBillingStatus } from '@/hooks/useBilling'
+import { useAuthStore } from '@/stores/authStore'
 import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
 import { useMailCampaigns, useDeleteMailCampaign } from '@/hooks/useMailCampaigns'
@@ -173,7 +175,37 @@ function CampaignCard({ campaign }: { campaign: MailCampaignListItem }) {
 export default function MailCampaignsPage() {
   const queryClient = useQueryClient()
   const { data: campaigns, isLoading, isError, error } = useMailCampaigns()
+  const { data: billing } = useBillingStatus()
+  const user = useAuthStore((s) => s.user)
   const count = campaigns?.length ?? 0
+
+  // Tier gate: Direct mail requires Titanium (business)
+  const userPlan = billing?.plan ?? user?.plan_tier ?? 'free'
+  if (userPlan !== 'business') {
+    return (
+      <AppShell title="Mail Campaigns">
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] px-4 text-center">
+          <div className="max-w-sm">
+            <div className="w-14 h-14 rounded-2xl bg-[#8B7AFF]/10 flex items-center justify-center mx-auto mb-6">
+              <Lock size={24} className="text-[#8B7AFF]" />
+            </div>
+            <h1 className="text-2xl text-text-primary mb-3" style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
+              Available on Titanium
+            </h1>
+            <p className="text-sm text-text-secondary mb-6">
+              Direct mail campaigns are available on the Titanium plan. Send postcards and letters to property owners at scale.
+            </p>
+            <Link
+              to="/pricing"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
+            >
+              View Plans
+            </Link>
+          </div>
+        </div>
+      </AppShell>
+    )
+  }
 
   return (
     <AppShell title="Mail Campaigns">
