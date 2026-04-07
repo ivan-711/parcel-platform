@@ -10,6 +10,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useOnboardingStore } from '@/stores/onboardingStore'
 import { ClerkProviderWrapper, isClerkEnabled } from '@/components/auth/ClerkProviderWrapper'
 import { AuthSyncProvider } from '@/components/auth/AuthSyncProvider'
+import { CookieConsent } from '@/components/CookieConsent'
 
 // ── Dev Preview Mode ──
 // Dynamic import ensures mock code is fully tree-shaken from production builds.
@@ -19,6 +20,8 @@ if (import.meta.env.VITE_DEV_PREVIEW === 'true') {
 
 // Lazy-loaded pages
 const Landing = lazy(() => import('@/components/landing/LandingPage'))
+const PrivacyPage = lazy(() => import('@/pages/PrivacyPage'))
+const TermsPage = lazy(() => import('@/pages/TermsPage'))
 const Login = lazy(() => import('@/pages/Login'))
 const Register = lazy(() => import('@/pages/Register'))
 const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'))
@@ -159,6 +162,8 @@ function AnimatedRoutes() {
         <Route path="/share/:dealId" element={<ShareDeal />} />
         <Route path="/reports/view/:shareToken" element={<SharedReportPage />} />
         <Route path="/packets/view/:shareToken" element={<SharedPacketPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
 
         {/* Onboarding — protected but skips the onboarding guard */}
         <Route path="/onboarding" element={<ProtectedRoute skipOnboarding><Onboarding /></ProtectedRoute>} />
@@ -228,6 +233,7 @@ export default function App() {
             <BrowserRouter>
               <AnimatedRoutes />
               <Toaster />
+              <CookieConsent />
             </BrowserRouter>
           </AuthSyncProvider>
         </QueryClientProvider>

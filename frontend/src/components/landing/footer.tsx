@@ -24,8 +24,8 @@ const COLUMNS = [
   {
     title: 'Legal',
     links: [
-      { label: 'Terms', href: '#' },
-      { label: 'Privacy', href: '#' },
+      { label: 'Terms', href: '/terms' },
+      { label: 'Privacy', href: '/privacy' },
     ],
   },
 ]
@@ -66,6 +66,13 @@ export function Footer() {
                     >
                       {link.label}
                     </button>
+                  ) : 'href' in link && link.href?.startsWith('/') ? (
+                    <Link
+                      to={link.href}
+                      className="text-sm text-text-secondary hover:text-text-primary transition-colors duration-200"
+                    >
+                      {link.label}
+                    </Link>
                   ) : (
                     <a
                       href={'href' in link ? link.href : '#'}

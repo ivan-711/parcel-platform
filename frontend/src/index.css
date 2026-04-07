@@ -514,3 +514,63 @@
     content: 'Use Export PDF for printable reports.';
   }
 }
+
+/* ── Legal prose styling (Privacy, Terms pages) ── */
+.prose-legal {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.75;
+}
+.prose-legal h1 {
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 300;
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+.prose-legal h2 {
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 400;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+.prose-legal h3 {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.prose-legal p { margin-bottom: 1rem; }
+.prose-legal ul, .prose-legal ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+.prose-legal li { margin-bottom: 0.25rem; }
+.prose-legal ul { list-style-type: disc; }
+.prose-legal ol { list-style-type: decimal; }
+.prose-legal a {
+  color: #8B7AFF;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-legal a:hover { color: #A89FFF; }
+.prose-legal table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  font-size: 0.8125rem;
+}
+.prose-legal th, .prose-legal td {
+  border: 1px solid var(--border-default);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+.prose-legal th {
+  background: var(--app-surface);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.prose-legal strong { color: var(--text-primary); }

@@ -130,6 +130,11 @@ export const api = {
         method: 'PUT',
         body: JSON.stringify(data),
       }),
+    deleteAccount: (confirmation: string) =>
+      request<{ message: string }>('/api/v1/auth/delete-account', {
+        method: 'POST',
+        body: JSON.stringify({ confirmation }),
+      }),
   },
   dashboard: {
     stats: () => request<DashboardStats>('/api/v1/dashboard/stats/'),

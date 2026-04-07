@@ -281,6 +281,77 @@ function DataManagement() {
   )
 }
 
+function DeleteAccountSection() {
+  const [open, setOpen] = useState(false)
+  const [confirmation, setConfirmation] = useState('')
+  const [deleting, setDeleting] = useState(false)
+  const clearAuth = useAuthStore((s) => s.clearAuth)
+
+  const handleDelete = async () => {
+    if (confirmation !== 'DELETE') return
+    setDeleting(true)
+    try {
+      await api.auth.deleteAccount('DELETE')
+      clearAuth()
+      window.location.href = '/'
+    } catch {
+      toast.error('Failed to delete account. Please try again.')
+      setDeleting(false)
+    }
+  }
+
+  return (
+    <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="mt-6">
+      <div className="rounded-xl border border-[#F87171]/20 bg-[#F87171]/[0.03] p-6">
+        <h3 className="text-sm font-medium text-[#F87171] mb-1">Danger Zone</h3>
+        <p className="text-xs text-text-secondary mb-4">
+          Permanently delete your account and all associated data.
+        </p>
+        {!open ? (
+          <button
+            onClick={() => setOpen(true)}
+            className="px-4 py-2 rounded-lg text-sm border border-[#F87171]/30 text-[#F87171] hover:bg-[#F87171]/10 transition-colors cursor-pointer"
+          >
+            Delete my account
+          </button>
+        ) : (
+          <div className="space-y-3">
+            <p className="text-xs text-text-secondary leading-relaxed">
+              Deleting your account permanently removes your Parcel login and workspace data, including
+              saved deals, contacts, documents, skip traces, mail campaigns, and settings. This action
+              cannot be undone. If you have an active subscription, it will be canceled.
+            </p>
+            <label className="flex items-start gap-2 text-xs text-text-secondary">
+              <input
+                type="text"
+                value={confirmation}
+                onChange={(e) => setConfirmation(e.target.value)}
+                placeholder='Type "DELETE" to confirm'
+                className="w-full h-9 px-3 rounded-md bg-app-recessed border border-[#F87171]/30 text-text-primary text-sm placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-[#F87171]/30"
+              />
+            </label>
+            <div className="flex gap-2">
+              <button
+                onClick={handleDelete}
+                disabled={confirmation !== 'DELETE' || deleting}
+                className="px-4 py-2 rounded-lg text-sm bg-[#F87171] text-white hover:bg-[#E56060] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              >
+                {deleting ? 'Deleting...' : 'Delete my account'}
+              </button>
+              <button
+                onClick={() => { setOpen(false); setConfirmation('') }}
+                className="px-4 py-2 rounded-lg text-sm text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+              >
+                Keep my account
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  )
+}
+
 const THEME_OPTIONS: { value: Theme; label: string; icon: React.ElementType }[] = [
   { value: 'system', label: 'System', icon: Monitor },
   { value: 'dark', label: 'Dark', icon: Moon },
@@ -695,7 +766,12 @@ export default function SettingsPage() {
 
         {activeTab === 'sms' && <SMSCompliance />}
 
-        {activeTab === 'data' && <DataManagement />}
+        {activeTab === 'data' && (
+          <>
+            <DataManagement />
+            <DeleteAccountSection />
+          </>
+        )}
       </motion.div>
 
       <SuccessOverlay />
