@@ -17,7 +17,7 @@ export default function Login() {
       >
         <SignIn
           routing="hash"
-          afterSignInUrl="/today"
+          fallbackRedirectUrl="/today"
           signUpUrl="/register"
           appearance={{
             elements: {

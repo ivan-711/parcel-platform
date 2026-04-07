@@ -23,7 +23,7 @@ export default function Register() {
         {/* Clerk SignUp form */}
         <SignUp
           routing="hash"
-          afterSignUpUrl="/onboarding"
+          fallbackRedirectUrl="/onboarding"
           signInUrl="/login"
           appearance={{
             elements: {

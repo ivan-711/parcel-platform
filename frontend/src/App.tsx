@@ -2,12 +2,13 @@ import { lazy, Suspense, useEffect } from 'react'
 import { initTheme } from '@/lib/theme'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useAuth as useClerkAuth } from '@clerk/clerk-react'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { Toaster } from '@/components/ui/sonner'
 import { ErrorBoundary, PageErrorBoundary } from '@/components/error-boundary'
 import { useAuthStore } from '@/stores/authStore'
 import { useOnboardingStore } from '@/stores/onboardingStore'
-import { ClerkProviderWrapper } from '@/components/auth/ClerkProviderWrapper'
+import { ClerkProviderWrapper, isClerkEnabled } from '@/components/auth/ClerkProviderWrapper'
 import { AuthSyncProvider } from '@/components/auth/AuthSyncProvider'
 
 // ── Dev Preview Mode ──
@@ -98,13 +99,30 @@ function useSessionValidation() {
   }, [isAuthenticated, onboardingFetched, fetchOnboardingStatus])
 }
 
+/**
+ * Hook that returns { isLoaded, isSignedIn } from Clerk when enabled,
+ * or derives the same shape from authStore when Clerk is disabled.
+ * Always called (no conditional hook), safe for React rules-of-hooks.
+ */
+function useIsSignedIn() {
+  const clerkAuth = useClerkAuth()
+  const storeAuthenticated = useAuthStore((s) => s.isAuthenticated)
+
+  if (isClerkEnabled) {
+    return { isLoaded: clerkAuth.isLoaded, isSignedIn: !!clerkAuth.isSignedIn }
+  }
+  // Clerk disabled — fall back to store (always "loaded")
+  return { isLoaded: true, isSignedIn: storeAuthenticated }
+}
+
 /** Redirects unauthenticated users to /login. Redirects to /onboarding if not completed. */
 function ProtectedRoute({ children, skipOnboarding }: { children: React.ReactNode; skipOnboarding?: boolean }) {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const { isLoaded, isSignedIn } = useIsSignedIn()
   const onboardingCompleted = useOnboardingStore((s) => s.completed)
   const onboardingFetched = useOnboardingStore((s) => s.fetched)
 
-  if (!isAuthenticated) return <Navigate to="/login" replace />
+  if (!isLoaded) return <PageFallback />
+  if (!isSignedIn) return <Navigate to="/login" replace />
 
   // Wait for onboarding status to load before redirecting
   if (!skipOnboarding && onboardingFetched && !onboardingCompleted) {
@@ -114,10 +132,13 @@ function ProtectedRoute({ children, skipOnboarding }: { children: React.ReactNod
   return <>{children}</>
 }
 
-/** Redirects authenticated users to /dashboard (prevents accessing login/register when logged in). */
+/** Redirects authenticated users to /today (prevents accessing login/register when logged in). */
 function GuestRoute({ children }: { children: React.ReactNode }) {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
-  if (isAuthenticated) return <Navigate to="/today" replace />
+  const { isLoaded, isSignedIn } = useIsSignedIn()
+
+  if (!isLoaded) return <PageFallback />
+  if (isSignedIn) return <Navigate to="/today" replace />
+
   return <>{children}</>
 }
 
