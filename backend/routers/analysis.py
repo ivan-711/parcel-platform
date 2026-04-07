@@ -309,6 +309,12 @@ async def quick_analysis(
 
     enrichment_details = _build_enrichment_details(enrichment, latency_ms)
 
+    # Auto-create draft deal
+    deal_id = None
+    if enrichment.property:
+        deal_id = _auto_create_deal(db, current_user.id, enrichment.property, strategy)
+        db.commit()
+
     track_event(current_user.id, "analysis_completed", {
         "enrichment_status": enrichment.status,
         "providers_used": list(enrichment.provider_statuses.keys()),
@@ -321,6 +327,7 @@ async def quick_analysis(
         scenario=scenario_response,
         enrichment=enrichment_details,
         narrative=narrative_response,
+        deal_id=deal_id,
     )
 
 
@@ -445,6 +452,15 @@ async def quick_analysis_stream(
 
             enrichment = await asyncio.to_thread(_enrich_sync) if _use_thread else _enrich_sync()
 
+            # Re-attach detached ORM objects to the main session.
+            # The thread session expunged them; merge() copies their state
+            # into the main session so lazy loads and flushes work.
+            if _use_thread:
+                if enrichment.property:
+                    enrichment.property = db.merge(enrichment.property)
+                if enrichment.scenario:
+                    enrichment.scenario = db.merge(enrichment.scenario)
+
             if not enrichment.is_existing:
                 record_usage(current_user.id, "analyses_per_month", db)
 
@@ -505,6 +521,11 @@ async def quick_analysis_stream(
                             )
                         db.commit()
 
+                        # Reload scenario from DB to pick up bricked data
+                        # (the dict update bypasses SQLAlchemy instrumentation)
+                        if _use_thread and enrichment.scenario:
+                            db.refresh(enrichment.scenario)
+
                         yield _sse("enrichment_update", {
                             "bricked_status": bricked_status.status,
                             "bricked_latency_ms": bricked_status.latency_ms,
@@ -548,13 +569,22 @@ async def quick_analysis_stream(
                     latency_ms=narrative_resp.latency_ms,
                 ).model_dump(mode="json"))
 
+            # Auto-create draft deal
+            deal_id = None
+            if enrichment.property:
+                deal_id = _auto_create_deal(db, current_user.id, enrichment.property, strategy)
+                db.commit()
+
             # Complete
             total_latency = int((time.time() - start) * 1000)
-            yield _sse("complete", {"latency_ms": total_latency})
+            yield _sse("complete", {
+                "latency_ms": total_latency,
+                "deal_id": str(deal_id) if deal_id else None,
+            })
 
         except Exception as e:
             logger.exception("SSE stream error")
-            yield _sse("error", {"error": str(e), "code": "STREAM_ERROR"})
+            yield _sse("error", _sanitize_sse_error(e))
 
     return StreamingResponse(
         event_stream(),
@@ -614,6 +644,65 @@ async def get_scenario_comps(
 def _sse(event: str, data: dict) -> str:
     """Format a Server-Sent Event."""
     return f"event: {event}\ndata: {json.dumps(data, default=str)}\n\n"
+
+
+def _sanitize_sse_error(e: Exception) -> dict:
+    """Map internal exceptions to user-safe SSE error events.
+
+    Never expose raw tracebacks, Pydantic validation errors, or DB errors.
+    """
+    msg = str(e).lower()
+    if "parse" in msg or "address" in msg:
+        return {"error": "Could not parse the address. Please check the format.", "code": "ADDRESS_PARSE_FAILED"}
+    if "rate limit" in msg or "429" in msg:
+        return {"error": "Too many requests. Please wait a moment.", "code": "RATE_LIMITED"}
+    if "timeout" in msg or "timed out" in msg:
+        return {"error": "The request timed out. Please try again.", "code": "TIMEOUT"}
+    return {"error": "Something went wrong during analysis. Please try again.", "code": "ANALYSIS_ERROR"}
+
+
+def _auto_create_deal(
+    db: Session,
+    user_id: UUID,
+    prop,
+    strategy: str,
+) -> "UUID | None":
+    """Auto-create a draft Deal for a property if one doesn't already exist.
+
+    Returns the deal_id (existing or newly created), or None on failure.
+    """
+    from models.deals import Deal
+
+    try:
+        existing = (
+            db.query(Deal)
+            .filter(
+                Deal.property_id == prop.id,
+                Deal.user_id == user_id,
+                Deal.deleted_at.is_(None),
+            )
+            .first()
+        )
+        if existing:
+            return existing.id
+
+        deal = Deal(
+            property_id=prop.id,
+            user_id=user_id,
+            address=prop.address_line1 or "",
+            zip_code=prop.zip_code or "",
+            property_type=prop.property_type or "single_family",
+            strategy=strategy,
+            status="draft",
+            deal_type="acquisition",
+        )
+        db.add(deal)
+        db.flush()
+        logger.info("Auto-created draft deal %s for property %s", deal.id, prop.id)
+        return deal.id
+    except Exception:
+        logger.warning("Failed to auto-create deal for property %s", prop.id, exc_info=True)
+        return None
 
 
 # ---------------------------------------------------------------------------

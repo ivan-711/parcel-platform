@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Save, GitBranch, FileText, Loader2, Check, Users, ChevronDown, Calculator } from 'lucide-react'
+import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
 import { CreateReportModal } from '@/components/reports/CreateReportModal'
 import { VerdictBadge } from './components/VerdictBadge'
@@ -42,6 +43,7 @@ export default function AnalysisResultsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [saved, setSaved] = useState(false)
+  const [dealId, setDealId] = useState<string | null>(null)
   const [refreshingNarrative, setRefreshingNarrative] = useState(false)
   const [inputsChanged, setInputsChanged] = useState(false)
   const [recalculating, setRecalculating] = useState(false)
@@ -64,6 +66,7 @@ export default function AnalysisResultsPage() {
       const scenario = routerState.scenario as ScenarioDetail
       setScenarios([scenario])
       setActiveStrategy(scenario.strategy)
+      if (routerState.deal_id) setDealId(routerState.deal_id as string)
       setLoading(false)
     } else {
       // Fetch from API (direct URL navigation)
@@ -155,13 +158,28 @@ export default function AnalysisResultsPage() {
     finally { setRefreshingNarrative(false) }
   }, [activeScenario])
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
+    if (saved) return
+    // Deal was auto-created during analysis — "Save" confirms the user's intent
     setSaved(true)
-  }
+    toast.success('Deal saved')
+    try { ;(window as any).posthog?.capture?.('deal_saved', { property_id: propertyId, deal_id: dealId }) } catch {}
+  }, [saved, propertyId, dealId])
 
-  const handlePipeline = () => {
-    navigate('/pipeline')
-  }
+  const handlePipeline = useCallback(async () => {
+    if (!dealId) {
+      toast.error('No deal found — please re-analyze the property')
+      return
+    }
+    try {
+      await api.pipeline.add({ deal_id: dealId, stage: 'lead' })
+      toast.success('Added to pipeline')
+      try { ;(window as any).posthog?.capture?.('deal_added_to_pipeline', { property_id: propertyId, deal_id: dealId }) } catch {}
+      navigate('/pipeline')
+    } catch {
+      toast.error('Could not add to pipeline')
+    }
+  }, [dealId, propertyId, navigate])
 
   const handleApplyReversePrice = useCallback(async (price: number) => {
     if (!activeScenario) return

@@ -132,6 +132,7 @@ export default function AnalyzePage() {
         case 'status':
           if (data.stage === 'parsing_address') updateStep(0, 'active')
           if (data.stage === 'fetching_property_data') { updateStep(0, 'success'); updateStep(1, 'active') }
+          if (data.stage === 'fetching_advanced_data') { /* Bricked in progress — keep step 1 active */ }
           if (data.stage === 'generating_analysis') { updateStep(1, 'success'); updateStep(2, 'active') }
           if (data.stage === 'generating_narrative') { updateStep(2, 'success'); updateStep(3, 'active') }
           break
@@ -140,6 +141,10 @@ export default function AnalyzePage() {
           setPartialResult(prev => ({ ...prev, ...data }))
           updateStep(1, 'success')
           updateStep(2, 'active')
+          break
+
+        case 'enrichment_update':
+          // Bricked degradation status — non-critical, analysis continues with RentCast data
           break
 
         case 'scenario':
@@ -155,17 +160,35 @@ export default function AnalyzePage() {
 
         case 'complete':
           updateStep(3, 'success')
+          // Store deal_id from the complete event
+          if (data.deal_id) {
+            setPartialResult(prev => ({ ...prev, deal_id: data.deal_id }))
+          }
           // Navigate to results after a beat — read from ref to avoid stale closure
           setTimeout(() => {
             const result = partialResultRef.current
+            // Include deal_id from complete event
+            if (data.deal_id && result) {
+              result.deal_id = data.deal_id
+            }
             if (result) navigateToResults(result)
             else setState('input')
           }, 600)
           break
 
-        case 'error':
-          updateStep(1, 'failed', data.error || 'Error')
+        case 'error': {
+          // Mark the current active step as failed, then exit loading state
+          const activeIdx = steps.findIndex(s => s.status === 'active')
+          if (activeIdx >= 0) {
+            updateStep(activeIdx, 'failed', data.error || 'Analysis failed')
+          } else {
+            updateStep(1, 'failed', data.error || 'Analysis failed')
+          }
+          setError(data.error || 'Analysis failed. Please try again.')
+          // Return to input state after a brief delay so user sees the failure
+          setTimeout(() => setState('input'), 2000)
           break
+        }
       }
     } catch { /* parse error, ignore */ }
   }

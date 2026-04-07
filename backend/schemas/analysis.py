@@ -99,6 +99,7 @@ class QuickAnalysisResponse(BaseModel):
     scenario: Optional[ScenarioResponse] = None
     enrichment: EnrichmentDetails
     narrative: Optional[NarrativeResponse] = None
+    deal_id: Optional[UUID] = None
 
 
 class CompareRequest(BaseModel):
