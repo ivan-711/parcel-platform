@@ -279,14 +279,19 @@ export function HeroSection({ onSkipHijack }: { onSkipHijack?: (cb: () => void) 
             <div className="bg-border-subtle rounded-md h-4 md:h-5 w-32 md:w-48 mx-auto" />
           </div>
 
-          {/* Dashboard content placeholder */}
+          {/* Dashboard content area */}
           <div
-            className="bg-gradient-to-br from-app-surface to-app-recessed flex items-center justify-center"
+            className="bg-gradient-to-br from-app-surface to-app-recessed relative"
             style={{ height: 'calc(100% - 2rem)' }}
           >
-            <p className="text-text-secondary text-xs md:text-sm">
-              Dashboard preview coming soon
-            </p>
+            {/* Subtle grid pattern */}
+            <div
+              className="absolute inset-0 opacity-[0.04]"
+              style={{
+                backgroundImage: 'linear-gradient(rgba(139,122,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(139,122,255,0.5) 1px, transparent 1px)',
+                backgroundSize: '40px 40px',
+              }}
+            />
           </div>
 
           {/* Dark overlay that clears as frame expands */}

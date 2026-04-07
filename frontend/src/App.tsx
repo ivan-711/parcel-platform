@@ -182,7 +182,7 @@ function AnimatedRoutes() {
         <Route path="/documents" element={<ProtectedRoute><PageErrorBoundary><Documents /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/chat" element={<ProtectedRoute><PageErrorBoundary><Chat /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><PageErrorBoundary><Settings /></PageErrorBoundary></ProtectedRoute>} />
-        <Route path="/pricing" element={<ProtectedRoute><PageErrorBoundary><PricingPage /></PageErrorBoundary></ProtectedRoute>} />
+        <Route path="/pricing" element={<PageErrorBoundary><PricingPage /></PageErrorBoundary>} />
         <Route path="/today" element={<ProtectedRoute><PageErrorBoundary><TodayPage /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/properties" element={<ProtectedRoute><PageErrorBoundary><PropertiesListPage /></PageErrorBoundary></ProtectedRoute>} />
         <Route path="/properties/:propertyId" element={<ProtectedRoute><PageErrorBoundary><PropertyDetailPage /></PageErrorBoundary></ProtectedRoute>} />

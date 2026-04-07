@@ -62,8 +62,14 @@ export function FeatureSection({
           className="md:[direction:ltr]"
         >
           <div className="rounded-xl border border-border-default overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
-            <div className="bg-app-surface aspect-[16/10] flex items-center justify-center">
-              <p className="text-sm text-text-secondary">Screenshot coming soon</p>
+            <div className="bg-gradient-to-br from-app-surface to-app-recessed aspect-[16/10] relative">
+              <div
+                className="absolute inset-0 opacity-[0.04]"
+                style={{
+                  backgroundImage: 'linear-gradient(rgba(139,122,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(139,122,255,0.5) 1px, transparent 1px)',
+                  backgroundSize: '40px 40px',
+                }}
+              />
             </div>
           </div>
         </motion.div>

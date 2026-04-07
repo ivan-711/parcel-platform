@@ -7,6 +7,7 @@
  */
 
 import { lazy, Suspense, useCallback, useRef } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { LazyMotion } from 'framer-motion'
 import { LandingNavbar } from './navbar'
 import { HeroSection } from './HeroSection'
@@ -56,6 +57,10 @@ export default function LandingPage() {
 
   return (
     <LazyMotion features={loadFeatures} strict={false}>
+      <Helmet>
+        <title>Parcel — Real Estate Deal Analysis in Under 60 Seconds</title>
+        <meta name="description" content="Analyze any US property across 5 investment strategies — wholesale, BRRRR, flip, buy & hold, creative finance — in under 60 seconds." />
+      </Helmet>
       <div className="min-h-screen bg-app-bg text-text-primary">
         <LandingNavbar onNavClick={onNavClick} />
         <main>

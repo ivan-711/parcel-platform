@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import { SignUp } from '@clerk/clerk-react'
 import { motion } from 'framer-motion'
 
@@ -20,6 +21,10 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-app-bg flex items-center justify-center px-4 py-12">
+      <Helmet>
+        <title>Sign Up — Parcel</title>
+        <meta name="description" content="Create your Parcel account and start your 7-day free Carbon trial." />
+      </Helmet>
       {/* Ambient glow */}
       <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
         <div className="w-[480px] h-[480px] rounded-full bg-[#8B7AFF]/[0.06] blur-[120px]" />

@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Allow: /pricing
+Allow: /privacy
+Allow: /terms
+Disallow: /today
+Disallow: /dashboard
+Disallow: /analyze
+Disallow: /deals
+Disallow: /pipeline
+Disallow: /settings
+Disallow: /api/
+
+Sitemap: https://www.parceldesk.io/sitemap.xml

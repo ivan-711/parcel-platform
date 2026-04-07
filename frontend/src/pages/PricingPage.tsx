@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, ChevronDown, Loader2, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
@@ -239,9 +240,14 @@ export default function PricingPage() {
 
   const isCheckoutLoading = checkout.isPending || portal.isPending
 
-  return (
-    <AppShell title="Pricing">
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+
+  const content = (
       <div className="max-w-5xl mx-auto space-y-12 pb-12">
+        <Helmet>
+          <title>Pricing — Parcel</title>
+          <meta name="description" content="Choose your Parcel plan. Start with a 7-day free Carbon trial — no credit card required." />
+        </Helmet>
 
         {/* ── Header ── */}
         <div className="text-center space-y-4">
@@ -500,6 +506,36 @@ export default function PricingPage() {
           )}
         </div>
       </div>
-    </AppShell>
+  )
+
+  if (isAuthenticated) {
+    return <AppShell title="Pricing">{content}</AppShell>
+  }
+
+  return (
+    <div className="min-h-screen bg-app-bg">
+      <nav className="flex items-center justify-between px-6 py-4 max-w-5xl mx-auto">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded bg-[#8B7AFF] flex items-center justify-center">
+            <span className="text-[11px] font-bold text-white font-mono">P</span>
+          </div>
+          <span className="text-sm font-semibold text-text-primary">Parcel</span>
+        </Link>
+        <div className="flex items-center gap-3">
+          <Link to="/login" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
+            Sign In
+          </Link>
+          <Link
+            to="/register"
+            className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
+          >
+            Get Started
+          </Link>
+        </div>
+      </nav>
+      <div className="px-4 sm:px-6 py-6">
+        {content}
+      </div>
+    </div>
   )
 }

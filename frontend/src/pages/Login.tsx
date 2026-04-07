@@ -1,10 +1,15 @@
 import { SignIn } from '@clerk/clerk-react'
+import { Helmet } from 'react-helmet-async'
 import { motion } from 'framer-motion'
 
 /** Full-screen login page — wraps Clerk's SignIn component with Parcel branding. */
 export default function Login() {
   return (
     <div className="min-h-screen bg-app-bg flex items-center justify-center px-4">
+      <Helmet>
+        <title>Sign In — Parcel</title>
+        <meta name="description" content="Sign in to your Parcel account to analyze real estate deals." />
+      </Helmet>
       {/* Ambient glow */}
       <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
         <div className="w-[480px] h-[480px] rounded-full bg-[#8B7AFF]/[0.06] blur-[120px]" />
