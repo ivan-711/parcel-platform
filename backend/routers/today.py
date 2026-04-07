@@ -93,7 +93,7 @@ async def get_today(
 
     # --- Greeting ---
     greeting = f"{_time_greeting(now.hour)}, {user_name}"
-    date_str = now.strftime("%A, %B %-d, %Y")
+    date_str = now.strftime("%A, %B %d, %Y").replace(" 0", " ")
 
     # --- Sample / real data detection ---
     total_props = (
@@ -132,22 +132,38 @@ async def get_today(
     if not has_real_data and total_deals > 0:
         has_real_data = True
 
-    # --- Portfolio summary ---
-    portfolio = _build_portfolio_summary(db, current_user.id)
+    # --- Portfolio summary (fail independently) ---
+    try:
+        portfolio = _build_portfolio_summary(db, current_user.id)
+    except Exception:
+        logger.exception("Portfolio summary builder failed")
+        portfolio = PortfolioSummary()
 
-    # --- Briefing items ---
-    briefing = _build_briefing_items(
-        db, current_user.id, now,
-        has_sample_data, has_real_data,
-    )
+    # --- Briefing items (fail independently) ---
+    try:
+        briefing = _build_briefing_items(
+            db, current_user.id, now,
+            has_sample_data, has_real_data,
+        )
+    except Exception:
+        logger.exception("Briefing items builder failed")
+        briefing = []
 
-    # --- Pipeline summary ---
-    pipeline = _build_pipeline_summary(db, current_user.id)
+    # --- Pipeline summary (fail independently) ---
+    try:
+        pipeline = _build_pipeline_summary(db, current_user.id)
+    except Exception:
+        logger.exception("Pipeline summary builder failed")
+        pipeline = PipelineSummary()
 
-    # --- Recent activity ---
-    activity = _build_recent_activity(
-        db, current_user.id, limit=8,
-    )
+    # --- Recent activity (fail independently) ---
+    try:
+        activity = _build_recent_activity(
+            db, current_user.id, limit=8,
+        )
+    except Exception:
+        logger.exception("Recent activity builder failed")
+        activity = []
 
     return TodayResponse(
         greeting=greeting,

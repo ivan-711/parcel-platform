@@ -2,6 +2,7 @@
 
 import { Link } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
+import { ErrorState } from '@/components/ui/ErrorState'
 import { Repeat, Plus, Pause, Play, Archive } from 'lucide-react'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
@@ -166,7 +167,8 @@ function SequenceCard({ seq }: { seq: SequenceListItem }) {
 // ---------------------------------------------------------------------------
 
 export default function SequencesListPage() {
-  const { data: sequences, isLoading } = useSequences()
+  const queryClient = useQueryClient()
+  const { data: sequences, isLoading, isError, error } = useSequences()
 
   const count = sequences?.length ?? 0
 
@@ -204,6 +206,11 @@ export default function SequencesListPage() {
           <div className="space-y-3">
             {[1, 2, 3].map((n) => <SkeletonCard key={n} />)}
           </div>
+        ) : isError ? (
+          <ErrorState
+            message={error instanceof Error ? error.message : 'Failed to load sequences'}
+            onRetry={() => queryClient.invalidateQueries({ queryKey: ['sequences'] })}
+          />
         ) : count === 0 ? (
           <EmptyState
             icon={Repeat}

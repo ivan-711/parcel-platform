@@ -2,7 +2,9 @@
 
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { Search, Upload } from 'lucide-react'
+import { ErrorState } from '@/components/ui/ErrorState'
 import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
 import { SkipTraceResultCard } from '@/components/skip-tracing/SkipTraceResultCard'
@@ -107,8 +109,9 @@ export default function SkipTracingPage() {
   const [zip, setZip] = useState('')
   const [inlineResult, setInlineResult] = useState<SkipTraceResult | null>(null)
 
+  const queryClient = useQueryClient()
   const skipTrace = useSkipTrace()
-  const { data: historyData, isLoading: historyLoading } = useSkipTraceHistory()
+  const { data: historyData, isLoading: historyLoading, isError: historyError, error: historyErr } = useSkipTraceHistory()
   const history = historyData?.items
   const { data: usage } = useSkipTraceUsage()
 
@@ -230,6 +233,11 @@ export default function SkipTracingPage() {
 
           {historyLoading ? (
             <TableSkeleton />
+          ) : historyError ? (
+            <ErrorState
+              message={historyErr instanceof Error ? historyErr.message : 'Failed to load history'}
+              onRetry={() => queryClient.invalidateQueries({ queryKey: ['skip-tracing', 'history'] })}
+            />
           ) : rows.length === 0 ? (
             <EmptyState
               icon={Search}

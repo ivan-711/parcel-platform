@@ -395,8 +395,26 @@ export default function Dashboard() {
                   {activityData.slice(0, 8).map((item, i) => {
                     const config = ACTIVITY_ICONS[item.type] ?? ACTIVITY_ICONS.property_saved
                     const Icon = config.icon
+                    const clickable = !!item.entity_id
+                    const handleClick = () => {
+                      if (!item.entity_id) return
+                      switch (item.entity_type) {
+                        case 'property': navigate(`/analyze/results/${item.entity_id}`); break
+                        case 'deal': navigate(`/analyze/deal/${item.entity_id}`); break
+                        case 'document': navigate('/documents'); break
+                      }
+                    }
                     return (
-                      <div key={i} className="flex items-center gap-3 rounded-lg px-2 py-2.5 hover:bg-[#0C0B0A] transition-colors">
+                      <div
+                        key={i}
+                        role={clickable ? 'button' : undefined}
+                        tabIndex={clickable ? 0 : undefined}
+                        onClick={clickable ? handleClick : undefined}
+                        onKeyDown={clickable ? (e) => { if (e.key === 'Enter') handleClick() } : undefined}
+                        className={`flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors ${
+                          clickable ? 'cursor-pointer hover:bg-[#0C0B0A]' : 'hover:bg-[#0C0B0A]'
+                        }`}
+                      >
                         <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: `${config.color}15` }}>
                           <Icon size={14} style={{ color: config.color }} />
                         </div>

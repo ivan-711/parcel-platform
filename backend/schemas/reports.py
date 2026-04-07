@@ -103,5 +103,5 @@ class BrandKitSchema(BaseModel):
 class PdfStatusResponse(BaseModel):
     """Response for PDF generation status polling."""
 
-    status: str  # "none" | "generating" | "ready"
+    status: str  # "none" | "generating" | "ready" | "failed"
     download_url: Optional[str] = None

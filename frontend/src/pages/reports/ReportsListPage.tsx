@@ -5,6 +5,7 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { ErrorState } from '@/components/ui/ErrorState'
 import { motion } from 'framer-motion'
 import {
   FileText,
@@ -111,7 +112,7 @@ function ReportActions({
 export default function ReportsListPage() {
   const queryClient = useQueryClient()
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ['reports'],
     queryFn: () => api.reports.list(),
   })
@@ -175,8 +176,16 @@ export default function ReportsListPage() {
           </div>
         )}
 
+        {/* Error state — check BEFORE empty */}
+        {isError && (
+          <ErrorState
+            message={error instanceof Error ? error.message : 'Failed to load reports'}
+            onRetry={() => queryClient.invalidateQueries({ queryKey: ['reports'] })}
+          />
+        )}
+
         {/* Empty state */}
-        {isEmpty && (
+        {!isError && isEmpty && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -211,7 +220,7 @@ export default function ReportsListPage() {
         )}
 
         {/* Reports table */}
-        {!isEmpty && !isLoading && (
+        {!isError && !isEmpty && !isLoading && (
           <div className="rounded-xl border border-border-default bg-app-surface overflow-hidden">
             <div className="grid grid-cols-[1fr_1fr_auto_auto_auto_auto_auto] gap-4 px-5 py-3 border-b border-border-default bg-layer-1 text-[10px] uppercase tracking-[0.08em] text-text-secondary font-medium">
               <span>Title</span>

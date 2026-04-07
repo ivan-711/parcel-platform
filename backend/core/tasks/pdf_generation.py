@@ -109,6 +109,15 @@ if dramatiq:
 
         except Exception as e:
             logger.error("PDF generation failed for report %s: %s", report_id, e, exc_info=True)
+            # Mark the report as attempted-but-failed so the frontend stops polling.
+            # pdf_generated_at is set (attempt was made) but pdf_s3_key stays null (no file).
+            try:
+                report = db.query(Report).filter(Report.id == report_id).first()
+                if report and not report.pdf_s3_key:
+                    report.pdf_generated_at = datetime.utcnow()
+                    db.commit()
+            except Exception:
+                pass
             raise
         finally:
             db.close()

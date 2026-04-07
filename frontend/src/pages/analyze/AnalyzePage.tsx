@@ -6,6 +6,7 @@ import { AppShell } from '@/components/layout/AppShell'
 import { AnalysisLoadingState, type LoadingStep, type StepStatus } from './components/AnalysisLoadingState'
 import { ManualCalculator } from './components/ManualCalculator'
 import { api, getAuthHeaders } from '@/lib/api'
+import { usePlacesAutocomplete } from '@/hooks/usePlacesAutocomplete'
 
 type PageState = 'input' | 'loading' | 'manual'
 
@@ -19,7 +20,12 @@ export default function AnalyzePage() {
   const [partialResult, setPartialResult] = useState<Record<string, unknown> | null>(null)
   const partialResultRef = useRef<Record<string, unknown> | null>(null)
   const abortRef = useRef<AbortController | null>(null)
+  const addressInputRef = useRef<HTMLInputElement | null>(null)
   const navigate = useNavigate()
+
+  usePlacesAutocomplete(addressInputRef, {
+    onSelect: (formatted) => { setAddress(formatted); if (error) setError('') },
+  })
 
   useEffect(() => {
     try {
@@ -284,6 +290,7 @@ export default function AnalyzePage() {
               <MapPin size={18} />
             </div>
             <input
+              ref={addressInputRef}
               type="text"
               value={address}
               onChange={e => { setAddress(e.target.value); if (error) setError('') }}

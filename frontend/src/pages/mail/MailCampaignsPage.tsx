@@ -1,7 +1,9 @@
 /** Mail campaigns list page — shows all campaigns with status badges, stats, and actions. */
 
 import { Link } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { Mail, Plus, Trash2, BarChart2, Edit2 } from 'lucide-react'
+import { ErrorState } from '@/components/ui/ErrorState'
 import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
 import { useMailCampaigns, useDeleteMailCampaign } from '@/hooks/useMailCampaigns'
@@ -169,7 +171,8 @@ function CampaignCard({ campaign }: { campaign: MailCampaignListItem }) {
 // ---------------------------------------------------------------------------
 
 export default function MailCampaignsPage() {
-  const { data: campaigns, isLoading } = useMailCampaigns()
+  const queryClient = useQueryClient()
+  const { data: campaigns, isLoading, isError, error } = useMailCampaigns()
   const count = campaigns?.length ?? 0
 
   return (
@@ -206,6 +209,11 @@ export default function MailCampaignsPage() {
           <div className="space-y-3">
             {[1, 2, 3].map((n) => <SkeletonCard key={n} />)}
           </div>
+        ) : isError ? (
+          <ErrorState
+            message={error instanceof Error ? error.message : 'Failed to load campaigns'}
+            onRetry={() => queryClient.invalidateQueries({ queryKey: ['mail-campaigns'] })}
+          />
         ) : count === 0 ? (
           <EmptyState
             icon={Mail}

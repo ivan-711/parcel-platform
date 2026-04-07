@@ -271,6 +271,9 @@ export function ChatPanel({
       const controller = new AbortController()
       abortRef.current = controller
 
+      // 30-second timeout — abort if no response starts streaming
+      const timeout = setTimeout(() => controller.abort(), 30_000)
+
       const historyPayload = messages.map((m) => ({ role: m.role, content: m.content }))
 
       try {
@@ -285,7 +288,12 @@ export function ChatPanel({
           controller.signal
         )
 
+        let receivedFirstChunk = false
         for await (const event of gen) {
+          if (!receivedFirstChunk) {
+            clearTimeout(timeout)
+            receivedFirstChunk = true
+          }
           if (event.type === 'delta') {
             setMessages((prev) =>
               prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + event.text } : m))
@@ -297,7 +305,18 @@ export function ChatPanel({
           }
         }
       } catch (err) {
-        if ((err as Error).name === 'AbortError') return
+        clearTimeout(timeout)
+        if ((err as Error).name === 'AbortError') {
+          // Show timeout message instead of blank
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantId && !m.content
+                ? { ...m, content: 'The request timed out. Please try again.' }
+                : m
+            )
+          )
+          return
+        }
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantId

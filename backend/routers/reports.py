@@ -315,6 +315,10 @@ async def pdf_status(
         url = generate_presigned_url(report.pdf_s3_key)
         return PdfStatusResponse(status="ready", download_url=url)
 
+    # pdf_generated_at set but no s3_key = generation was attempted and failed
+    if report.pdf_generated_at:
+        return PdfStatusResponse(status="failed")
+
     return PdfStatusResponse(status="generating")
 
 
