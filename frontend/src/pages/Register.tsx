@@ -10,13 +10,14 @@ import { motion } from 'framer-motion'
 export default function Register() {
   const [tosAccepted, setTosAccepted] = useState(false)
   const [tosError, setTosError] = useState(false)
+  const [proceeded, setProceeded] = useState(false)
 
   const handleProceed = () => {
     if (!tosAccepted) {
       setTosError(true)
       return
     }
-    // Acceptance is already tracked in state — SignUp is visible
+    setProceeded(true)
   }
 
   return (
@@ -35,7 +36,7 @@ export default function Register() {
         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
         className="relative w-full max-w-[440px]"
       >
-        {!tosAccepted ? (
+        {!proceeded ? (
           /* TOS acceptance gate — shown before Clerk SignUp */
           <div className="bg-app-surface border border-border-strong rounded-xl p-8 space-y-6">
             <div className="text-center space-y-1">
