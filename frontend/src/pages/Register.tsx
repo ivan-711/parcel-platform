@@ -8,11 +8,14 @@ import { motion } from 'framer-motion'
  * Full-screen registration page — requires TOS acceptance before showing Clerk SignUp.
  */
 export default function Register() {
-  // Clerk OAuth/SSO callbacks return to /register with either:
-  //   - hash fragment: #/sso-callback (hash routing mode)
-  //   - query params: __clerk_status, __clerk_db_jwt, __clerk_ticket, __clerk_created_session
+  // Clerk OAuth/SSO callbacks return to /register with params in the hash fragment:
+  //   - #/sso-callback (hash routing mode)
+  //   - #/?sign_up_fallback_redirect_url=... (Google OAuth redirect)
+  //   - #/?__clerk_status=... (Clerk internal state)
   // Bypass TOS gate so <SignUp> can process the callback and complete the flow.
   const isClerkCallback = window.location.hash.includes('sso-callback')
+    || window.location.hash.includes('fallback_redirect_url')
+    || window.location.hash.includes('__clerk')
     || window.location.search.includes('__clerk')
 
   const [tosAccepted, setTosAccepted] = useState(false)
