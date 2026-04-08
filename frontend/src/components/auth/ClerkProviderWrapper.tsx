@@ -17,7 +17,14 @@ export function ClerkProviderWrapper({ children }: { children: ReactNode }) {
   }
 
   return (
-    <ClerkProvider publishableKey={clerkPubKey}>
+    <ClerkProvider
+      publishableKey={clerkPubKey}
+      signInUrl="/login"
+      signUpUrl="/register"
+      signInFallbackRedirectUrl="/today"
+      signUpFallbackRedirectUrl="/onboarding"
+      afterSignOutUrl="/login"
+    >
       {children}
     </ClerkProvider>
   )
