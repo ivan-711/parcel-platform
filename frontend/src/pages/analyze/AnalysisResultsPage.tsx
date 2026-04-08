@@ -242,7 +242,7 @@ export default function AnalysisResultsPage() {
           </div>
 
           {/* Action buttons */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-2 flex-shrink-0 overflow-x-auto">
             <button
               onClick={handleSave}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border transition-all ${

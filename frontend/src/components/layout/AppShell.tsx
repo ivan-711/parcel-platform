@@ -689,7 +689,7 @@ function Topbar({
       <div className="flex items-center gap-2 md:gap-3 shrink-0">
         {/* Page-level action buttons */}
         {actions && (
-          <div className="hidden sm:flex items-center gap-2">{actions}</div>
+          <div className="flex items-center gap-2 shrink-0">{actions}</div>
         )}
 
         {/* Notification bell (placeholder) */}
