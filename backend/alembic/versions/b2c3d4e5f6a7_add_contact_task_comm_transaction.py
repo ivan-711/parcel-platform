@@ -39,10 +39,10 @@ def upgrade() -> None:
     op.create_index("ix_contacts_created_by", "contacts", ["created_by"])
     # Trigram indexes for fuzzy name search
     op.execute(
-        "CREATE INDEX ix_contacts_first_name_trgm ON contacts USING gin (first_name gin_trgm_ops)"
+        "CREATE INDEX IF NOT EXISTS ix_contacts_first_name_trgm ON contacts USING gin (first_name gin_trgm_ops)"
     )
     op.execute(
-        "CREATE INDEX ix_contacts_last_name_trgm ON contacts USING gin (last_name gin_trgm_ops)"
+        "CREATE INDEX IF NOT EXISTS ix_contacts_last_name_trgm ON contacts USING gin (last_name gin_trgm_ops)"
     )
 
     # --- tasks ---

@@ -33,14 +33,14 @@ def upgrade() -> None:
     """)
 
     # Indexes
-    op.execute("CREATE INDEX ix_document_chunks_document_id ON document_chunks (document_id)")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_document_chunks_document_id ON document_chunks (document_id)")
     op.execute(
-        "CREATE INDEX ix_document_chunks_embedding_hnsw "
+        "CREATE INDEX IF NOT EXISTS ix_document_chunks_embedding_hnsw "
         "ON document_chunks USING hnsw (embedding vector_cosine_ops) "
         "WITH (m = 16, ef_construction = 64)"
     )
     op.execute(
-        "CREATE INDEX ix_document_chunks_content_trgm "
+        "CREATE INDEX IF NOT EXISTS ix_document_chunks_content_trgm "
         "ON document_chunks USING gin (content gin_trgm_ops)"
     )
 

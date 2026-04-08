@@ -120,6 +120,22 @@ async def health() -> dict[str, str]:
     return {"status": "healthy"}
 
 
+@app.get("/health/worker")
+async def worker_health():
+    """Check Dramatiq broker (Redis) connectivity."""
+    try:
+        import redis
+        r = redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379"))
+        r.ping()
+        return {"status": "healthy", "broker": "redis", "connected": True}
+    except Exception as e:
+        from fastapi.responses import JSONResponse
+        return JSONResponse(
+            status_code=503,
+            content={"status": "unhealthy", "broker": "redis", "connected": False, "error": str(e)},
+        )
+
+
 @app.get("/")
 async def root() -> dict[str, str]:
     """Root endpoint."""

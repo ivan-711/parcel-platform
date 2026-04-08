@@ -90,7 +90,7 @@ def upgrade() -> None:
 
     # --- remaining trigram index ---
     op.execute(
-        "CREATE INDEX ix_properties_address_trgm ON properties USING gin (address_line1 gin_trgm_ops)"
+        "CREATE INDEX IF NOT EXISTS ix_properties_address_trgm ON properties USING gin (address_line1 gin_trgm_ops)"
     )
 
 
