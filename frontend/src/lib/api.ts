@@ -432,6 +432,8 @@ export const api = {
     pdfStatus: (id: string) =>
       request<import('@/types').PdfStatusResponse>(`/api/reports/${id}/pdf/status`),
   },
+  serviceStatus: () =>
+    request<Record<string, boolean>>('/api/service-status'),
   billing: {
     status: () =>
       request<BillingStatus>('/api/v1/billing/status'),

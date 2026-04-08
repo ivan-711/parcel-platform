@@ -88,7 +88,7 @@ export default function DocumentsPage() {
       setSelectedId(resp.id)
       toast.success('Document uploaded')
     },
-    onError: () => toast.error('Upload failed — please try again'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : 'Upload failed — please try again'),
   })
 
   const showMobileDetail = selectedId !== null

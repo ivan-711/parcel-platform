@@ -6,6 +6,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Search, Upload } from 'lucide-react'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { AppShell } from '@/components/layout/AppShell'
+import { ComingSoonGate } from '@/components/ComingSoonGate'
 import { EmptyState } from '@/components/EmptyState'
 import { SkipTraceResultCard } from '@/components/skip-tracing/SkipTraceResultCard'
 import { useSkipTrace, useSkipTraceHistory, useSkipTraceUsage, useCreateContactFromTrace } from '@/hooks/useSkipTracing'
@@ -134,6 +135,7 @@ export default function SkipTracingPage() {
 
   return (
     <AppShell title="Skip Tracing">
+      <ComingSoonGate service="skip_tracing" featureName="Skip Tracing">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
         {/* ── Header ── */}
@@ -301,6 +303,7 @@ export default function SkipTracingPage() {
           )}
         </div>
       </div>
+      </ComingSoonGate>
     </AppShell>
   )
 }

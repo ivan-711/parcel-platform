@@ -168,7 +168,7 @@ export function DealSidePanel({ card, isOpen, onClose }: Props) {
           </p>
           <div className="flex items-center gap-2 py-3 text-sm text-[#8A8580]">
             <Users size={14} />
-            Contact linking coming soon
+            No linked contacts
           </div>
         </div>
 

@@ -1,10 +1,13 @@
 """Documents router — upload, list, get, status, and delete documents."""
 
+import logging
 import os
 import uuid
 from uuid import UUID
 
 import math
+
+logger = logging.getLogger(__name__)
 
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, status
 from sqlalchemy.orm import Session
@@ -90,7 +93,20 @@ async def upload_document(
     # Generate S3 key and upload
     s3_key = f"documents/{current_user.id}/{uuid.uuid4()}/{file.filename}"
     content_type = CONTENT_TYPE_MAP.get(ext, "application/octet-stream")
-    upload_file(file_bytes, s3_key, content_type)
+
+    if not os.getenv("AWS_S3_BUCKET_NAME"):
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail={"error": "Document storage is not yet configured.", "code": "STORAGE_NOT_CONFIGURED"},
+        )
+    try:
+        upload_file(file_bytes, s3_key, content_type)
+    except Exception as e:
+        logger.error("S3 upload failed for %s: %s", s3_key, e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": "Upload failed. Please try again.", "code": "UPLOAD_FAILED"},
+        )
 
     # Create DB record
     doc = Document(

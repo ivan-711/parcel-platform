@@ -399,7 +399,7 @@ function OverviewTab({
           <div className="flex items-center justify-center py-12 text-center">
             <div className="flex flex-col items-center gap-2">
               <MapPin size={24} className="text-text-muted" />
-              <p className="text-sm text-text-muted">Map view coming soon</p>
+              <p className="text-sm text-text-muted">Map view not available</p>
             </div>
           </div>
         </Card>
@@ -902,8 +902,8 @@ function DocumentsTab() {
   return (
     <EmptyState
       icon={FileText}
-      heading="Documents coming soon"
-      description="Document linking to properties is being built. You can upload documents from the Documents page."
+      heading="No linked documents"
+      description="You can upload and manage documents from the Documents page."
       ctaLabel="Go to Documents"
       ctaHref="/documents"
     />

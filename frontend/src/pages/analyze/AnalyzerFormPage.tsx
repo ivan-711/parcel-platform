@@ -1,4 +1,4 @@
-/** Deal analyzer form page — strategy-aware form for wholesale and buy & hold, coming soon for others. */
+/** Deal analyzer form page — strategy-aware form for wholesale and buy & hold, placeholder for others. */
 
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
@@ -1245,7 +1245,7 @@ export default function AnalyzerFormPage() {
           <div className="text-center space-y-4">
             <StrategyBadge strategy={strategy as Strategy} />
             <p className="text-text-secondary text-sm">
-              This strategy&apos;s calculator is coming soon.
+              This strategy calculator is not yet available.
             </p>
             <Link
               to="/analyze"

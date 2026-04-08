@@ -7,6 +7,7 @@ import { ErrorState } from '@/components/ui/ErrorState'
 import { useBillingStatus } from '@/hooks/useBilling'
 import { useAuthStore } from '@/stores/authStore'
 import { AppShell } from '@/components/layout/AppShell'
+import { ComingSoonGate } from '@/components/ComingSoonGate'
 import { EmptyState } from '@/components/EmptyState'
 import { useMailCampaigns, useDeleteMailCampaign } from '@/hooks/useMailCampaigns'
 import { cn } from '@/lib/utils'
@@ -179,11 +180,16 @@ export default function MailCampaignsPage() {
   const user = useAuthStore((s) => s.user)
   const count = campaigns?.length ?? 0
 
+  // Service gate: Direct mail requires Lob API key (checked before tier gate)
+  // ComingSoonGate wraps all content — if service unavailable, shows "Coming Soon"
+  // regardless of tier. If service IS available, tier gate below takes effect.
+
   // Tier gate: Direct mail requires Titanium (business)
   const userPlan = billing?.plan ?? user?.plan_tier ?? 'free'
   if (userPlan !== 'business') {
     return (
       <AppShell title="Mail Campaigns">
+        <ComingSoonGate service="direct_mail" featureName="Direct Mail">
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] px-4 text-center">
           <div className="max-w-sm">
             <div className="w-14 h-14 rounded-2xl bg-[#8B7AFF]/10 flex items-center justify-center mx-auto mb-6">
@@ -203,12 +209,14 @@ export default function MailCampaignsPage() {
             </Link>
           </div>
         </div>
+        </ComingSoonGate>
       </AppShell>
     )
   }
 
   return (
     <AppShell title="Mail Campaigns">
+      <ComingSoonGate service="direct_mail" featureName="Direct Mail">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between gap-4">
@@ -262,6 +270,7 @@ export default function MailCampaignsPage() {
           </div>
         )}
       </div>
+      </ComingSoonGate>
     </AppShell>
   )
 }

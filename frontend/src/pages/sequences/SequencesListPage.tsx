@@ -8,6 +8,7 @@ import { useBillingStatus } from '@/hooks/useBilling'
 import { useAuthStore } from '@/stores/authStore'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
+import { ComingSoonGate } from '@/components/ComingSoonGate'
 import { EmptyState } from '@/components/EmptyState'
 import { useSequences } from '@/hooks/useSequences'
 import { useUpdateSequence } from '@/hooks/useSequences'
@@ -182,6 +183,7 @@ export default function SequencesListPage() {
   if ((tierOrder[userPlan] ?? 0) < 1) {
     return (
       <AppShell title="Sequences">
+        <ComingSoonGate service="email_outbound" featureName="Sequences">
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] px-4 text-center">
           <div className="max-w-sm">
             <div className="w-14 h-14 rounded-2xl bg-[#8B7AFF]/10 flex items-center justify-center mx-auto mb-6">
@@ -201,12 +203,14 @@ export default function SequencesListPage() {
             </Link>
           </div>
         </div>
+        </ComingSoonGate>
       </AppShell>
     )
   }
 
   return (
     <AppShell title="Sequences">
+      <ComingSoonGate service="email_outbound" featureName="Sequences">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between gap-4">
@@ -260,6 +264,7 @@ export default function SequencesListPage() {
           </div>
         )}
       </div>
+      </ComingSoonGate>
     </AppShell>
   )
 }
