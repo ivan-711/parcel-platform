@@ -298,29 +298,31 @@ export default function AnalyzePage() {
             Enter any US address to get an AI-powered analysis in seconds
           </p>
 
-          {/* Address input */}
-          <div className="relative mb-2">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8A8580] z-10 pointer-events-none">
-              <MapPin size={18} />
+          {/* Address input + Analyze button — flex siblings, no overlap */}
+          <div className="flex items-center gap-2 mb-2">
+            <div className="relative flex-1 min-w-0">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8A8580] z-10 pointer-events-none">
+                <MapPin size={18} />
+              </div>
+              {isMapsEnabled ? (
+                <Suspense fallback={<AddressFallbackInput address={address} onChange={v => { setAddress(v); if (error) setError('') }} onKeyDown={handleKeyDown} hasError={!!error} />}>
+                  <MapsProvider>
+                    <PlaceAutocompleteInput
+                      onPlaceSelect={handlePlaceSelect}
+                      onInputChange={v => { setAddress(v); if (error) setError('') }}
+                      value={address}
+                      className={error ? 'autocomplete-error' : ''}
+                    />
+                  </MapsProvider>
+                </Suspense>
+              ) : (
+                <AddressFallbackInput address={address} onChange={v => { setAddress(v); if (error) setError('') }} onKeyDown={handleKeyDown} hasError={!!error} />
+              )}
             </div>
-            {isMapsEnabled ? (
-              <Suspense fallback={<AddressFallbackInput address={address} onChange={v => { setAddress(v); if (error) setError('') }} onKeyDown={handleKeyDown} hasError={!!error} />}>
-                <MapsProvider>
-                  <PlaceAutocompleteInput
-                    onPlaceSelect={handlePlaceSelect}
-                    onInputChange={v => { setAddress(v); if (error) setError('') }}
-                    value={address}
-                    className={error ? 'autocomplete-error' : ''}
-                  />
-                </MapsProvider>
-              </Suspense>
-            ) : (
-              <AddressFallbackInput address={address} onChange={v => { setAddress(v); if (error) setError('') }} onKeyDown={handleKeyDown} hasError={!!error} />
-            )}
             <button
               onClick={handleSubmit}
               disabled={!address.trim()}
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] disabled:opacity-40 disabled:cursor-not-allowed z-20"
+              className="shrink-0 h-12 px-5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Analyze
             </button>
@@ -382,7 +384,7 @@ function AddressFallbackInput({ address, onChange, onKeyDown, hasError }: {
       onChange={e => onChange(e.target.value)}
       onKeyDown={onKeyDown}
       placeholder="Enter an address — e.g. 613 N 14th St, Sheboygan, WI"
-      className={`w-full h-12 pl-11 pr-28 rounded-xl bg-[#141311] text-[#F0EDE8] text-sm placeholder-[#8A8580]/60 focus:outline-none focus:ring-2 transition-all ${
+      className={`w-full h-12 pl-11 pr-4 rounded-xl bg-[#141311] text-[#F0EDE8] text-sm placeholder-[#8A8580]/60 focus:outline-none focus:ring-2 transition-all ${
         hasError ? 'border border-[#F87171] focus:ring-[#F87171]/30' : 'border border-[#1E1D1B] focus:ring-[#8B7AFF]/30'
       }`}
     />
