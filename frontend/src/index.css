@@ -589,6 +589,11 @@
   color-scheme: dark;
 }
 
+/* Hide the built-in clear (X) button — it overlaps with the Analyze button */
+.parcel-autocomplete::part(clear-button) {
+  display: none;
+}
+
 /* Style the inner input via ::part */
 .parcel-autocomplete::part(input) {
   width: 100%;
