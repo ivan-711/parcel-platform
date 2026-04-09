@@ -129,15 +129,23 @@ def _apply_strategy_defaults(strategy: str, inputs: dict) -> None:
         inputs.setdefault("desired_profit", 10000)
         inputs.setdefault("closing_costs_pct", 3)
         inputs.setdefault("asking_price", inputs.get("purchase_price", 0))
+        inputs.setdefault("arv", inputs.get("purchase_price", 0))
+        inputs.setdefault("repair_costs", 0)
     elif strategy == "flip":
         inputs.setdefault("holding_months", 5)
         inputs.setdefault("selling_costs_pct", 8)
         inputs.setdefault("financing_costs", 0)
+        # Fallback ARV to purchase price when Bricked doesn't return data
+        inputs.setdefault("arv", inputs.get("purchase_price", 0))
+        inputs.setdefault("rehab_budget", 0)
     elif strategy == "brrrr":
         inputs.setdefault("refinance_ltv_pct", 75)
         inputs.setdefault("new_loan_rate", 7.25)
         inputs.setdefault("new_loan_term_years", 30)
         inputs.setdefault("monthly_expenses", 400)
+        # Fallback ARV to purchase price when Bricked doesn't return data
+        inputs.setdefault("arv_post_rehab", inputs.get("purchase_price", 0))
+        inputs.setdefault("rehab_costs", 0)
     elif strategy == "creative_finance":
         inputs.setdefault("existing_loan_balance", inputs.get("purchase_price", 0) * 0.8)
         inputs.setdefault("monthly_piti", 0)
@@ -256,6 +264,13 @@ async def quick_analysis(
         default_strategy=strategy,
         providers=providers,
     )
+
+    # Persist client-side geocoding data if provided
+    if enrichment.property and (body.lat is not None and body.lng is not None):
+        enrichment.property.latitude = body.lat
+        enrichment.property.longitude = body.lng
+    if enrichment.property and body.place_id:
+        enrichment.property.place_id = body.place_id
 
     if not enrichment.is_existing:
         record_usage(current_user.id, "analyses_per_month", db)
@@ -391,6 +406,9 @@ async def quick_analysis_stream(
     request: Request,
     address: str,
     strategy: str = "buy_and_hold",
+    lat: float | None = None,
+    lng: float | None = None,
+    place_id: str | None = None,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
     _quota: None = Depends(require_quota("analyses_per_month")),
@@ -460,6 +478,13 @@ async def quick_analysis_stream(
                     enrichment.property = db.merge(enrichment.property)
                 if enrichment.scenario:
                     enrichment.scenario = db.merge(enrichment.scenario)
+
+            # Persist client-side geocoding data if provided
+            if enrichment.property and (lat is not None and lng is not None):
+                enrichment.property.latitude = lat
+                enrichment.property.longitude = lng
+            if enrichment.property and place_id:
+                enrichment.property.place_id = place_id
 
             if not enrichment.is_existing:
                 record_usage(current_user.id, "analyses_per_month", db)

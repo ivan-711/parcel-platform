@@ -190,6 +190,9 @@ export interface PropertyDetail {
   status: string
   data_sources: Record<string, { source: string; timestamp: string; confidence: string }> | null
   is_sample: boolean
+  latitude: number | null
+  longitude: number | null
+  place_id: string | null
   created_at: string
   updated_at: string
 }
@@ -244,6 +247,8 @@ export interface PropertyListItem {
   year_built: number | null
   status: string
   is_sample: boolean
+  latitude: number | null
+  longitude: number | null
   created_at: string
   updated_at: string
   primary_scenario: ScenarioSummary | null

@@ -38,14 +38,37 @@ const API_URL = _rawUrl.includes('localhost') || _rawUrl.includes('127.0.0.1') ?
 /** Module-level Clerk token cache — set by authStore when Clerk is active. */
 let _clerkTokenCache: string | null = null
 
+/** Stored reference to Clerk's getToken() for on-demand token refresh. */
+let _clerkTokenGetter: (() => Promise<string | null>) | null = null
+
 /** Called by authStore to set the current Clerk session token. */
 export function setClerkToken(token: string | null) {
   _clerkTokenCache = token
 }
 
-/** Get the current auth headers for manual fetch calls (SSE streams). */
+/** Called by AuthSyncProvider to store Clerk's getToken() for on-demand use. */
+export function setClerkTokenGetter(getter: (() => Promise<string | null>) | null) {
+  _clerkTokenGetter = getter
+}
+
+/** Get the current auth headers synchronously (may be empty if token not yet cached). */
 export function getAuthHeaders(): Record<string, string> {
   if (_clerkTokenCache) return { Authorization: `Bearer ${_clerkTokenCache}` }
+  return {}
+}
+
+/** Ensure auth headers are available — fetches token on-demand if cache is empty. */
+export async function ensureAuthHeaders(): Promise<Record<string, string>> {
+  if (_clerkTokenCache) return { Authorization: `Bearer ${_clerkTokenCache}` }
+  if (_clerkTokenGetter) {
+    try {
+      const token = await _clerkTokenGetter()
+      if (token) {
+        _clerkTokenCache = token
+        return { Authorization: `Bearer ${token}` }
+      }
+    } catch { /* token fetch failed — proceed unauthenticated */ }
+  }
   return {}
 }
 

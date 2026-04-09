@@ -13,7 +13,7 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { useAuth, useSession } from '@clerk/clerk-react'
 import { useAuthStore } from '@/stores/authStore'
-import { setClerkToken, api } from '@/lib/api'
+import { setClerkToken, setClerkTokenGetter, api } from '@/lib/api'
 
 export function AuthSyncProvider({ children }: { children: ReactNode }) {
   const { isSignedIn, isLoaded, getToken } = useAuth()
@@ -21,6 +21,16 @@ export function AuthSyncProvider({ children }: { children: ReactNode }) {
   const setAuth = useAuthStore((s) => s.setAuth)
   const clearAuth = useAuthStore((s) => s.clearAuth)
   const syncedRef = useRef(false)
+
+  // Store Clerk's getToken so api.ts can fetch tokens on-demand (avoids race conditions)
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      setClerkTokenGetter(getToken)
+    } else {
+      setClerkTokenGetter(null)
+    }
+    return () => setClerkTokenGetter(null)
+  }, [isLoaded, isSignedIn, getToken])
 
   useEffect(() => {
     if (!isLoaded) return

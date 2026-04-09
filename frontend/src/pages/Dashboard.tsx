@@ -94,9 +94,10 @@ export default function Dashboard() {
     staleTime: 60_000,
   })
 
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   useEffect(() => {
-    if (!onboardingFetched) fetchStatus()
-  }, [onboardingFetched, fetchStatus])
+    if (isAuthenticated && !onboardingFetched) fetchStatus()
+  }, [isAuthenticated, onboardingFetched, fetchStatus])
 
   useEffect(() => {
     try {

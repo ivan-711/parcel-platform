@@ -231,6 +231,8 @@ def enrich_property(
         state=parsed.state,
         zip_code=parsed.zip_code,
         county=parsed.county,
+        latitude=parsed.latitude,
+        longitude=parsed.longitude,
         status="under_analysis",
     )
 

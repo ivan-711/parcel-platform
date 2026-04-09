@@ -11,6 +11,9 @@ class QuickAnalysisRequest(BaseModel):
     """Request to analyze a property by address."""
     address: str = Field(..., min_length=5, max_length=500)
     strategy: Optional[str] = Field(None, description="Investment strategy. Defaults to buy_and_hold.")
+    lat: Optional[float] = Field(None, description="Latitude from Places autocomplete.")
+    lng: Optional[float] = Field(None, description="Longitude from Places autocomplete.")
+    place_id: Optional[str] = Field(None, description="Google Place ID from autocomplete.")
 
 
 class ProviderStatusResponse(BaseModel):

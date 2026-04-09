@@ -253,14 +253,18 @@ export default function ResultsPage() {
     updateDeal.mutate(
       { status: 'saved' },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           setSaved(true)
-          toast.success('Deal saved', {
-            action: {
-              label: 'View My Deals →',
-              onClick: () => navigate('/deals'),
-            },
-          })
+          try {
+            await api.pipeline.add({ deal_id: deal!.id, stage: 'lead' })
+            toast.success('Deal saved to pipeline', {
+              action: { label: 'View Pipeline →', onClick: () => navigate('/pipeline') },
+            })
+          } catch {
+            toast.success('Deal saved', {
+              action: { label: 'View My Deals →', onClick: () => navigate('/deals') },
+            })
+          }
         },
         onError: (err) => toast.error(err.message),
       }

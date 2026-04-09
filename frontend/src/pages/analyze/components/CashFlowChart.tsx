@@ -85,7 +85,7 @@ export function CashFlowChart({ scenario }: Props) {
         </h3>
         <div className="flex items-center justify-center py-12 text-center">
           <p className="text-sm text-[var(--chart-axis-text)]">
-            Cash flow projection requires calculated outputs. Edit inputs above to generate.
+            Enter property value and rent estimate below to generate cash flow projections.
           </p>
         </div>
       </div>

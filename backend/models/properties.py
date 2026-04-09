@@ -1,6 +1,6 @@
 """Property model — the durable root record for a physical real estate asset."""
 
-from sqlalchemy import Boolean, Column, Integer, Numeric, String
+from sqlalchemy import Boolean, Column, Float, Integer, Numeric, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
 
@@ -23,6 +23,11 @@ class Property(TimestampMixin, Base):
     state = Column(String(2), nullable=False)
     zip_code = Column(String(10), nullable=False)
     county = Column(String, nullable=True)
+
+    # Geocoding
+    latitude = Column(Numeric(10, 7), nullable=True)
+    longitude = Column(Numeric(10, 7), nullable=True)
+    place_id = Column(String, nullable=True)
 
     # Physical characteristics
     property_type = Column(String, nullable=True)

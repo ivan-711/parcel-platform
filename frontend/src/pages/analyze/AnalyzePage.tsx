@@ -1,12 +1,16 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef, useCallback, useEffect, lazy, Suspense } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { MapPin, Sparkles, ArrowRight, AlertCircle } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { AnalysisLoadingState, type LoadingStep, type StepStatus } from './components/AnalysisLoadingState'
 import { ManualCalculator } from './components/ManualCalculator'
-import { api, getAuthHeaders } from '@/lib/api'
-import { usePlacesAutocomplete } from '@/hooks/usePlacesAutocomplete'
+import { api, ensureAuthHeaders } from '@/lib/api'
+import { isMapsEnabled } from '@/components/maps/MapsProvider'
+import { PlaceAutocompleteInput } from '@/components/maps/PlaceAutocompleteInput'
+import type { PlaceSelection, GeoPoint } from '@/types/maps'
+
+const MapsProvider = lazy(() => import('@/components/maps/MapsProvider'))
 
 type PageState = 'input' | 'loading' | 'manual'
 
@@ -15,17 +19,21 @@ const API_URL = (import.meta.env.VITE_API_URL ?? 'https://api.parceldesk.io').re
 export default function AnalyzePage() {
   const [state, setState] = useState<PageState>('input')
   const [address, setAddress] = useState('')
+  const [geoLocation, setGeoLocation] = useState<GeoPoint | null>(null)
+  const [placeId, setPlaceId] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [steps, setSteps] = useState<LoadingStep[]>(initialSteps())
   const [partialResult, setPartialResult] = useState<Record<string, unknown> | null>(null)
   const partialResultRef = useRef<Record<string, unknown> | null>(null)
   const abortRef = useRef<AbortController | null>(null)
-  const addressInputRef = useRef<HTMLInputElement | null>(null)
   const navigate = useNavigate()
 
-  usePlacesAutocomplete(addressInputRef, {
-    onSelect: (formatted) => { setAddress(formatted); if (error) setError('') },
-  })
+  const handlePlaceSelect = useCallback((place: PlaceSelection) => {
+    setAddress(place.formattedAddress)
+    setGeoLocation(place.location)
+    setPlaceId(place.placeId)
+    if (error) setError('')
+  }, [error])
 
   useEffect(() => {
     try {
@@ -72,12 +80,18 @@ export default function AnalyzePage() {
     } catch { /* ignore */ }
 
     try {
-      const res = await fetch(`${API_URL}/api/analysis/quick/stream?address=${encodeURIComponent(addr)}`, {
+      const authHeaders = await ensureAuthHeaders()
+      let streamUrl = `${API_URL}/api/analysis/quick/stream?address=${encodeURIComponent(addr)}`
+      if (geoLocation) {
+        streamUrl += `&lat=${geoLocation.lat}&lng=${geoLocation.lng}`
+      }
+      if (placeId) {
+        streamUrl += `&place_id=${encodeURIComponent(placeId)}`
+      }
+      const res = await fetch(streamUrl, {
         credentials: 'include',
         signal: controller.signal,
-        headers: {
-          ...(getAuthHeaders()),
-        },
+        headers: authHeaders,
       })
 
       if (!res.ok || !res.body) {
@@ -286,24 +300,27 @@ export default function AnalyzePage() {
 
           {/* Address input */}
           <div className="relative mb-2">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8A8580]">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8A8580] z-10 pointer-events-none">
               <MapPin size={18} />
             </div>
-            <input
-              ref={addressInputRef}
-              type="text"
-              value={address}
-              onChange={e => { setAddress(e.target.value); if (error) setError('') }}
-              onKeyDown={handleKeyDown}
-              placeholder="Enter an address — e.g. 613 N 14th St, Sheboygan, WI"
-              className={`w-full h-12 pl-11 pr-28 rounded-xl bg-[#141311] text-[#F0EDE8] text-sm placeholder-[#8A8580]/60 focus:outline-none focus:ring-2 transition-all ${
-                error ? 'border border-[#F87171] focus:ring-[#F87171]/30' : 'border border-[#1E1D1B] focus:ring-[#8B7AFF]/30'
-              }`}
-            />
+            {isMapsEnabled ? (
+              <Suspense fallback={<AddressFallbackInput address={address} onChange={v => { setAddress(v); if (error) setError('') }} onKeyDown={handleKeyDown} hasError={!!error} />}>
+                <MapsProvider>
+                  <PlaceAutocompleteInput
+                    onPlaceSelect={handlePlaceSelect}
+                    onInputChange={v => { setAddress(v); if (error) setError('') }}
+                    value={address}
+                    className={error ? 'autocomplete-error' : ''}
+                  />
+                </MapsProvider>
+              </Suspense>
+            ) : (
+              <AddressFallbackInput address={address} onChange={v => { setAddress(v); if (error) setError('') }} onKeyDown={handleKeyDown} hasError={!!error} />
+            )}
             <button
               onClick={handleSubmit}
               disabled={!address.trim()}
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] disabled:opacity-40 disabled:cursor-not-allowed"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] disabled:opacity-40 disabled:cursor-not-allowed z-10"
             >
               Analyze
             </button>
@@ -348,6 +365,27 @@ export default function AnalyzePage() {
         </motion.div>
       </div>
     </AppShell>
+  )
+}
+
+/** Plain <input> fallback when Maps SDK is unavailable or still loading. */
+function AddressFallbackInput({ address, onChange, onKeyDown, hasError }: {
+  address: string
+  onChange: (v: string) => void
+  onKeyDown?: (e: React.KeyboardEvent) => void
+  hasError: boolean
+}) {
+  return (
+    <input
+      type="text"
+      value={address}
+      onChange={e => onChange(e.target.value)}
+      onKeyDown={onKeyDown}
+      placeholder="Enter an address — e.g. 613 N 14th St, Sheboygan, WI"
+      className={`w-full h-12 pl-11 pr-28 rounded-xl bg-[#141311] text-[#F0EDE8] text-sm placeholder-[#8A8580]/60 focus:outline-none focus:ring-2 transition-all ${
+        hasError ? 'border border-[#F87171] focus:ring-[#F87171]/30' : 'border border-[#1E1D1B] focus:ring-[#8B7AFF]/30'
+      }`}
+    />
   )
 }
 

@@ -158,13 +158,19 @@ export default function AnalysisResultsPage() {
     finally { setRefreshingNarrative(false) }
   }, [activeScenario])
 
-  const handleSave = useCallback(() => {
-    if (saved) return
-    // Deal was auto-created during analysis — "Save" confirms the user's intent
+  const handleSave = useCallback(async () => {
+    if (saved || !dealId) return
     setSaved(true)
-    toast.success('Deal saved')
+    try {
+      await api.pipeline.add({ deal_id: dealId, stage: 'lead' })
+      toast.success('Deal saved to pipeline', {
+        action: { label: 'View Pipeline →', onClick: () => navigate('/pipeline') },
+      })
+    } catch {
+      toast.success('Deal saved')
+    }
     try { ;(window as any).posthog?.capture?.('deal_saved', { property_id: propertyId, deal_id: dealId }) } catch {}
-  }, [saved, propertyId, dealId])
+  }, [saved, dealId, propertyId, navigate])
 
   const handlePipeline = useCallback(async () => {
     if (!dealId) {

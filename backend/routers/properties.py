@@ -45,6 +45,9 @@ class PropertyDetailResponse(BaseModel):
     status: str
     data_sources: Optional[dict] = None
     is_sample: bool = False
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    place_id: Optional[str] = None
     created_at: str
     updated_at: str
 
@@ -71,6 +74,9 @@ class PropertyDetailResponse(BaseModel):
             status=p.status,
             data_sources=p.data_sources,
             is_sample=p.is_sample,
+            latitude=float(p.latitude) if p.latitude is not None else None,
+            longitude=float(p.longitude) if p.longitude is not None else None,
+            place_id=p.place_id,
             created_at=(
                 p.created_at.isoformat() if p.created_at else ""
             ),
@@ -160,6 +166,8 @@ class PropertyListItem(BaseModel):
     year_built: Optional[int] = None
     status: str
     is_sample: bool = False
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
     created_at: str
     updated_at: str
     primary_scenario: Optional[ScenarioSummary] = None
@@ -331,6 +339,8 @@ async def list_properties(
             year_built=p.year_built,
             status=p.status,
             is_sample=p.is_sample,
+            latitude=float(p.latitude) if p.latitude is not None else None,
+            longitude=float(p.longitude) if p.longitude is not None else None,
             created_at=(
                 p.created_at.isoformat() if p.created_at else ""
             ),
