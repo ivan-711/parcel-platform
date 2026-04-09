@@ -320,7 +320,7 @@ export default function AnalyzePage() {
             <button
               onClick={handleSubmit}
               disabled={!address.trim()}
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] disabled:opacity-40 disabled:cursor-not-allowed z-10"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] disabled:opacity-40 disabled:cursor-not-allowed z-20"
             >
               Analyze
             </button>

@@ -580,8 +580,12 @@
    PlaceAutocompleteElement renders a shadow-DOM <input>.
    Style via ::part(input) and the .pac-container dropdown.
    ---------------------------------------------------------------- */
+/* The container clips the right edge so the built-in clear button is hidden
+   behind the Analyze button zone. */
 .parcel-autocomplete-container {
   width: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
 .parcel-autocomplete {
@@ -589,17 +593,28 @@
   color-scheme: dark;
 }
 
-/* Hide the built-in clear (X) button — it overlaps with the Analyze button */
-.parcel-autocomplete::part(clear-button) {
-  display: none;
+/* Hide the built-in clear (X) button — it overlaps with the Analyze button.
+   Target by tag name + class, and every known part/selector Google may expose. */
+gmp-place-autocomplete::part(clear-button),
+.parcel-autocomplete::part(clear-button),
+gmp-place-autocomplete::part(clear),
+.parcel-autocomplete::part(clear) {
+  display: none !important;
+}
+
+/* Fallback: hide any clear/close icon via CSS custom properties */
+gmp-place-autocomplete,
+.parcel-autocomplete {
+  --gmp-clear-button-display: none;
 }
 
 /* Style the inner input via ::part */
-.parcel-autocomplete::part(input) {
+.parcel-autocomplete::part(input),
+gmp-place-autocomplete::part(input) {
   width: 100%;
   height: 48px;
   padding-left: 2.75rem;
-  padding-right: 7rem;
+  padding-right: 7.5rem;
   border-radius: 0.75rem;
   background: #141311;
   color: #F0EDE8;
@@ -610,20 +625,24 @@
   transition: box-shadow 0.15s, border-color 0.15s;
 }
 
-.parcel-autocomplete::part(input):focus {
+.parcel-autocomplete::part(input):focus,
+gmp-place-autocomplete::part(input):focus {
   box-shadow: 0 0 0 2px rgba(139, 122, 255, 0.3);
   border-color: rgba(139, 122, 255, 0.3);
 }
 
-.parcel-autocomplete::part(input)::placeholder {
+.parcel-autocomplete::part(input)::placeholder,
+gmp-place-autocomplete::part(input)::placeholder {
   color: rgba(138, 133, 128, 0.6);
 }
 
-.autocomplete-error .parcel-autocomplete::part(input) {
+.autocomplete-error .parcel-autocomplete::part(input),
+.autocomplete-error gmp-place-autocomplete::part(input) {
   border-color: #F87171;
 }
 
-.autocomplete-error .parcel-autocomplete::part(input):focus {
+.autocomplete-error .parcel-autocomplete::part(input):focus,
+.autocomplete-error gmp-place-autocomplete::part(input):focus {
   box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.3);
 }
 
