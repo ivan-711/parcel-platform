@@ -586,8 +586,10 @@ async def quick_analysis_stream(
                 scenario_data = ScenarioResponse.model_validate(enrichment.scenario).model_dump(mode="json")
                 yield _sse("scenario", scenario_data)
 
-            # Stage 4: AI Narrative
-            if enrichment.scenario and not enrichment.is_existing:
+            # Stage 4: AI Narrative — generate for new properties OR existing
+            # ones that never got a narrative (e.g. first attempt crashed)
+            needs_narrative = not enrichment.is_existing or not enrichment.scenario.ai_narrative
+            if enrichment.scenario and needs_narrative:
                 yield _sse("status", {"stage": "generating_narrative"})
 
                 narrative_resp = await _generate_narrative(
