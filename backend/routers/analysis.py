@@ -470,6 +470,15 @@ async def quick_analysis_stream(
 
             enrichment = await asyncio.to_thread(_enrich_sync) if _use_thread else _enrich_sync()
 
+            # The enrichment call takes 5-30s (RentCast + Bricked). During
+            # this time the main db session sits idle. Railway's PgBouncer
+            # or PostgreSQL may drop idle connections, causing the subsequent
+            # db.merge() / db.commit() to fail on a stale connection.
+            # Rollback any stale transaction state and force a reconnect
+            # via pool_pre_ping on the next operation.
+            if _use_thread:
+                db.rollback()
+
             # Re-attach detached ORM objects to the main session.
             # The thread session expunged them; merge() copies their state
             # into the main session so lazy loads and flushes work.
@@ -535,6 +544,8 @@ async def quick_analysis_stream(
                                     bdb.close()
 
                             bricked_status = await asyncio.to_thread(_bricked_sync)
+                            # Bricked takes 15-30s — refresh stale connection
+                            db.rollback()
                         else:
                             bricked_status = enrich_with_bricked(
                                 enrichment.property, enrichment.scenario, address, db,
