@@ -1,20 +1,19 @@
 /**
- * Address autocomplete input using Google Places API (New).
+ * Address autocomplete input using the headless Places Autocomplete Data API.
  *
- * Uses the PlaceAutocompleteElement web component which renders its own
- * <input> inside a shadow DOM. Styled via ::part(input) CSS to match
- * Parcel's dark theme.
+ * Uses AutocompleteSuggestion.fetchAutocompleteSuggestions() with our own
+ * <input> and dropdown — no shadow DOM, no PlaceAutocompleteElement web
+ * component. This gives full control over styling and layout.
  *
  * Must be rendered inside a <MapsProvider> (APIProvider ancestor).
  */
 
-import { useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useMapsLibrary } from '@vis.gl/react-google-maps'
 import type { PlaceSelection } from '@/types/maps'
 
 interface PlaceAutocompleteInputProps {
   onPlaceSelect: (place: PlaceSelection) => void
-  /** Called on every keystroke so the parent can track the raw text value. */
   onInputChange?: (value: string) => void
   placeholder?: string
   className?: string
@@ -27,34 +26,70 @@ export function PlaceAutocompleteInput({
   onInputChange,
   placeholder = 'Enter an address — e.g. 613 N 14th St, Sheboygan, WI',
   className = '',
-  value,
+  value = '',
   autoFocus,
 }: PlaceAutocompleteInputProps) {
+  const placesLib = useMapsLibrary('places')
+  const [suggestions, setSuggestions] = useState<google.maps.places.AutocompleteSuggestion[]>([])
+  const [isOpen, setIsOpen] = useState(false)
+  const [highlightIdx, setHighlightIdx] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
-  const elementRef = useRef<google.maps.places.PlaceAutocompleteElement | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null)
   const onSelectRef = useRef(onPlaceSelect)
   const onChangeRef = useRef(onInputChange)
   onSelectRef.current = onPlaceSelect
   onChangeRef.current = onInputChange
 
-  const placesLib = useMapsLibrary('places')
+  // Create a session token for billing purposes (groups keystrokes into one session)
+  useEffect(() => {
+    if (placesLib) {
+      sessionTokenRef.current = new google.maps.places.AutocompleteSessionToken()
+    }
+  }, [placesLib])
 
-  const initAutocomplete = useCallback(() => {
-    if (!placesLib || !containerRef.current || elementRef.current) return
+  const fetchSuggestions = useCallback(async (input: string) => {
+    if (!placesLib || input.trim().length < 3) {
+      setSuggestions([])
+      setIsOpen(false)
+      return
+    }
 
-    const el = new google.maps.places.PlaceAutocompleteElement({
-      componentRestrictions: { country: 'us' },
-      types: ['address'],
-    })
+    try {
+      const { suggestions: results } = await google.maps.places.AutocompleteSuggestion.fetchAutocompleteSuggestions({
+        input,
+        includedRegionCodes: ['us'],
+        includedPrimaryTypes: ['street_address', 'subpremise', 'premise', 'route'],
+        sessionToken: sessionTokenRef.current ?? undefined,
+      })
+      setSuggestions(results)
+      setIsOpen(results.length > 0)
+      setHighlightIdx(-1)
+    } catch {
+      setSuggestions([])
+      setIsOpen(false)
+    }
+  }, [placesLib])
 
-    // Apply Parcel dark theme classes to the web component host element
-    el.classList.add('parcel-autocomplete')
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    onChangeRef.current?.(val)
 
-    el.addEventListener('gmp-placeselect', async (event: any) => {
-      const place = event.place as google.maps.places.Place
-      if (!place) return
+    // Debounce suggestions fetch
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => fetchSuggestions(val), 300)
+  }
 
-      // Fetch the fields we need (included in session pricing — no extra cost)
+  const handleSelect = useCallback(async (suggestion: google.maps.places.AutocompleteSuggestion) => {
+    const prediction = suggestion.placePrediction
+    if (!prediction) return
+
+    setIsOpen(false)
+    setSuggestions([])
+
+    try {
+      const place = prediction.toPlace()
       await place.fetchFields({ fields: ['formattedAddress', 'location', 'id'] })
 
       const result: PlaceSelection = {
@@ -66,40 +101,50 @@ export function PlaceAutocompleteInput({
       }
 
       onSelectRef.current(result)
-    })
 
-    // Track raw input text
-    el.addEventListener('input', () => {
-      const input = el.querySelector('input') ?? (el.shadowRoot?.querySelector('input'))
-      if (input && onChangeRef.current) {
-        onChangeRef.current(input.value)
-      }
-    })
-
-    containerRef.current.appendChild(el)
-    elementRef.current = el
-
-    if (autoFocus) {
-      // Focus the inner input after a tick (shadow DOM needs time to render)
-      requestAnimationFrame(() => {
-        const inner = el.querySelector('input') ?? (el.shadowRoot?.querySelector('input'))
-        inner?.focus()
+      // Reset session token after a selection (starts a new billing session)
+      sessionTokenRef.current = new google.maps.places.AutocompleteSessionToken()
+    } catch {
+      // If fetchFields fails, still use the prediction text
+      const text = prediction.mainText?.text ?? ''
+      const secondary = prediction.secondaryText?.text ?? ''
+      onSelectRef.current({
+        formattedAddress: secondary ? `${text}, ${secondary}` : text,
+        location: null,
+        placeId: null,
       })
     }
-  }, [placesLib, autoFocus])
+  }, [])
 
-  useEffect(() => {
-    initAutocomplete()
-    return () => {
-      if (elementRef.current && containerRef.current?.contains(elementRef.current)) {
-        containerRef.current.removeChild(elementRef.current)
-      }
-      elementRef.current = null
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isOpen || suggestions.length === 0) return
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setHighlightIdx(prev => (prev + 1) % suggestions.length)
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setHighlightIdx(prev => (prev <= 0 ? suggestions.length - 1 : prev - 1))
+    } else if (e.key === 'Enter' && highlightIdx >= 0) {
+      e.preventDefault()
+      handleSelect(suggestions[highlightIdx])
+    } else if (e.key === 'Escape') {
+      setIsOpen(false)
     }
-  }, [initAutocomplete])
+  }
 
-  // If API key is missing or Places library isn't loaded yet, render a plain <input>
-  // so the user can still type an address manually (graceful degradation).
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Fallback: if Places library isn't loaded yet, render a plain input
   if (!placesLib) {
     return (
       <input
@@ -113,5 +158,45 @@ export function PlaceAutocompleteInput({
     )
   }
 
-  return <div ref={containerRef} className={`parcel-autocomplete-container ${className}`} />
+  return (
+    <div ref={containerRef} className={`parcel-autocomplete-container ${className}`}>
+      <input
+        ref={inputRef}
+        type="text"
+        value={value}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
+        onFocus={() => { if (suggestions.length > 0) setIsOpen(true) }}
+        placeholder={placeholder}
+        autoFocus={autoFocus}
+        autoComplete="off"
+        className="parcel-autocomplete-input"
+      />
+      {isOpen && suggestions.length > 0 && (
+        <ul className="parcel-autocomplete-dropdown">
+          {suggestions.map((s, i) => {
+            const prediction = s.placePrediction
+            if (!prediction) return null
+            return (
+              <li
+                key={i}
+                onMouseDown={() => handleSelect(s)}
+                onMouseEnter={() => setHighlightIdx(i)}
+                className={`parcel-autocomplete-item${i === highlightIdx ? ' highlighted' : ''}`}
+              >
+                <span className="parcel-autocomplete-main">
+                  {prediction.mainText?.text ?? ''}
+                </span>
+                {prediction.secondaryText?.text && (
+                  <span className="parcel-autocomplete-secondary">
+                    {' '}{prediction.secondaryText.text}
+                  </span>
+                )}
+              </li>
+            )
+          })}
+        </ul>
+      )}
+    </div>
+  )
 }
