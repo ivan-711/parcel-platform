@@ -88,22 +88,26 @@ def create_checkout_session(db: Session, user, plan: str, interval: str) -> str:
     customer_id = get_or_create_customer(db, user)
     price_id = settings.get_price_id(plan, interval)
 
+    subscription_data: dict = {
+        "metadata": {
+            "parcel_user_id": str(user.id),
+            "parcel_plan": plan,
+        },
+    }
+    # 7-day free trial for Carbon (pro) tier only
+    if plan in ("pro", "carbon"):
+        subscription_data["trial_period_days"] = settings.TRIAL_PERIOD_DAYS
+
     session = _stripe_call(
         stripe.checkout.Session.create,
         mode="subscription",
         customer=customer_id,
         client_reference_id=str(user.id),
         line_items=[{"price": price_id, "quantity": 1}],
-        subscription_data={
-            "trial_period_days": 7,
-            "metadata": {
-                "parcel_user_id": str(user.id),
-                "parcel_plan": plan,
-            },
-        },
+        subscription_data=subscription_data,
         payment_method_collection="if_required",
         allow_promotion_codes=True,
-        success_url=f"{settings.FRONTEND_URL}/pricing?billing=success&session_id={{CHECKOUT_SESSION_ID}}",
+        success_url=f"{settings.FRONTEND_URL}/dashboard?checkout=success&session_id={{CHECKOUT_SESSION_ID}}",
         cancel_url=f"{settings.FRONTEND_URL}/pricing",
     )
 
