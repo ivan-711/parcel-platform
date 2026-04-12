@@ -13,10 +13,10 @@ import type { SkipTraceResult, PhoneResult, EmailResult } from '@/types'
 // ---------------------------------------------------------------------------
 
 const PHONE_TYPE_STYLES: Record<PhoneResult['type'], string> = {
-  mobile:   'bg-[#4ADE80]/15 text-[#4ADE80] border border-[#4ADE80]/30',
-  landline: 'bg-[#8A8580]/15 text-[#8A8580] border border-[#8A8580]/30',
-  voip:     'bg-[#60A5FA]/15 text-[#60A5FA] border border-[#60A5FA]/30',
-  unknown:  'bg-[#8A8580]/15 text-[#8A8580] border border-[#8A8580]/30',
+  mobile:   'bg-profit-bg text-profit border border-profit/30',
+  landline: 'bg-text-muted/15 text-text-muted border border-text-muted/30',
+  voip:     'bg-info-bg text-info border border-info/30',
+  unknown:  'bg-text-muted/15 text-text-muted border border-text-muted/30',
 }
 
 function PhoneTypeBadge({ type }: { type: PhoneResult['type'] }) {
@@ -41,8 +41,9 @@ function CopyButton({ value }: { value: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="inline-flex items-center px-2 py-1 rounded text-xs text-[#8A8580] hover:text-[#F0EDE8] hover:bg-[#1E1D1B] transition-colors"
+      className="inline-flex items-center px-2 py-1 rounded text-xs text-text-muted hover:text-text-primary hover:bg-border-default transition-colors"
       title="Copy"
+      aria-label="Copy to clipboard"
     >
       <Copy size={11} />
     </button>
@@ -58,16 +59,16 @@ function PhoneRow({ phone }: { phone: PhoneResult }) {
 
   return (
     <div className="flex items-center gap-2 py-1">
-      <span className="text-sm text-[#F0EDE8] font-mono tabular-nums">{phone.number}</span>
+      <span className="text-sm text-text-primary font-mono tabular-nums">{phone.number}</span>
       <PhoneTypeBadge type={phone.type} />
       {phone.is_primary && (
-        <span className="text-[10px] text-[#8A8580] uppercase tracking-wide">(primary)</span>
+        <span className="text-[10px] text-text-muted uppercase tracking-wide">(primary)</span>
       )}
       <div className="flex items-center gap-0.5 ml-auto">
         <CopyButton value={phone.number} />
         <a
           href={smsHref}
-          className="inline-flex items-center px-2.5 py-1 rounded text-xs text-[#8A8580] hover:text-[#F0EDE8] hover:bg-[#1E1D1B] transition-colors"
+          className="inline-flex items-center px-2.5 py-1 rounded text-xs text-text-muted hover:text-text-primary hover:bg-border-default transition-colors"
         >
           SMS
         </a>
@@ -85,15 +86,15 @@ function EmailRow({ email }: { email: EmailResult }) {
 
   return (
     <div className="flex items-center gap-2 py-1">
-      <span className="text-sm text-[#F0EDE8] truncate">{email.email}</span>
+      <span className="text-sm text-text-primary truncate">{email.email}</span>
       {email.is_primary && (
-        <span className="text-[10px] text-[#8A8580] uppercase tracking-wide">(primary)</span>
+        <span className="text-[10px] text-text-muted uppercase tracking-wide">(primary)</span>
       )}
       <div className="flex items-center gap-0.5 ml-auto shrink-0">
         <CopyButton value={email.email} />
         <a
           href={mailHref}
-          className="inline-flex items-center px-2.5 py-1 rounded text-xs text-[#8A8580] hover:text-[#F0EDE8] hover:bg-[#1E1D1B] transition-colors"
+          className="inline-flex items-center px-2.5 py-1 rounded text-xs text-text-muted hover:text-text-primary hover:bg-border-default transition-colors"
         >
           Email
         </a>
@@ -156,23 +157,22 @@ export function SkipTraceResultCard({ result, onCreateContact }: Props) {
   const effectiveContactName = createdContactName || ownerName
 
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5 space-y-5">
+    <div className="bg-app-recessed border border-border-default rounded-xl p-5 space-y-5">
       {/* Owner name + absentee badge */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-[#8B7AFF]/15 flex items-center justify-center shrink-0">
-            <User size={15} className="text-[#8B7AFF]" />
+          <div className="w-8 h-8 rounded-full bg-accent-primary/15 flex items-center justify-center shrink-0">
+            <User size={15} className="text-accent-primary" />
           </div>
           <h2
-            className="text-xl text-[#F0EDE8]"
-            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+            className="text-xl text-text-primary font-brand font-light"
           >
             {ownerName}
           </h2>
         </div>
 
         {result.is_absentee_owner && (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium tracking-wide bg-[#F97316]/15 text-[#F97316] border border-[#F97316]/30 shrink-0">
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium tracking-wide bg-warning-bg text-warning border border-warning/30 shrink-0">
             ABSENTEE OWNER
           </span>
         )}
@@ -180,44 +180,44 @@ export function SkipTraceResultCard({ result, onCreateContact }: Props) {
 
       {/* Traced address */}
       {inputAddr && (
-        <p className="text-xs text-[#8A8580]">{inputAddr}</p>
+        <p className="text-xs text-text-muted">{inputAddr}</p>
       )}
 
       {/* Phones */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <Phone size={13} className="text-[#8A8580]" />
-          <span className="text-xs text-[#8A8580] uppercase tracking-wide font-medium">
+          <Phone size={13} className="text-text-muted" />
+          <span className="text-xs text-text-muted uppercase tracking-wide font-medium">
             Phones {(result.phones ?? []).length > 0 && `(${(result.phones ?? []).length})`}
           </span>
         </div>
         {(result.phones ?? []).length > 0 ? (
-          <div className="divide-y divide-[#1E1D1B]">
+          <div className="divide-y divide-border-default">
             {(result.phones ?? []).map((p, i) => (
               <PhoneRow key={i} phone={p} />
             ))}
           </div>
         ) : (
-          <p className="text-sm text-[#8A8580] italic">No phone numbers found</p>
+          <p className="text-sm text-text-muted italic">No phone numbers found</p>
         )}
       </div>
 
       {/* Emails */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <Mail size={13} className="text-[#8A8580]" />
-          <span className="text-xs text-[#8A8580] uppercase tracking-wide font-medium">
+          <Mail size={13} className="text-text-muted" />
+          <span className="text-xs text-text-muted uppercase tracking-wide font-medium">
             Emails {(result.emails ?? []).length > 0 && `(${(result.emails ?? []).length})`}
           </span>
         </div>
         {(result.emails ?? []).length > 0 ? (
-          <div className="divide-y divide-[#1E1D1B]">
+          <div className="divide-y divide-border-default">
             {(result.emails ?? []).map((e, i) => (
               <EmailRow key={i} email={e} />
             ))}
           </div>
         ) : (
-          <p className="text-sm text-[#8A8580] italic">No email addresses found</p>
+          <p className="text-sm text-text-muted italic">No email addresses found</p>
         )}
       </div>
 
@@ -225,22 +225,22 @@ export function SkipTraceResultCard({ result, onCreateContact }: Props) {
       {mailingLine && (
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <MapPin size={13} className="text-[#8A8580]" />
-            <span className="text-xs text-[#8A8580] uppercase tracking-wide font-medium">Mailing Address</span>
+            <MapPin size={13} className="text-text-muted" />
+            <span className="text-xs text-text-muted uppercase tracking-wide font-medium">Mailing Address</span>
           </div>
-          <p className="text-sm text-[#C5C0B8] pl-5">{mailingLine}</p>
+          <p className="text-sm text-text-secondary pl-5">{mailingLine}</p>
         </div>
       )}
 
       {/* Demographics */}
       {hasDemographics && (
         <div>
-          <p className="text-xs text-[#8A8580] uppercase tracking-wide font-medium mb-1">Demographics</p>
+          <p className="text-xs text-text-muted uppercase tracking-wide font-medium mb-1">Demographics</p>
           <div className="flex flex-wrap gap-x-4 gap-y-1 pl-0">
             {Object.entries(result.demographics!).map(([key, val]) => (
-              <span key={key} className="text-xs text-[#8A8580]">
+              <span key={key} className="text-xs text-text-muted">
                 <span className="capitalize">{key.replace(/_/g, ' ')}</span>:{' '}
-                <span className="text-[#C5C0B8]">{String(val)}</span>
+                <span className="text-text-secondary">{String(val)}</span>
               </span>
             ))}
           </div>
@@ -248,11 +248,11 @@ export function SkipTraceResultCard({ result, onCreateContact }: Props) {
       )}
 
       {/* Actions */}
-      <div className="pt-1 border-t border-[#1E1D1B]">
+      <div className="pt-1 border-t border-border-default">
         {effectiveContactId ? (
           <Link
             to={contactPath(effectiveContactId)}
-            className="text-sm text-[#8B7AFF] hover:text-[#7B6AEF] transition-colors"
+            className="text-sm text-accent-primary hover:text-accent-hover transition-colors"
           >
             Contact: {effectiveContactName} →
           </Link>
@@ -260,7 +260,7 @@ export function SkipTraceResultCard({ result, onCreateContact }: Props) {
           <button
             onClick={handleCreateContact}
             disabled={createContact.isPending}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm bg-accent-primary text-accent-text-on-accent hover:bg-accent-hover transition-colors disabled:opacity-50"
           >
             {createContact.isPending ? 'Creating...' : 'Create Contact'}
           </button>

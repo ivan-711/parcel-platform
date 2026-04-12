@@ -29,16 +29,16 @@ function trackEvent(event: string, props?: Record<string, unknown>) {
 }
 
 const TYPE_COLORS: Record<string, string> = {
-  analysis: 'bg-[#8B7AFF]/10 text-[#8B7AFF] border-[#8B7AFF]/20',
-  portfolio_snapshot: 'bg-[#6DBEA3]/10 text-[#6DBEA3] border-[#6DBEA3]/20',
-  buyer_packet: 'bg-[#E5A84B]/10 text-[#E5A84B] border-[#E5A84B]/20',
+  analysis: 'bg-violet-400/10 text-violet-400 border-violet-400/20',
+  portfolio_snapshot: 'bg-success-bg text-success border-success/20',
+  buyer_packet: 'bg-warning-bg text-warning border-warning/20',
 }
 
 const AUDIENCE_COLORS: Record<string, string> = {
-  client: 'bg-[#8B7AFF]/10 text-[#8B7AFF] border-[#8B7AFF]/20',
-  lender: 'bg-[#6DBEA3]/10 text-[#6DBEA3] border-[#6DBEA3]/20',
+  client: 'bg-violet-400/10 text-violet-400 border-violet-400/20',
+  lender: 'bg-success-bg text-success border-success/20',
   internal: 'bg-layer-2 text-text-secondary border-border-default',
-  partner: 'bg-[#E5A84B]/10 text-[#E5A84B] border-[#E5A84B]/20',
+  partner: 'bg-warning-bg text-warning border-warning/20',
 }
 
 function formatRelativeDate(dateStr: string): string {
@@ -96,13 +96,13 @@ function ReportActions({
 
   return (
     <div className="flex items-center gap-1">
-      <button onClick={handleCopyLink} className="p-1.5 rounded-md hover:bg-layer-2 text-text-secondary hover:text-text-primary transition-colors" title="Copy share link">
+      <button onClick={handleCopyLink} className="p-1.5 rounded-md hover:bg-layer-2 text-text-secondary hover:text-text-primary transition-colors" title="Copy share link" aria-label="Copy share link">
         <Link2 size={14} />
       </button>
-      <button onClick={() => void handleDownloadPdf()} disabled={pdfLoading} className="p-1.5 rounded-md hover:bg-layer-2 text-text-secondary hover:text-text-primary transition-colors disabled:opacity-40" title="Download PDF">
+      <button onClick={() => void handleDownloadPdf()} disabled={pdfLoading} className="p-1.5 rounded-md hover:bg-layer-2 text-text-secondary hover:text-text-primary transition-colors disabled:opacity-40" title="Download PDF" aria-label="Download PDF">
         {pdfLoading ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
       </button>
-      <button onClick={() => onDelete(report.id)} className="p-1.5 rounded-md hover:bg-[#D4766A]/10 text-text-secondary hover:text-[#D4766A] transition-colors" title="Delete">
+      <button onClick={() => onDelete(report.id)} className="p-1.5 rounded-md hover:bg-error-bg text-text-secondary hover:text-error transition-colors" title="Delete" aria-label="Delete report">
         <Trash2 size={14} />
       </button>
     </div>
@@ -148,7 +148,7 @@ export default function ReportsListPage() {
           </div>
           {!isEmpty && (
             <Button
-              className="bg-[#8B7AFF] hover:bg-[#6C5CE7] text-white text-xs gap-1.5"
+              className="bg-violet-400 hover:bg-violet-600 text-white text-xs gap-1.5"
               size="sm"
               onClick={() => toast('Create report from an analysis result', { description: 'Go to a property analysis and click "Generate Report"' })}
             >
@@ -191,8 +191,8 @@ export default function ReportsListPage() {
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col items-center justify-center py-24 text-center"
           >
-            <div className="w-16 h-16 rounded-2xl bg-[#8B7AFF]/10 border border-[#8B7AFF]/15 flex items-center justify-center mb-4">
-              <FileText size={28} className="text-[#8B7AFF]" />
+            <div className="w-16 h-16 rounded-2xl bg-violet-400/10 border border-violet-400/15 flex items-center justify-center mb-4">
+              <FileText size={28} className="text-violet-400" />
             </div>
             <h2 className="text-lg font-semibold text-text-primary mb-2">
               Your analysis shelf is empty
@@ -201,7 +201,7 @@ export default function ReportsListPage() {
               Generate professional investment reports to share with clients, partners, or lenders.
             </p>
             <Button
-              className="bg-[#8B7AFF] hover:bg-[#6C5CE7] text-white gap-1.5"
+              className="bg-violet-400 hover:bg-violet-600 text-white gap-1.5"
               onClick={() => toast('Create report from an analysis result', { description: 'Go to a property analysis and click "Generate Report"' })}
             >
               <Plus size={14} />
@@ -246,7 +246,7 @@ export default function ReportsListPage() {
                   {report.audience || 'internal'}
                 </Badge>
                 <span className="text-xs text-text-secondary tabular-nums whitespace-nowrap">{formatRelativeDate(report.created_at)}</span>
-                <span className={cn('text-xs tabular-nums flex items-center gap-1', report.view_count > 0 ? 'text-[#6DBEA3]' : 'text-text-disabled')}>
+                <span className={cn('text-xs tabular-nums flex items-center gap-1', report.view_count > 0 ? 'text-success' : 'text-text-disabled')}>
                   <Eye size={12} />
                   {report.view_count}
                 </span>

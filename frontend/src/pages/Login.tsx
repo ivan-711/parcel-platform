@@ -1,6 +1,7 @@
 import { SignIn } from '@clerk/clerk-react'
 import { Helmet } from 'react-helmet-async'
 import { motion } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 
 /** Full-screen login page — wraps Clerk's SignIn component with Parcel branding. */
 export default function Login() {
@@ -12,12 +13,12 @@ export default function Login() {
       </Helmet>
       {/* Ambient glow */}
       <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
-        <div className="w-[480px] h-[480px] rounded-full bg-[#8B7AFF]/[0.06] blur-[120px]" />
+        <div className="w-[480px] h-[480px] rounded-full bg-violet-400/[0.06] blur-[120px]" />
       </div>
       <motion.div
-        initial={{ opacity: 0, scale: 0.96 }}
+        initial={prefersReducedMotion ? {} : { opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+        transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
         className="relative"
       >
         <SignIn
@@ -32,9 +33,9 @@ export default function Login() {
               headerSubtitle: 'text-text-secondary',
               formFieldLabel: 'text-text-secondary',
               formFieldInput: 'bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled',
-              formButtonPrimary: 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90',
-              footerActionLink: 'text-[#8B7AFF] hover:text-[#A89FFF]',
-              identityPreviewEditButton: 'text-[#8B7AFF]',
+              formButtonPrimary: 'bg-gradient-to-r from-violet-400 to-violet-600 text-accent-text-on-accent hover:opacity-90',
+              footerActionLink: 'text-violet-400 hover:text-violet-300',
+              identityPreviewEditButton: 'text-violet-400',
             },
           }}
         />

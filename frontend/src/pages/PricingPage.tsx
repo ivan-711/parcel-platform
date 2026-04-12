@@ -9,26 +9,18 @@ import { AppShell } from '@/components/layout/AppShell'
 import { useBillingStatus, useCheckout, usePortal } from '@/hooks/useBilling'
 import { useAuthStore } from '@/stores/authStore'
 import { cn } from '@/lib/utils'
+import { prefersReducedMotion } from '@/lib/motion'
 import type { BillingCycle } from '@/types'
 
 /* ─── Animation Variants ─── */
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-}
+const staggerContainer = prefersReducedMotion
+  ? { hidden: {}, visible: {} }
+  : { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } }
 
-const staggerItem = {
-  hidden: { opacity: 0, y: 16 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] },
-  },
-}
+const staggerItem = prefersReducedMotion
+  ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+  : { hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] } } }
 
 /* ─── Plan Data ─── */
 
@@ -110,7 +102,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
           size={16}
           className={cn(
             'shrink-0 transition-transform duration-200',
-            open ? 'text-[#8B7AFF] rotate-180' : 'text-text-muted',
+            open ? 'text-violet-400 rotate-180' : 'text-text-muted',
           )}
         />
       </button>
@@ -166,7 +158,7 @@ function BillingToggle({
           )}
         >
           Annual
-          <span className="bg-[#8B7AFF]/15 text-[#8B7AFF] text-xs font-semibold px-2 py-0.5 rounded-full">
+          <span className="bg-violet-400/15 text-violet-400 text-xs font-semibold px-2 py-0.5 rounded-full">
             Save 20%
           </span>
         </button>
@@ -174,7 +166,7 @@ function BillingToggle({
         {/* Animated active pill */}
         <motion.div
           layoutId="billing-toggle-pill"
-          className="absolute top-1 bottom-1 rounded-md bg-[#8B7AFF]/15 border border-[#8B7AFF]/20"
+          className="absolute top-1 bottom-1 rounded-md bg-violet-400/15 border border-violet-400/20"
           style={{
             left: interval === 'monthly' ? '4px' : undefined,
             right: interval === 'annual' ? '4px' : undefined,
@@ -251,7 +243,7 @@ export default function PricingPage() {
 
         {/* ── Header ── */}
         <div className="text-center space-y-4">
-          <h1 className="text-2xl font-semibold text-text-primary">
+          <h1 className="text-2xl font-brand font-light text-text-primary">
             Choose Your Plan
           </h1>
           <p className="text-base text-text-secondary">
@@ -265,11 +257,15 @@ export default function PricingPage() {
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
+          role="list"
+          aria-label="Pricing plans"
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {/* Steel Card (Free) */}
           <motion.div
             variants={staggerItem}
+            role="listitem"
+            aria-label="Steel plan — Free"
             className="bg-white/[0.03] rounded-lg border border-border-default p-6 flex flex-col order-2 md:order-1"
           >
             <div className="space-y-4 flex-1">
@@ -314,14 +310,16 @@ export default function PricingPage() {
           {/* Carbon Card (emphasized) */}
           <motion.div
             variants={staggerItem}
-            className="bg-white/[0.05] rounded-lg border border-[#8B7AFF]/20 shadow-[0_0_24px_rgba(139,122,255,0.08)] p-6 flex flex-col relative order-1 md:order-2 lg:py-8"
+            role="listitem"
+            aria-label={`Carbon plan — ${carbonPrice} per month`}
+            className="bg-white/[0.05] rounded-lg border border-violet-400/20 shadow-[0_0_24px_rgba(139,122,255,0.08)] p-6 flex flex-col relative order-1 md:order-2 lg:py-8"
           >
             {/* Crown gradient line at top */}
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#8B7AFF] to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-400 to-transparent" />
 
             {/* Most Popular badge */}
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-              <span className="bg-[#8B7AFF] text-accent-text-on-accent text-xs font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1 shadow-[0_0_12px_rgba(139,122,255,0.3)]">
+              <span className="bg-violet-400 text-accent-text-on-accent text-xs font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1 shadow-[0_0_12px_rgba(139,122,255,0.3)]">
                 <Sparkles size={12} />
                 Most Popular
               </span>
@@ -356,7 +354,7 @@ export default function PricingPage() {
               <ul className="space-y-3">
                 {CARBON_FEATURES.map((f) => (
                   <li key={f} className="flex items-start gap-2.5 text-sm text-text-secondary">
-                    <Check size={16} className="text-[#8B7AFF] mt-0.5 shrink-0" />
+                    <Check size={16} className="text-violet-400 mt-0.5 shrink-0" />
                     {f}
                   </li>
                 ))}
@@ -370,7 +368,7 @@ export default function PricingPage() {
                   whileTap={{ scale: 0.99 }}
                   onClick={handleCarbonCta}
                   disabled={isCheckoutLoading}
-                  className="w-full h-11 rounded-lg text-sm font-medium bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:from-[#7B6AEF] hover:to-[#6B5AD6] text-accent-text-on-accent transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-gradient-to-r from-violet-400 to-violet-600 hover:from-violet-500 hover:to-violet-700 hover:shadow-[0_0_20px_rgba(139,122,255,0.3)] text-accent-text-on-accent transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                 >
                   {portal.isPending ? (
                     <>
@@ -387,7 +385,7 @@ export default function PricingPage() {
                   whileTap={{ scale: 0.99 }}
                   onClick={handleCarbonCta}
                   disabled={isCheckoutLoading}
-                  className="w-full h-11 rounded-lg text-sm font-medium bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:from-[#7B6AEF] hover:to-[#6B5AD6] text-accent-text-on-accent transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-gradient-to-r from-violet-400 to-violet-600 hover:from-violet-500 hover:to-violet-700 hover:shadow-[0_0_20px_rgba(139,122,255,0.3)] text-accent-text-on-accent transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                 >
                   {checkout.isPending ? (
                     <>
@@ -405,6 +403,8 @@ export default function PricingPage() {
           {/* Titanium Card */}
           <motion.div
             variants={staggerItem}
+            role="listitem"
+            aria-label={`Titanium plan — ${titaniumPrice} per month`}
             className="bg-white/[0.03] rounded-lg border border-border-default p-6 flex flex-col order-3"
           >
             <div className="space-y-4 flex-1">
@@ -453,12 +453,22 @@ export default function PricingPage() {
                   Manage Subscription
                 </motion.button>
               ) : (
-                <button
-                  disabled
-                  className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-border-default text-text-muted cursor-not-allowed"
+                <motion.button
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={handleTitaniumCta}
+                  disabled={isCheckoutLoading}
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-border-emphasis text-text-primary hover:bg-white/[0.04] transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                 >
-                  Coming Soon
-                </button>
+                  {checkout.isPending ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Redirecting to checkout...
+                    </>
+                  ) : (
+                    'Get Started'
+                  )}
+                </motion.button>
               )}
             </div>
           </motion.div>
@@ -466,7 +476,7 @@ export default function PricingPage() {
 
         {/* ── FAQ Section ── */}
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-lg font-semibold text-text-primary mb-4">
+          <h2 className="text-lg font-brand font-light text-text-primary mb-4">
             Frequently Asked Questions
           </h2>
           <div className="bg-white/[0.03] rounded-lg border border-border-default divide-y-0 px-6">
@@ -477,9 +487,9 @@ export default function PricingPage() {
         </div>
 
         {/* ── Bottom CTA Banner ── */}
-        <div className="bg-[#8B7AFF]/[0.04] border border-[#8B7AFF]/10 rounded-lg p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="bg-violet-400/[0.04] border border-violet-400/10 rounded-lg p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <h3 className="text-lg font-semibold text-text-primary">
+            <h3 className="text-lg font-brand font-light text-text-primary">
               Ready to analyze deals faster?
             </h3>
             <p className="text-sm text-text-secondary mt-1">
@@ -492,7 +502,7 @@ export default function PricingPage() {
               whileTap={{ scale: 0.99 }}
               onClick={handleCarbonCta}
               disabled={isCheckoutLoading}
-              className="shrink-0 h-11 px-6 rounded-lg text-sm font-medium bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:from-[#7B6AEF] hover:to-[#6B5AD6] text-accent-text-on-accent transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+              className="shrink-0 h-11 px-6 rounded-lg text-sm font-medium bg-gradient-to-r from-violet-400 to-violet-600 hover:from-violet-500 hover:to-violet-700 hover:shadow-[0_0_20px_rgba(139,122,255,0.3)] text-accent-text-on-accent transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
             >
               {checkout.isPending ? (
                 <>
@@ -516,7 +526,7 @@ export default function PricingPage() {
     <div className="min-h-screen bg-app-bg">
       <nav className="flex items-center justify-between px-6 py-4 max-w-5xl mx-auto">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded bg-[#8B7AFF] flex items-center justify-center">
+          <div className="w-7 h-7 rounded bg-violet-400 flex items-center justify-center">
             <span className="text-[11px] font-bold text-white font-mono">P</span>
           </div>
           <span className="text-sm font-semibold text-text-primary">Parcel</span>
@@ -527,7 +537,7 @@ export default function PricingPage() {
           </Link>
           <Link
             to="/register"
-            className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
+            className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-violet-400 text-white hover:bg-violet-500 transition-colors"
           >
             Get Started
           </Link>

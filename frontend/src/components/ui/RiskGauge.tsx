@@ -13,10 +13,10 @@ const STROKE_WIDTH = 12
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 
 function getColor(score: number): string {
-  if (score <= 30) return '#6DBEA3'  // success green
-  if (score <= 60) return '#D4A867'  // warm amber
-  if (score <= 80) return '#D4766A'  // terracotta
-  return '#C45E52'                   // error strong
+  if (score <= 30) return 'var(--color-success, #6DBEA3)'
+  if (score <= 60) return 'var(--color-warning, #D4A867)'
+  if (score <= 80) return 'var(--color-error, #D4766A)'
+  return 'var(--color-error-strong, #C45E52)'
 }
 
 function getLabel(score: number): string {
@@ -27,10 +27,10 @@ function getLabel(score: number): string {
 }
 
 function getLabelClasses(score: number): string {
-  if (score <= 30) return 'bg-[#6DBEA3]/10 text-[#6DBEA3] border border-[#6DBEA3]/20'
-  if (score <= 60) return 'bg-[#D4A867]/10 text-[#D4A867] border border-[#D4A867]/20'
-  if (score <= 80) return 'bg-[#D4766A]/10 text-[#D4766A] border border-[#D4766A]/20'
-  return 'bg-[#C45E52]/10 text-[#C45E52] border border-[#C45E52]/20'
+  if (score <= 30) return 'bg-success-bg text-success border border-success/20'
+  if (score <= 60) return 'bg-warning-bg text-warning border border-warning/20'
+  if (score <= 80) return 'bg-error-bg text-error border border-error/20'
+  return 'bg-error-bg text-error-strong border border-error-strong/20'
 }
 
 export function RiskGauge({ score, className }: RiskGaugeProps) {
@@ -43,7 +43,7 @@ export function RiskGauge({ score, className }: RiskGaugeProps) {
 
   return (
     <div className={cn('flex flex-col items-center gap-3', className)}>
-      <svg width={180} height={180} viewBox="0 0 180 180">
+      <svg width={180} height={180} viewBox="0 0 180 180" role="meter" aria-label="Risk score" aria-valuenow={normalizedScore} aria-valuemin={0} aria-valuemax={100}>
         <defs>
           <filter id="gauge-glow">
             <feGaussianBlur stdDeviation={4} result="blur" />
@@ -86,11 +86,10 @@ export function RiskGauge({ score, className }: RiskGaugeProps) {
           y={85}
           textAnchor="middle"
           dominantBaseline="central"
+          className="font-brand font-light"
           style={{
             fontSize: '36px',
-            fontWeight: 300,
-            fill: '#F0EDE8',
-            fontFamily: "'Satoshi', 'Satoshi Fallback', system-ui, sans-serif",
+            fill: 'var(--text-primary)',
             fontFeatureSettings: '"tnum"',
           }}
         >
@@ -102,11 +101,10 @@ export function RiskGauge({ score, className }: RiskGaugeProps) {
           y={110}
           textAnchor="middle"
           dominantBaseline="central"
+          className="font-sans font-medium"
           style={{
             fontSize: '11px',
-            fontWeight: 500,
-            fill: '#A09D98',
-            fontFamily: 'Inter, sans-serif',
+            fill: 'var(--text-secondary)',
           }}
         >
           / 100

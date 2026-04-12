@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 import type { UsageMetric } from '@/types'
 
@@ -34,11 +35,11 @@ export function UsageMeter({ metric }: UsageMeterProps) {
         <motion.div
           className={cn(
             'h-full rounded-full',
-            exceeded ? 'bg-[#D4766A]' : warning ? 'bg-[#D4A867]' : 'bg-[#8B7AFF]'
+            exceeded ? 'bg-loss' : warning ? 'bg-warning' : 'bg-violet-400'
           )}
-          initial={{ width: 0 }}
+          initial={prefersReducedMotion ? { width: `${pct}%` } : { width: 0 }}
           animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+          transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
         />
       </div>
     </div>

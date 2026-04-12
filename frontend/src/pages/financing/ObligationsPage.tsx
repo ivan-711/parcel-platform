@@ -17,7 +17,7 @@ import {
 import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
 import { cn } from '@/lib/utils'
-import { duration, ease } from '@/lib/motion'
+import { duration, ease, prefersReducedMotion } from '@/lib/motion'
 import { useObligations, useCompleteObligation, useUpdateObligation } from '@/hooks/useFinancing'
 import type { Obligation, CompleteObligationRequest } from '@/types/financing'
 
@@ -40,10 +40,10 @@ const OBLIGATION_ICONS: Record<string, React.ElementType> = {
 }
 
 const SEVERITY_COLORS: Record<string, { border: string; header: string; text: string }> = {
-  overdue: { border: 'border-l-[#F87171]', header: 'bg-[#F87171]/10 text-[#F87171]', text: 'text-[#F87171]' },
-  critical: { border: 'border-l-[#FBBF24]', header: 'bg-[#FBBF24]/10 text-[#FBBF24]', text: 'text-[#FBBF24]' },
-  high: { border: 'border-l-[#FBBF24]', header: 'bg-[#FBBF24]/10 text-[#FBBF24]', text: 'text-[#FBBF24]' },
-  normal: { border: 'border-l-[#8A8580]', header: 'bg-[#1E1D1B] text-[#C5C0B8]', text: 'text-[#C5C0B8]' },
+  overdue: { border: 'border-l-loss', header: 'bg-loss-bg text-loss', text: 'text-loss' },
+  critical: { border: 'border-l-warning', header: 'bg-warning-bg text-warning', text: 'text-warning' },
+  high: { border: 'border-l-warning', header: 'bg-warning-bg text-warning', text: 'text-warning' },
+  normal: { border: 'border-l-gray-9', header: 'bg-border-default text-text-secondary', text: 'text-text-secondary' },
 }
 
 function getDateFilter(filter: TimeFilter): string | undefined {
@@ -107,7 +107,7 @@ export default function ObligationsPage() {
       <AppShell title="Obligations">
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 bg-[#141311] rounded-xl animate-pulse" />
+            <div key={i} className="h-20 bg-app-recessed rounded-xl animate-pulse" />
           ))}
         </div>
       </AppShell>
@@ -120,8 +120,7 @@ export default function ObligationsPage() {
         {/* Header */}
         <div>
           <h1
-            className="text-xl sm:text-2xl text-[#F0EDE8] mb-4"
-            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+            className="text-xl sm:text-2xl text-text-primary mb-4 font-brand font-light"
           >
             Obligations
           </h1>
@@ -134,7 +133,7 @@ export default function ObligationsPage() {
           </div>
 
           {/* Time filter */}
-          <div className="flex items-center gap-1 p-1 bg-[#141311] rounded-lg border border-[#1E1D1B] w-fit">
+          <div className="flex items-center gap-1 p-1 bg-app-recessed rounded-lg border border-border-default w-fit">
             {TIME_FILTERS.map((f) => (
               <button
                 key={f.value}
@@ -142,8 +141,8 @@ export default function ObligationsPage() {
                 className={cn(
                   'px-3 py-1.5 text-xs rounded-md transition-colors cursor-pointer',
                   timeFilter === f.value
-                    ? 'bg-[#8B7AFF]/15 text-[#8B7AFF]'
-                    : 'text-[#8A8580] hover:text-[#C5C0B8]'
+                    ? 'bg-violet-400/15 text-violet-400'
+                    : 'text-text-muted hover:text-text-secondary'
                 )}
               >
                 {f.label}
@@ -183,16 +182,16 @@ export default function ObligationsPage() {
 
 function KpiChip({ label, value, variant = 'default' }: { label: string; value: number; variant?: 'default' | 'danger' }) {
   return (
-    <div className="flex items-center gap-2 px-3 py-2 bg-[#141311] border border-[#1E1D1B] rounded-lg">
+    <div className="flex items-center gap-2 px-3 py-2 bg-app-recessed border border-border-default rounded-lg">
       <span
         className={cn(
           'text-base font-medium tabular-nums',
-          variant === 'danger' && value > 0 ? 'text-[#F87171]' : 'text-[#F0EDE8]'
+          variant === 'danger' && value > 0 ? 'text-loss' : 'text-text-primary'
         )}
       >
         {value}
       </span>
-      <span className="text-xs text-[#8A8580]">{label}</span>
+      <span className="text-xs text-text-muted">{label}</span>
     </div>
   )
 }
@@ -227,10 +226,10 @@ function ObligationGroup({
       <AnimatePresence>
         {!collapsed && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
+            initial={prefersReducedMotion ? {} : { opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: duration.normal, ease: ease.luxury as any }}
+            exit={prefersReducedMotion ? {} : { opacity: 0, height: 0 }}
+            transition={prefersReducedMotion ? { duration: 0 } : { duration: duration.normal, ease: ease.luxury as any }}
             className="space-y-2 overflow-hidden"
           >
             {obligations.map((ob) => (
@@ -266,17 +265,17 @@ function ObligationCard({ obligation, severity }: { obligation: Obligation; seve
 
   return (
     <motion.div
-      layout
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: duration.fast }}
+      layout={!prefersReducedMotion}
+      exit={prefersReducedMotion ? {} : { opacity: 0, x: -20 }}
+      transition={prefersReducedMotion ? { duration: 0 } : { duration: duration.fast }}
       className={cn(
-        'bg-[#141311] border border-[#1E1D1B] border-l-[3px] rounded-xl p-4',
+        'bg-app-recessed border border-border-default rounded-xl p-4',
         colors.border
       )}
     >
       <div className="flex items-start gap-3">
         {/* Icon */}
-        <div className="w-8 h-8 rounded-lg bg-[#0C0B0A] flex items-center justify-center shrink-0">
+        <div className="w-8 h-8 rounded-lg bg-app-bg flex items-center justify-center shrink-0">
           <Icon size={14} className={colors.text} />
         </div>
 
@@ -284,8 +283,8 @@ function ObligationCard({ obligation, severity }: { obligation: Obligation; seve
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="text-sm text-[#F0EDE8] font-medium">{obligation.title}</p>
-              <p className="text-xs text-[#8A8580] mt-0.5 truncate">
+              <p className="text-sm text-text-primary font-medium">{obligation.title}</p>
+              <p className="text-xs text-text-muted mt-0.5 truncate">
                 {obligation.instrument_name}
                 {obligation.property_address && ` · ${obligation.property_address}`}
               </p>
@@ -293,7 +292,7 @@ function ObligationCard({ obligation, severity }: { obligation: Obligation; seve
 
             <div className="text-right shrink-0">
               {obligation.amount != null && (
-                <p className="text-base text-[#F0EDE8] font-medium tabular-nums">
+                <p className="text-base text-text-primary font-medium tabular-nums">
                   ${Number(obligation.amount).toLocaleString()}
                 </p>
               )}
@@ -308,12 +307,12 @@ function ObligationCard({ obligation, severity }: { obligation: Obligation; seve
           {/* Due date line */}
           <div className="flex items-center gap-3 mt-2">
             {obligation.next_due && (
-              <span className="text-xs text-[#8A8580]">
+              <span className="text-xs text-text-muted">
                 Due {new Date(obligation.next_due).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </span>
             )}
             {daysText && (
-              <span className={cn('text-xs font-medium', obligation.is_overdue ? 'text-[#F87171]' : colors.text)}>
+              <span className={cn('text-xs font-medium', obligation.is_overdue ? 'text-loss' : colors.text)}>
                 {daysText}
               </span>
             )}
@@ -323,34 +322,35 @@ function ObligationCard({ obligation, severity }: { obligation: Obligation; seve
           <div className="flex items-center gap-2 mt-3">
             <button
               onClick={() => { setShowComplete(!showComplete); setShowSnooze(false) }}
-              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs rounded-md bg-[#4ADE80]/10 text-[#4ADE80] hover:bg-[#4ADE80]/20 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs rounded-md bg-profit-bg text-profit hover:bg-profit/20 transition-colors cursor-pointer"
             >
               <Check size={12} /> Complete
             </button>
             <button
               onClick={() => { setShowSnooze(!showSnooze); setShowComplete(false) }}
-              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs rounded-md bg-[#1E1D1B] text-[#C5C0B8] hover:bg-[#2A2826] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs rounded-md bg-border-default text-text-secondary hover:bg-border-strong transition-colors cursor-pointer"
             >
               <Clock size={12} /> Snooze
             </button>
             <div className="relative">
               <button
                 onClick={() => setShowMenu(!showMenu)}
-                className="p-1.5 rounded-md text-[#8A8580] hover:bg-[#1E1D1B] transition-colors cursor-pointer"
+                aria-label="More actions"
+                className="p-1.5 rounded-md text-text-muted hover:bg-border-default transition-colors cursor-pointer"
               >
                 <MoreHorizontal size={14} />
               </button>
               {showMenu && (
-                <div className="absolute right-0 top-8 z-10 w-44 bg-[#141311] border border-[#1E1D1B] rounded-lg shadow-xl py-1">
+                <div className="absolute right-0 top-8 z-10 w-44 bg-app-recessed border border-border-default rounded-lg shadow-xl py-1">
                   <button
                     onClick={() => { navigate(`/properties/${obligation.property_id}?tab=financing`); setShowMenu(false) }}
-                    className="w-full text-left px-3 py-2 text-xs text-[#C5C0B8] hover:bg-[#1E1D1B] cursor-pointer"
+                    className="w-full text-left px-3 py-2 text-xs text-text-secondary hover:bg-border-default cursor-pointer"
                   >
                     View Property
                   </button>
                   <button
                     onClick={() => setShowMenu(false)}
-                    className="w-full text-left px-3 py-2 text-xs text-[#C5C0B8] hover:bg-[#1E1D1B] cursor-pointer"
+                    className="w-full text-left px-3 py-2 text-xs text-text-secondary hover:bg-border-default cursor-pointer"
                   >
                     Edit
                   </button>
@@ -440,34 +440,34 @@ function CompleteForm({
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: 'auto' }}
       exit={{ opacity: 0, height: 0 }}
-      className="mt-3 pt-3 border-t border-[#1E1D1B] overflow-hidden"
+      className="mt-3 pt-3 border-t border-border-default overflow-hidden"
     >
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
-          <label className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1 block">Amount</label>
+          <label className="text-[10px] uppercase tracking-wider text-text-muted mb-1 block">Amount</label>
           <input
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+            className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
             placeholder="0.00"
           />
         </div>
         <div>
-          <label className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1 block">Date</label>
+          <label className="text-[10px] uppercase tracking-wider text-text-muted mb-1 block">Date</label>
           <input
             type="date"
             value={paymentDate}
             onChange={(e) => setPaymentDate(e.target.value)}
-            className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+            className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
           />
         </div>
         <div>
-          <label className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1 block">Method</label>
+          <label className="text-[10px] uppercase tracking-wider text-text-muted mb-1 block">Method</label>
           <select
             value={method}
             onChange={(e) => setMethod(e.target.value)}
-            className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+            className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
           >
             <option value="bank_transfer">Bank Transfer</option>
             <option value="check">Check</option>
@@ -483,7 +483,7 @@ function CompleteForm({
           payment_method: method,
         })}
         disabled={isPending}
-        className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-[#4ADE80] text-[#0C0B0A] font-medium hover:bg-[#3FCF70] transition-colors disabled:opacity-50 cursor-pointer"
+        className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-profit text-app-bg font-medium hover:bg-profit-strong transition-colors disabled:opacity-50 cursor-pointer"
       >
         <Check size={14} />
         {isPending ? 'Recording...' : 'Record Payment'}
@@ -510,22 +510,22 @@ function SnoozeForm({
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: 'auto' }}
       exit={{ opacity: 0, height: 0 }}
-      className="mt-3 pt-3 border-t border-[#1E1D1B] overflow-hidden"
+      className="mt-3 pt-3 border-t border-border-default overflow-hidden"
     >
       <div className="flex items-end gap-3">
         <div className="flex-1">
-          <label className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1 block">Snooze until</label>
+          <label className="text-[10px] uppercase tracking-wider text-text-muted mb-1 block">Snooze until</label>
           <input
             type="date"
             value={snoozeDate}
             onChange={(e) => setSnoozeDate(e.target.value)}
-            className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+            className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
           />
         </div>
         <button
           onClick={() => onSnooze(snoozeDate)}
           disabled={isPending}
-          className="px-4 py-2 text-sm rounded-lg bg-[#1E1D1B] text-[#C5C0B8] hover:bg-[#2A2826] transition-colors disabled:opacity-50 cursor-pointer"
+          className="px-4 py-2 text-sm rounded-lg bg-border-default text-text-secondary hover:bg-border-strong transition-colors disabled:opacity-50 cursor-pointer"
         >
           {isPending ? 'Snoozing...' : 'Snooze'}
         </button>

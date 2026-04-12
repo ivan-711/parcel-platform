@@ -24,10 +24,10 @@ export function AIFloatingButton() {
           setChatOpen(true)
         }}
         aria-label="AI Assistant"
-        className="fixed z-40 bottom-[88px] right-4 md:bottom-8 md:right-8 w-12 h-12 rounded-full bg-[#8B7AFF] hover:bg-[#7B6AEF] shadow-lg shadow-[#8B7AFF]/20 flex items-center justify-center transition-colors cursor-pointer group"
+        className="fixed z-40 bottom-[88px] right-4 md:bottom-8 md:right-8 w-12 h-12 rounded-full bg-violet-400 hover:bg-violet-500 shadow-lg shadow-violet-400/20 flex items-center justify-center transition-colors cursor-pointer group"
       >
         {/* Pulse ring */}
-        <span className="absolute inset-0 rounded-full bg-[#8B7AFF]/30 animate-ping opacity-20 group-hover:opacity-0" />
+        <span className="absolute inset-0 rounded-full bg-violet-400/30 animate-ping opacity-20 group-hover:opacity-0" />
         <Sparkles size={20} className="text-white relative z-10" />
       </button>
 

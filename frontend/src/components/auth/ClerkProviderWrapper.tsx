@@ -5,6 +5,7 @@
  */
 
 import { ClerkProvider } from '@clerk/clerk-react'
+import { dark } from '@clerk/themes'
 import type { ReactNode } from 'react'
 
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY as string | undefined
@@ -19,6 +20,7 @@ export function ClerkProviderWrapper({ children }: { children: ReactNode }) {
   return (
     <ClerkProvider
       publishableKey={clerkPubKey}
+      appearance={{ baseTheme: dark }}
       signInUrl="/login"
       signUpUrl="/register"
       signInFallbackRedirectUrl="/today"

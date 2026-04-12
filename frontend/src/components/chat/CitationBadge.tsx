@@ -28,7 +28,7 @@ export function CitationBadge({ index, citation }: CitationBadgeProps) {
             })
           }
         }}
-        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-[#8B7AFF]/10 text-[#8B7AFF] text-xs font-mono hover:bg-[#8B7AFF]/20 transition-colors cursor-pointer"
+        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-violet-400/10 text-violet-400 text-xs font-mono hover:bg-violet-400/20 transition-colors cursor-pointer"
       >
         [{index}]
       </button>
@@ -44,13 +44,14 @@ export function CitationBadge({ index, citation }: CitationBadgeProps) {
           <div className="absolute bottom-full left-0 mb-2 z-50 w-72 rounded-lg border border-border-default bg-app-elevated shadow-lg p-3 animate-in fade-in slide-in-from-bottom-2 duration-200">
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className="flex items-center gap-1.5 min-w-0">
-                <FileText size={12} className="text-[#8B7AFF] shrink-0" />
+                <FileText size={12} className="text-violet-400 shrink-0" />
                 <span className="text-xs font-medium text-text-primary truncate">
                   {citation.document_name}
                 </span>
               </div>
               <button
                 onClick={() => setOpen(false)}
+                aria-label="Close citation"
                 className="text-text-secondary hover:text-text-primary transition-colors shrink-0"
               >
                 <X size={12} />
@@ -67,7 +68,7 @@ export function CitationBadge({ index, citation }: CitationBadgeProps) {
             <div className="mt-2 flex items-center gap-1.5">
               <div className="h-1 flex-1 bg-layer-3 rounded-full overflow-hidden max-w-[60px]">
                 <div
-                  className="h-full bg-[#8B7AFF] rounded-full"
+                  className="h-full bg-violet-400 rounded-full"
                   style={{ width: `${Math.round(citation.relevance_score * 100)}%` }}
                 />
               </div>

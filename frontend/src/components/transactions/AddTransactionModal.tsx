@@ -102,20 +102,21 @@ export function AddTransactionModal({ open, onOpenChange, properties, defaultPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px] bg-[#141311] border-[#1E1D1B]">
+      <DialogContent className="sm:max-w-[480px] bg-app-recessed border-border-default">
         <DialogHeader>
-          <DialogTitle className="text-[#F0EDE8]" style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
+          <DialogTitle className="text-text-primary font-brand font-light">
             Add Transaction
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 mt-2">
           {/* Property */}
-          <Field label="Property">
+          <Field id="txn-property" label="Property">
             <select
+              id="txn-property"
               value={propertyId}
               onChange={(e) => setPropertyId(e.target.value)}
-              className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+              className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
             >
               <option value="">Select property...</option>
               {properties.map((p) => (
@@ -126,30 +127,32 @@ export function AddTransactionModal({ open, onOpenChange, properties, defaultPro
 
           {/* Amount + Date */}
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Amount ($)">
+            <Field id="txn-amount" label="Amount ($)">
               <input
+                id="txn-amount"
                 type="number"
                 min="0"
                 step="0.01"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+                className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
                 placeholder="0.00"
               />
             </Field>
-            <Field label="Date">
+            <Field id="txn-date" label="Date">
               <input
+                id="txn-date"
                 type="date"
                 value={txnDate}
                 onChange={(e) => setTxnDate(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+                className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
               />
             </Field>
           </div>
 
           {/* Category pills */}
           <Field label="Category">
-            <div className="flex gap-1 p-1 bg-[#0C0B0A] rounded-lg border border-[#1E1D1B]">
+            <div className="flex gap-1 p-1 bg-app-bg rounded-lg border border-border-default">
               {(['income', 'expense', 'transfer'] as const).map((c) => (
                 <button
                   key={c}
@@ -157,10 +160,10 @@ export function AddTransactionModal({ open, onOpenChange, properties, defaultPro
                   className={cn(
                     'flex-1 px-3 py-1.5 text-xs rounded-md transition-colors cursor-pointer capitalize',
                     category === c
-                      ? c === 'income' ? 'bg-[#4ADE80]/15 text-[#4ADE80]'
-                        : c === 'expense' ? 'bg-[#F87171]/15 text-[#F87171]'
-                        : 'bg-[#60A5FA]/15 text-[#60A5FA]'
-                      : 'text-[#8A8580] hover:text-[#C5C0B8]'
+                      ? c === 'income' ? 'bg-profit/15 text-profit'
+                        : c === 'expense' ? 'bg-loss/15 text-loss'
+                        : 'bg-info/15 text-info'
+                      : 'text-text-muted hover:text-text-secondary'
                   )}
                 >
                   {c}
@@ -170,11 +173,12 @@ export function AddTransactionModal({ open, onOpenChange, properties, defaultPro
           </Field>
 
           {/* Type */}
-          <Field label="Type">
+          <Field id="txn-type" label="Type">
             <select
+              id="txn-type"
               value={txnType}
               onChange={(e) => setTxnType(e.target.value)}
-              className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+              className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
             >
               {typeOptions.map((t) => (
                 <option key={t.value} value={t.value}>{t.label}</option>
@@ -183,24 +187,25 @@ export function AddTransactionModal({ open, onOpenChange, properties, defaultPro
           </Field>
 
           {/* Description */}
-          <Field label="Description (optional)">
+          <Field id="txn-description" label="Description (optional)">
             <input
+              id="txn-description"
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+              className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
               placeholder="e.g., March rent payment"
             />
           </Field>
 
           {/* Recurring */}
           <div className="flex items-center gap-3">
-            <label className="flex items-center gap-2 text-sm text-[#C5C0B8] cursor-pointer">
+            <label className="flex items-center gap-2 text-sm text-text-secondary cursor-pointer">
               <input
                 type="checkbox"
                 checked={isRecurring}
                 onChange={(e) => setIsRecurring(e.target.checked)}
-                className="rounded border-[#1E1D1B] bg-[#0C0B0A]"
+                className="rounded border-border-default bg-app-bg"
               />
               Recurring
             </label>
@@ -208,7 +213,7 @@ export function AddTransactionModal({ open, onOpenChange, properties, defaultPro
               <select
                 value={recurrenceInterval}
                 onChange={(e) => setRecurrenceInterval(e.target.value)}
-                className="px-2 py-1 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-xs text-[#F0EDE8] outline-none"
+                className="px-2 py-1 bg-app-bg border border-border-default rounded-lg text-xs text-text-primary outline-none"
               >
                 <option value="monthly">Monthly</option>
                 <option value="quarterly">Quarterly</option>
@@ -218,12 +223,13 @@ export function AddTransactionModal({ open, onOpenChange, properties, defaultPro
           </div>
 
           {/* Notes */}
-          <Field label="Notes (optional)">
+          <Field id="txn-notes" label="Notes (optional)">
             <textarea
+              id="txn-notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
-              className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none resize-none"
+              className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none resize-none"
             />
           </Field>
 
@@ -231,7 +237,7 @@ export function AddTransactionModal({ open, onOpenChange, properties, defaultPro
           <button
             onClick={handleSubmit}
             disabled={!propertyId || !amount || createMutation.isPending}
-            className="w-full py-2.5 text-sm rounded-lg bg-[#8B7AFF] text-white font-medium hover:bg-[#7B6AEF] transition-colors disabled:opacity-50 cursor-pointer"
+            className="w-full py-2.5 text-sm rounded-lg bg-violet-400 text-white font-medium hover:bg-violet-500 transition-colors disabled:opacity-50 cursor-pointer"
           >
             {createMutation.isPending ? 'Saving...' : 'Add Transaction'}
           </button>
@@ -241,10 +247,10 @@ export function AddTransactionModal({ open, onOpenChange, properties, defaultPro
   )
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ id, label, children }: { id?: string; label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1 block">{label}</label>
+      <label htmlFor={id} className="text-[10px] uppercase tracking-wider text-text-muted mb-1 block">{label}</label>
       {children}
     </div>
   )

@@ -111,9 +111,9 @@ function truncateAddr(addr: string, max = 28): string {
 
 function riskScoreColor(score: number | null): string {
   if (score === null) return 'text-text-muted'
-  if (score <= 30) return 'text-[#6DBEA3]'
-  if (score <= 60) return 'text-[#D4A867]'
-  return 'text-[#D4766A]'
+  if (score <= 30) return 'text-profit'
+  if (score <= 60) return 'text-warning'
+  return 'text-loss'
 }
 
 // ── KPI Comparison Card ─────────────────────────────────────────────────────
@@ -153,7 +153,7 @@ function KPICompareCard({
               <div className="flex items-center gap-2">
                 {isWinner && (
                   <>
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#8B7AFF] shrink-0" aria-hidden="true" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-violet-400 shrink-0" aria-hidden="true" />
                     <span className="sr-only">(Best value)</span>
                   </>
                 )}
@@ -242,7 +242,7 @@ function SummaryVerdict({
       </div>
       {results.overallWinner >= 0 && (
         <div className="mt-4 pt-4 border-t border-border-subtle">
-          <div className="border-l-2 border-[#8B7AFF] pl-3">
+          <div className="pl-3">
             <p className="text-sm text-text-primary">
               {truncateAddr(deals[results.overallWinner].address)} leads overall with {results.wins[results.overallWinner]} metric wins
             </p>
@@ -357,7 +357,7 @@ export default function ComparePage() {
                   {loadingList ? (
                     <div className="px-3 py-2 text-sm text-text-secondary">Loading deals...</div>
                   ) : isError ? (
-                    <div className="px-3 py-2 text-sm text-[#D4766A]">Failed to load deals</div>
+                    <div className="px-3 py-2 text-sm text-loss">Failed to load deals</div>
                   ) : dealOptions.length === 0 ? (
                     <div className="px-3 py-2 text-sm text-text-secondary">No deals found</div>
                   ) : (
@@ -451,8 +451,8 @@ export default function ComparePage() {
 
         {/* Error */}
         {(errorA || errorB) && (
-          <div className="flex items-center gap-3 rounded-xl border border-[#D4766A]/20 bg-[#D4766A]/10 px-4 py-3">
-            <AlertTriangle size={16} className="text-[#D4766A] shrink-0" />
+          <div className="flex items-center gap-3 rounded-xl border border-loss/20 bg-loss/10 px-4 py-3">
+            <AlertTriangle size={16} className="text-loss shrink-0" />
             <p className="text-sm text-text-secondary">
               Failed to load {errorA && errorB ? 'both deals' : errorA ? 'Deal A' : 'Deal B'}.
             </p>
@@ -461,9 +461,9 @@ export default function ComparePage() {
 
         {/* Cross-strategy warning */}
         {crossStrategy && (
-          <div className="flex items-center gap-3 rounded-xl border border-[#D4A867]/20 bg-[#D4A867]/10 px-4 py-3">
-            <AlertTriangle size={16} className="text-[#D4A867] shrink-0" />
-            <p className="text-sm text-[#D4A867]">
+          <div className="flex items-center gap-3 rounded-xl border border-warning/20 bg-warning/10 px-4 py-3">
+            <AlertTriangle size={16} className="text-warning shrink-0" />
+            <p className="text-sm text-warning">
               These deals use different strategies — comparison may not be meaningful
             </p>
           </div>

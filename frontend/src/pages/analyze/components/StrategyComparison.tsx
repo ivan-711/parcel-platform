@@ -51,8 +51,8 @@ export function StrategyComparison({ propertyId: _propertyId, activeStrategy, sc
 
   if (loading) {
     return (
-      <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5 flex items-center justify-center py-12">
-        <Loader2 size={20} className="animate-spin text-[#8B7AFF]" />
+      <div className="bg-app-recessed border border-border-default rounded-xl p-5 flex items-center justify-center py-12">
+        <Loader2 size={20} className="animate-spin text-violet-400" />
       </div>
     )
   }
@@ -74,8 +74,8 @@ export function StrategyComparison({ propertyId: _propertyId, activeStrategy, sc
   }
 
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
-      <h3 className="text-[11px] text-[#8A8580] uppercase tracking-wider font-medium mb-4">
+    <div className="bg-app-recessed border border-border-default rounded-xl p-5">
+      <h3 className="text-[11px] text-text-muted uppercase tracking-wider font-medium mb-4">
         Compare Strategies
       </h3>
 
@@ -83,20 +83,20 @@ export function StrategyComparison({ propertyId: _propertyId, activeStrategy, sc
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-[10px] text-[#8A8580] uppercase tracking-wider border-b border-[#1E1D1B]">
+            <tr className="text-[10px] text-text-muted uppercase tracking-wider border-b border-border-default">
               <th className="text-left py-2 pr-3">Strategy</th>
               <th className="text-right py-2 px-3">Key Metric</th>
-              <th className="text-right py-2 px-3 cursor-pointer hover:text-[#C5C0B8]" onClick={() => handleSort('roi')}>
+              <th className="text-right py-2 px-3 cursor-pointer hover:text-text-secondary" onClick={() => handleSort('roi')}>
                 ROI <ArrowUpDown size={10} className="inline ml-0.5" />
               </th>
-              <th className="text-right py-2 px-3 cursor-pointer hover:text-[#C5C0B8]" onClick={() => handleSort('risk_score')}>
+              <th className="text-right py-2 px-3 cursor-pointer hover:text-text-secondary" onClick={() => handleSort('risk_score')}>
                 Risk <ArrowUpDown size={10} className="inline ml-0.5" />
               </th>
               <th className="text-center py-2 px-3">Horizon</th>
-              <th className="text-right py-2 px-3 cursor-pointer hover:text-[#C5C0B8]" onClick={() => handleSort('break_even_months')}>
+              <th className="text-right py-2 px-3 cursor-pointer hover:text-text-secondary" onClick={() => handleSort('break_even_months')}>
                 Break-Even <ArrowUpDown size={10} className="inline ml-0.5" />
               </th>
-              <th className="text-right py-2 px-3 cursor-pointer hover:text-[#C5C0B8]" onClick={() => handleSort('five_year_total_return')}>
+              <th className="text-right py-2 px-3 cursor-pointer hover:text-text-secondary" onClick={() => handleSort('five_year_total_return')}>
                 5yr Return <ArrowUpDown size={10} className="inline ml-0.5" />
               </th>
               <th className="text-left py-2 pl-3">Verdict</th>
@@ -111,46 +111,46 @@ export function StrategyComparison({ propertyId: _propertyId, activeStrategy, sc
                   key={r.strategy}
                   onClick={() => onStrategySwitch(r.strategy)}
                   className={cn(
-                    'border-b border-[#1E1D1B]/50 last:border-0 cursor-pointer transition-colors',
-                    isRecommended ? 'bg-[#8B7AFF]/5 border-l-2 border-l-[#8B7AFF]' : 'hover:bg-[#1A1918]',
-                    isActive && 'bg-[#1E1D1B]/50'
+                    'border-b border-border-default/50 last:border-0 cursor-pointer transition-colors',
+                    isRecommended ? 'bg-violet-400/5' : 'hover:bg-app-surface',
+                    isActive && 'bg-border-default/50'
                   )}
                 >
                   <td className="py-3 pr-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-[#F0EDE8] font-medium">{STRATEGY_LABELS[r.strategy] || r.strategy}</span>
+                      <span className="text-text-primary font-medium">{STRATEGY_LABELS[r.strategy] || r.strategy}</span>
                       {isRecommended && (
-                        <span className="text-[9px] bg-[#8B7AFF]/15 text-[#8B7AFF] px-1.5 py-0.5 rounded uppercase tracking-wider">
+                        <span className="text-[9px] bg-violet-400/15 text-violet-400 px-1.5 py-0.5 rounded uppercase tracking-wider">
                           Best
                         </span>
                       )}
                     </div>
                   </td>
-                  <td className="py-3 px-3 text-right tabular-nums text-[#F0EDE8]">
+                  <td className="py-3 px-3 text-right tabular-nums text-text-primary">
                     {r.key_metric != null ? `$${Math.round(r.key_metric).toLocaleString()}` : '—'}
-                    <span className="text-[9px] text-[#8A8580] block">{r.key_metric_label}</span>
+                    <span className="text-[9px] text-text-muted block">{r.key_metric_label}</span>
                   </td>
-                  <td className="py-3 px-3 text-right tabular-nums text-[#F0EDE8]">
+                  <td className="py-3 px-3 text-right tabular-nums text-text-primary">
                     {r.roi != null ? `${r.roi.toFixed(1)}%` : '—'}
                   </td>
                   <td className="py-3 px-3 text-right">
                     <span className={cn(
                       'inline-flex items-center justify-center text-[10px] font-medium tabular-nums px-1.5 py-0.5 rounded',
-                      r.risk_score <= 33 ? 'bg-[#4ADE80]/10 text-[#4ADE80]' :
-                      r.risk_score <= 66 ? 'bg-[#FBBF24]/10 text-[#FBBF24]' :
-                      'bg-[#F87171]/10 text-[#F87171]'
+                      r.risk_score <= 33 ? 'bg-profit/10 text-profit' :
+                      r.risk_score <= 66 ? 'bg-warning/10 text-warning' :
+                      'bg-loss/10 text-loss'
                     )}>
                       {r.risk_score}
                     </span>
                   </td>
-                  <td className="py-3 px-3 text-center text-xs text-[#C5C0B8] capitalize">{r.time_horizon}</td>
-                  <td className="py-3 px-3 text-right tabular-nums text-[#C5C0B8]">
+                  <td className="py-3 px-3 text-center text-xs text-text-secondary capitalize">{r.time_horizon}</td>
+                  <td className="py-3 px-3 text-right tabular-nums text-text-secondary">
                     {r.break_even_months != null ? `${r.break_even_months}mo` : '—'}
                   </td>
-                  <td className="py-3 px-3 text-right tabular-nums text-[#F0EDE8]">
+                  <td className="py-3 px-3 text-right tabular-nums text-text-primary">
                     {r.five_year_total_return != null ? `$${Math.round(r.five_year_total_return).toLocaleString()}` : '—'}
                   </td>
-                  <td className="py-3 pl-3 text-xs text-[#8A8580] max-w-[200px] truncate">{r.verdict}</td>
+                  <td className="py-3 pl-3 text-xs text-text-muted max-w-[200px] truncate">{r.verdict}</td>
                 </tr>
               )
             })}
@@ -169,23 +169,23 @@ export function StrategyComparison({ propertyId: _propertyId, activeStrategy, sc
               className={cn(
                 'w-full text-left p-3 rounded-lg border transition-colors cursor-pointer',
                 isRecommended
-                  ? 'bg-[#8B7AFF]/5 border-[#8B7AFF]/30'
-                  : 'bg-[#0C0B0A] border-[#1E1D1B] hover:border-[#8B7AFF]/20'
+                  ? 'bg-violet-400/5 border-violet-400/30'
+                  : 'bg-app-bg border-border-default hover:border-violet-400/20'
               )}
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="text-sm text-[#F0EDE8] font-medium">{STRATEGY_LABELS[r.strategy]}</span>
+                <span className="text-sm text-text-primary font-medium">{STRATEGY_LABELS[r.strategy]}</span>
                 {isRecommended && (
-                  <span className="text-[9px] bg-[#8B7AFF]/15 text-[#8B7AFF] px-1.5 py-0.5 rounded uppercase tracking-wider">Best</span>
+                  <span className="text-[9px] bg-violet-400/15 text-violet-400 px-1.5 py-0.5 rounded uppercase tracking-wider">Best</span>
                 )}
               </div>
-              <p className="text-xs text-[#8A8580]">{r.verdict}</p>
+              <p className="text-xs text-text-muted">{r.verdict}</p>
               <div className="flex items-center gap-4 mt-2 text-xs">
-                <span className="text-[#F0EDE8] tabular-nums">{r.key_metric != null ? `$${Math.round(r.key_metric).toLocaleString()}` : '—'}</span>
-                <span className={r.risk_score <= 33 ? 'text-[#4ADE80]' : r.risk_score <= 66 ? 'text-[#FBBF24]' : 'text-[#F87171]'}>
+                <span className="text-text-primary tabular-nums">{r.key_metric != null ? `$${Math.round(r.key_metric).toLocaleString()}` : '—'}</span>
+                <span className={r.risk_score <= 33 ? 'text-profit' : r.risk_score <= 66 ? 'text-warning' : 'text-loss'}>
                   Risk: {r.risk_score}
                 </span>
-                <span className="text-[#8A8580] capitalize">{r.time_horizon}</span>
+                <span className="text-text-muted capitalize">{r.time_horizon}</span>
               </div>
             </button>
           )
@@ -196,14 +196,14 @@ export function StrategyComparison({ propertyId: _propertyId, activeStrategy, sc
       {comparison.recommendation_reason && (
         <button
           onClick={() => setShowReason(!showReason)}
-          className="flex items-center gap-1 mt-4 text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors cursor-pointer"
+          className="flex items-center gap-1 mt-4 text-xs text-violet-400 hover:text-violet-300 transition-colors cursor-pointer"
         >
           {showReason ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
           Why {STRATEGY_LABELS[comparison.recommendation] || comparison.recommendation}?
         </button>
       )}
       {showReason && (
-        <p className="mt-2 text-xs text-[#C5C0B8] pl-4 border-l-2 border-[#8B7AFF]/20">
+        <p className="mt-2 text-xs text-text-secondary pl-4 border-l-2 border-violet-400/20">
           {comparison.recommendation_reason}
         </p>
       )}

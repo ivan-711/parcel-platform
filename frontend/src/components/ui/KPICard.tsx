@@ -29,7 +29,7 @@ function formatValue(value: number, format: Format): string {
 }
 
 /**
- * KPI metric card with count-up animation, delta badge, optional sparkline, and Inter tabular-nums value.
+ * KPI metric card with count-up animation, delta badge, optional sparkline, and tabular-nums value.
  * Use for all financial metrics on dashboards and deal results.
  * Pass `sparklineData` (array of numbers) to render a mini area chart at the bottom.
  */
@@ -53,8 +53,11 @@ export function KPICard({ label, value, format, delta, loading, className, spark
 
   return (
     <div
+      role="group"
+      aria-label={label}
       className={cn(
         'bg-app-surface border border-border-subtle rounded-xl shadow-xs edge-highlight p-5 space-y-1 overflow-hidden bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(139,122,255,0.02),transparent)]',
+        'transition-shadow duration-200 hover:shadow-lg hover:-translate-y-0.5',
         className
       )}
     >
@@ -66,7 +69,7 @@ export function KPICard({ label, value, format, delta, loading, className, spark
         <p
           className={cn(
             'text-xs font-medium tabular-nums',
-            delta >= 0 ? 'text-[#6DBEA3]' : 'text-[#D4766A]'
+            delta >= 0 ? 'text-profit' : 'text-loss'
           )}
         >
           {delta >= 0 ? '\u2191' : '\u2193'} {Math.abs(delta).toFixed(1)}

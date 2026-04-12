@@ -135,7 +135,7 @@ export function EditPortfolioModal({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
-              className="flex w-full rounded-md border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/30 focus:border-[#8B7AFF]/40 resize-none"
+              className="flex w-full rounded-md border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-violet-400/30 focus:border-violet-400/40 resize-none"
               placeholder="Optional notes about this deal"
             />
           </div>
@@ -153,7 +153,7 @@ export function EditPortfolioModal({
             <Button
               type="submit"
               disabled={!canSubmit}
-              className="bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:brightness-110"
+              className="bg-gradient-to-r from-violet-400 to-violet-500 text-accent-text-on-accent hover:brightness-110"
             >
               {isSaving ? 'Saving...' : 'Save Changes'}
             </Button>

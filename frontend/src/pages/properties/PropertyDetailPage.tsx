@@ -56,11 +56,11 @@ const TABS = [
 type TabKey = (typeof TABS)[number]['key']
 
 const STATUS_COLORS: Record<string, string> = {
-  prospect: 'bg-[#8A8580]/20 text-text-secondary border-[#8A8580]/30',
-  under_analysis: 'bg-[#60A5FA]/15 text-[#93C5FD] border-[#60A5FA]/30',
-  in_pipeline: 'bg-[#8B7AFF]/15 text-[#A89FFF] border-[#8B7AFF]/30',
-  owned: 'bg-[#4ADE80]/15 text-[#6DBEA3] border-[#4ADE80]/30',
-  sold: 'bg-[#C5C0B8]/15 text-text-muted border-[#C5C0B8]/30',
+  prospect: 'bg-text-muted/20 text-text-secondary border-text-muted/30',
+  under_analysis: 'bg-info/15 text-info border-info/30',
+  in_pipeline: 'bg-violet-400/15 text-violet-300 border-violet-400/30',
+  owned: 'bg-profit/15 text-profit border-profit/30',
+  sold: 'bg-text-secondary/15 text-text-muted border-text-secondary/30',
   archived: 'bg-border-default text-text-muted border-border-default',
 }
 
@@ -193,7 +193,7 @@ export default function PropertyDetailPage() {
                 className={cn(
                   'flex items-center gap-2 px-4 py-2.5 text-sm whitespace-nowrap transition-colors cursor-pointer border-b-2 -mb-px',
                   isActive
-                    ? 'text-text-primary border-[#8B7AFF]'
+                    ? 'text-text-primary border-violet-400'
                     : 'text-text-muted border-transparent hover:text-text-secondary'
                 )}
               >
@@ -263,10 +263,7 @@ function PropertyHeader({
     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
       <div>
         <div className="flex items-center gap-3 mb-1">
-          <h1
-            className="text-xl sm:text-2xl text-text-primary"
-            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
-          >
+          <h1 className="font-brand font-light text-xl sm:text-2xl text-text-primary">
             {property.address_line1}
           </h1>
           <StatusBadge status={property.status} />
@@ -316,7 +313,7 @@ function PropertyHeader({
       <div className="flex items-center gap-2 shrink-0">
         <Link
           to="/analyze"
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium bg-violet-400 text-white hover:bg-violet-500 transition-colors"
         >
           <Search size={14} />
           Analyze
@@ -326,7 +323,7 @@ function PropertyHeader({
             try { ;(window as any).posthog?.capture?.('find_buyers_clicked', { source: 'property' }) } catch {}
             navigate(`/dispositions/matches/${propertyId}`)
           }}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-violet-400/30 hover:text-violet-400 transition-colors cursor-pointer"
         >
           <Users size={14} />
           Find Buyers
@@ -334,21 +331,21 @@ function PropertyHeader({
         <button
           onClick={onSkipTrace}
           disabled={isTracing}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-colors cursor-pointer disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-violet-400/30 hover:text-violet-400 transition-colors cursor-pointer disabled:opacity-50"
         >
           {isTracing ? <Loader2 size={14} className="animate-spin" /> : <Search size={14} />}
           Skip Trace
         </button>
         <Link
           to="/mail-campaigns/new"
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-violet-400/30 hover:text-violet-400 transition-colors"
         >
           <Mail size={14} />
           Send Mail
         </Link>
         <button
           onClick={onDelete}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#F87171] border border-[#F87171]/20 hover:bg-[#F87171]/10 transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-loss border border-loss/20 hover:bg-loss-bg transition-colors cursor-pointer"
         >
           <Trash2 size={14} />
           Delete
@@ -417,7 +414,7 @@ function OverviewTab({
                 <Link
                   key={s.id}
                   to={`/analyze/results/${propertyId}`}
-                  className="flex items-center justify-between p-3 rounded-lg bg-app-bg hover:bg-layer-2 border border-border-default transition-colors"
+                  className="flex items-center justify-between p-3 rounded-lg bg-app-bg hover:bg-app-elevated border border-border-default transition-colors"
                 >
                   <div>
                     <span className="text-sm text-text-primary font-medium">
@@ -440,7 +437,7 @@ function OverviewTab({
           )}
           <Link
             to="/analyze"
-            className="inline-flex items-center gap-1.5 mt-3 text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors"
+            className="inline-flex items-center gap-1.5 mt-3 text-xs text-violet-400 hover:text-violet-300 transition-colors"
           >
             <Search size={12} />
             New Analysis
@@ -464,7 +461,7 @@ function OverviewTab({
           {(!rehabProjects || rehabProjects.length === 0) ? (
             <div className="py-2">
               <p className="text-sm text-text-muted">No rehab projects.</p>
-              <Link to="/rehabs" className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors mt-1 inline-block">
+              <Link to="/rehabs" className="text-xs text-violet-400 hover:text-violet-300 transition-colors mt-1 inline-block">
                 + Create Rehab Project
               </Link>
             </div>
@@ -474,13 +471,13 @@ function OverviewTab({
                 const pct = proj.total_estimated > 0 ? Math.min((proj.total_actual / proj.total_estimated) * 100, 100) : 0
                 const overBudget = proj.total_actual > proj.total_estimated && proj.total_estimated > 0
                 return (
-                  <Link key={proj.id} to={`/rehabs/${proj.id}`} className="block p-3 rounded-lg bg-app-bg border border-border-default hover:border-[#8B7AFF]/20 transition-colors">
+                  <Link key={proj.id} to={`/rehabs/${proj.id}`} className="block p-3 rounded-lg bg-app-bg border border-border-default hover:border-violet-400/20 transition-colors">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm text-text-primary">{proj.name}</span>
                       <span className="text-[10px] uppercase tracking-wider text-text-muted">{proj.status.replace(/_/g, ' ')}</span>
                     </div>
                     <div className="h-1.5 bg-border-default rounded-full overflow-hidden mb-1">
-                      <div className={`h-full rounded-full ${overBudget ? 'bg-[#F87171]' : 'bg-[#4ADE80]'}`} style={{ width: `${Math.min(pct, 100)}%` }} />
+                      <div className={`h-full rounded-full ${overBudget ? 'bg-loss' : 'bg-profit'}`} style={{ width: `${Math.min(pct, 100)}%` }} />
                     </div>
                     <div className="flex items-center justify-between text-[10px] text-text-muted">
                       <span>${Number(proj.total_actual).toLocaleString()} of ${Number(proj.total_estimated).toLocaleString()}</span>
@@ -542,7 +539,7 @@ function FinancialsTab({
                   </span>
                   <Link
                     to={`/analyze/results/${propertyId}`}
-                    className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors"
+                    className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
                   >
                     View Analysis
                   </Link>
@@ -575,7 +572,7 @@ function FinancialsTab({
             <p className="text-sm text-text-muted">No transactions recorded yet.</p>
             <button
               onClick={() => setShowAddTxn(true)}
-              className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors cursor-pointer mt-1"
+              className="text-xs text-violet-400 hover:text-violet-300 transition-colors cursor-pointer mt-1"
             >
               + Add Transaction
             </button>
@@ -594,7 +591,7 @@ function FinancialsTab({
                       </span>
                       <span className="text-text-secondary truncate">{txn.description || txn.transaction_type.replace(/_/g, ' ')}</span>
                     </div>
-                    <span className={cn('tabular-nums font-medium shrink-0 ml-2', isPositive ? 'text-[#4ADE80]' : 'text-[#F87171]')}>
+                    <span className={cn('tabular-nums font-medium shrink-0 ml-2', isPositive ? 'text-profit' : 'text-loss')}>
                       {isPositive ? '+' : ''}${Math.abs(amt).toLocaleString()}
                     </span>
                   </div>
@@ -603,7 +600,7 @@ function FinancialsTab({
             </div>
             <button
               onClick={() => setShowAddTxn(true)}
-              className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors cursor-pointer"
+              className="text-xs text-violet-400 hover:text-violet-300 transition-colors cursor-pointer"
             >
               + Add Transaction
             </button>
@@ -624,21 +621,21 @@ function FinancialsTab({
 /* ─── Financing Tab ─── */
 
 const INSTRUMENT_TYPE_COLORS: Record<string, string> = {
-  sub_to_mortgage: 'bg-[#FBBF24]/15 text-[#FBBF24] border-[#FBBF24]/30',
-  seller_finance: 'bg-[#8B7AFF]/15 text-[#A89FFF] border-[#8B7AFF]/30',
-  wrap_mortgage: 'bg-[#60A5FA]/15 text-[#93C5FD] border-[#60A5FA]/30',
-  lease_option: 'bg-[#2DD4BF]/15 text-[#2DD4BF] border-[#2DD4BF]/30',
-  conventional_mortgage: 'bg-[#8A8580]/15 text-text-secondary border-[#8A8580]/30',
-  hard_money: 'bg-[#F87171]/15 text-[#F87171] border-[#F87171]/30',
-  private_money: 'bg-[#C084FC]/15 text-[#C084FC] border-[#C084FC]/30',
-  heloc: 'bg-[#34D399]/15 text-[#34D399] border-[#34D399]/30',
-  land_contract: 'bg-[#FB923C]/15 text-[#FB923C] border-[#FB923C]/30',
+  sub_to_mortgage: 'bg-warning-bg text-warning border-warning/30',
+  seller_finance: 'bg-violet-400/15 text-violet-300 border-violet-400/30',
+  wrap_mortgage: 'bg-info-bg text-info border-info/30',
+  lease_option: 'bg-teal-400/15 text-teal-400 border-teal-400/30',
+  conventional_mortgage: 'bg-text-muted/15 text-text-secondary border-text-muted/30',
+  hard_money: 'bg-loss-bg text-loss border-loss/30',
+  private_money: 'bg-purple-400/15 text-purple-400 border-purple-400/30',
+  heloc: 'bg-emerald-400/15 text-emerald-400 border-emerald-400/30',
+  land_contract: 'bg-orange-400/15 text-orange-400 border-orange-400/30',
 }
 
 const INSTRUMENT_STATUS_COLORS: Record<string, string> = {
-  active: 'bg-[#4ADE80]/15 text-[#4ADE80] border-[#4ADE80]/30',
-  paid_off: 'bg-[#8A8580]/15 text-text-secondary border-[#8A8580]/30',
-  defaulted: 'bg-[#F87171]/15 text-[#F87171] border-[#F87171]/30',
+  active: 'bg-profit-bg text-profit border-profit/30',
+  paid_off: 'bg-text-muted/15 text-text-secondary border-text-muted/30',
+  defaulted: 'bg-loss-bg text-loss border-loss/30',
 }
 
 function FinancingTab({
@@ -669,7 +666,7 @@ function FinancingTab({
         />
         <button
           onClick={() => setShowAddModal(true)}
-          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-violet-400 text-white hover:bg-violet-500 transition-colors cursor-pointer"
         >
           <Landmark size={14} />
           Add Instrument
@@ -698,9 +695,9 @@ function FinancingTab({
               </p>
             </div>
             <div className="text-text-muted">→</div>
-            <div className="text-center p-3 bg-[#4ADE80]/5 rounded-lg border border-[#4ADE80]/20">
-              <p className="text-[10px] uppercase tracking-wider text-[#4ADE80] mb-1">Your Spread</p>
-              <p className="text-lg text-[#4ADE80] font-medium tabular-nums">
+            <div className="text-center p-3 bg-profit-bg rounded-lg border border-profit/20">
+              <p className="text-[10px] uppercase tracking-wider text-profit mb-1">Your Spread</p>
+              <p className="text-lg text-profit font-medium tabular-nums">
                 ${wrapInstrument.wrap_spread.monthly_spread.toLocaleString()}/mo
               </p>
             </div>
@@ -771,7 +768,7 @@ function FinancingTab({
 
                   {/* Balloon callout */}
                   {inst.has_balloon && inst.balloon_amount != null && (
-                    <div className="mt-2 px-2 py-1 bg-[#FBBF24]/10 rounded text-xs text-[#FBBF24] inline-block">
+                    <div className="mt-2 px-2 py-1 bg-warning-bg rounded text-xs text-warning inline-block">
                       BALLOON: ${Number(inst.balloon_amount).toLocaleString()}
                       {inst.balloon_date && ` · ${new Date(inst.balloon_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`}
                     </div>
@@ -779,7 +776,7 @@ function FinancingTab({
 
                   {/* Wrap spread inline */}
                   {inst.wrap_spread && (
-                    <div className="mt-2 px-2 py-1 bg-[#4ADE80]/10 rounded text-xs text-[#4ADE80] inline-block">
+                    <div className="mt-2 px-2 py-1 bg-profit-bg rounded text-xs text-profit inline-block">
                       Spread: ${inst.wrap_spread.monthly_spread.toLocaleString()}/mo
                     </div>
                   )}
@@ -796,7 +793,7 @@ function FinancingTab({
       {/* Add Instrument button */}
       <button
         onClick={() => setShowAddModal(true)}
-        className="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors cursor-pointer"
+        className="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-violet-400 text-white hover:bg-violet-500 transition-colors cursor-pointer"
       >
         <Landmark size={14} />
         Add Instrument
@@ -867,7 +864,7 @@ function InstrumentExpandedDetail({ instrumentId }: { instrumentId: string }) {
                 <span className="text-text-secondary">
                   {new Date(p.payment_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </span>
-                <span className={cn('tabular-nums font-medium', p.direction === 'incoming' ? 'text-[#4ADE80]' : 'text-text-primary')}>
+                <span className={cn('tabular-nums font-medium', p.direction === 'incoming' ? 'text-profit' : 'text-text-primary')}>
                   {p.direction === 'incoming' ? '+' : '-'}${Number(p.amount).toLocaleString()}
                 </span>
               </div>

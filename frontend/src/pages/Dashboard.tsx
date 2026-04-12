@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useSearchParams } from 'react-router-dom'
+import { toast } from 'sonner'
 import { motion } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import {
   ArrowRight, GitBranch, FileText, AlertCircle, X,
   Calculator, CheckCircle2, MapPin, Search,
@@ -17,15 +19,13 @@ import { useOnboardingStore } from '@/stores/onboardingStore'
 import { api } from '@/lib/api'
 import { timeAgo } from '@/lib/utils'
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
-}
+const containerVariants = prefersReducedMotion
+  ? { hidden: {}, visible: {} }
+  : { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.08 } } }
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 6 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.18, ease: 'easeOut' } },
-}
+const itemVariants = prefersReducedMotion
+  ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+  : { hidden: { opacity: 0, y: 6 }, visible: { opacity: 1, y: 0, transition: { duration: 0.18, ease: 'easeOut' } } }
 
 function getGreeting(): string {
   const h = new Date().getHours()
@@ -72,14 +72,15 @@ function statusLabel(status: string): string {
 
 function riskColor(score: number | null): string {
   if (score === null) return 'text-text-muted'
-  if (score <= 30) return 'text-[#7CCBA5]'
-  if (score <= 60) return 'text-[#D4A867]'
-  return 'text-[#D4766A]'
+  if (score <= 30) return 'text-profit'
+  if (score <= 60) return 'text-warning'
+  return 'text-loss'
 }
 
 export default function Dashboard() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const [searchParams, setSearchParams] = useSearchParams()
   const { data: stats, isLoading, isError, error } = useDashboard()
   const user = useAuthStore((s) => s.user)
   const isDemoUser = user?.email === 'demo@parcel.app'
@@ -95,6 +96,17 @@ export default function Dashboard() {
   })
 
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+
+  // Handle ?checkout=success redirect from Stripe
+  useEffect(() => {
+    if (searchParams.get('checkout') === 'success') {
+      toast.success('Welcome! Your subscription is active.')
+      queryClient.invalidateQueries({ queryKey: ['billing'] })
+      queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
+      setSearchParams({}, { replace: true })
+    }
+  }, [searchParams, setSearchParams, queryClient])
+
   useEffect(() => {
     if (isAuthenticated && !onboardingFetched) fetchStatus()
   }, [isAuthenticated, onboardingFetched, fetchStatus])
@@ -154,8 +166,8 @@ export default function Dashboard() {
     return (
       <AppShell title="Dashboard">
         {demoBanner}
-        <div className="rounded-xl border border-[#D4766A]/20 bg-[#D4766A]/10 p-6 flex items-start gap-3 max-w-lg">
-          <AlertCircle size={20} className="text-[#D4766A] shrink-0 mt-0.5" />
+        <div className="rounded-xl border border-loss/20 bg-loss/10 p-6 flex items-start gap-3 max-w-lg">
+          <AlertCircle size={20} className="text-loss shrink-0 mt-0.5" />
           <div className="space-y-2">
             <p className="text-sm font-medium text-text-primary">Failed to load dashboard</p>
             <p className="text-xs text-text-secondary">{error instanceof Error ? error.message : 'Something went wrong.'}</p>
@@ -182,26 +194,25 @@ export default function Dashboard() {
           animate="visible"
         >
           {/* Welcome icon */}
-          <motion.div variants={itemVariants} className="w-14 h-14 rounded-2xl bg-[#8B7AFF]/10 flex items-center justify-center mb-6">
-            <Search size={24} className="text-[#8B7AFF]/60" />
+          <motion.div variants={itemVariants} className="w-14 h-14 rounded-2xl bg-accent-primary/10 flex items-center justify-center mb-6">
+            <Search size={24} className="text-accent-primary/60" />
           </motion.div>
 
           <motion.h1
             variants={itemVariants}
-            className="text-2xl sm:text-3xl text-[#F0EDE8] text-center mb-2"
-            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+            className="text-2xl sm:text-3xl text-text-primary font-brand font-light text-center mb-2"
           >
             Welcome to Parcel
           </motion.h1>
 
-          <motion.p variants={itemVariants} className="text-sm text-[#C5C0B8] text-center mb-8 max-w-md">
+          <motion.p variants={itemVariants} className="text-sm text-text-secondary text-center mb-8 max-w-md">
             Analyze your first property to start building your briefing.
           </motion.p>
 
           <motion.div variants={itemVariants}>
             <button
               onClick={() => { navigate('/analyze'); try { (window as any).posthog?.capture?.('welcome_cta_clicked', { action: 'analyze' }) } catch {} }}
-              className="px-6 py-3 rounded-lg text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
+              className="px-6 py-3 rounded-lg text-sm font-medium bg-accent-primary text-white hover:bg-accent-hover transition-colors"
             >
               Analyze a Property
             </button>
@@ -210,14 +221,14 @@ export default function Dashboard() {
           {/* Sample data cards */}
           {hasSampleData && (
             <motion.div variants={itemVariants} className="mt-12 w-full max-w-2xl">
-              <p className="text-[11px] text-[#8A8580] uppercase tracking-wider font-medium mb-3 text-center">
+              <p className="text-[11px] text-text-muted uppercase tracking-wider font-medium mb-3 text-center">
                 Sample Deal Preview
               </p>
-              <div className="rounded-xl border border-dashed border-[#1E1D1B] bg-[#141311]/50 p-5 text-center">
-                <p className="text-sm text-[#C5C0B8] mb-2">
+              <div className="rounded-xl border border-dashed border-border-default bg-app-recessed/50 p-5 text-center">
+                <p className="text-sm text-text-secondary mb-2">
                   Explore your sample deal to see what Parcel can do.
                 </p>
-                <p className="text-xs text-[#8A8580]">
+                <p className="text-xs text-text-muted">
                   Sample data will be replaced when you analyze real properties.
                 </p>
               </div>
@@ -226,8 +237,8 @@ export default function Dashboard() {
 
           {/* Briefing placeholder */}
           <motion.div variants={itemVariants} className="mt-6 w-full max-w-2xl">
-            <div className="rounded-xl border border-dashed border-[#1E1D1B] p-6 text-center">
-              <p className="text-sm text-[#8A8580]">
+            <div className="rounded-xl border border-dashed border-border-default p-6 text-center">
+              <p className="text-sm text-text-muted">
                 Your morning briefing will appear here as you add properties and track deals.
               </p>
             </div>
@@ -245,21 +256,21 @@ export default function Dashboard() {
         {/* Greeting + Quick Actions */}
         <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl text-[#F0EDE8] font-light" style={{ fontFamily: 'Satoshi, sans-serif' }}>
+            <h1 className="text-2xl sm:text-3xl text-text-primary font-brand font-light">
               {getGreeting()}, {firstName}
             </h1>
-            <p className="text-sm text-[#8A8580] mt-1">{formatDate()}</p>
+            <p className="text-sm text-text-muted mt-1">{formatDate()}</p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="px-3 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 transition-all">
+            <button className="px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-accent-primary/30 transition-all">
               Log Activity
             </button>
-            <button className="px-3 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 transition-all">
+            <button className="px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-accent-primary/30 transition-all">
               Add Contact
             </button>
             <button
               onClick={() => navigate('/analyze')}
-              className="px-4 py-2 rounded-lg text-sm bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
+              className="px-4 py-2 rounded-lg text-sm bg-accent-primary text-white hover:bg-accent-hover transition-colors"
             >
               Analyze Property
             </button>
@@ -275,35 +286,35 @@ export default function Dashboard() {
         </motion.div>
 
         {portfolioData && portfolioData.summary.total_properties > 0 && (
-          <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
+          <div className="bg-app-recessed border border-border-default rounded-xl p-5">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium">Portfolio</h3>
-              <Link to="/portfolio" className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors">
+              <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium">Portfolio</h3>
+              <Link to="/portfolio" className="text-xs text-accent-primary hover:text-accent-secondary transition-colors">
                 View Portfolio →
               </Link>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div>
-                <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-0.5">Total Value</p>
-                <p className="text-lg text-[#F0EDE8] font-medium tabular-nums">
+                <p className="text-[10px] uppercase tracking-wider text-text-muted mb-0.5">Total Value</p>
+                <p className="text-lg text-text-primary font-medium tabular-nums">
                   ${portfolioData.summary.total_estimated_value >= 1_000_000
                     ? `${(portfolioData.summary.total_estimated_value / 1_000_000).toFixed(1)}M`
                     : `${Math.round(portfolioData.summary.total_estimated_value / 1000)}K`}
                 </p>
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-0.5">Monthly CF</p>
-                <p className={`text-lg font-medium tabular-nums ${portfolioData.summary.total_monthly_cash_flow >= 0 ? 'text-[#4ADE80]' : 'text-[#F87171]'}`}>
+                <p className="text-[10px] uppercase tracking-wider text-text-muted mb-0.5">Monthly CF</p>
+                <p className={`text-lg font-medium tabular-nums ${portfolioData.summary.total_monthly_cash_flow >= 0 ? 'text-profit' : 'text-loss'}`}>
                   {portfolioData.summary.total_monthly_cash_flow < 0 ? '-' : ''}${Math.abs(Math.round(portfolioData.summary.total_monthly_cash_flow)).toLocaleString()}
                 </p>
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-0.5">LTV</p>
-                <p className="text-lg text-[#F0EDE8] font-medium tabular-nums">{portfolioData.summary.ltv_ratio}%</p>
+                <p className="text-[10px] uppercase tracking-wider text-text-muted mb-0.5">LTV</p>
+                <p className="text-lg text-text-primary font-medium tabular-nums">{portfolioData.summary.ltv_ratio}%</p>
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-0.5">Properties</p>
-                <p className="text-lg text-[#F0EDE8] font-medium tabular-nums">{portfolioData.summary.total_properties}</p>
+                <p className="text-[10px] uppercase tracking-wider text-text-muted mb-0.5">Properties</p>
+                <p className="text-lg text-text-primary font-medium tabular-nums">{portfolioData.summary.total_properties}</p>
               </div>
             </div>
           </div>
@@ -316,21 +327,21 @@ export default function Dashboard() {
             {pipelineEntries.length > 0 ? (
               <motion.div variants={itemVariants} className="space-y-3">
                 <h2 className="text-sm font-semibold text-text-primary">Pipeline Velocity</h2>
-                <div className="rounded-xl border border-[#1E1D1B] bg-[#141311] p-4">
+                <div className="rounded-xl border border-border-default bg-app-recessed p-4">
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {pipelineEntries.map(([stage, count]) => (
-                      <div key={stage} className="flex items-center justify-between p-3 rounded-lg bg-[#0C0B0A]">
-                        <span className="text-sm text-[#C5C0B8]">{STAGE_LABELS[stage] ?? statusLabel(stage)}</span>
-                        <span className="text-lg font-semibold text-[#F0EDE8] tabular-nums">{count}</span>
+                      <div key={stage} className="flex items-center justify-between p-3 rounded-lg bg-app-bg">
+                        <span className="text-sm text-text-secondary">{STAGE_LABELS[stage] ?? statusLabel(stage)}</span>
+                        <span className="text-lg font-semibold text-text-primary tabular-nums">{count}</span>
                       </div>
                     ))}
                   </div>
                 </div>
               </motion.div>
             ) : (
-              <motion.div variants={itemVariants} className="rounded-xl border border-dashed border-[#1E1D1B] bg-[#141311]/50 p-6 text-center">
-                <p className="text-sm text-[#8A8580] mb-2">No active deals in your pipeline</p>
-                <Link to="/analyze" className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors">
+              <motion.div variants={itemVariants} className="rounded-xl border border-dashed border-border-default bg-app-recessed/50 p-6 text-center">
+                <p className="text-sm text-text-muted mb-2">No active deals in your pipeline</p>
+                <Link to="/analyze" className="text-xs text-accent-primary hover:text-accent-secondary transition-colors">
                   Analyze a property and move it to your pipeline →
                 </Link>
               </motion.div>
@@ -343,20 +354,20 @@ export default function Dashboard() {
                   <h2 className="text-sm font-semibold text-text-primary">Recent Deals</h2>
                   <Link to="/deals" className="text-xs text-violet-400 hover:text-violet-300 transition-colors">View all →</Link>
                 </div>
-                <div className="rounded-xl border border-[#1E1D1B] bg-[#141311] overflow-x-auto">
+                <div className="rounded-xl border border-border-default bg-app-recessed overflow-x-auto">
                   <table className="w-full min-w-[500px]">
                     <thead>
-                      <tr className="border-b border-[#1E1D1B]">
-                        <th className="text-left text-xs text-[#8A8580] uppercase tracking-wider px-4 py-3">Address</th>
-                        <th className="text-left text-xs text-[#8A8580] uppercase tracking-wider px-4 py-3">Strategy</th>
-                        <th className="text-left text-xs text-[#8A8580] uppercase tracking-wider px-4 py-3">Risk</th>
+                      <tr className="border-b border-border-default">
+                        <th className="text-left text-xs text-text-muted uppercase tracking-wider px-4 py-3">Address</th>
+                        <th className="text-left text-xs text-text-muted uppercase tracking-wider px-4 py-3">Strategy</th>
+                        <th className="text-left text-xs text-text-muted uppercase tracking-wider px-4 py-3">Risk</th>
                         <th className="px-4 py-3" />
                       </tr>
                     </thead>
                     <tbody>
                       {(stats.recent_deals ?? []).map((deal) => (
-                        <tr key={deal.id} className="border-b border-[#1E1D1B]/50 last:border-0 hover:bg-[#1E1D1B]/30 transition-colors">
-                          <td className="px-4 py-3 text-sm text-[#F0EDE8]">{deal.address}</td>
+                        <tr key={deal.id} className="border-b border-border-default/50 last:border-0 hover:bg-border-default/30 transition-colors">
+                          <td className="px-4 py-3 text-sm text-text-primary">{deal.address}</td>
                           <td className="px-4 py-3"><StrategyBadge strategy={deal.strategy} /></td>
                           <td className="px-4 py-3">
                             <span className={`text-sm font-medium tabular-nums ${riskColor(deal.risk_score)}`}>
@@ -378,7 +389,7 @@ export default function Dashboard() {
           {/* Right column: Recent Activity */}
           <motion.div variants={itemVariants} className="space-y-3">
             <h2 className="text-sm font-semibold text-text-primary">Recent Activity</h2>
-            <div className="rounded-xl border border-[#1E1D1B] bg-[#141311] p-4">
+            <div className="rounded-xl border border-border-default bg-app-recessed p-4">
               {activityLoading && (
                 <div className="space-y-3">
                   {Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} lines={1} />)}
@@ -387,7 +398,7 @@ export default function Dashboard() {
 
               {!activityLoading && (!activityData || activityData.length === 0) && (
                 <div className="py-8 text-center">
-                  <p className="text-sm text-[#8A8580]">Your activity will appear here as you use Parcel</p>
+                  <p className="text-sm text-text-muted">Your activity will appear here as you use Parcel</p>
                 </div>
               )}
 
@@ -413,15 +424,15 @@ export default function Dashboard() {
                         onClick={clickable ? handleClick : undefined}
                         onKeyDown={clickable ? (e) => { if (e.key === 'Enter') handleClick() } : undefined}
                         className={`flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors ${
-                          clickable ? 'cursor-pointer hover:bg-[#0C0B0A]' : 'hover:bg-[#0C0B0A]'
+                          clickable ? 'cursor-pointer hover:bg-app-bg' : 'hover:bg-app-bg'
                         }`}
                       >
                         <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: `${config.color}15` }}>
                           <Icon size={14} style={{ color: config.color }} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-[#C5C0B8] truncate">{item.description}</p>
-                          <p className="text-[10px] text-[#8A8580]">{item.timestamp ? timeAgo(item.timestamp) : ''}</p>
+                          <p className="text-xs text-text-secondary truncate">{item.description}</p>
+                          <p className="text-[10px] text-text-muted">{item.timestamp ? timeAgo(item.timestamp) : ''}</p>
                         </div>
                       </div>
                     )

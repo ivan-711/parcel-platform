@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import { ChevronDown, HelpCircle } from 'lucide-react'
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover'
 import { METRIC_TOOLTIPS } from './MetricTooltips'
@@ -85,10 +86,10 @@ const SUPPORTING_METRICS: Record<string, MetricDef[]> = {
 }
 
 function dotColor(value: number | null, threshold?: { green: number; yellow: number }): string {
-  if (value === null || !threshold) return '#8A8580'
-  if (value >= threshold.green) return '#4ADE80'
-  if (value >= threshold.yellow) return '#FBBF24'
-  return '#F87171'
+  if (value === null || !threshold) return 'var(--text-muted)'
+  if (value >= threshold.green) return '#7CCBA5'
+  if (value >= threshold.yellow) return '#D4A867'
+  return '#D4766A'
 }
 
 function formatVal(v: number | string | boolean | null | undefined, prefix?: string, suffix?: string): string {
@@ -177,8 +178,8 @@ export function KeyMetrics({ scenario }: Props) {
         </div>
         <div className="flex items-baseline gap-1">
           <span className={`text-4xl sm:text-5xl font-light ${
-            typeof primaryVal === 'number' && primaryVal > 0 ? 'text-[#4ADE80]' :
-            typeof primaryVal === 'number' && primaryVal < 0 ? 'text-[#F87171]' :
+            typeof primaryVal === 'number' && primaryVal > 0 ? 'text-profit' :
+            typeof primaryVal === 'number' && primaryVal < 0 ? 'text-loss' :
             'text-text-primary'
           }`}>
             {formatVal(primaryVal, primary.prefix)}
@@ -204,17 +205,17 @@ export function KeyMetrics({ scenario }: Props) {
           >
             <ChevronDown
               size={14}
-              className={`transition-transform duration-200 ${showMore ? 'rotate-180 text-[#8B7AFF]' : ''}`}
+              className={`transition-transform duration-200 ${showMore ? 'rotate-180 text-violet-400' : ''}`}
             />
             {showMore ? 'Hide metrics' : `More Metrics (${secondaryCount})`}
           </button>
           <AnimatePresence initial={false}>
             {showMore && (
               <motion.div
-                initial={{ height: 0, opacity: 0 }}
+                initial={prefersReducedMotion ? {} : { height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                exit={prefersReducedMotion ? {} : { height: 0, opacity: 0 }}
+                transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                 className="overflow-hidden"
               >
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">

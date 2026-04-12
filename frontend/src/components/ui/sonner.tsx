@@ -39,13 +39,13 @@ function Toaster() {
             'group toast group-[.toaster]:bg-app-elevated group-[.toaster]:text-text-primary group-[.toaster]:border-border-default group-[.toaster]:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.5)] group-[.toaster]:rounded-lg',
           description: 'group-[.toast]:text-text-secondary',
           actionButton:
-            'group-[.toast]:bg-[#8B7AFF] group-[.toast]:text-accent-text-on-accent group-[.toast]:rounded-md group-[.toast]:text-xs group-[.toast]:font-medium',
+            'group-[.toast]:bg-violet-400 group-[.toast]:text-accent-text-on-accent group-[.toast]:rounded-md group-[.toast]:text-xs group-[.toast]:font-medium',
           cancelButton:
             'group-[.toast]:bg-black/[0.04] dark:group-[.toast]:bg-layer-3 group-[.toast]:text-text-secondary group-[.toast]:rounded-md group-[.toast]:text-xs',
-          success: 'group-[.toaster]:border-l-[3px] group-[.toaster]:border-l-[#6DBEA3]',
-          error: 'group-[.toaster]:border-l-[3px] group-[.toaster]:border-l-[#D4766A]',
-          warning: 'group-[.toaster]:border-l-[3px] group-[.toaster]:border-l-[#D4A867]',
-          info: 'group-[.toaster]:border-l-[3px] group-[.toaster]:border-l-[#8B7AFF]',
+          success: 'group-[.toaster]:bg-[rgba(109,190,163,0.06)]',
+          error: 'group-[.toaster]:bg-[rgba(212,118,106,0.06)]',
+          warning: 'group-[.toaster]:bg-[rgba(212,168,103,0.06)]',
+          info: 'group-[.toaster]:bg-[rgba(123,159,204,0.06)]',
         },
       }}
     />

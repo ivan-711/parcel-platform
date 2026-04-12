@@ -14,6 +14,7 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { prefersReducedMotion } from '@/lib/motion'
 import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
 import { useContacts, useDeleteContact } from '@/hooks/useContacts'
@@ -35,14 +36,14 @@ const TYPE_OPTIONS = [
 ]
 
 const TYPE_COLORS: Record<string, string> = {
-  seller: 'bg-[#F97316]/15 text-[#FB923C] border-[#F97316]/30',
-  buyer: 'bg-[#4ADE80]/15 text-[#6DBEA3] border-[#4ADE80]/30',
-  agent: 'bg-[#60A5FA]/15 text-[#93C5FD] border-[#60A5FA]/30',
-  lender: 'bg-[#8B7AFF]/15 text-[#A89FFF] border-[#8B7AFF]/30',
-  contractor: 'bg-[#8A8580]/15 text-[#C5C0B8] border-[#8A8580]/30',
-  tenant: 'bg-[#2DD4BF]/15 text-[#5EEAD4] border-[#2DD4BF]/30',
-  partner: 'bg-[#FBBF24]/15 text-[#FCD34D] border-[#FBBF24]/30',
-  other: 'bg-[#1E1D1B] text-[#8A8580] border-[#1E1D1B]',
+  seller: 'bg-warning-bg text-warning border-warning/30', // TODO: verify token mapping — #F97316/#FB923C mapped to warning
+  buyer: 'bg-profit-bg text-profit border-profit/30',
+  agent: 'bg-info-bg text-info border-info/30', // TODO: verify token mapping — #60A5FA/#93C5FD mapped to info
+  lender: 'bg-violet-400/15 text-violet-300 border-violet-400/30',
+  contractor: 'bg-gray-9/15 text-text-secondary border-gray-9/30', // TODO: verify token mapping — #8A8580/#C5C0B8 mapped to gray-9/text-secondary
+  tenant: 'bg-success-bg text-success border-success/30', // TODO: verify token mapping — #2DD4BF/#5EEAD4 mapped to success
+  partner: 'bg-warning-bg text-warning border-warning/30', // TODO: verify token mapping — #FBBF24/#FCD34D mapped to warning
+  other: 'bg-border-default text-text-muted border-border-default',
 }
 
 export function TypeBadge({ type }: { type: string | null }) {
@@ -120,7 +121,7 @@ export default function ContactsListPage() {
       actions={
         <button
           onClick={() => setModalOpen(true)}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-violet-400 text-white hover:bg-violet-500 transition-colors cursor-pointer"
         >
           <Plus size={14} />
           Add Contact
@@ -129,22 +130,22 @@ export default function ContactsListPage() {
     >
       <div className="space-y-5">
         {total > 0 && (
-          <p className="text-sm text-[#8A8580]">{total} contact{total !== 1 ? 's' : ''}</p>
+          <p className="text-sm text-text-muted">{total} contact{total !== 1 ? 's' : ''}</p>
         )}
 
         {/* Search + Filters */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1 max-w-md">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A8580]" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               type="text"
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1) }}
               placeholder="Search contacts..."
-              className="w-full h-9 pl-9 pr-8 rounded-lg bg-[#141311] border border-[#1E1D1B] text-sm text-[#F0EDE8] placeholder-[#8A8580]/60 focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-all"
+              className="w-full h-9 pl-9 pr-8 rounded-lg bg-app-recessed border border-border-default text-sm text-text-primary placeholder-text-muted/60 focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 transition-all"
             />
             {search && (
-              <button onClick={() => { setSearch(''); setPage(1) }} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#8A8580] hover:text-[#C5C0B8] cursor-pointer">
+              <button onClick={() => { setSearch(''); setPage(1) }} aria-label="Clear search" className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary transition-colors cursor-pointer">
                 <X size={14} />
               </button>
             )}
@@ -158,8 +159,8 @@ export default function ContactsListPage() {
                 className={cn(
                   'text-xs px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors cursor-pointer',
                   typeFilter === opt.value
-                    ? 'bg-[#8B7AFF]/15 text-[#A89FFF] border border-[#8B7AFF]/30'
-                    : 'bg-[#141311] text-[#8A8580] border border-[#1E1D1B] hover:text-[#C5C0B8]'
+                    ? 'bg-violet-400/15 text-violet-300 border border-violet-400/30'
+                    : 'bg-app-recessed text-text-muted border border-border-default hover:text-text-secondary'
                 )}
               >
                 {opt.label}
@@ -169,7 +170,7 @@ export default function ContactsListPage() {
         </div>
 
         {isError && (
-          <div className="bg-[#F87171]/10 border border-[#F87171]/20 rounded-lg p-4 text-sm text-[#F87171]">
+          <div className="bg-loss-bg border border-loss/20 rounded-lg p-4 text-sm text-loss">
             Failed to load contacts.
           </div>
         )}
@@ -177,7 +178,7 @@ export default function ContactsListPage() {
         {isLoading && (
           <div className="space-y-2">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-14 bg-[#141311] rounded-lg animate-pulse" />
+              <div key={i} className="h-14 bg-app-recessed rounded-lg animate-pulse" />
             ))}
           </div>
         )}
@@ -194,8 +195,8 @@ export default function ContactsListPage() {
 
         {!isLoading && !isError && contacts.length === 0 && hasFilters && (
           <div className="text-center py-12">
-            <p className="text-sm text-[#8A8580] mb-2">No contacts match your search.</p>
-            <button onClick={clearFilters} className="text-sm text-[#8B7AFF] hover:text-[#A89FFF] transition-colors cursor-pointer">
+            <p className="text-sm text-text-muted mb-2">No contacts match your search.</p>
+            <button onClick={clearFilters} className="text-sm text-violet-400 hover:text-violet-300 transition-colors cursor-pointer">
               Clear filters
             </button>
           </div>
@@ -207,40 +208,41 @@ export default function ContactsListPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className="border border-[#1E1D1B] rounded-xl overflow-hidden"
+            className="border border-border-default rounded-xl overflow-hidden"
           >
             {/* Desktop */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-[#141311] border-b border-[#1E1D1B]">
-                    <th className="text-left text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-4 py-3">Name</th>
-                    <th className="text-left text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-4 py-3">Type</th>
-                    <th className="text-left text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-4 py-3">Phone</th>
-                    <th className="text-left text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-4 py-3">Email</th>
-                    <th className="text-right text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-4 py-3">Deals</th>
-                    <th className="text-right text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-4 py-3">Last Contact</th>
-                    <th className="text-right text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-4 py-3 w-10"></th>
+                  <tr className="bg-app-recessed border-b border-border-default">
+                    <th className="text-left text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Name</th>
+                    <th className="text-left text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Type</th>
+                    <th className="text-left text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Phone</th>
+                    <th className="text-left text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Email</th>
+                    <th className="text-right text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Deals</th>
+                    <th className="text-right text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Last Contact</th>
+                    <th className="text-right text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3 w-10"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {contacts.map((c) => {
                     const fullName = [c.first_name, c.last_name].filter(Boolean).join(' ')
                     return (
-                      <tr
+                      <motion.tr
                         key={c.id}
-                        className="group border-b border-[#1E1D1B] last:border-0 hover:bg-[#141311]/60 transition-colors cursor-pointer"
+                        whileHover={prefersReducedMotion ? undefined : { y: -2 }}
+                        className="group border-b border-border-default last:border-0 hover:bg-app-recessed/60 transition-shadow duration-200 hover:shadow-lg cursor-pointer"
                         onClick={() => navigate(`/contacts/${c.id}`)}
                       >
                         <td className="px-4 py-3">
-                          <span className="text-[#F0EDE8] font-medium">{fullName}</span>
-                          {c.company && <p className="text-xs text-[#8A8580] mt-0.5">{c.company}</p>}
+                          <span className="text-text-primary font-medium">{fullName}</span>
+                          {c.company && <p className="text-xs text-text-muted mt-0.5">{c.company}</p>}
                         </td>
                         <td className="px-4 py-3"><TypeBadge type={c.contact_type} /></td>
-                        <td className="px-4 py-3 text-[#C5C0B8]">{c.phone || '—'}</td>
-                        <td className="px-4 py-3 text-[#C5C0B8] max-w-[180px] truncate">{c.email || '—'}</td>
-                        <td className="px-4 py-3 text-right text-[#C5C0B8] tabular-nums">{c.deal_count}</td>
-                        <td className="px-4 py-3 text-right text-xs text-[#8A8580] tabular-nums">
+                        <td className="px-4 py-3 text-text-secondary">{c.phone || '—'}</td>
+                        <td className="px-4 py-3 text-text-secondary max-w-[180px] truncate">{c.email || '—'}</td>
+                        <td className="px-4 py-3 text-right text-text-secondary tabular-nums">{c.deal_count}</td>
+                        <td className="px-4 py-3 text-right text-xs text-text-muted tabular-nums">
                           {c.last_communication ? formatRelativeTime(c.last_communication) : 'Never'}
                         </td>
                         <td className="px-4 py-3 text-right" onClick={e => e.stopPropagation()}>
@@ -250,7 +252,7 @@ export default function ContactsListPage() {
                             onEdit={() => navigate(`/contacts/${c.id}`)}
                           />
                         </td>
-                      </tr>
+                      </motion.tr>
                     )
                   })}
                 </tbody>
@@ -258,28 +260,29 @@ export default function ContactsListPage() {
             </div>
 
             {/* Mobile cards */}
-            <div className="md:hidden divide-y divide-[#1E1D1B]">
+            <div className="md:hidden divide-y divide-border-default">
               {contacts.map((c) => {
                 const fullName = [c.first_name, c.last_name].filter(Boolean).join(' ')
                 return (
+                  <motion.div key={c.id} whileHover={prefersReducedMotion ? undefined : { y: -2 }}>
                   <Link
-                    key={c.id}
                     to={`/contacts/${c.id}`}
-                    className="flex items-center justify-between px-4 py-3 hover:bg-[#141311]/60 transition-colors"
+                    className="flex items-center justify-between px-4 py-3 hover:bg-app-recessed/60 transition-shadow duration-200 hover:shadow-lg"
                   >
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-[#F0EDE8] font-medium truncate">{fullName}</span>
+                        <span className="text-sm text-text-primary font-medium truncate">{fullName}</span>
                         <TypeBadge type={c.contact_type} />
                       </div>
-                      <p className="text-xs text-[#8A8580] mt-0.5">
+                      <p className="text-xs text-text-muted mt-0.5">
                         {c.phone || c.email || 'No contact info'}
                       </p>
                     </div>
-                    <span className="text-xs text-[#8A8580] shrink-0 ml-3">
+                    <span className="text-xs text-text-muted shrink-0 ml-3">
                       {c.last_communication ? formatRelativeTime(c.last_communication) : 'Never'}
                     </span>
                   </Link>
+                  </motion.div>
                 )
               })}
             </div>
@@ -289,22 +292,22 @@ export default function ContactsListPage() {
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between text-sm">
-            <span className="text-[#8A8580]">
+            <span className="text-text-muted">
               Showing {(page - 1) * PER_PAGE + 1}–{Math.min(page * PER_PAGE, total)} of {total}
             </span>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-[#8A8580] hover:text-[#C5C0B8] hover:bg-[#141311] disabled:opacity-30 transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-app-recessed disabled:opacity-30 transition-colors cursor-pointer"
               >
                 <ChevronLeft size={16} />
               </button>
-              <span className="px-2 text-[#C5C0B8] tabular-nums">{page} / {totalPages}</span>
+              <span className="px-2 text-text-secondary tabular-nums">{page} / {totalPages}</span>
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-[#8A8580] hover:text-[#C5C0B8] hover:bg-[#141311] disabled:opacity-30 transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-app-recessed disabled:opacity-30 transition-colors cursor-pointer"
               >
                 <ChevronRight size={16} />
               </button>
@@ -334,18 +337,18 @@ function ContactActions({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="w-7 h-7 rounded-md flex items-center justify-center text-[#8A8580] hover:text-[#C5C0B8] hover:bg-[#141311] opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
+        <button aria-label="Contact actions" className="w-7 h-7 rounded-md flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-app-recessed opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
           <MoreHorizontal size={14} />
         </button>
       </PopoverTrigger>
-      <PopoverContent align="end" sideOffset={4} className="w-40 p-1 bg-[#141311] border border-[#1E1D1B] shadow-lg rounded-xl">
-        <Link to={`/contacts/${contact.id}`} className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-sm text-[#C5C0B8] hover:bg-[#1A1918] hover:text-[#F0EDE8] transition-colors">
+      <PopoverContent align="end" sideOffset={4} className="w-40 p-1 bg-app-recessed border border-border-default shadow-lg rounded-xl">
+        <Link to={`/contacts/${contact.id}`} className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-sm text-text-secondary hover:bg-app-surface hover:text-text-primary transition-colors">
           <Eye size={14} /> View
         </Link>
-        <button onClick={onEdit} className="flex items-center gap-2 w-full px-2.5 py-2 rounded-lg text-sm text-[#C5C0B8] hover:bg-[#1A1918] hover:text-[#F0EDE8] transition-colors cursor-pointer">
+        <button onClick={onEdit} className="flex items-center gap-2 w-full px-2.5 py-2 rounded-lg text-sm text-text-secondary hover:bg-app-surface hover:text-text-primary transition-colors cursor-pointer">
           <Pencil size={14} /> Edit
         </button>
-        <button onClick={onDelete} className="flex items-center gap-2 w-full px-2.5 py-2 rounded-lg text-sm text-[#F87171] hover:bg-[#F87171]/10 transition-colors cursor-pointer">
+        <button onClick={onDelete} className="flex items-center gap-2 w-full px-2.5 py-2 rounded-lg text-sm text-loss hover:bg-loss-bg transition-colors cursor-pointer">
           <Trash2 size={14} /> Delete
         </button>
       </PopoverContent>

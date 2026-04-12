@@ -100,8 +100,8 @@ export function SensitivityMatrix({ scenario }: Props) {
               className={cn(
                 'px-2 py-1 text-[10px] rounded transition-colors cursor-pointer',
                 activeMetric === opt.value
-                  ? 'bg-[#8B7AFF]/15 text-[#8B7AFF]'
-                  : 'text-[var(--chart-axis-text)] hover:text-[#C5C0B8]'
+                  ? 'bg-violet-400/15 text-violet-400'
+                  : 'text-[var(--chart-axis-text)] hover:text-text-secondary'
               )}
             >
               {opt.label}
@@ -130,14 +130,14 @@ export function SensitivityMatrix({ scenario }: Props) {
                   const isCenter = ri === 2 && ci === 2
                   const positive = isPositive(cell.value)
                   const strong = activeMetric === 'cash_flow' ? cell.value > 200 : cell.value > 8
-                  const bg = strong ? 'rgba(74,222,128,0.15)' :
-                             positive ? 'rgba(74,222,128,0.07)' :
-                             'rgba(248,113,113,0.1)'
+                  const bg = strong ? 'rgba(124,203,165,0.15)' :
+                             positive ? 'rgba(124,203,165,0.07)' :
+                             'rgba(212,118,106,0.1)'
                   return (
                     <td
                       key={ci}
-                      className={`p-2 text-sm font-light ${isCenter ? 'ring-1 ring-[#8B7AFF] rounded' : ''}`}
-                      style={{ backgroundColor: bg, color: positive ? '#F0EDE8' : '#F87171' }}
+                      className={`p-2 text-sm font-light ${isCenter ? 'ring-1 ring-violet-400 rounded' : ''}`}
+                      style={{ backgroundColor: bg, color: positive ? 'var(--text-primary)' : '#D4766A' }}
                     >
                       {formatCell(cell.value, activeMetric)}
                     </td>

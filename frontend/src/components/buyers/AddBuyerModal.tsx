@@ -16,13 +16,13 @@ interface Props {
 }
 
 const inputCls =
-  'w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none'
-const labelCls = 'text-[10px] uppercase tracking-wider text-[#8A8580] mb-1 block'
+  'w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none'
+const labelCls = 'text-[10px] uppercase tracking-wider text-text-muted mb-1 block'
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ id, label, children }: { id?: string; label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className={labelCls}>{label}</label>
+      <label htmlFor={id} className={labelCls}>{label}</label>
       {children}
     </div>
   )
@@ -83,18 +83,17 @@ export function AddBuyerModal({ open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-[#141311] border-[#1E1D1B] max-h-[90vh] flex flex-col">
+      <DialogContent className="sm:max-w-[500px] bg-app-recessed border-border-default max-h-[90vh] flex flex-col">
         <DialogHeader className="shrink-0">
           <DialogTitle
-            className="text-[#F0EDE8]"
-            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+            className="text-text-primary font-brand font-light"
           >
             Add Buyer
           </DialogTitle>
           {/* Step indicator */}
-          <p className="text-xs text-[#8A8580] mt-1">
+          <p className="text-xs text-text-muted mt-1">
             Step {step} of 2 —{' '}
-            <span className="text-[#C5C0B8]">
+            <span className="text-text-secondary">
               {step === 1 ? 'Contact Info' : 'First Buy Box'}
             </span>
           </p>
@@ -103,7 +102,7 @@ export function AddBuyerModal({ open, onOpenChange }: Props) {
               <div
                 key={n}
                 className={`h-1 flex-1 rounded-full transition-colors ${
-                  n <= step ? 'bg-[#8B7AFF]' : 'bg-[#1E1D1B]'
+                  n <= step ? 'bg-violet-400' : 'bg-border-default'
                 }`}
               />
             ))}
@@ -115,18 +114,21 @@ export function AddBuyerModal({ open, onOpenChange }: Props) {
             <div className="space-y-4">
               {/* Name row */}
               <div className="grid grid-cols-2 gap-3">
-                <Field label="First Name *">
+                <Field id="buyer-first-name" label="First Name *">
                   <input
+                    id="buyer-first-name"
                     type="text"
                     className={inputCls}
                     placeholder="Jane"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
+                    aria-required="true"
                     autoFocus
                   />
                 </Field>
-                <Field label="Last Name">
+                <Field id="buyer-last-name" label="Last Name">
                   <input
+                    id="buyer-last-name"
                     type="text"
                     className={inputCls}
                     placeholder="Smith"
@@ -138,8 +140,9 @@ export function AddBuyerModal({ open, onOpenChange }: Props) {
 
               {/* Phone + Email */}
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Phone">
+                <Field id="buyer-phone" label="Phone">
                   <input
+                    id="buyer-phone"
                     type="tel"
                     className={inputCls}
                     placeholder="(555) 000-0000"
@@ -147,8 +150,9 @@ export function AddBuyerModal({ open, onOpenChange }: Props) {
                     onChange={(e) => setPhone(e.target.value)}
                   />
                 </Field>
-                <Field label="Email">
+                <Field id="buyer-email" label="Email">
                   <input
+                    id="buyer-email"
                     type="email"
                     className={inputCls}
                     placeholder="jane@example.com"
@@ -159,8 +163,9 @@ export function AddBuyerModal({ open, onOpenChange }: Props) {
               </div>
 
               {/* Company */}
-              <Field label="Company">
+              <Field id="buyer-company" label="Company">
                 <input
+                  id="buyer-company"
                   type="text"
                   className={inputCls}
                   placeholder="Acme Investments LLC"
@@ -174,7 +179,7 @@ export function AddBuyerModal({ open, onOpenChange }: Props) {
                 type="button"
                 disabled={!firstName.trim()}
                 onClick={handleContinue}
-                className="w-full py-2.5 text-sm rounded-lg bg-[#8B7AFF] text-white font-medium hover:bg-[#7B6AEF] transition-colors disabled:opacity-50 cursor-pointer mt-2"
+                className="w-full py-2.5 text-sm rounded-lg bg-violet-400 text-white font-medium hover:bg-violet-500 transition-colors disabled:opacity-50 cursor-pointer mt-2"
               >
                 Continue
               </button>
@@ -188,7 +193,7 @@ export function AddBuyerModal({ open, onOpenChange }: Props) {
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="flex-1 py-2.5 text-sm rounded-lg border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/40 hover:text-[#F0EDE8] transition-colors cursor-pointer"
+                  className="flex-1 py-2.5 text-sm rounded-lg border border-border-default text-text-secondary hover:border-violet-400/40 hover:text-text-primary transition-colors cursor-pointer"
                 >
                   Back
                 </button>
@@ -196,7 +201,7 @@ export function AddBuyerModal({ open, onOpenChange }: Props) {
                   type="button"
                   disabled={quickAdd.isPending}
                   onClick={handleSubmit}
-                  className="flex-1 py-2.5 text-sm rounded-lg bg-[#8B7AFF] text-white font-medium hover:bg-[#7B6AEF] transition-colors disabled:opacity-50 cursor-pointer"
+                  className="flex-1 py-2.5 text-sm rounded-lg bg-violet-400 text-white font-medium hover:bg-violet-500 transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   {quickAdd.isPending ? 'Saving...' : 'Add Buyer'}
                 </button>

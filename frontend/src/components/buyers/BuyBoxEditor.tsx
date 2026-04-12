@@ -30,8 +30,8 @@ const FUNDING_TYPE_OPTIONS = [
 ]
 
 const inputCls =
-  'w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none'
-const labelCls = 'text-[10px] uppercase tracking-wider text-[#8A8580] mb-1 block'
+  'w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none'
+const labelCls = 'text-[10px] uppercase tracking-wider text-text-muted mb-1 block'
 
 export function BuyBoxEditor({ value, onChange }: Props) {
   const [marketInput, setMarketInput] = useState('')
@@ -69,21 +69,24 @@ export function BuyBoxEditor({ value, onChange }: Props) {
     <div className="space-y-5">
       {/* Name */}
       <div>
-        <label className={labelCls}>Name *</label>
+        <label htmlFor="buybox-name" className={labelCls}>Name *</label>
         <input
+          id="buybox-name"
           type="text"
           className={inputCls}
           placeholder="e.g. Cash deals under $150K"
           value={value.name ?? ''}
           onChange={(e) => onChange({ ...value, name: e.target.value })}
+          aria-required="true"
         />
       </div>
 
       {/* Target Markets */}
       <div>
-        <label className={labelCls}>Target Markets</label>
+        <label htmlFor="buybox-target-markets" className={labelCls}>Target Markets</label>
         <div className="flex gap-2">
           <input
+            id="buybox-target-markets"
             type="text"
             className={inputCls}
             placeholder="City or zip code"
@@ -99,7 +102,7 @@ export function BuyBoxEditor({ value, onChange }: Props) {
           <button
             type="button"
             onClick={addMarket}
-            className="flex items-center gap-1 px-3 py-2 bg-[#1E1D1B] hover:bg-[#2A2926] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] transition-colors shrink-0"
+            className="flex items-center gap-1 px-3 py-2 bg-border-default hover:bg-app-overlay border border-border-default rounded-lg text-sm text-text-primary transition-colors shrink-0"
           >
             <Plus className="w-3.5 h-3.5" />
             Add
@@ -110,13 +113,14 @@ export function BuyBoxEditor({ value, onChange }: Props) {
             {(value.target_markets || []).map((m) => (
               <span
                 key={m}
-                className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#8B7AFF]/15 border border-[#8B7AFF]/30 rounded-full text-xs text-[#8B7AFF]"
+                className="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-400/15 border border-violet-400/30 rounded-full text-xs text-violet-400"
               >
                 {m}
                 <button
                   type="button"
                   onClick={() => removeMarket(m)}
-                  className="hover:text-[#F0EDE8] transition-colors"
+                  aria-label={`Remove ${m}`}
+                  className="hover:text-text-primary transition-colors"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -128,11 +132,13 @@ export function BuyBoxEditor({ value, onChange }: Props) {
 
       {/* Price Range */}
       <div>
-        <label className={labelCls}>Price Range</label>
+        <span className={labelCls}>Price Range</span>
         <div className="grid grid-cols-2 gap-3">
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#8A8580]">$</span>
+            <label htmlFor="buybox-min-price" className="sr-only">Minimum Price</label>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-text-muted">$</span>
             <input
+              id="buybox-min-price"
               type="number"
               className={`${inputCls} pl-6`}
               placeholder="Min"
@@ -141,8 +147,10 @@ export function BuyBoxEditor({ value, onChange }: Props) {
             />
           </div>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#8A8580]">$</span>
+            <label htmlFor="buybox-max-price" className="sr-only">Maximum Price</label>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-text-muted">$</span>
             <input
+              id="buybox-max-price"
               type="number"
               className={`${inputCls} pl-6`}
               placeholder="Max"
@@ -166,8 +174,8 @@ export function BuyBoxEditor({ value, onChange }: Props) {
                 onClick={() => toggleArrayItem('property_types', pt.value)}
                 className={`px-3 py-1.5 rounded-lg text-xs border transition-colors ${
                   selected
-                    ? 'bg-[#8B7AFF]/20 border-[#8B7AFF]/50 text-[#8B7AFF]'
-                    : 'bg-[#0C0B0A] border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30'
+                    ? 'bg-violet-400/20 border-violet-400/50 text-violet-400'
+                    : 'bg-app-bg border-border-default text-text-secondary hover:border-violet-400/30'
                 }`}
               >
                 {pt.label}
@@ -190,8 +198,8 @@ export function BuyBoxEditor({ value, onChange }: Props) {
                 onClick={() => toggleArrayItem('strategies', s.value)}
                 className={`px-3 py-1.5 rounded-lg text-xs border transition-colors ${
                   selected
-                    ? 'bg-[#8B7AFF]/20 border-[#8B7AFF]/50 text-[#8B7AFF]'
-                    : 'bg-[#0C0B0A] border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30'
+                    ? 'bg-violet-400/20 border-violet-400/50 text-violet-400'
+                    : 'bg-app-bg border-border-default text-text-secondary hover:border-violet-400/30'
                 }`}
               >
                 {s.label}
@@ -204,8 +212,9 @@ export function BuyBoxEditor({ value, onChange }: Props) {
       {/* Bedrooms / Bathrooms */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className={labelCls}>Min Bedrooms</label>
+          <label htmlFor="buybox-min-bedrooms" className={labelCls}>Min Bedrooms</label>
           <input
+            id="buybox-min-bedrooms"
             type="number"
             min={0}
             className={inputCls}
@@ -215,8 +224,9 @@ export function BuyBoxEditor({ value, onChange }: Props) {
           />
         </div>
         <div>
-          <label className={labelCls}>Min Bathrooms</label>
+          <label htmlFor="buybox-min-bathrooms" className={labelCls}>Min Bathrooms</label>
           <input
+            id="buybox-min-bathrooms"
             type="number"
             min={0}
             step={0.5}
@@ -230,8 +240,9 @@ export function BuyBoxEditor({ value, onChange }: Props) {
 
       {/* Funding Type */}
       <div>
-        <label className={labelCls}>Funding Type</label>
+        <label htmlFor="buybox-funding-type" className={labelCls}>Funding Type</label>
         <select
+          id="buybox-funding-type"
           className={`${inputCls} cursor-pointer`}
           value={value.funding_type ?? ''}
           onChange={(e) => onChange({ ...value, funding_type: e.target.value || undefined })}
@@ -247,8 +258,9 @@ export function BuyBoxEditor({ value, onChange }: Props) {
 
       {/* Close Timeline */}
       <div>
-        <label className={labelCls}>Close Timeline (days)</label>
+        <label htmlFor="buybox-close-timeline" className={labelCls}>Close Timeline (days)</label>
         <input
+          id="buybox-close-timeline"
           type="number"
           min={1}
           className={inputCls}
@@ -261,8 +273,8 @@ export function BuyBoxEditor({ value, onChange }: Props) {
       {/* Proof of Funds */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-[#F0EDE8]">Proof of Funds</p>
-          <p className="text-xs text-[#8A8580] mt-0.5">Buyer has verifiable proof of funds</p>
+          <p className="text-sm text-text-primary">Proof of Funds</p>
+          <p className="text-xs text-text-muted mt-0.5">Buyer has verifiable proof of funds</p>
         </div>
         <button
           type="button"
@@ -270,7 +282,7 @@ export function BuyBoxEditor({ value, onChange }: Props) {
           aria-checked={!!value.proof_of_funds}
           onClick={() => onChange({ ...value, proof_of_funds: !value.proof_of_funds })}
           className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-            value.proof_of_funds ? 'bg-[#8B7AFF]' : 'bg-[#1E1D1B]'
+            value.proof_of_funds ? 'bg-violet-400' : 'bg-border-default'
           }`}
         >
           <span
@@ -283,8 +295,9 @@ export function BuyBoxEditor({ value, onChange }: Props) {
 
       {/* Notes */}
       <div>
-        <label className={labelCls}>Notes</label>
+        <label htmlFor="buybox-notes" className={labelCls}>Notes</label>
         <textarea
+          id="buybox-notes"
           rows={3}
           className={`${inputCls} resize-none`}
           placeholder="Additional criteria or preferences…"

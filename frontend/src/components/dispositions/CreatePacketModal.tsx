@@ -20,8 +20,8 @@ interface Props {
 }
 
 const inputCls =
-  'w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] placeholder-[#8A8580] focus:border-[#8B7AFF] focus:outline-none transition-colors'
-const labelCls = 'text-[10px] uppercase tracking-wider text-[#8A8580] mb-1.5 block'
+  'w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary placeholder-text-muted focus:border-violet-400 focus:outline-none transition-colors'
+const labelCls = 'text-[10px] uppercase tracking-wider text-text-muted mb-1.5 block'
 
 function strategyLabel(s: string | null): string {
   if (!s) return 'Deal'
@@ -125,23 +125,23 @@ export function CreatePacketModal({
       />
 
       {/* Modal card */}
-      <div className="relative z-10 w-full max-w-md bg-[#141311] border border-[#1E1D1B] rounded-2xl shadow-2xl overflow-hidden">
+      <div className="relative z-10 w-full max-w-md bg-app-recessed border border-border-default rounded-2xl shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#1E1D1B]">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border-default">
           <div>
             <h2
-              className="text-base text-[#F0EDE8]"
-              style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+              className="text-base text-text-primary font-brand font-light"
             >
               Send Buyer Packet
             </h2>
-            <p className="text-[11px] text-[#8A8580] mt-0.5">
+            <p className="text-[11px] text-text-muted mt-0.5">
               {selectedBuyerIds.length} buyer{selectedBuyerIds.length !== 1 ? 's' : ''} selected
             </p>
           </div>
           <button
             onClick={() => !submitting && onOpenChange(false)}
-            className="w-7 h-7 flex items-center justify-center rounded-lg text-[#8A8580] hover:text-[#C5C0B8] hover:bg-[#1E1D1B] transition-colors"
+            aria-label="Close"
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-text-muted hover:text-text-secondary hover:bg-app-elevated transition-colors"
           >
             <X size={14} />
           </button>
@@ -151,24 +151,27 @@ export function CreatePacketModal({
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           {/* Title */}
           <div>
-            <label className={labelCls}>Packet Title</label>
+            <label htmlFor="packet-title" className={labelCls}>Packet Title</label>
             <input
+              id="packet-title"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className={inputCls}
               placeholder="e.g. 123 Main St — Wholesale Analysis"
               required
+              aria-required="true"
             />
           </div>
 
           {/* Asking price + Assignment fee side by side */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={labelCls}>Asking Price</label>
+              <label htmlFor="packet-asking-price" className={labelCls}>Asking Price</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A8580] text-sm">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-sm">$</span>
                 <input
+                  id="packet-asking-price"
                   type="number"
                   value={askingPrice}
                   onChange={(e) => setAskingPrice(e.target.value)}
@@ -179,10 +182,11 @@ export function CreatePacketModal({
               </div>
             </div>
             <div>
-              <label className={labelCls}>Assignment Fee <span className="normal-case text-[#8A8580]">(opt)</span></label>
+              <label htmlFor="packet-assignment-fee" className={labelCls}>Assignment Fee <span className="normal-case text-text-muted">(opt)</span></label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A8580] text-sm">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-sm">$</span>
                 <input
+                  id="packet-assignment-fee"
                   type="number"
                   value={assignmentFee}
                   onChange={(e) => setAssignmentFee(e.target.value)}
@@ -196,8 +200,9 @@ export function CreatePacketModal({
 
           {/* Notes */}
           <div>
-            <label className={labelCls}>Notes to Buyer <span className="normal-case text-[#8A8580]">(opt)</span></label>
+            <label htmlFor="packet-notes" className={labelCls}>Notes to Buyer <span className="normal-case text-text-muted">(opt)</span></label>
             <textarea
+              id="packet-notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
@@ -212,7 +217,7 @@ export function CreatePacketModal({
               type="button"
               onClick={() => onOpenChange(false)}
               disabled={submitting}
-              className="px-4 py-2 text-sm text-[#8A8580] hover:text-[#C5C0B8] transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-sm text-text-muted hover:text-text-secondary transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
@@ -220,7 +225,7 @@ export function CreatePacketModal({
               type="submit"
               disabled={submitting || !title.trim()}
               className={cn(
-                'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-[#8B7AFF] text-white transition-opacity',
+                'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-violet-400 text-accent-text-on-accent transition-opacity',
                 'hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed'
               )}
             >

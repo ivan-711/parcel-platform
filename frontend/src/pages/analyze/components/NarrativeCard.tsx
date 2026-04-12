@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import { ChevronDown, RefreshCw, Loader2 } from 'lucide-react'
 import type { ScenarioDetail } from '@/types'
 
@@ -13,7 +14,7 @@ interface Props {
 
 function confidenceDots(confidence: string) {
   const filled = confidence === 'high' ? 4 : confidence === 'medium' ? 3 : 2
-  const color = confidence === 'high' ? '#4ADE80' : confidence === 'medium' ? '#FBBF24' : '#F87171'
+  const color = confidence === 'high' ? '#7CCBA5' : confidence === 'medium' ? '#D4A867' : '#D4766A'
   return (
     <div className="flex items-center gap-1">
       {[0, 1, 2, 3].map(i => (
@@ -88,7 +89,7 @@ export function NarrativeCard({ scenario, loading, onRefreshNarrative, refreshin
 
   if (loading || !scenario) {
     return (
-      <div className="bg-app-surface border-l-[3px] border-l-[#8B7AFF] rounded-xl p-6 mb-6">
+      <div className="bg-app-surface rounded-xl p-6 mb-6">
         <div className="space-y-3 animate-pulse">
           <div className="h-3 bg-border-default rounded w-40" />
           <div className="h-4 bg-border-default rounded w-full" />
@@ -106,7 +107,7 @@ export function NarrativeCard({ scenario, loading, onRefreshNarrative, refreshin
   const isTruncatable = preview !== null
 
   return (
-    <div className="bg-app-surface border-l-[3px] border-l-[#8B7AFF] rounded-xl p-6 mb-6">
+    <div className="bg-app-surface rounded-xl p-6 mb-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <span className="text-[11px] text-text-muted uppercase tracking-wider font-medium">
@@ -124,7 +125,7 @@ export function NarrativeCard({ scenario, loading, onRefreshNarrative, refreshin
           {isTruncatable && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] mt-2 transition-colors"
+              className="text-xs text-violet-400 hover:text-violet-300 mt-2 transition-colors"
             >
               {expanded ? 'Show less' : 'Read full analysis \u203A'}
             </button>
@@ -141,7 +142,7 @@ export function NarrativeCard({ scenario, loading, onRefreshNarrative, refreshin
         <button
           onClick={onRefreshNarrative}
           disabled={refreshing}
-          className="flex items-center gap-1.5 text-xs text-[#8B7AFF] hover:text-[#A89FFF] mt-3 transition-colors"
+          className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 mt-3 transition-colors"
         >
           {refreshing ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
           Refresh AI Narrative
@@ -162,10 +163,10 @@ export function NarrativeCard({ scenario, loading, onRefreshNarrative, refreshin
       <AnimatePresence initial={false}>
         {showAssumptions && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
+            initial={prefersReducedMotion ? {} : { opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+            exit={prefersReducedMotion ? {} : { height: 0, opacity: 0 }}
+            transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
             className="overflow-hidden mt-3 pl-4 border-l border-border-default"
           >
             <p className="text-text-secondary text-sm leading-relaxed">

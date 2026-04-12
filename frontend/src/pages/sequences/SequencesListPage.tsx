@@ -2,6 +2,7 @@
 
 import { Link } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
+import { motion } from 'framer-motion'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { Repeat, Plus, Pause, Play, Archive, Lock } from 'lucide-react'
 import { useBillingStatus } from '@/hooks/useBilling'
@@ -13,6 +14,7 @@ import { EmptyState } from '@/components/EmptyState'
 import { useSequences } from '@/hooks/useSequences'
 import { useUpdateSequence } from '@/hooks/useSequences'
 import { cn } from '@/lib/utils'
+import { safeStaggerContainer, safeStaggerItem } from '@/lib/motion'
 import { api } from '@/lib/api'
 import type { SequenceListItem } from '@/types'
 
@@ -21,9 +23,9 @@ import type { SequenceListItem } from '@/types'
 // ---------------------------------------------------------------------------
 
 const STATUS_STYLES: Record<string, string> = {
-  active:   'bg-[#4ADE80]/15 text-[#4ADE80]',
-  paused:   'bg-[#FBBF24]/15 text-[#FBBF24]',
-  archived: 'bg-[#8A8580]/15 text-[#8A8580]',
+  active:   'bg-profit/15 text-profit',
+  paused:   'bg-warning/15 text-warning',
+  archived: 'bg-text-muted/15 text-text-muted',
 }
 
 function StatusBadge({ status }: { status: SequenceListItem['status'] }) {
@@ -45,13 +47,13 @@ function StatusBadge({ status }: { status: SequenceListItem['status'] }) {
 
 function SkeletonCard() {
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-4 space-y-3 animate-pulse">
+    <div className="bg-app-recessed border border-border-default rounded-xl p-4 space-y-3 animate-pulse">
       <div className="flex items-center justify-between">
-        <div className="h-4 w-40 bg-[#1E1D1B] rounded" />
-        <div className="h-5 w-16 bg-[#1E1D1B] rounded" />
+        <div className="h-4 w-40 bg-border-default rounded" />
+        <div className="h-5 w-16 bg-border-default rounded" />
       </div>
-      <div className="h-3 w-64 bg-[#1E1D1B] rounded" />
-      <div className="h-3 w-48 bg-[#1E1D1B] rounded" />
+      <div className="h-3 w-64 bg-border-default rounded" />
+      <div className="h-3 w-48 bg-border-default rounded" />
     </div>
   )
 }
@@ -90,13 +92,12 @@ function SequenceCard({ seq }: { seq: SequenceListItem }) {
     : '0%'
 
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-4 hover:border-[#8B7AFF]/30 transition-colors">
+    <div className="bg-app-recessed border border-border-default rounded-xl p-4 hover:border-violet-400/30 transition-colors">
       {/* Row 1: name + status */}
       <div className="flex items-center justify-between gap-3 mb-1">
         <Link
           to={`/sequences/${seq.id}`}
-          className="text-sm text-[#F0EDE8] hover:text-[#8B7AFF] transition-colors truncate"
-          style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+          className="text-sm text-text-primary font-brand font-light hover:text-violet-400 transition-colors truncate"
         >
           {seq.name}
         </Link>
@@ -105,11 +106,11 @@ function SequenceCard({ seq }: { seq: SequenceListItem }) {
 
       {/* Row 2: description */}
       {seq.description && (
-        <p className="text-xs text-[#8A8580] mb-3 line-clamp-2">{seq.description}</p>
+        <p className="text-xs text-text-muted mb-3 line-clamp-2">{seq.description}</p>
       )}
 
       {/* Row 3: stats */}
-      <p className="text-xs text-[#8A8580] mb-3">
+      <p className="text-xs text-text-muted mb-3">
         {seq.total_enrolled} enrolled
         {' · '}
         {seq.total_completed} completed
@@ -121,7 +122,7 @@ function SequenceCard({ seq }: { seq: SequenceListItem }) {
 
       {/* Row 4: step preview + actions */}
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs text-[#8A8580]">
+        <span className="text-xs text-text-muted">
           {seq.step_count} {seq.step_count === 1 ? 'step' : 'steps'}
         </span>
 
@@ -129,7 +130,7 @@ function SequenceCard({ seq }: { seq: SequenceListItem }) {
           {/* Edit */}
           <Link
             to={`/sequences/${seq.id}`}
-            className="inline-flex items-center px-2.5 py-1 rounded text-xs text-[#8A8580] hover:text-[#F0EDE8] hover:bg-[#1E1D1B] transition-colors"
+            className="inline-flex items-center px-2.5 py-1 rounded text-xs text-text-muted hover:text-text-primary hover:bg-border-default transition-colors"
           >
             Edit
           </Link>
@@ -139,7 +140,7 @@ function SequenceCard({ seq }: { seq: SequenceListItem }) {
             <button
               onClick={handleTogglePause}
               disabled={updateSeq.isPending}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-[#8A8580] hover:text-[#F0EDE8] hover:bg-[#1E1D1B] transition-colors disabled:opacity-40"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-text-muted hover:text-text-primary hover:bg-border-default transition-colors disabled:opacity-40"
             >
               {seq.status === 'active' ? (
                 <><Pause size={12} /> Pause</>
@@ -154,7 +155,7 @@ function SequenceCard({ seq }: { seq: SequenceListItem }) {
             <button
               onClick={handleArchive}
               disabled={updateSeq.isPending}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-[#8A8580] hover:text-[#F0EDE8] hover:bg-[#1E1D1B] transition-colors disabled:opacity-40"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-text-muted hover:text-text-primary hover:bg-border-default transition-colors disabled:opacity-40"
             >
               <Archive size={12} /> Archive
             </button>
@@ -186,10 +187,10 @@ export default function SequencesListPage() {
         <ComingSoonGate service="email_outbound" featureName="Sequences">
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] px-4 text-center">
           <div className="max-w-sm">
-            <div className="w-14 h-14 rounded-2xl bg-[#8B7AFF]/10 flex items-center justify-center mx-auto mb-6">
-              <Lock size={24} className="text-[#8B7AFF]" />
+            <div className="w-14 h-14 rounded-2xl bg-violet-400/10 flex items-center justify-center mx-auto mb-6">
+              <Lock size={24} className="text-violet-400" />
             </div>
-            <h1 className="text-2xl text-text-primary mb-3" style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
+            <h1 className="text-2xl text-text-primary mb-3 font-brand font-light">
               Available on Carbon
             </h1>
             <p className="text-sm text-text-secondary mb-6">
@@ -197,7 +198,7 @@ export default function SequencesListPage() {
             </p>
             <Link
               to="/pricing"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium bg-violet-400 text-white hover:bg-violet-500 transition-colors"
             >
               View Plans
             </Link>
@@ -211,18 +212,22 @@ export default function SequencesListPage() {
   return (
     <AppShell title="Sequences">
       <ComingSoonGate service="email_outbound" featureName="Sequences">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <motion.div
+        variants={safeStaggerContainer(100)}
+        initial="hidden"
+        animate="visible"
+        className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6"
+      >
         {/* Header */}
-        <div className="flex items-center justify-between gap-4">
+        <motion.div variants={safeStaggerItem} className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <h1
-              className="text-2xl text-[#F0EDE8]"
-              style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+              className="text-2xl text-text-primary font-brand font-light"
             >
               Sequences
             </h1>
             {count > 0 && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-[#1E1D1B] text-[#8A8580]">
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-border-default text-text-muted">
                 {count}
               </span>
             )}
@@ -230,15 +235,15 @@ export default function SequencesListPage() {
 
           <Link
             to="/sequences/new"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
-            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-brand font-light bg-violet-400 text-white hover:bg-violet-500 transition-colors"
           >
             <Plus size={15} />
             Create Sequence
           </Link>
-        </div>
+        </motion.div>
 
         {/* Body */}
+        <motion.div variants={safeStaggerItem}>
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((n) => <SkeletonCard key={n} />)}
@@ -263,7 +268,8 @@ export default function SequencesListPage() {
             ))}
           </div>
         )}
-      </div>
+        </motion.div>
+      </motion.div>
       </ComingSoonGate>
     </AppShell>
   )

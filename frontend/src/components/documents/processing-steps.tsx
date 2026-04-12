@@ -23,12 +23,12 @@ export function ProcessingSteps({ status }: ProcessingStepsProps) {
         return (
           <div key={i} className="flex items-center gap-3">
             {step.done && !isActive ? (
-              <div className="w-5 h-5 rounded-full bg-[#6DBEA3]/10 flex items-center justify-center">
-                <Check size={12} className="text-[#6DBEA3]" />
+              <div className="w-5 h-5 rounded-full bg-success-bg flex items-center justify-center">
+                <Check size={12} className="text-success" />
               </div>
             ) : isActive ? (
-              <div className="w-5 h-5 rounded-full bg-[#8B7AFF]/10 flex items-center justify-center">
-                <Loader2 size={12} className="text-[#8B7AFF] animate-spin" />
+              <div className="w-5 h-5 rounded-full bg-violet-400/10 flex items-center justify-center">
+                <Loader2 size={12} className="text-violet-400 animate-spin" />
               </div>
             ) : (
               <div className="w-5 h-5 rounded-full bg-layer-2 flex items-center justify-center">
@@ -38,8 +38,8 @@ export function ProcessingSteps({ status }: ProcessingStepsProps) {
             <span
               className={cn(
                 'text-sm',
-                step.done && !isActive && 'text-[#6DBEA3]',
-                isActive && 'text-[#8B7AFF]',
+                step.done && !isActive && 'text-success',
+                isActive && 'text-violet-400',
                 isWaiting && 'text-text-secondary',
               )}
             >

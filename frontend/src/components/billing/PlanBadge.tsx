@@ -16,18 +16,31 @@ interface PlanBadgeProps {
 export function PlanBadge({ planTier, trialActive }: PlanBadgeProps) {
   if (trialActive && planTier === 'free') {
     return (
-      <span className="bg-[#8B7AFF]/[0.06] text-[#8B7AFF]/70 ring-1 ring-[#8B7AFF]/10 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide">
+      <span className="bg-violet-400/[0.06] text-violet-400/70 ring-1 ring-violet-400/10 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide">
         Trial
       </span>
     )
   }
 
-  if (planTier === 'pro' || planTier === 'business' || planTier === 'plus') {
+  if (planTier === 'pro' || planTier === 'plus') {
     return (
       <span
         className={cn(
           'px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide',
-          'bg-[#8B7AFF]/15 text-[#A89FFF] ring-1 ring-[#8B7AFF]/20'
+          'bg-violet-400/15 text-violet-300 ring-1 ring-violet-400/20'
+        )}
+      >
+        {DISPLAY_NAMES[planTier] ?? planTier}
+      </span>
+    )
+  }
+
+  if (planTier === 'business') {
+    return (
+      <span
+        className={cn(
+          'px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide',
+          'bg-layer-2 text-text-secondary ring-1 ring-border-default'
         )}
       >
         {DISPLAY_NAMES[planTier] ?? planTier}
@@ -38,12 +51,12 @@ export function PlanBadge({ planTier, trialActive }: PlanBadgeProps) {
   // Free tier
   return (
     <span className="inline-flex items-center gap-1.5">
-      <span className="bg-layer-2 text-[#F0EDE8]/40 ring-1 ring-white/[0.06] px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide">
+      <span className="bg-layer-2 text-text-primary/40 ring-1 ring-white/[0.06] px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide">
         Steel
       </span>
       <Link
         to="/pricing"
-        className="text-[10px] text-[#8B7AFF] hover:text-[#A89FFF] font-medium transition-colors"
+        className="text-[10px] text-violet-400 hover:text-violet-300 font-medium transition-colors"
       >
         Upgrade
       </Link>

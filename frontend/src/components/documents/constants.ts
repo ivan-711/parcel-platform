@@ -1,5 +1,7 @@
 /** Shared constants and animation presets for the documents page. */
 
+import { prefersReducedMotion } from '@/lib/motion'
+
 export const ACCEPTED_TYPES: Record<string, string[]> = {
   'application/pdf': ['.pdf'],
   'image/png': ['.png'],
@@ -9,9 +11,6 @@ export const ACCEPTED_TYPES: Record<string, string[]> = {
 
 export const MAX_FILE_SIZE = 10 * 1024 * 1024
 
-export const fadeUp = {
-  initial: { opacity: 0, y: 8 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: 8 },
-  transition: { duration: 0.2 },
-}
+export const fadeUp = prefersReducedMotion
+  ? { initial: {}, animate: {}, exit: {}, transition: { duration: 0 } }
+  : { initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 8 }, transition: { duration: 0.2 } }

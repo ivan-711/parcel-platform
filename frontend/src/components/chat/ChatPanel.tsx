@@ -6,6 +6,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import ReactMarkdown from 'react-markdown'
 import { Sparkles, Send, Square, Copy, RotateCcw } from 'lucide-react'
 import { api } from '@/lib/api'
@@ -46,7 +47,7 @@ const MD_COMPONENTS: React.ComponentProps<typeof ReactMarkdown>['components'] = 
   // @ts-expect-error react-markdown passes inline prop not in types
   code: ({ inline, children }) =>
     inline ? (
-      <code className="font-mono text-[13px] bg-[#8B7AFF]/10 text-[#8B7AFF] px-1.5 py-0.5 rounded">
+      <code className="font-mono text-[13px] bg-violet-400/10 text-violet-400 px-1.5 py-0.5 rounded">
         {children}
       </code>
     ) : (
@@ -60,7 +61,7 @@ const MD_COMPONENTS: React.ComponentProps<typeof ReactMarkdown>['components'] = 
   ol: ({ children }) => <ol className="space-y-1.5 my-2 pl-1 list-decimal list-inside">{children}</ol>,
   li: ({ children }) => (
     <li className="text-sm text-text-primary/90 flex items-start gap-2">
-      <span className="text-[#8B7AFF] mt-0.5 shrink-0">&#9656;</span>
+      <span className="text-violet-400 mt-0.5 shrink-0">&#9656;</span>
       <span className="leading-relaxed">{children}</span>
     </li>
   ),
@@ -84,7 +85,7 @@ const MD_COMPONENTS: React.ComponentProps<typeof ReactMarkdown>['components'] = 
     <h3 className="text-[15px] font-semibold text-text-primary mt-4 mb-2">{children}</h3>
   ),
   a: ({ children, href }) => (
-    <a href={href} className="text-[#8B7AFF] hover:text-[#6C5CE7] underline underline-offset-2 transition-colors" target="_blank" rel="noopener noreferrer">
+    <a href={href} className="text-violet-400 hover:text-violet-500 underline underline-offset-2 transition-colors" target="_blank" rel="noopener noreferrer">
       {children}
     </a>
   ),
@@ -121,8 +122,8 @@ function MessageRow({
   return (
     <div className="max-w-3xl mx-auto flex gap-4">
       {msg.role === 'assistant' && (
-        <div className="w-8 h-8 rounded-lg bg-[#8B7AFF]/10 border border-[#8B7AFF]/15 flex items-center justify-center shrink-0 mt-0.5">
-          <Sparkles size={14} className="text-[#8B7AFF]" />
+        <div className="w-8 h-8 rounded-lg bg-violet-400/10 border border-violet-400/15 flex items-center justify-center shrink-0 mt-0.5">
+          <Sparkles size={14} className="text-violet-400" />
         </div>
       )}
 
@@ -142,15 +143,15 @@ function MessageRow({
           {/* Typing dots */}
           {msg.isStreaming && !msg.content && (
             <span className="inline-flex items-center gap-1.5 py-1" role="status" aria-label="AI is thinking">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#8B7AFF]/60 animate-[typing_1.4s_ease-in-out_infinite]" />
-              <span className="w-1.5 h-1.5 rounded-full bg-[#8B7AFF]/60 animate-[typing_1.4s_ease-in-out_0.2s_infinite]" />
-              <span className="w-1.5 h-1.5 rounded-full bg-[#8B7AFF]/60 animate-[typing_1.4s_ease-in-out_0.4s_infinite]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-violet-400/60 animate-[typing_1.4s_ease-in-out_infinite]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-violet-400/60 animate-[typing_1.4s_ease-in-out_0.2s_infinite]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-violet-400/60 animate-[typing_1.4s_ease-in-out_0.4s_infinite]" />
             </span>
           )}
 
           {/* Streaming cursor */}
           {msg.isStreaming && msg.content && (
-            <span className="inline-block w-[2px] h-[18px] bg-[#8B7AFF] animate-pulse ml-0.5 align-text-bottom rounded-full" aria-hidden="true" />
+            <span className="inline-block w-[2px] h-[18px] bg-violet-400 animate-pulse ml-0.5 align-text-bottom rounded-full" aria-hidden="true" />
           )}
 
           {/* Complete: actions + citations */}
@@ -160,9 +161,9 @@ function MessageRow({
                 <CitationList citations={msg.citations} />
               )}
               <motion.div
-                initial={{ opacity: 0 }}
+                initial={prefersReducedMotion ? {} : { opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.3 }}
+                transition={prefersReducedMotion ? { duration: 0 } : { delay: 0.2, duration: 0.3 }}
                 className="flex items-center gap-3 mt-3 pt-2 border-t border-border-subtle"
               >
                 <button
@@ -186,7 +187,7 @@ function MessageRow({
       )}
 
       {msg.role === 'user' && (
-        <div className="w-8 h-8 rounded-full bg-[#8B7AFF] flex items-center justify-center shrink-0 mt-0.5">
+        <div className="w-8 h-8 rounded-full bg-violet-400 flex items-center justify-center shrink-0 mt-0.5">
           <span className="text-xs font-semibold text-white">U</span>
         </div>
       )}
@@ -373,8 +374,8 @@ export function ChatPanel({
       {/* Header */}
       <div className="shrink-0 px-6 py-4 border-b border-border-default bg-app-bg">
         <div className="max-w-3xl mx-auto flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#8B7AFF]/10 border border-[#8B7AFF]/15 flex items-center justify-center">
-            <Sparkles size={15} className="text-[#8B7AFF]" />
+          <div className="w-8 h-8 rounded-lg bg-violet-400/10 border border-violet-400/15 flex items-center justify-center">
+            <Sparkles size={15} className="text-violet-400" />
           </div>
           <div>
             <h2 className="text-sm font-semibold text-text-primary">AI Specialist</h2>
@@ -383,7 +384,7 @@ export function ChatPanel({
         </div>
         {contextType !== 'general' && contextId && (
           <div className="max-w-3xl mx-auto mt-3 flex items-center gap-2 text-[12px] text-text-secondary">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#8B7AFF] shrink-0 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-violet-400 shrink-0 animate-pulse" />
             {contextType === 'deal'
               ? 'Deal context active — AI knows the details of this deal'
               : 'Document context active — AI has read this document'}
@@ -413,14 +414,14 @@ export function ChatPanel({
           </div>
         ) : showEmpty ? (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={prefersReducedMotion ? {} : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.3 }}
             className="flex flex-col items-center justify-center h-full min-h-[400px] space-y-8 px-6"
           >
             <div className="flex flex-col items-center gap-3">
-              <div className="w-14 h-14 rounded-2xl bg-[#8B7AFF]/10 border border-[#8B7AFF]/15 flex items-center justify-center">
-                <Sparkles size={24} className="text-[#8B7AFF]" />
+              <div className="w-14 h-14 rounded-2xl bg-violet-400/10 border border-violet-400/15 flex items-center justify-center">
+                <Sparkles size={24} className="text-violet-400" />
               </div>
               <div className="text-center space-y-1">
                 <h3 className="text-lg font-semibold text-text-primary">Parcel AI</h3>
@@ -434,14 +435,14 @@ export function ChatPanel({
               {SUGGESTED_QUESTIONS.map((q, index) => (
                 <motion.button
                   key={q.question}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={prefersReducedMotion ? {} : { opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
+                  transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.4, delay: index * 0.05 }}
                   onClick={() => void handleSend(q.question)}
-                  className="text-left p-3.5 rounded-xl border border-border-default bg-app-surface hover:border-[#8B7AFF]/30 hover:bg-[#8B7AFF]/[0.04] transition-all group cursor-pointer"
+                  className="text-left p-3.5 rounded-xl border border-border-default bg-app-surface hover:border-violet-400/30 hover:bg-violet-400/[0.04] transition-all group cursor-pointer"
                   aria-label={q.question}
                 >
-                  <p className="text-[11px] uppercase tracking-wide text-text-secondary font-medium group-hover:text-[#8B7AFF] transition-colors">
+                  <p className="text-[11px] uppercase tracking-wide text-text-secondary font-medium group-hover:text-violet-400 transition-colors">
                     {q.category}
                   </p>
                   <p className="text-[13px] text-text-secondary leading-snug mt-1">{q.question}</p>
@@ -468,10 +469,10 @@ export function ChatPanel({
               {messages.slice(-3).map((msg) => (
                 <motion.div
                   key={msg.id}
-                  initial={{ opacity: 0, y: 8 }}
+                  initial={prefersReducedMotion ? {} : { opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                  exit={prefersReducedMotion ? {} : { opacity: 0, y: -4 }}
+                  transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                   className={cn(
                     'w-full py-5 px-6 border-b border-border-subtle',
                     msg.role === 'user' ? 'bg-app-bg' : 'bg-app-recessed'
@@ -488,7 +489,7 @@ export function ChatPanel({
       </div>
 
       {/* Input area */}
-      <div className="shrink-0 px-6 py-4 border-t border-border-default bg-[#0C0B0A]/95 backdrop-blur-md pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
+      <div className="shrink-0 px-6 py-4 border-t border-border-default bg-app-bg/95 backdrop-blur-md pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
         <div className="max-w-3xl mx-auto">
           <div className="flex gap-3 items-end">
             <textarea
@@ -503,8 +504,8 @@ export function ChatPanel({
               className={cn(
                 'flex-1 resize-none rounded-xl border border-border-default bg-app-recessed',
                 'px-4 py-3 text-sm text-text-primary placeholder:text-text-disabled',
-                'focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/20',
-                'focus:border-[#8B7AFF]/40 transition-all',
+                'focus:outline-none focus:ring-2 focus:ring-violet-400/20',
+                'focus:border-violet-400/40 transition-all',
                 'min-h-[48px] max-h-[140px] leading-relaxed',
                 isStreaming && 'opacity-50'
               )}
@@ -513,7 +514,7 @@ export function ChatPanel({
             {isStreaming ? (
               <button
                 onClick={handleStop}
-                className="w-10 h-10 rounded-xl bg-[#D4766A]/10 border border-[#D4766A]/20 flex items-center justify-center text-[#D4766A] hover:bg-[#D4766A]/20 transition-colors shrink-0 cursor-pointer"
+                className="w-10 h-10 rounded-xl bg-loss/10 border border-loss/20 flex items-center justify-center text-loss hover:bg-loss/20 transition-colors shrink-0 cursor-pointer"
                 aria-label="Stop generating"
               >
                 <Square size={14} fill="currentColor" />
@@ -525,7 +526,7 @@ export function ChatPanel({
                 className={cn(
                   'w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors',
                   input.trim()
-                    ? 'bg-[#8B7AFF] hover:bg-[#6C5CE7] text-white shadow-[0_0_20px_rgba(139,122,255,0.3)] cursor-pointer'
+                    ? 'bg-violet-400 hover:bg-violet-500 text-white shadow-[0_0_20px_rgba(139,122,255,0.3)] cursor-pointer'
                     : 'bg-layer-2 border border-border-default text-text-disabled cursor-not-allowed'
                 )}
                 aria-label="Send message"

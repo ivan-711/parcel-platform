@@ -22,11 +22,11 @@ import type { TodayActivityItem } from '@/types'
 const ACTIVITY_DOTS: Record<string, string> = {
   property_saved: '#8B7AFF',
   analysis_completed: '#8B7AFF',
-  deal_created: '#60A5FA',
-  deal_moved: '#60A5FA',
-  document_uploaded: '#8A8580',
-  contact_added: '#4ADE80',
-  pipeline_moved: '#FBBF24',
+  deal_created: '#7B9FCC',
+  deal_moved: '#7B9FCC',
+  document_uploaded: '#7A7872',
+  contact_added: '#7CCBA5',
+  pipeline_moved: '#D4A867',
 }
 
 export default function TodayPage() {
@@ -49,9 +49,9 @@ export default function TodayPage() {
     return (
       <AppShell title="Today">
         <div className="space-y-6">
-          <div className="h-10 w-64 bg-[#141311] rounded animate-pulse" />
-          <div className="h-24 bg-[#141311] rounded-xl animate-pulse" />
-          <div className="h-48 bg-[#141311] rounded-xl animate-pulse" />
+          <div className="h-10 w-64 bg-app-recessed rounded animate-pulse" />
+          <div className="h-24 bg-app-recessed rounded-xl animate-pulse" />
+          <div className="h-48 bg-app-recessed rounded-xl animate-pulse" />
         </div>
       </AppShell>
     )
@@ -62,12 +62,12 @@ export default function TodayPage() {
       <AppShell title="Today">
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] px-4 text-center">
           <div className="max-w-sm">
-            <p className="text-[#C5C0B8] text-sm mb-4">
+            <p className="text-text-secondary text-sm mb-4">
               Unable to load your briefing. Please try again.
             </p>
             <button
               onClick={() => refetch()}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-accent-primary text-white hover:bg-accent-hover transition-colors cursor-pointer"
             >
               Retry
             </button>
@@ -96,12 +96,11 @@ export default function TodayPage() {
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <h1
-              className="text-2xl sm:text-3xl text-[#F0EDE8]"
-              style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+              className="text-2xl sm:text-3xl text-text-primary font-brand font-light"
             >
               {data.greeting}
             </h1>
-            <p className="text-sm text-[#8A8580] mt-1">{data.date}</p>
+            <p className="text-sm text-text-muted mt-1">{data.date}</p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <QuickAction
@@ -123,7 +122,7 @@ export default function TodayPage() {
             <Link
               to="/analyze"
               onClick={() => trackQuickAction('analyze')}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium bg-accent-primary text-white hover:bg-accent-hover transition-colors"
             >
               <Search size={14} />
               Analyze Property
@@ -137,7 +136,7 @@ export default function TodayPage() {
           <div className="lg:col-span-3 space-y-6">
             {/* Briefing */}
             <div>
-              <h2 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium mb-3">
+              <h2 className="text-[11px] uppercase tracking-wider text-text-muted font-medium mb-3">
                 Morning Briefing
               </h2>
               <BriefingCards items={data.briefing_items} />
@@ -159,21 +158,21 @@ export default function TodayPage() {
             <PortfolioCard portfolio={data.portfolio_summary} />
 
             {/* Recent Activity */}
-            <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
+            <div className="bg-app-recessed border border-border-default rounded-xl p-5">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium">
+                <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium">
                   Recent Activity
                 </h3>
                 <Link
                   to="/dashboard"
-                  className="text-[10px] uppercase tracking-wider text-[#8A8580] hover:text-[#C5C0B8] transition-colors"
+                  className="text-[10px] uppercase tracking-wider text-text-muted hover:text-text-secondary transition-colors"
                 >
                   View All Activity
                 </Link>
               </div>
 
               {data.recent_activity.length === 0 ? (
-                <p className="text-sm text-[#8A8580] py-4 text-center">
+                <p className="text-sm text-text-muted py-4 text-center">
                   Your activity will appear here as you use Parcel.
                 </p>
               ) : (
@@ -207,33 +206,32 @@ function NewUserView({
         className="max-w-lg"
       >
         {/* Logo */}
-        <div className="w-14 h-14 rounded-2xl bg-[#8B7AFF]/10 flex items-center justify-center mx-auto mb-6">
-          <Sparkles size={24} className="text-[#8B7AFF]" />
+        <div className="w-14 h-14 rounded-2xl bg-accent-primary/10 flex items-center justify-center mx-auto mb-6">
+          <Sparkles size={24} className="text-accent-primary" />
         </div>
 
         <h1
-          className="text-3xl sm:text-4xl text-[#F0EDE8] mb-3"
-          style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+          className="text-3xl sm:text-4xl text-text-primary font-brand font-light mb-3"
         >
           Welcome to Parcel
         </h1>
 
-        <p className="text-[#C5C0B8] text-sm sm:text-base mb-8">
+        <p className="text-text-secondary text-sm sm:text-base mb-8">
           Analyze your first property to start building your daily briefing.
         </p>
 
         <Link
           to="/analyze"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium bg-accent-primary text-white hover:bg-accent-hover transition-colors"
         >
           <Search size={16} />
           Analyze a Property
         </Link>
 
         {hasSampleData && (
-          <p className="text-xs text-[#8A8580] mt-6">
+          <p className="text-xs text-text-muted mt-6">
             Explore your sample deals in{' '}
-            <Link to="/pipeline" className="text-[#8B7AFF] hover:text-[#A89FFF] transition-colors">
+            <Link to="/pipeline" className="text-accent-primary hover:text-accent-secondary transition-colors">
               Pipeline
             </Link>{' '}
             to see what Parcel can do.
@@ -241,8 +239,8 @@ function NewUserView({
         )}
 
         {/* Placeholder briefing card */}
-        <div className="mt-10 border border-dashed border-[#1E1D1B] rounded-xl p-5 text-center">
-          <p className="text-sm text-[#8A8580]">
+        <div className="mt-10 border border-dashed border-border-default rounded-xl p-5 text-center">
+          <p className="text-sm text-text-muted">
             Your morning briefing will appear here as you add properties and track deals.
           </p>
         </div>
@@ -259,21 +257,20 @@ function PortfolioCard({
   portfolio: { total_value: number; total_cash_flow: number; property_count: number; change_pct: number }
 }) {
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
-      <p className="text-[10px] uppercase tracking-wider text-[#8A8580] font-medium mb-2">
+    <div className="bg-app-recessed border border-border-default rounded-xl p-5">
+      <p className="text-[10px] uppercase tracking-wider text-text-muted font-medium mb-2">
         Total Portfolio Value
       </p>
       <div className="flex items-baseline gap-3">
         <span
-          className="text-2xl text-[#F0EDE8] tabular-nums"
-          style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+          className="text-2xl text-text-primary font-brand font-light tabular-nums"
         >
           ${portfolio.total_value.toLocaleString()}
         </span>
         {portfolio.change_pct !== 0 && (
           <span className={cn(
             'text-xs font-medium flex items-center gap-0.5',
-            portfolio.change_pct > 0 ? 'text-[#4ADE80]' : 'text-[#F87171]'
+            portfolio.change_pct > 0 ? 'text-profit' : 'text-loss'
           )}>
             <TrendingUp size={12} />
             {portfolio.change_pct > 0 ? '+' : ''}{portfolio.change_pct.toFixed(1)}%
@@ -282,15 +279,15 @@ function PortfolioCard({
       </div>
 
       <div className="grid grid-cols-2 gap-3 mt-4">
-        <div className="bg-[#0C0B0A] rounded-lg p-3">
-          <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1">Monthly Cash Flow</p>
-          <p className="text-sm text-[#F0EDE8] font-medium tabular-nums">
+        <div className="bg-app-bg rounded-lg p-3">
+          <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">Monthly Cash Flow</p>
+          <p className="text-sm text-text-primary font-medium tabular-nums">
             ${portfolio.total_cash_flow.toLocaleString()}/mo
           </p>
         </div>
-        <div className="bg-[#0C0B0A] rounded-lg p-3">
-          <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1">Properties</p>
-          <p className="text-sm text-[#F0EDE8] font-medium tabular-nums">
+        <div className="bg-app-bg rounded-lg p-3">
+          <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">Properties</p>
+          <p className="text-sm text-text-primary font-medium tabular-nums">
             {portfolio.property_count}
           </p>
         </div>
@@ -302,17 +299,17 @@ function PortfolioCard({
 /* ─── Activity Row ─── */
 
 function ActivityRow({ event }: { event: TodayActivityItem }) {
-  const dotColor = ACTIVITY_DOTS[event.type] || '#8A8580'
+  const dotColor = ACTIVITY_DOTS[event.type] || '#7A7872'
 
   return (
-    <div className="flex items-start gap-3 py-2.5 border-b border-[#1E1D1B] last:border-0">
+    <div className="flex items-start gap-3 py-2.5 border-b border-border-default last:border-0">
       <div
         className="w-2 h-2 rounded-full mt-1.5 shrink-0"
         style={{ backgroundColor: dotColor }}
       />
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-[#C5C0B8] truncate">{event.description}</p>
-        <p className="text-[10px] text-[#8A8580]/60 mt-0.5">
+        <p className="text-sm text-text-secondary truncate">{event.description}</p>
+        <p className="text-[10px] text-text-muted/60 mt-0.5">
           {formatRelativeTime(event.timestamp)}
         </p>
       </div>
@@ -334,16 +331,16 @@ function TasksSection({
   ]
 
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
+    <div className="bg-app-recessed border border-border-default rounded-xl p-5">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium">
-          Tasks {allTasks.length > 0 && <span className="text-[#C5C0B8] ml-1">{allTasks.length}</span>}
+        <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium">
+          Tasks {allTasks.length > 0 && <span className="text-text-secondary ml-1">{allTasks.length}</span>}
         </h3>
         <AddTaskForm />
       </div>
 
       {allTasks.length === 0 ? (
-        <p className="text-sm text-[#8A8580] py-3 text-center">
+        <p className="text-sm text-text-muted py-3 text-center">
           No tasks yet. Add tasks to track your to-dos.
         </p>
       ) : (
@@ -367,7 +364,7 @@ function QuickAction({
   return (
     <button
       onClick={onClick}
-      className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#C5C0B8] border border-[#1E1D1B] hover:bg-[#141311] hover:text-[#F0EDE8] transition-colors cursor-pointer"
+      className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-text-secondary border border-border-default hover:bg-app-recessed hover:text-text-primary transition-colors cursor-pointer"
     >
       <Icon size={14} />
       {label}

@@ -48,13 +48,13 @@ const FIELDS: Record<string, InputField[]> = {
 }
 
 function badgeForField(fieldKey: string, sourceConfidence: ScenarioDetail['source_confidence'], editedFields: Set<string>): { text: string; color: string } {
-  if (editedFields.has(fieldKey)) return { text: 'YOUR INPUT', color: '#8A8580' }
-  if (!sourceConfidence) return { text: 'NEEDED', color: '#F87171' }
+  if (editedFields.has(fieldKey)) return { text: 'YOUR INPUT', color: 'var(--text-muted)' }
+  if (!sourceConfidence) return { text: 'NEEDED', color: '#D4766A' }
   const info = sourceConfidence[fieldKey]
-  if (!info) return { text: 'NEEDED', color: '#F87171' }
-  if (info.confidence === 'single_source' || info.confidence === 'high') return { text: 'VERIFIED', color: '#4ADE80' }
-  if (info.confidence === 'estimated') return { text: 'ESTIMATED', color: '#FBBF24' }
-  return { text: 'NEEDED', color: '#F87171' }
+  if (!info) return { text: 'NEEDED', color: '#D4766A' }
+  if (info.confidence === 'single_source' || info.confidence === 'high') return { text: 'VERIFIED', color: '#7CCBA5' }
+  if (info.confidence === 'estimated') return { text: 'ESTIMATED', color: '#D4A867' }
+  return { text: 'NEEDED', color: '#D4766A' }
 }
 
 interface Props {
@@ -115,8 +115,8 @@ export function FinancialInputs({ scenario, onInputsChange }: Props) {
   const advFields = fields.filter(f => f.advanced)
 
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
-      <h3 className="text-[11px] text-[#8A8580] uppercase tracking-wider font-medium mb-4">
+    <div className="bg-app-recessed border border-border-default rounded-xl p-5">
+      <h3 className="text-[11px] text-text-muted uppercase tracking-wider font-medium mb-4">
         Financial Inputs
       </h3>
 
@@ -126,7 +126,7 @@ export function FinancialInputs({ scenario, onInputsChange }: Props) {
           return (
             <div key={f.key}>
               <div className="flex items-center gap-2 mb-1">
-                <label className="text-xs text-[#8A8580] uppercase tracking-wider">{f.label}</label>
+                <label className="text-xs text-text-muted uppercase tracking-wider">{f.label}</label>
                 <span
                   className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-sm border font-medium"
                   style={{ color: badge.color, borderColor: badge.color + '40' }}
@@ -136,17 +136,17 @@ export function FinancialInputs({ scenario, onInputsChange }: Props) {
               </div>
               <div className="relative">
                 {f.prefix && (
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#8A8580]">{f.prefix}</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-text-muted">{f.prefix}</span>
                 )}
                 <input
                   type="number"
                   step={f.step || '1'}
                   value={localValues[f.key] ?? ''}
                   onChange={e => handleChange(f.key, e.target.value)}
-                  className={`w-full h-10 rounded-md bg-[#0C0B0A] border border-[#1E1D1B] text-[#F0EDE8] text-lg font-light focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/30 ${f.prefix ? 'pl-7' : 'px-3'} ${f.suffix ? 'pr-12' : 'pr-3'}`}
+                  className={`w-full h-10 rounded-md bg-app-bg border border-border-default text-text-primary text-lg font-light focus:outline-none focus:ring-2 focus:ring-violet-400/30 ${f.prefix ? 'pl-7' : 'px-3'} ${f.suffix ? 'pr-12' : 'pr-3'}`}
                 />
                 {f.suffix && (
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#8A8580]">{f.suffix}</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-muted">{f.suffix}</span>
                 )}
               </div>
             </div>
@@ -159,20 +159,20 @@ export function FinancialInputs({ scenario, onInputsChange }: Props) {
         <>
           <button
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="flex items-center gap-1 text-xs text-[#8A8580] hover:text-[#C5C0B8] mt-5 transition-colors"
+            className="flex items-center gap-1 text-xs text-text-muted hover:text-text-secondary mt-5 transition-colors"
           >
             <ChevronDown size={14} className={`transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
             Edit Advanced Expenses
           </button>
 
           {showAdvanced && (
-            <div className="mt-3 space-y-3 pl-3 border-l border-[#1E1D1B]">
+            <div className="mt-3 space-y-3 pl-3 border-l border-border-default">
               {advFields.map(f => {
                 const badge = badgeForField(f.key, scenario.source_confidence, editedFields)
                 return (
                   <div key={f.key}>
                     <div className="flex items-center gap-2 mb-1">
-                      <label className="text-[10px] text-[#8A8580] uppercase tracking-wider">{f.label}</label>
+                      <label className="text-[10px] text-text-muted uppercase tracking-wider">{f.label}</label>
                       <span
                         className="text-[8px] uppercase tracking-wider px-1 py-0.5 rounded-sm border"
                         style={{ color: badge.color, borderColor: badge.color + '40' }}
@@ -181,15 +181,15 @@ export function FinancialInputs({ scenario, onInputsChange }: Props) {
                       </span>
                     </div>
                     <div className="relative">
-                      {f.prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#8A8580]">{f.prefix}</span>}
+                      {f.prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-text-muted">{f.prefix}</span>}
                       <input
                         type="number"
                         step={f.step || '1'}
                         value={localValues[f.key] ?? ''}
                         onChange={e => handleChange(f.key, e.target.value)}
-                        className={`w-full h-9 rounded-md bg-[#0C0B0A] border border-[#1E1D1B] text-[#F0EDE8] text-sm focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/30 ${f.prefix ? 'pl-7' : 'px-3'} ${f.suffix ? 'pr-12' : 'pr-3'}`}
+                        className={`w-full h-9 rounded-md bg-app-bg border border-border-default text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-violet-400/30 ${f.prefix ? 'pl-7' : 'px-3'} ${f.suffix ? 'pr-12' : 'pr-3'}`}
                       />
-                      {f.suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#8A8580]">{f.suffix}</span>}
+                      {f.suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-muted">{f.suffix}</span>}
                     </div>
                   </div>
                 )

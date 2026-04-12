@@ -32,10 +32,10 @@ import type {
 
 // ── Constants ────────────────────────────────────────────
 const FUNDING_COLORS: Record<string, string> = {
-  cash: 'bg-[#4ADE80]/15 text-[#4ADE80] border-[#4ADE80]/30',
-  hard_money: 'bg-[#FBBF24]/15 text-[#FBBF24] border-[#FBBF24]/30',
-  conventional: 'bg-[#60A5FA]/15 text-[#60A5FA] border-[#60A5FA]/30',
-  creative: 'bg-[#8B7AFF]/15 text-[#8B7AFF] border-[#8B7AFF]/30',
+  cash: 'bg-profit/15 text-profit border-profit/30',
+  hard_money: 'bg-warning-bg text-warning border-warning/30',
+  conventional: 'bg-info-bg text-info border-info/30',
+  creative: 'bg-violet-400/15 text-violet-400 border-violet-400/30',
 }
 
 const STRATEGY_LABELS: Record<string, string> = {
@@ -113,10 +113,10 @@ export default function BuyerDetailPage() {
     return (
       <AppShell title="Buyer">
         <div className="space-y-4">
-          <div className="h-6 w-48 bg-[#141311] rounded animate-pulse" />
-          <div className="h-48 bg-[#141311] rounded-xl animate-pulse" />
-          <div className="h-40 bg-[#141311] rounded-xl animate-pulse" />
-          <div className="h-32 bg-[#141311] rounded-xl animate-pulse" />
+          <div className="h-6 w-48 bg-app-recessed rounded animate-pulse" />
+          <div className="h-48 bg-app-recessed rounded-xl animate-pulse" />
+          <div className="h-40 bg-app-recessed rounded-xl animate-pulse" />
+          <div className="h-32 bg-app-recessed rounded-xl animate-pulse" />
         </div>
       </AppShell>
     )
@@ -127,10 +127,10 @@ export default function BuyerDetailPage() {
     return (
       <AppShell title="Buyer">
         <div className="text-center py-20 space-y-4">
-          <p className="text-[#C5C0B8]">Buyer not found</p>
+          <p className="text-text-secondary">Buyer not found</p>
           <Link
             to="/buyers"
-            className="inline-flex items-center gap-1.5 text-sm text-[#8B7AFF] hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm text-violet-400 hover:underline"
           >
             <ArrowLeft size={14} /> Back to Buyers
           </Link>
@@ -147,27 +147,26 @@ export default function BuyerDetailPage() {
     <AppShell title={fullName}>
       <div className="space-y-6 max-w-4xl">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-xs text-[#8A8580]">
-          <Link to="/buyers" className="hover:text-[#C5C0B8] transition-colors">
+        <nav className="flex items-center gap-1.5 text-xs text-text-muted">
+          <Link to="/buyers" className="hover:text-text-secondary transition-colors">
             Buyers
           </Link>
           <span>/</span>
-          <span className="text-[#C5C0B8]">{fullName}</span>
+          <span className="text-text-secondary">{fullName}</span>
         </nav>
 
         {/* Header */}
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
             <h1
-              className="text-xl sm:text-2xl text-[#F0EDE8]"
-              style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+              className="text-xl sm:text-2xl text-text-primary font-brand font-light"
             >
               {fullName}
             </h1>
             {buyer.company && (
-              <p className="text-sm text-[#8A8580] mt-0.5">{buyer.company}</p>
+              <p className="text-sm text-text-muted mt-0.5">{buyer.company}</p>
             )}
-            <p className="text-xs text-[#8A8580] mt-2">
+            <p className="text-xs text-text-muted mt-2">
               {buyer.total_deals_closed} deal{buyer.total_deals_closed !== 1 ? 's' : ''} &middot;{' '}
               {formatVolume(buyer.total_deal_volume)} volume
             </p>
@@ -184,7 +183,7 @@ export default function BuyerDetailPage() {
               </span>
             )}
             {buyer.has_pof && (
-              <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border bg-[#4ADE80]/15 text-[#4ADE80] border-[#4ADE80]/30 inline-flex items-center gap-1">
+              <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border bg-profit/15 text-profit border-profit/30 inline-flex items-center gap-1">
                 <ShieldCheck size={11} /> POF &#x2713;
               </span>
             )}
@@ -194,13 +193,13 @@ export default function BuyerDetailPage() {
             <div className="relative">
               <button
                 onClick={() => setSeqDropdownOpen(v => !v)}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#C5C0B8] border border-[#1E1D1B] hover:bg-[#141311] hover:text-[#F0EDE8] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-text-secondary border border-border-default hover:bg-app-recessed hover:text-text-primary transition-colors cursor-pointer"
               >
                 <Repeat size={14} />
                 Add to Sequence
               </button>
               {seqDropdownOpen && activeSequences.length > 0 && (
-                <div className="absolute right-0 top-full mt-1 w-56 bg-[#141311] border border-[#1E1D1B] rounded-xl shadow-xl z-20 py-1">
+                <div className="absolute right-0 top-full mt-1 w-56 bg-app-recessed border border-border-default rounded-xl shadow-xl z-20 py-1">
                   {activeSequences.map(seq => (
                     <button
                       key={seq.id}
@@ -214,10 +213,10 @@ export default function BuyerDetailPage() {
                           toast.error(err instanceof Error ? err.message : 'Failed to enroll')
                         }
                       }}
-                      className="w-full text-left px-3 py-2 text-sm text-[#C5C0B8] hover:bg-[#1E1D1B] hover:text-[#F0EDE8] transition-colors"
+                      className="w-full text-left px-3 py-2 text-sm text-text-secondary hover:bg-border-default hover:text-text-primary transition-colors"
                     >
                       {seq.name}
-                      <span className="text-[10px] text-[#8A8580] ml-1">
+                      <span className="text-[10px] text-text-muted ml-1">
                         ({seq.step_count} steps)
                       </span>
                     </button>
@@ -225,8 +224,8 @@ export default function BuyerDetailPage() {
                 </div>
               )}
               {seqDropdownOpen && activeSequences.length === 0 && (
-                <div className="absolute right-0 top-full mt-1 w-56 bg-[#141311] border border-[#1E1D1B] rounded-xl shadow-xl z-20 p-3">
-                  <p className="text-xs text-[#8A8580]">No active sequences. Create one first.</p>
+                <div className="absolute right-0 top-full mt-1 w-56 bg-app-recessed border border-border-default rounded-xl shadow-xl z-20 p-3">
+                  <p className="text-xs text-text-muted">No active sequences. Create one first.</p>
                 </div>
               )}
             </div>
@@ -272,17 +271,16 @@ function BuyBoxesSection({
   }
 
   return (
-    <section className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
+    <section className="bg-app-recessed border border-border-default rounded-xl p-5">
       <div className="flex items-center justify-between mb-4">
         <h2
-          className="text-base text-[#F0EDE8]"
-          style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+          className="text-base text-text-primary font-brand font-light"
         >
           Buy Boxes
         </h2>
         <button
           onClick={() => setShowEditor((v) => !v)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg bg-violet-400 text-white hover:bg-violet-500 transition-colors cursor-pointer"
         >
           <Plus size={13} /> Add Buy Box
         </button>
@@ -290,13 +288,13 @@ function BuyBoxesSection({
 
       {/* Inline editor */}
       {showEditor && (
-        <div className="mb-4 p-4 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg space-y-4">
+        <div className="mb-4 p-4 bg-app-bg border border-border-default rounded-lg space-y-4">
           <BuyBoxEditor value={newBox} onChange={setNewBox} />
           <div className="flex items-center gap-2 pt-2">
             <button
               onClick={handleSave}
               disabled={createMutation.isPending || !newBox.name?.trim()}
-              className="px-4 py-2 text-xs rounded-lg bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors disabled:opacity-50 cursor-pointer"
+              className="px-4 py-2 text-xs rounded-lg bg-violet-400 text-white hover:bg-violet-500 transition-colors disabled:opacity-50 cursor-pointer"
             >
               {createMutation.isPending ? 'Saving...' : 'Save'}
             </button>
@@ -305,7 +303,7 @@ function BuyBoxesSection({
                 setShowEditor(false)
                 setNewBox({ name: '' })
               }}
-              className="px-4 py-2 text-xs rounded-lg text-[#8A8580] hover:text-[#C5C0B8] transition-colors cursor-pointer"
+              className="px-4 py-2 text-xs rounded-lg text-text-muted hover:text-text-secondary transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -315,7 +313,7 @@ function BuyBoxesSection({
 
       {/* Buy box list */}
       {buyBoxes.length === 0 && !showEditor ? (
-        <p className="text-sm text-[#8A8580]">No buy boxes yet</p>
+        <p className="text-sm text-text-muted">No buy boxes yet</p>
       ) : (
         <div className="space-y-2">
           {buyBoxes.map((box) => (
@@ -340,28 +338,28 @@ function BuyBoxCard({ contactId, box }: { contactId: string; box: BuyBox }) {
   const summary = buyBoxSummary(box)
 
   return (
-    <div className="border border-[#1E1D1B] rounded-lg overflow-hidden">
+    <div className="border border-border-default rounded-lg overflow-hidden">
       {/* Collapsed header */}
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-[#1E1D1B]/50 transition-colors cursor-pointer"
+        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-border-default/50 transition-colors cursor-pointer"
       >
         {expanded ? (
-          <ChevronDown size={14} className="text-[#8A8580] shrink-0" />
+          <ChevronDown size={14} className="text-text-muted shrink-0" />
         ) : (
-          <ChevronRight size={14} className="text-[#8A8580] shrink-0" />
+          <ChevronRight size={14} className="text-text-muted shrink-0" />
         )}
         <div className="min-w-0 flex-1">
-          <p className="text-sm text-[#F0EDE8] truncate">{box.name}</p>
+          <p className="text-sm text-text-primary truncate">{box.name}</p>
           {!expanded && summary && (
-            <p className="text-xs text-[#8A8580] truncate mt-0.5">{summary}</p>
+            <p className="text-xs text-text-muted truncate mt-0.5">{summary}</p>
           )}
         </div>
       </button>
 
       {/* Expanded content */}
       {expanded && (
-        <div className="px-4 pb-4 pt-1 border-t border-[#1E1D1B]">
+        <div className="px-4 pb-4 pt-1 border-t border-border-default">
           <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-xs mt-3">
             {box.target_markets?.length ? (
               <DetailField label="Markets" value={box.target_markets.join(', ')} />
@@ -397,11 +395,11 @@ function BuyBoxCard({ contactId, box }: { contactId: string; box: BuyBox }) {
             {box.notes && <DetailField label="Notes" value={box.notes} span2 />}
           </div>
 
-          <div className="mt-4 pt-3 border-t border-[#1E1D1B]">
+          <div className="mt-4 pt-3 border-t border-border-default">
             <button
               onClick={handleDelete}
               disabled={deleteMutation.isPending}
-              className="inline-flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 transition-colors cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 text-xs text-loss hover:text-loss/80 transition-colors cursor-pointer disabled:opacity-50"
             >
               <Trash2 size={12} />
               {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
@@ -425,39 +423,38 @@ function DetailField({
 }) {
   return (
     <div className={span2 ? 'col-span-2' : ''}>
-      <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-0.5">{label}</p>
-      <p className="text-[#C5C0B8]">{value}</p>
+      <p className="text-[10px] uppercase tracking-wider text-text-muted mb-0.5">{label}</p>
+      <p className="text-text-secondary">{value}</p>
     </div>
   )
 }
 
 const MATCH_LEVEL_COLORS: Record<string, { text: string; bg: string }> = {
-  strong:   { text: 'text-[#4ADE80]', bg: 'bg-[#4ADE80]/15' },
-  moderate: { text: 'text-[#FBBF24]', bg: 'bg-[#FBBF24]/15' },
-  weak:     { text: 'text-[#F97316]', bg: 'bg-[#F97316]/15' },
-  no_match: { text: 'text-[#8A8580]', bg: 'bg-[#1E1D1B]' },
+  strong:   { text: 'text-profit', bg: 'bg-profit/15' },
+  moderate: { text: 'text-warning', bg: 'bg-warning-bg' },
+  weak:     { text: 'text-loss', bg: 'bg-loss-bg' },
+  no_match: { text: 'text-text-muted', bg: 'bg-border-default' },
 }
 
 // ── Matching Properties Section ──────────────────────────
 function MatchingPropertiesSection({ matches }: { matches: BuyerMatchResult[] }) {
   return (
-    <section className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
+    <section className="bg-app-recessed border border-border-default rounded-xl p-5">
       <div className="flex items-center gap-2 mb-4">
         <h2
-          className="text-base text-[#F0EDE8]"
-          style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+          className="text-base text-text-primary font-brand font-light"
         >
           Matching Properties
         </h2>
         {matches.length > 0 && (
-          <span className="px-2 py-0.5 text-xs rounded-full bg-[#1E1D1B] text-[#8A8580]">
+          <span className="px-2 py-0.5 text-xs rounded-full bg-border-default text-text-muted">
             {matches.length}
           </span>
         )}
       </div>
 
       {matches.length === 0 ? (
-        <p className="text-sm text-[#8A8580]">No properties match this buyer's criteria</p>
+        <p className="text-sm text-text-muted">No properties match this buyer's criteria</p>
       ) : (
         <div className="space-y-2">
           {matches.map((match) => {
@@ -466,10 +463,10 @@ function MatchingPropertiesSection({ matches }: { matches: BuyerMatchResult[] })
               <Link
                 key={match.property_id}
                 to={`/properties/${match.property_id}`}
-                className="flex items-center justify-between gap-4 p-3 rounded-lg border border-[#1E1D1B] hover:border-[#8B7AFF]/30 transition-colors group"
+                className="flex items-center justify-between gap-4 p-3 rounded-lg border border-border-default hover:border-violet-400/30 transition-colors group"
               >
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm text-[#F0EDE8] group-hover:text-[#8B7AFF] transition-colors truncate">
+                  <p className="text-sm text-text-primary group-hover:text-violet-400 transition-colors truncate">
                     {match.address}
                   </p>
                   <div className="flex items-center gap-1.5 mt-1 flex-wrap">
@@ -479,17 +476,17 @@ function MatchingPropertiesSection({ matches }: { matches: BuyerMatchResult[] })
                     <span className={cn('text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded', levelColors.bg, levelColors.text)}>
                       {match.match_level.replace('_', ' ')}
                     </span>
-                    <span className="text-[10px] text-[#8A8580] truncate">{match.buy_box_name}</span>
+                    <span className="text-[10px] text-text-muted truncate">{match.buy_box_name}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0 text-xs">
                   {match.purchase_price != null && (
-                    <span className="text-[#F0EDE8] font-medium">
+                    <span className="text-text-primary font-medium">
                       {formatPrice(match.purchase_price)}
                     </span>
                   )}
                   {match.strategy && (
-                    <span className="px-2 py-0.5 rounded bg-[#8B7AFF]/15 text-[#8B7AFF] border border-[#8B7AFF]/30">
+                    <span className="px-2 py-0.5 rounded bg-violet-400/15 text-violet-400 border border-violet-400/30">
                       {humanizeStrategy(match.strategy)}
                     </span>
                   )}
@@ -512,27 +509,26 @@ function DealHistorySection({
   totalDealVolume: number
 }) {
   return (
-    <section className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
+    <section className="bg-app-recessed border border-border-default rounded-xl p-5">
       <h2
-        className="text-base text-[#F0EDE8] mb-4"
-        style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+        className="text-base text-text-primary font-brand font-light mb-4"
       >
         Deal History
       </h2>
 
       {totalDealsClosed === 0 ? (
-        <p className="text-sm text-[#8A8580]">No deals closed with this buyer yet</p>
+        <p className="text-sm text-text-muted">No deals closed with this buyer yet</p>
       ) : (
         <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B]">
-            <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1">Deals Closed</p>
-            <p className="text-2xl text-[#F0EDE8]" style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
+          <div className="p-4 rounded-lg bg-app-bg border border-border-default">
+            <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">Deals Closed</p>
+            <p className="text-2xl text-text-primary font-brand font-light">
               {totalDealsClosed}
             </p>
           </div>
-          <div className="p-4 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B]">
-            <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1">Total Volume</p>
-            <p className="text-2xl text-[#F0EDE8]" style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
+          <div className="p-4 rounded-lg bg-app-bg border border-border-default">
+            <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">Total Volume</p>
+            <p className="text-2xl text-text-primary font-brand font-light">
               {formatVolume(totalDealVolume)}
             </p>
           </div>

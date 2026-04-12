@@ -18,21 +18,21 @@ const MAIL_TYPE_LABELS: Record<string, string> = {
 }
 
 const CAMPAIGN_STATUS_STYLES: Record<string, string> = {
-  draft:     'bg-[#8A8580]/15 text-[#8A8580]',
-  scheduled: 'bg-[#60A5FA]/15 text-[#60A5FA]',
-  sending:   'bg-[#FBBF24]/15 text-[#FBBF24]',
-  sent:      'bg-[#4ADE80]/15 text-[#4ADE80]',
-  cancelled: 'bg-[#EF4444]/15 text-[#EF4444]',
+  draft:     'bg-text-muted/15 text-text-muted',
+  scheduled: 'bg-info/15 text-info',
+  sending:   'bg-warning/15 text-warning',
+  sent:      'bg-profit/15 text-profit',
+  cancelled: 'bg-loss/15 text-loss',
 }
 
 const RECIPIENT_STATUS_STYLES: Record<string, string> = {
-  pending:    'bg-[#8A8580]/15 text-[#8A8580]',
-  queued:     'bg-[#8A8580]/15 text-[#C5C0B8]',
-  in_transit: 'bg-[#FBBF24]/15 text-[#FBBF24]',
-  delivered:  'bg-[#4ADE80]/15 text-[#4ADE80]',
-  returned:   'bg-[#EF4444]/15 text-[#EF4444]',
-  cancelled:  'bg-[#1E1D1B] text-[#8A8580]',
-  failed:     'bg-[#EF4444]/15 text-[#EF4444]',
+  pending:    'bg-text-muted/15 text-text-muted',
+  queued:     'bg-text-muted/15 text-text-secondary',
+  in_transit: 'bg-warning/15 text-warning',
+  delivered:  'bg-profit/15 text-profit',
+  returned:   'bg-loss/15 text-loss',
+  cancelled:  'bg-border-default text-text-muted',
+  failed:     'bg-loss/15 text-loss',
 }
 
 function formatCost(cents: number | null) {
@@ -85,18 +85,17 @@ function KpiCard({
   color: 'blue' | 'yellow' | 'green' | 'red'
 }) {
   const colorMap = {
-    blue:   'text-[#60A5FA]',
-    yellow: 'text-[#FBBF24]',
-    green:  'text-[#4ADE80]',
-    red:    'text-[#F87171]',
+    blue:   'text-info',
+    yellow: 'text-warning',
+    green:  'text-profit',
+    red:    'text-loss',
   }
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5 flex flex-col gap-1">
-      <p className={cn('text-3xl tabular-nums', colorMap[color])}
-         style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
+    <div className="bg-app-recessed border border-border-default rounded-xl p-5 flex flex-col gap-1">
+      <p className={cn('text-3xl tabular-nums font-brand font-light', colorMap[color])}>
         {value.toLocaleString()}
       </p>
-      <p className="text-xs text-[#8A8580] uppercase tracking-wider">{label}</p>
+      <p className="text-xs text-text-muted uppercase tracking-wider">{label}</p>
     </div>
   )
 }
@@ -108,18 +107,18 @@ function RecipientRow({ recipient }: { recipient: MailRecipient }) {
     .join(', ')
 
   return (
-    <tr className="border-b border-[#1E1D1B] last:border-0 hover:bg-[#141311]/50 transition-colors">
-      <td className="px-4 py-3 text-sm text-[#F0EDE8] whitespace-nowrap">
-        {recipient.to_name ?? <span className="text-[#8A8580]">—</span>}
+    <tr className="border-b border-border-default last:border-0 hover:bg-app-recessed/50 transition-colors">
+      <td className="px-4 py-3 text-sm text-text-primary whitespace-nowrap">
+        {recipient.to_name ?? <span className="text-text-muted">—</span>}
       </td>
-      <td className="px-4 py-3 text-sm text-[#C5C0B8]">{addressStr}</td>
+      <td className="px-4 py-3 text-sm text-text-secondary">{addressStr}</td>
       <td className="px-4 py-3">
         <RecipientStatusBadge status={recipient.status} />
       </td>
-      <td className="px-4 py-3 text-xs text-[#8A8580] font-mono whitespace-nowrap">
-        {recipient.lob_mail_id ?? <span className="text-[#8A8580]">—</span>}
+      <td className="px-4 py-3 text-xs text-text-muted font-mono whitespace-nowrap">
+        {recipient.lob_mail_id ?? <span className="text-text-muted">—</span>}
       </td>
-      <td className="px-4 py-3 text-sm text-[#C5C0B8] tabular-nums text-right whitespace-nowrap">
+      <td className="px-4 py-3 text-sm text-text-secondary tabular-nums text-right whitespace-nowrap">
         {formatCost(recipient.cost_cents)}
       </td>
     </tr>
@@ -142,15 +141,15 @@ export default function CampaignAnalyticsPage() {
     return (
       <AppShell title="Campaign Analytics">
         <div className="space-y-4">
-          <div className="h-6 w-48 bg-[#141311] rounded animate-pulse" />
+          <div className="h-6 w-48 bg-app-recessed rounded animate-pulse" />
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[0, 1, 2, 3].map(i => (
-              <div key={i} className="h-24 bg-[#141311] rounded-xl animate-pulse" />
+              <div key={i} className="h-24 bg-app-recessed rounded-xl animate-pulse" />
             ))}
           </div>
-          <div className="h-6 bg-[#141311] rounded-full animate-pulse" />
-          <div className="h-32 bg-[#141311] rounded-xl animate-pulse" />
-          <div className="h-64 bg-[#141311] rounded-xl animate-pulse" />
+          <div className="h-6 bg-app-recessed rounded-full animate-pulse" />
+          <div className="h-32 bg-app-recessed rounded-xl animate-pulse" />
+          <div className="h-64 bg-app-recessed rounded-xl animate-pulse" />
         </div>
       </AppShell>
     )
@@ -198,7 +197,7 @@ export default function CampaignAnalyticsPage() {
         <div>
           <Link
             to="/mail-campaigns"
-            className="inline-flex items-center gap-1.5 text-xs text-[#8A8580] hover:text-[#C5C0B8] transition-colors mb-4"
+            className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-text-secondary transition-colors mb-4"
           >
             <ArrowLeft size={13} />
             Mail Campaigns
@@ -207,12 +206,11 @@ export default function CampaignAnalyticsPage() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <h1
-                className="text-xl sm:text-2xl text-[#F0EDE8] mb-1"
-                style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+                className="text-xl sm:text-2xl text-text-primary font-brand font-light mb-1"
               >
                 {campaign.name}
               </h1>
-              <p className="text-sm text-[#8A8580]">{mailTypeLabel}</p>
+              <p className="text-sm text-text-muted">{mailTypeLabel}</p>
             </div>
             <CampaignStatusBadge status={campaign.status} />
           </div>
@@ -220,7 +218,7 @@ export default function CampaignAnalyticsPage() {
 
         {/* Delivery Funnel — 4 KPI cards */}
         <div>
-          <h2 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium mb-3">
+          <h2 className="text-[11px] uppercase tracking-wider text-text-muted font-medium mb-3">
             Delivery Funnel
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -232,73 +230,71 @@ export default function CampaignAnalyticsPage() {
         </div>
 
         {/* Delivery Rate Bar */}
-        <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
+        <div className="bg-app-recessed border border-border-default rounded-xl p-5">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium">
+            <h2 className="text-[11px] uppercase tracking-wider text-text-muted font-medium">
               Delivery Rate
             </h2>
-            <span className="text-sm text-[#4ADE80] tabular-nums font-medium">
+            <span className="text-sm text-profit tabular-nums font-medium">
               {deliveryRate}% delivered
             </span>
           </div>
-          <div className="h-2.5 bg-[#1E1D1B] rounded-full overflow-hidden">
+          <div className="h-2.5 bg-border-default rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#4ADE80] rounded-full transition-all duration-500"
+              className="h-full bg-profit rounded-full transition-all duration-500"
               style={{ width: `${deliveryRate}%` }}
             />
           </div>
           {sent === 0 && (
-            <p className="text-xs text-[#8A8580] mt-2">No mail sent yet.</p>
+            <p className="text-xs text-text-muted mt-2">No mail sent yet.</p>
           )}
         </div>
 
         {/* Cost Summary */}
-        <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
-          <h2 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium mb-4">
+        <div className="bg-app-recessed border border-border-default rounded-xl p-5">
+          <h2 className="text-[11px] uppercase tracking-wider text-text-muted font-medium mb-4">
             Cost Summary
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-[#0C0B0A] rounded-lg p-4">
-              <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1">Total Cost</p>
-              <p className="text-lg text-[#F0EDE8] tabular-nums"
-                 style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
+            <div className="bg-app-bg rounded-lg p-4">
+              <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">Total Cost</p>
+              <p className="text-lg text-text-primary tabular-nums font-brand font-light">
                 {formatCostDollars(totalCost)}
               </p>
             </div>
-            <div className="bg-[#0C0B0A] rounded-lg p-4">
-              <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1">Avg. Cost / Piece</p>
-              <p className="text-lg text-[#F0EDE8] tabular-nums"
-                 style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
+            <div className="bg-app-bg rounded-lg p-4">
+              <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">Avg. Cost / Piece</p>
+              <p className="text-lg text-text-primary tabular-nums font-brand font-light">
                 {sent > 0 ? formatCostDollars(avgCostCents) : '—'}
               </p>
             </div>
-            <div className="bg-[#0C0B0A] rounded-lg p-4">
-              <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1">Mail Type</p>
-              <p className="text-base text-[#F0EDE8]">{mailTypeLabel}</p>
+            <div className="bg-app-bg rounded-lg p-4">
+              <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">Mail Type</p>
+              <p className="text-base text-text-primary">{mailTypeLabel}</p>
             </div>
           </div>
         </div>
 
         {/* Recipients Table */}
         <div>
-          <h2 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium mb-3">
+          <h2 className="text-[11px] uppercase tracking-wider text-text-muted font-medium mb-3">
             Recipients ({recipients.length})
           </h2>
-          <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl overflow-hidden">
+          <div className="bg-app-recessed border border-border-default rounded-xl overflow-hidden">
             {recipients.length === 0 ? (
               <div className="p-8 text-center">
-                <p className="text-sm text-[#8A8580]">No recipients added to this campaign.</p>
+                <p className="text-sm text-text-muted">No recipients added to this campaign.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-[#1E1D1B]">
-                      <th className="px-4 py-3 text-left text-[10px] uppercase tracking-wider text-[#8A8580] font-medium">Name</th>
-                      <th className="px-4 py-3 text-left text-[10px] uppercase tracking-wider text-[#8A8580] font-medium">Address</th>
-                      <th className="px-4 py-3 text-left text-[10px] uppercase tracking-wider text-[#8A8580] font-medium">Status</th>
-                      <th className="px-4 py-3 text-left text-[10px] uppercase tracking-wider text-[#8A8580] font-medium">Lob ID</th>
-                      <th className="px-4 py-3 text-right text-[10px] uppercase tracking-wider text-[#8A8580] font-medium">Cost</th>
+                    <tr className="border-b border-border-default">
+                      <th className="px-4 py-3 text-left text-[10px] uppercase tracking-wider text-text-muted font-medium">Name</th>
+                      <th className="px-4 py-3 text-left text-[10px] uppercase tracking-wider text-text-muted font-medium">Address</th>
+                      <th className="px-4 py-3 text-left text-[10px] uppercase tracking-wider text-text-muted font-medium">Status</th>
+                      <th className="px-4 py-3 text-left text-[10px] uppercase tracking-wider text-text-muted font-medium">Lob ID</th>
+                      <th className="px-4 py-3 text-right text-[10px] uppercase tracking-wider text-text-muted font-medium">Cost</th>
                     </tr>
                   </thead>
                   <tbody>

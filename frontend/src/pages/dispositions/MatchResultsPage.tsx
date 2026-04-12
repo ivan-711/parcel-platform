@@ -45,24 +45,24 @@ const FUNDING_PILLS = [
 ] as const
 
 const MATCH_LEVEL_COLORS: Record<string, string> = {
-  strong: '#4ADE80',
-  moderate: '#FBBF24',
-  weak: '#F97316',
-  no_match: '#8A8580',
+  strong: 'var(--color-profit)',
+  moderate: 'var(--color-warning)',
+  weak: 'rgb(249, 115, 22)',
+  no_match: 'var(--color-text-muted)',
 }
 
 const MATCH_LEVEL_BG: Record<string, string> = {
-  strong: 'bg-[#4ADE80]/15 text-[#4ADE80] border-[#4ADE80]/30',
-  moderate: 'bg-[#FBBF24]/15 text-[#FBBF24] border-[#FBBF24]/30',
-  weak: 'bg-[#F97316]/15 text-[#F97316] border-[#F97316]/30',
-  no_match: 'bg-[#8A8580]/15 text-[#8A8580] border-[#8A8580]/30',
+  strong: 'bg-profit-bg text-profit border-profit/30',
+  moderate: 'bg-warning-bg text-warning border-warning/30',
+  weak: 'bg-orange-500/15 text-orange-500 border-orange-500/30',
+  no_match: 'bg-text-muted/15 text-text-muted border-text-muted/30',
 }
 
 const FUNDING_COLORS: Record<string, string> = {
-  cash: 'bg-[#4ADE80]/15 text-[#4ADE80] border-[#4ADE80]/30',
-  hard_money: 'bg-[#FBBF24]/15 text-[#FBBF24] border-[#FBBF24]/30',
-  conventional: 'bg-[#60A5FA]/15 text-[#60A5FA] border-[#60A5FA]/30',
-  creative: 'bg-[#8B7AFF]/15 text-[#8B7AFF] border-[#8B7AFF]/30',
+  cash: 'bg-profit-bg text-profit border-profit/30',
+  hard_money: 'bg-warning-bg text-warning border-warning/30',
+  conventional: 'bg-info-bg text-info border-info/30',
+  creative: 'bg-violet-400/15 text-violet-400 border-violet-400/30',
 }
 
 // ---------------------------------------------------------------------------
@@ -105,18 +105,18 @@ function ScoreBar({
   max?: number
 }) {
   const pct = Math.min(100, (value / max) * 100)
-  const color = pct >= 80 ? '#4ADE80' : pct >= 56 ? '#FBBF24' : '#F97316'
+  const color = pct >= 80 ? 'var(--color-profit)' : pct >= 56 ? 'var(--color-warning)' : 'rgb(249, 115, 22)'
 
   return (
     <div className="flex items-center gap-2">
-      <span className="w-16 text-[10px] text-[#8A8580] shrink-0">{label}</span>
-      <div className="flex-1 h-1.5 bg-[#1E1D1B] rounded-full overflow-hidden">
+      <span className="w-16 text-[10px] text-text-muted shrink-0">{label}</span>
+      <div className="flex-1 h-1.5 bg-border-default rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all"
           style={{ width: `${pct}%`, backgroundColor: color }}
         />
       </div>
-      <span className="text-[10px] text-[#C5C0B8] tabular-nums w-8 text-right">
+      <span className="text-[10px] text-text-secondary tabular-nums w-8 text-right">
         {value}/{max}
       </span>
     </div>
@@ -135,9 +135,9 @@ function MatchCard({
   selected: boolean
   onToggle: () => void
 }) {
-  const scoreColor = MATCH_LEVEL_COLORS[match.match_level] ?? '#8A8580'
+  const scoreColor = MATCH_LEVEL_COLORS[match.match_level] ?? 'var(--color-text-muted)'
   const levelBadge = MATCH_LEVEL_BG[match.match_level] ?? MATCH_LEVEL_BG.no_match
-  const fundingBadge = match.funding_type ? (FUNDING_COLORS[match.funding_type] ?? 'bg-[#1E1D1B] text-[#C5C0B8] border-[#2A2826]') : null
+  const fundingBadge = match.funding_type ? (FUNDING_COLORS[match.funding_type] ?? 'bg-border-default text-text-secondary border-border-strong') : null
 
   // Partition reasons: lines starting with '+' or positive cues = positive, else negative
   const positiveReasons = match.reasons.filter((r) => !r.startsWith('✗') && !r.startsWith('—') && !r.toLowerCase().startsWith('no '))
@@ -146,22 +146,33 @@ function MatchCard({
   return (
     <div
       className={cn(
-        'relative bg-[#141311] border rounded-xl p-4 transition-all cursor-pointer',
+        'relative bg-app-recessed border rounded-xl p-4 transition-all cursor-pointer',
         selected
-          ? 'border-[#8B7AFF] ring-1 ring-[#8B7AFF]/40'
-          : 'border-[#1E1D1B] hover:border-[#2A2826]'
+          ? 'border-violet-400 ring-1 ring-violet-400/40'
+          : 'border-border-default hover:border-border-strong'
       )}
+      role="checkbox"
+      aria-checked={selected}
+      aria-label={`Select buyer ${match.buyer_name}, match score ${match.score}`}
+      tabIndex={0}
       onClick={onToggle}
+      onKeyDown={(e) => {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault()
+          onToggle()
+        }
+      }}
     >
       {/* Top row: checkbox + buyer info + score */}
       <div className="flex items-start gap-3">
         {/* Checkbox */}
         <div
+          aria-hidden="true"
           className={cn(
             'w-4 h-4 mt-0.5 rounded border flex items-center justify-center shrink-0 transition-colors',
             selected
-              ? 'bg-[#8B7AFF] border-[#8B7AFF]'
-              : 'border-[#2A2826] bg-[#0C0B0A]'
+              ? 'bg-violet-400 border-violet-400'
+              : 'border-border-strong bg-app-bg'
           )}
         >
           {selected && (
@@ -177,15 +188,15 @@ function MatchCard({
             <Link
               to={`/buyers/${match.contact_id}`}
               onClick={(e) => e.stopPropagation()}
-              className="text-sm text-[#F0EDE8] hover:text-[#8B7AFF] transition-colors font-medium"
+              className="text-sm text-text-primary hover:text-violet-400 transition-colors font-medium"
             >
               {match.buyer_name}
             </Link>
             {match.company && (
-              <span className="text-[11px] text-[#8A8580]">{match.company}</span>
+              <span className="text-[11px] text-text-muted">{match.company}</span>
             )}
           </div>
-          <p className="text-[11px] text-[#8A8580] mt-0.5">{match.buy_box_name}</p>
+          <p className="text-[11px] text-text-muted mt-0.5">{match.buy_box_name}</p>
         </div>
 
         {/* Score */}
@@ -223,13 +234,13 @@ function MatchCard({
           </span>
         )}
         {match.has_pof && (
-          <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] border bg-[#4ADE80]/10 text-[#4ADE80] border-[#4ADE80]/25">
+          <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] border bg-profit-bg text-profit border-profit/25">
             <ShieldCheck size={9} />
             POF
           </span>
         )}
         {match.can_close_days != null && (
-          <span className="px-2 py-0.5 rounded text-[10px] border bg-[#1E1D1B] text-[#C5C0B8] border-[#2A2826]">
+          <span className="px-2 py-0.5 rounded text-[10px] border bg-border-default text-text-secondary border-border-strong">
             Close in {match.can_close_days}d
           </span>
         )}
@@ -240,14 +251,14 @@ function MatchCard({
         <div className="mt-3 pl-7 space-y-0.5">
           {positiveReasons.slice(0, 3).map((r, i) => (
             <div key={i} className="flex items-start gap-1.5">
-              <CheckCircle2 size={10} className="text-[#4ADE80] mt-0.5 shrink-0" />
-              <span className="text-[11px] text-[#C5C0B8]">{r}</span>
+              <CheckCircle2 size={10} className="text-profit mt-0.5 shrink-0" />
+              <span className="text-[11px] text-text-secondary">{r}</span>
             </div>
           ))}
           {negativeReasons.slice(0, 2).map((r, i) => (
             <div key={i} className="flex items-start gap-1.5">
-              <XCircle size={10} className="text-[#F97316] mt-0.5 shrink-0" />
-              <span className="text-[11px] text-[#8A8580]">{r.replace(/^[✗—]\s*/, '')}</span>
+              <XCircle size={10} className="text-orange-500 mt-0.5 shrink-0" />
+              <span className="text-[11px] text-text-muted">{r.replace(/^[✗—]\s*/, '')}</span>
             </div>
           ))}
         </div>
@@ -304,20 +315,20 @@ export default function MatchResultsPage() {
 
   return (
     <AppShell>
-      <div className="min-h-screen bg-[#0C0B0A]">
+      <div className="min-h-screen bg-app-bg">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 space-y-6 pb-28">
 
           {/* Breadcrumb */}
           <div className="flex items-center gap-2">
             <Link
               to={propertyId ? `/properties/${propertyId}` : '/properties'}
-              className="flex items-center gap-1.5 text-[13px] text-[#8A8580] hover:text-[#C5C0B8] transition-colors"
+              className="flex items-center gap-1.5 text-[13px] text-text-muted hover:text-text-secondary transition-colors"
             >
               <ArrowLeft size={14} />
               Back
             </Link>
-            <span className="text-[#1E1D1B]">/</span>
-            <span className="text-[13px] text-[#C5C0B8]">Match Results</span>
+            <span className="text-border-default">/</span>
+            <span className="text-[13px] text-text-secondary">Match Results</span>
           </div>
 
           {/* Header */}
@@ -325,24 +336,21 @@ export default function MatchResultsPage() {
             <div className="space-y-1">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h1
-                    className="text-xl text-[#F0EDE8]"
-                    style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
-                  >
+                  <h1 className="font-brand font-light text-xl text-text-primary">
                     {property.address}
                   </h1>
-                  <p className="text-sm text-[#8A8580] mt-0.5">
+                  <p className="text-sm text-text-muted mt-0.5">
                     {property.city}, {property.state}
                   </p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   {property.strategy && (
-                    <span className="px-2.5 py-1 rounded-lg text-[11px] border bg-[#8B7AFF]/10 text-[#8B7AFF] border-[#8B7AFF]/25">
+                    <span className="px-2.5 py-1 rounded-lg text-[11px] border bg-violet-400/10 text-violet-400 border-violet-400/25">
                       {strategyLabel(property.strategy)}
                     </span>
                   )}
                   {property.purchase_price != null && (
-                    <span className="text-sm text-[#C5C0B8] font-medium tabular-nums">
+                    <span className="text-sm text-text-secondary font-medium tabular-nums">
                       {formatPrice(property.purchase_price)}
                     </span>
                   )}
@@ -357,13 +365,13 @@ export default function MatchResultsPage() {
             <div className="relative">
               <button
                 onClick={() => setMinScoreOpen((v) => !v)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] bg-[#141311] border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#2A2826] transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] bg-app-recessed border border-border-default text-text-secondary hover:border-border-strong transition-colors"
               >
                 Score: {currentMinScoreLabel}
                 <ChevronDown size={12} />
               </button>
               {minScoreOpen && (
-                <div className="absolute top-full left-0 mt-1 z-20 bg-[#141311] border border-[#1E1D1B] rounded-xl shadow-xl overflow-hidden min-w-[120px]">
+                <div className="absolute top-full left-0 mt-1 z-20 bg-app-recessed border border-border-default rounded-xl shadow-xl overflow-hidden min-w-[120px]">
                   {MIN_SCORE_OPTIONS.map((opt) => (
                     <button
                       key={opt.value}
@@ -374,8 +382,8 @@ export default function MatchResultsPage() {
                       className={cn(
                         'w-full text-left px-3 py-2 text-[12px] transition-colors',
                         (filters.min_score ?? 0) === opt.value
-                          ? 'text-[#8B7AFF] bg-[#8B7AFF]/10'
-                          : 'text-[#C5C0B8] hover:bg-[#1E1D1B]'
+                          ? 'text-violet-400 bg-violet-400/10'
+                          : 'text-text-secondary hover:bg-border-default'
                       )}
                     >
                       {opt.label}
@@ -395,8 +403,8 @@ export default function MatchResultsPage() {
                 className={cn(
                   'px-3 py-1.5 rounded-lg text-[12px] border transition-colors',
                   filters.funding_type === (pill.value || undefined)
-                    ? 'bg-[#8B7AFF] border-[#8B7AFF] text-white'
-                    : 'bg-[#141311] border-[#1E1D1B] text-[#C5C0B8] hover:border-[#2A2826]'
+                    ? 'bg-violet-400 border-violet-400 text-white'
+                    : 'bg-app-recessed border-border-default text-text-secondary hover:border-border-strong'
                 )}
               >
                 {pill.label}
@@ -411,8 +419,8 @@ export default function MatchResultsPage() {
               className={cn(
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] border transition-colors',
                 filters.has_pof
-                  ? 'bg-[#4ADE80]/15 border-[#4ADE80]/30 text-[#4ADE80]'
-                  : 'bg-[#141311] border-[#1E1D1B] text-[#C5C0B8] hover:border-[#2A2826]'
+                  ? 'bg-profit-bg border-profit/30 text-profit'
+                  : 'bg-app-recessed border-border-default text-text-secondary hover:border-border-strong'
               )}
             >
               <ShieldCheck size={11} />
@@ -423,12 +431,13 @@ export default function MatchResultsPage() {
           {/* Results count + select all */}
           {!isLoading && matches.length > 0 && (
             <div className="flex items-center justify-between">
-              <p className="text-[12px] text-[#8A8580]">
+              <p className="text-[12px] text-text-muted">
                 {matches.length} buyer{matches.length !== 1 ? 's' : ''} matched
               </p>
               <button
                 onClick={toggleAll}
-                className="text-[12px] text-[#8B7AFF] hover:text-[#7B6AEF] transition-colors"
+                aria-label={allSelected ? 'Deselect all buyers' : 'Select all buyers'}
+                className="text-[12px] text-violet-400 hover:text-violet-500 transition-colors"
               >
                 {allSelected ? 'Deselect all' : 'Select all'}
               </button>
@@ -441,7 +450,7 @@ export default function MatchResultsPage() {
               {[0, 1, 2].map((i) => (
                 <div
                   key={i}
-                  className="h-40 rounded-xl bg-[#141311] border border-[#1E1D1B] animate-pulse"
+                  className="h-40 rounded-xl bg-app-recessed border border-border-default animate-pulse"
                 />
               ))}
             </div>
@@ -449,8 +458,8 @@ export default function MatchResultsPage() {
 
           {/* Error */}
           {isError && !isLoading && (
-            <div className="rounded-xl bg-[#141311] border border-[#1E1D1B] p-6 text-center">
-              <p className="text-sm text-[#C5C0B8]">Failed to load matches. Please try again.</p>
+            <div className="rounded-xl bg-app-recessed border border-border-default p-6 text-center">
+              <p className="text-sm text-text-secondary">Failed to load matches. Please try again.</p>
             </div>
           )}
 
@@ -484,14 +493,14 @@ export default function MatchResultsPage() {
         {selectedCount > 0 && (
           <div className="fixed bottom-0 inset-x-0 z-40 pb-safe">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 pb-4">
-              <div className="bg-[#141311] border border-[#8B7AFF]/40 rounded-xl px-4 py-3 flex items-center justify-between shadow-2xl">
-                <p className="text-[13px] text-[#C5C0B8]">
-                  <span className="text-[#F0EDE8] font-medium">{selectedCount}</span>{' '}
+              <div className="bg-app-recessed border border-violet-400/40 rounded-xl px-4 py-3 flex items-center justify-between shadow-2xl">
+                <p className="text-[13px] text-text-secondary">
+                  <span className="text-text-primary font-medium">{selectedCount}</span>{' '}
                   buyer{selectedCount !== 1 ? 's' : ''} selected
                 </p>
                 <button
                   onClick={() => setShowPacketModal(true)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-[#8B7AFF] text-white hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-violet-400 text-white hover:opacity-90 transition-opacity"
                 >
                   <Send size={14} />
                   Send Packet

@@ -13,7 +13,7 @@ export function PipelineEmpty() {
       <PageContent>
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4 max-w-md text-center">
-            <div className="w-12 h-12 rounded-xl bg-white/[0.03] border border-border-default flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-app-surface border border-border-default flex items-center justify-center">
               <GitBranch size={24} className="text-text-muted" />
             </div>
             <div className="space-y-1">
@@ -24,7 +24,7 @@ export function PipelineEmpty() {
             </div>
             <Link
               to="/analyze"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#8B7AFF] hover:bg-[#7B6AEF] text-accent-text-on-accent text-[13px] font-medium transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-accent-primary hover:bg-accent-hover text-accent-text-on-accent text-[13px] font-medium transition-colors"
             >
               <Plus size={14} />
               Analyze a Deal

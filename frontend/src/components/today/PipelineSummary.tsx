@@ -23,13 +23,13 @@ export function PipelineSummaryBar({ pipeline }: Props) {
 
   if (total === 0) {
     return (
-      <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
-        <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium mb-4">
+      <div className="bg-app-recessed border border-border-default rounded-xl p-5">
+        <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium mb-4">
           Pipeline Velocity
         </h3>
-        <p className="text-sm text-[#8A8580] py-4 text-center">
+        <p className="text-sm text-text-muted py-4 text-center">
           No active deals.{' '}
-          <Link to="/analyze" className="text-[#8B7AFF] hover:text-[#A89FFF] transition-colors">
+          <Link to="/analyze" className="text-accent-primary hover:text-accent-secondary transition-colors">
             Analyze a property
           </Link>{' '}
           to get started.
@@ -43,23 +43,23 @@ export function PipelineSummaryBar({ pipeline }: Props) {
   )
 
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
+    <div className="bg-app-recessed border border-border-default rounded-xl p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium">
+        <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium">
           Pipeline Velocity
         </h3>
         <div className="flex items-center gap-3 text-xs">
-          <span className="text-[#C5C0B8]">
-            Active: <span className="text-[#F0EDE8] font-medium tabular-nums">{pipeline.total_active}</span>
+          <span className="text-text-secondary">
+            Active: <span className="text-text-primary font-medium tabular-nums">{pipeline.total_active}</span>
           </span>
-          <span className="text-[#C5C0B8]">
-            Total: <span className="text-[#F0EDE8] font-medium tabular-nums">{total}</span>
+          <span className="text-text-secondary">
+            Total: <span className="text-text-primary font-medium tabular-nums">{total}</span>
           </span>
         </div>
       </div>
 
       {/* Segmented bar */}
-      <div className="flex h-3 rounded-full overflow-hidden bg-[#0C0B0A] mb-4">
+      <div className="flex h-3 rounded-full overflow-hidden bg-app-bg mb-4">
         {STAGE_CONFIG.map((stage) => {
           const count = pipeline.by_stage[stage.key] ?? 0
           if (count === 0) return null
@@ -89,9 +89,9 @@ export function PipelineSummaryBar({ pipeline }: Props) {
                 className="w-2 h-2 rounded-full"
                 style={{ backgroundColor: stage.color }}
               />
-              <span className="text-[#8A8580]">{stage.label}</span>
-              <span className="text-[#C5C0B8] tabular-nums">{count}</span>
-              <span className="text-[#8A8580]/60 tabular-nums">{pct}%</span>
+              <span className="text-text-muted">{stage.label}</span>
+              <span className="text-text-secondary tabular-nums">{count}</span>
+              <span className="text-text-muted/60 tabular-nums">{pct}%</span>
             </div>
           )
         })}

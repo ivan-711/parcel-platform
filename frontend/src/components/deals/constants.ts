@@ -1,6 +1,7 @@
 /** Shared constants and utility functions for the My Deals page. */
 
 import type { Variants } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 
 export const STRATEGIES: { value: string; label: string }[] = [
   { value: 'all', label: 'All Strategies' },
@@ -26,9 +27,9 @@ export const PER_PAGE = 12
 
 export function riskColor(score: number | null): string {
   if (score === null) return 'text-text-muted'
-  if (score <= 30) return 'text-[#7CCBA5]'
-  if (score <= 60) return 'text-[#D4A867]'
-  return 'text-[#D4766A]'
+  if (score <= 30) return 'text-profit'
+  if (score <= 60) return 'text-warning'
+  return 'text-loss'
 }
 
 export function statusLabel(status: string): string {
@@ -47,17 +48,13 @@ export function formatMetricValue(label: string | null, value: number | null): s
   return value.toLocaleString('en-US', { maximumFractionDigits: 1 })
 }
 
-export const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.04 },
-  },
-}
+export const containerVariants: Variants = prefersReducedMotion
+  ? { hidden: {}, visible: {} }
+  : { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.04 } } }
 
-export const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 6 },
-  visible: {
+export const itemVariants: Variants = prefersReducedMotion
+  ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+  : { hidden: { opacity: 0, y: 6 }, visible: {
     opacity: 1,
     y: 0,
     transition: { duration: 0.18, ease: 'easeOut' },

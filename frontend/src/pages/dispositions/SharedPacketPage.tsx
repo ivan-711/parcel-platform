@@ -48,7 +48,7 @@ function MetricCard({
     <div
       className={`rounded-xl p-4 space-y-1 ${
         highlight
-          ? 'bg-[#8B7AFF] text-white'
+          ? 'bg-violet-400 text-white'
           : 'bg-white border border-gray-200'
       }`}
     >
@@ -73,10 +73,10 @@ function MetricCard({
 function ParcelLogo() {
   return (
     <Link to="/" className="flex items-center gap-2 group">
-      <div className="w-7 h-7 rounded-lg bg-[#8B7AFF] flex items-center justify-center">
+      <div className="w-7 h-7 rounded-lg bg-violet-400 flex items-center justify-center">
         <span className="text-[11px] font-bold text-white">P</span>
       </div>
-      <span className="text-sm font-semibold text-gray-900 tracking-tight group-hover:text-[#8B7AFF] transition-colors">
+      <span className="text-sm font-semibold text-gray-900 tracking-tight group-hover:text-violet-400 transition-colors">
         Parcel
       </span>
     </Link>
@@ -90,7 +90,7 @@ function ParcelLogo() {
 function LoadingState() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center">
-      <div className="w-8 h-8 rounded-full border-2 border-[#8B7AFF] border-t-transparent animate-spin" />
+      <div className="w-8 h-8 rounded-full border-2 border-violet-400 border-t-transparent animate-spin" />
     </div>
   )
 }
@@ -154,8 +154,7 @@ export default function SharedPacketPage() {
         {/* ── Title & Address ── */}
         <div className="space-y-1">
           <h1
-            className="text-[28px] leading-tight text-gray-900"
-            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 400 }}
+            className="text-[28px] leading-tight text-gray-900 font-brand font-normal"
           >
             {title}
           </h1>
@@ -280,8 +279,7 @@ export default function SharedPacketPage() {
         {(seller_name || seller_email || seller_phone) && (
           <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4 text-center">
             <h2
-              className="text-[22px] text-gray-900"
-              style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 400 }}
+              className="text-[22px] text-gray-900 font-brand font-normal"
             >
               Interested?
             </h2>
@@ -294,7 +292,7 @@ export default function SharedPacketPage() {
               {seller_email && (
                 <a
                   href={`mailto:${seller_email}`}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#8B7AFF] text-white text-[14px] font-medium hover:bg-[#7c6cf0] transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-violet-400 text-white text-[14px] font-medium hover:bg-violet-500 transition-colors"
                 >
                   <Mail size={15} />
                   {seller_email}
@@ -303,7 +301,7 @@ export default function SharedPacketPage() {
               {seller_phone && (
                 <a
                   href={`tel:${seller_phone}`}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#8B7AFF] text-[#8B7AFF] text-[14px] font-medium hover:bg-violet-50 transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-violet-400 text-violet-400 text-[14px] font-medium hover:bg-violet-50 transition-colors"
                 >
                   <Phone size={15} />
                   {seller_phone}

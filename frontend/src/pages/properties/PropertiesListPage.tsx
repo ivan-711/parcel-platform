@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'
+import { prefersReducedMotion } from '@/lib/motion'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
@@ -34,12 +35,12 @@ const STATUS_OPTIONS = [
 ]
 
 const STATUS_COLORS: Record<string, string> = {
-  prospect: 'bg-[#8A8580]/20 text-[#C5C0B8] border-[#8A8580]/30',
-  under_analysis: 'bg-[#60A5FA]/15 text-[#93C5FD] border-[#60A5FA]/30',
-  in_pipeline: 'bg-[#8B7AFF]/15 text-[#A89FFF] border-[#8B7AFF]/30',
-  owned: 'bg-[#4ADE80]/15 text-[#6DBEA3] border-[#4ADE80]/30',
-  sold: 'bg-[#C5C0B8]/15 text-[#8A8580] border-[#C5C0B8]/30',
-  archived: 'bg-[#1E1D1B] text-[#8A8580] border-[#1E1D1B]',
+  prospect: 'bg-text-muted/20 text-text-secondary border-text-muted/30',
+  under_analysis: 'bg-info/15 text-info border-info/30',
+  in_pipeline: 'bg-violet-400/15 text-violet-300 border-violet-400/30',
+  owned: 'bg-profit/15 text-profit border-profit/30',
+  sold: 'bg-text-secondary/15 text-text-muted border-text-secondary/30',
+  archived: 'bg-border-default text-text-muted border-border-default',
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -153,7 +154,7 @@ export default function PropertiesListPage() {
       actions={
         <Link
           to="/analyze"
-          className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
+          className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-violet-400 text-white hover:bg-violet-500 transition-colors"
         >
           Analyze Property
         </Link>
@@ -162,7 +163,7 @@ export default function PropertiesListPage() {
       <div className="space-y-5">
         {/* Subtitle */}
         {total > 0 && (
-          <p className="text-sm text-[#8A8580]">
+          <p className="text-sm text-text-muted">
             Total Value: ${totalValue.toLocaleString()} &middot; {activeCount} Active Asset{activeCount !== 1 ? 's' : ''}
           </p>
         )}
@@ -171,18 +172,19 @@ export default function PropertiesListPage() {
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search */}
           <div className="relative flex-1 max-w-md">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A8580]" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               type="text"
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1) }}
               placeholder="Search by address..."
-              className="w-full h-9 pl-9 pr-8 rounded-lg bg-[#141311] border border-[#1E1D1B] text-sm text-[#F0EDE8] placeholder-[#8A8580]/60 focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-all"
+              className="w-full h-9 pl-9 pr-8 rounded-lg bg-app-recessed border border-border-default text-sm text-text-primary placeholder-text-muted/60 focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 transition-all"
             />
             {search && (
               <button
                 onClick={() => { setSearch(''); setPage(1) }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-[#8A8580] hover:text-[#C5C0B8] cursor-pointer"
+                aria-label="Clear search"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary cursor-pointer"
               >
                 <X size={14} />
               </button>
@@ -198,8 +200,8 @@ export default function PropertiesListPage() {
                 className={cn(
                   'text-xs px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors cursor-pointer',
                   statusFilter === opt.value
-                    ? 'bg-[#8B7AFF]/15 text-[#A89FFF] border border-[#8B7AFF]/30'
-                    : 'bg-[#141311] text-[#8A8580] border border-[#1E1D1B] hover:text-[#C5C0B8]'
+                    ? 'bg-violet-400/15 text-violet-300 border border-violet-400/30'
+                    : 'bg-app-recessed text-text-muted border border-border-default hover:text-text-secondary'
                 )}
               >
                 {opt.label}
@@ -210,7 +212,7 @@ export default function PropertiesListPage() {
 
         {/* Error */}
         {isError && (
-          <div className="bg-[#F87171]/10 border border-[#F87171]/20 rounded-lg p-4 text-sm text-[#F87171]">
+          <div className="bg-loss-bg border border-loss/20 rounded-lg p-4 text-sm text-loss">
             Failed to load properties. Please try again.
           </div>
         )}
@@ -219,7 +221,7 @@ export default function PropertiesListPage() {
         {isLoading && (
           <div className="space-y-2">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-14 bg-[#141311] rounded-lg animate-pulse" />
+              <div key={i} className="h-14 bg-app-recessed rounded-lg animate-pulse" />
             ))}
           </div>
         )}
@@ -247,7 +249,7 @@ export default function PropertiesListPage() {
         )}
         {!isLoading && !isError && properties.length === 0 && hasFilters && (
           <div className="flex justify-center -mt-4">
-            <button onClick={clearFilters} className="text-sm text-[#8B7AFF] hover:text-[#A89FFF] transition-colors cursor-pointer">
+            <button onClick={clearFilters} className="text-sm text-accent-primary hover:text-accent-hover transition-colors cursor-pointer">
               Clear all filters
             </button>
           </div>
@@ -259,53 +261,54 @@ export default function PropertiesListPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className="border border-[#1E1D1B] rounded-xl overflow-hidden"
+            className="border border-border-default rounded-xl overflow-hidden"
           >
             {/* Desktop table */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-[#141311] border-b border-[#1E1D1B]">
-                    <th className="text-left text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-4 py-3">Address</th>
-                    <th className="text-left text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-4 py-3">Type</th>
-                    <th className="text-left text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-4 py-3">Status</th>
-                    <th className="text-left text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-4 py-3">Strategy</th>
-                    <th className="text-right text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-4 py-3">Key Metric</th>
-                    <th className="text-right text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-4 py-3">Updated</th>
-                    <th className="text-right text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-4 py-3 w-10"></th>
+                  <tr className="bg-app-recessed border-b border-border-default">
+                    <th className="text-left text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Address</th>
+                    <th className="text-left text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Type</th>
+                    <th className="text-left text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Status</th>
+                    <th className="text-left text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Strategy</th>
+                    <th className="text-right text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Key Metric</th>
+                    <th className="text-right text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Updated</th>
+                    <th className="text-right text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3 w-10"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {properties.map((p) => (
-                    <tr
+                    <motion.tr
                       key={p.id}
-                      className="group border-b border-[#1E1D1B] last:border-0 hover:bg-[#141311]/60 transition-colors cursor-pointer"
+                      whileHover={prefersReducedMotion ? undefined : { y: -2 }}
+                      className="group border-b border-border-default last:border-0 hover:bg-app-recessed/60 transition-shadow duration-200 hover:shadow-lg cursor-pointer"
                       onClick={() => navigate(`/properties/${p.id}`)}
                     >
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <span className="text-[#F0EDE8] font-medium truncate max-w-[250px]">
+                          <span className="text-text-primary font-medium truncate max-w-[250px]">
                             {p.address_line1}
                           </span>
                           {p.is_sample && <SampleBadge />}
                         </div>
-                        <p className="text-xs text-[#8A8580] mt-0.5">
+                        <p className="text-xs text-text-muted mt-0.5">
                           {p.city}, {p.state} {p.zip_code}
                         </p>
                       </td>
-                      <td className="px-4 py-3 text-[#C5C0B8]">
+                      <td className="px-4 py-3 text-text-secondary">
                         {p.property_type?.toUpperCase() || '—'}
                       </td>
                       <td className="px-4 py-3">
                         <StatusBadge status={p.status} />
                       </td>
-                      <td className="px-4 py-3 text-[#C5C0B8]">
+                      <td className="px-4 py-3 text-text-secondary">
                         {p.primary_scenario?.strategy?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || '—'}
                       </td>
-                      <td className="px-4 py-3 text-right text-[#F0EDE8] tabular-nums">
+                      <td className="px-4 py-3 text-right text-text-primary tabular-nums">
                         {getKeyMetric(p)}
                       </td>
-                      <td className="px-4 py-3 text-right text-xs text-[#8A8580] tabular-nums">
+                      <td className="px-4 py-3 text-right text-xs text-text-muted tabular-nums">
                         {formatRelativeTime(p.updated_at)}
                       </td>
                       <td className="px-4 py-3 text-right" onClick={e => e.stopPropagation()}>
@@ -314,32 +317,33 @@ export default function PropertiesListPage() {
                           onDelete={() => handleDelete(p.id, p.address_line1)}
                         />
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>
             </div>
 
             {/* Mobile cards */}
-            <div className="md:hidden divide-y divide-[#1E1D1B]">
+            <div className="md:hidden divide-y divide-border-default">
               {properties.map((p) => (
+                <motion.div key={p.id} whileHover={prefersReducedMotion ? undefined : { y: -2 }}>
                 <Link
-                  key={p.id}
                   to={`/properties/${p.id}`}
-                  className="flex items-center justify-between px-4 py-3 hover:bg-[#141311]/60 transition-colors"
+                  className="flex items-center justify-between px-4 py-3 hover:bg-app-recessed/60 transition-shadow duration-200 hover:shadow-lg"
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-[#F0EDE8] font-medium truncate">{p.address_line1}</span>
+                      <span className="text-sm text-text-primary font-medium truncate">{p.address_line1}</span>
                       {p.is_sample && <SampleBadge />}
                     </div>
-                    <p className="text-xs text-[#8A8580] mt-0.5">{p.city}, {p.state}</p>
+                    <p className="text-xs text-text-muted mt-0.5">{p.city}, {p.state}</p>
                   </div>
                   <div className="flex items-center gap-3 shrink-0 ml-3">
                     <StatusBadge status={p.status} />
-                    <span className="text-sm text-[#F0EDE8] tabular-nums">{getKeyMetric(p)}</span>
+                    <span className="text-sm text-text-primary tabular-nums">{getKeyMetric(p)}</span>
                   </div>
                 </Link>
+                </motion.div>
               ))}
             </div>
           </motion.div>
@@ -348,24 +352,26 @@ export default function PropertiesListPage() {
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between text-sm">
-            <span className="text-[#8A8580]">
+            <span className="text-text-muted">
               Showing {(page - 1) * PER_PAGE + 1}–{Math.min(page * PER_PAGE, total)} of {total}
             </span>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-[#8A8580] hover:text-[#C5C0B8] hover:bg-[#141311] disabled:opacity-30 transition-colors cursor-pointer"
+                aria-label="Previous page"
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-app-recessed disabled:opacity-30 transition-colors cursor-pointer"
               >
                 <ChevronLeft size={16} />
               </button>
-              <span className="px-2 text-[#C5C0B8] tabular-nums">
+              <span className="px-2 text-text-secondary tabular-nums">
                 {page} / {totalPages}
               </span>
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-[#8A8580] hover:text-[#C5C0B8] hover:bg-[#141311] disabled:opacity-30 transition-colors cursor-pointer"
+                aria-label="Next page"
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-app-recessed disabled:opacity-30 transition-colors cursor-pointer"
               >
                 <ChevronRight size={16} />
               </button>
@@ -388,7 +394,8 @@ function PropertyActions({
     <Popover>
       <PopoverTrigger asChild>
         <button
-          className="w-7 h-7 rounded-md flex items-center justify-center text-[#8A8580] hover:text-[#C5C0B8] hover:bg-[#141311] opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
+          aria-label="Property actions"
+          className="w-7 h-7 rounded-md flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-app-recessed opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
         >
           <MoreHorizontal size={14} />
         </button>
@@ -396,25 +403,25 @@ function PropertyActions({
       <PopoverContent
         align="end"
         sideOffset={4}
-        className="w-40 p-1 bg-[#141311] border border-[#1E1D1B] shadow-lg rounded-xl"
+        className="w-40 p-1 bg-app-recessed border border-border-default shadow-lg rounded-xl"
       >
         <Link
           to={`/properties/${property.id}`}
-          className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-sm text-[#C5C0B8] hover:bg-[#1A1918] hover:text-[#F0EDE8] transition-colors"
+          className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-sm text-text-secondary hover:bg-app-surface hover:text-text-primary transition-colors"
         >
           <Eye size={14} />
           View
         </Link>
         <Link
           to={`/properties/${property.id}?tab=overview`}
-          className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-sm text-[#C5C0B8] hover:bg-[#1A1918] hover:text-[#F0EDE8] transition-colors"
+          className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-sm text-text-secondary hover:bg-app-surface hover:text-text-primary transition-colors"
         >
           <Pencil size={14} />
           Edit
         </Link>
         <button
           onClick={onDelete}
-          className="flex items-center gap-2 w-full px-2.5 py-2 rounded-lg text-sm text-[#F87171] hover:bg-[#F87171]/10 transition-colors cursor-pointer"
+          className="flex items-center gap-2 w-full px-2.5 py-2 rounded-lg text-sm text-loss hover:bg-loss-bg transition-colors cursor-pointer"
         >
           <Trash2 size={14} />
           Delete

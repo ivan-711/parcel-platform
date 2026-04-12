@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 
 const STORAGE_KEY = 'parcel_cookie_consent'
 
@@ -54,16 +55,16 @@ export function CookieConsent() {
     <AnimatePresence>
       {visible && (
         <motion.div
-          initial={{ y: 100, opacity: 0 }}
+          initial={prefersReducedMotion ? {} : { y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+          exit={prefersReducedMotion ? {} : { y: 100, opacity: 0 }}
+          transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
           className="fixed bottom-0 left-0 right-0 z-[100] p-4"
         >
           <div className="max-w-2xl mx-auto bg-app-surface border border-border-strong rounded-xl p-4 shadow-lg flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <p className="text-xs text-text-secondary leading-relaxed flex-1">
               Parcel uses cookies to keep you signed in, secure your account, and understand product usage.{' '}
-              <Link to="/privacy" className="text-[#8B7AFF] hover:text-[#A89FFF] underline underline-offset-2">
+              <Link to="/privacy" className="text-violet-400 hover:text-violet-300 underline underline-offset-2">
                 Privacy Policy
               </Link>
             </p>
@@ -76,7 +77,7 @@ export function CookieConsent() {
               </button>
               <button
                 onClick={handleAccept}
-                className="px-3 py-1.5 text-xs text-white bg-[#8B7AFF] rounded-lg hover:bg-[#7B6AEF] transition-colors cursor-pointer"
+                className="px-3 py-1.5 text-xs text-white bg-violet-400 rounded-lg hover:bg-violet-500 transition-colors cursor-pointer"
               >
                 Accept
               </button>

@@ -40,7 +40,7 @@ export function UploadZone({ onUpload, isUploading }: UploadZoneProps) {
       className={cn(
         'border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-colors',
         isDragActive
-          ? 'border-[#8B7AFF]/40 bg-[#8B7AFF]/[0.04]'
+          ? 'border-violet-400/40 bg-violet-400/[0.04]'
           : 'border-border-strong bg-app-recessed hover:border-border-emphasis hover:bg-layer-1',
         isUploading && 'pointer-events-none opacity-60',
       )}
@@ -48,7 +48,7 @@ export function UploadZone({ onUpload, isUploading }: UploadZoneProps) {
       <input {...getInputProps()} />
       {isUploading ? (
         <div className="flex flex-col items-center gap-2 py-2">
-          <Loader2 size={20} className="text-[#8B7AFF] animate-spin" />
+          <Loader2 size={20} className="text-violet-400 animate-spin" />
           <p className="text-xs text-text-secondary">Uploading...</p>
         </div>
       ) : (

@@ -212,19 +212,18 @@ export function ManualCalculator({ onBack }: Props) {
       className="w-full max-w-4xl mx-auto"
     >
       {/* Back link */}
-      <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-[#8A8580] hover:text-[#C5C0B8] transition-colors mb-6">
+      <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-text-muted hover:text-text-secondary transition-colors mb-6">
         <ArrowLeft size={14} />
         Back to address lookup
       </button>
 
       {/* Heading */}
       <h2
-        className="text-2xl sm:text-3xl text-[#F0EDE8] text-center mb-2"
-        style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+        className="text-2xl sm:text-3xl text-text-primary text-center mb-2 font-brand font-light"
       >
         Quick Calculator
       </h2>
-      <p className="text-sm text-[#C5C0B8] text-center mb-8">
+      <p className="text-sm text-text-secondary text-center mb-8">
         Run the numbers without looking up a property
       </p>
 
@@ -236,8 +235,8 @@ export function ManualCalculator({ onBack }: Props) {
             onClick={() => setStrategy(s.value)}
             className={`px-4 py-2 rounded-lg text-sm transition-all ${
               strategy === s.value
-                ? 'bg-[#8B7AFF] text-white'
-                : 'bg-[#141311] text-[#8A8580] hover:text-[#C5C0B8] border border-[#1E1D1B]'
+                ? 'bg-violet-400 text-white'
+                : 'bg-app-recessed text-text-muted hover:text-text-secondary border border-border-default'
             }`}
           >
             {s.label}
@@ -248,19 +247,19 @@ export function ManualCalculator({ onBack }: Props) {
       {/* Two-column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* LEFT: Inputs */}
-        <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
-          <h3 className="text-xs uppercase tracking-wider text-[#8A8580] font-medium mb-4">Inputs</h3>
+        <div className="bg-app-recessed border border-border-default rounded-xl p-5">
+          <h3 className="text-xs uppercase tracking-wider text-text-muted font-medium mb-4">Inputs</h3>
           <div className="space-y-3">
             {STRATEGY_FIELDS[strategy].map(field => (
               <div key={field.key}>
-                <label className="text-xs text-[#8A8580] uppercase tracking-wider mb-1 block">
+                <label className="text-xs text-text-muted uppercase tracking-wider mb-1 block">
                   {field.label}
                 </label>
                 {field.key === 'finance_type' ? (
                   <select
                     value={String(inputs[field.key] || 'subject_to')}
                     onChange={e => handleInputChange(field.key, e.target.value)}
-                    className="w-full h-10 px-3 rounded-md bg-[#0C0B0A] border border-[#1E1D1B] text-[#F0EDE8] text-sm focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/30"
+                    className="w-full h-10 px-3 rounded-md bg-app-bg border border-border-default text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-violet-400/30"
                   >
                     <option value="subject_to">Subject-To</option>
                     <option value="seller_finance">Seller Finance</option>
@@ -268,7 +267,7 @@ export function ManualCalculator({ onBack }: Props) {
                 ) : (
                   <div className="relative">
                     {field.prefix && (
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#8A8580]">{field.prefix}</span>
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-text-muted">{field.prefix}</span>
                     )}
                     <input
                       type="number"
@@ -276,10 +275,10 @@ export function ManualCalculator({ onBack }: Props) {
                       value={inputs[field.key] ?? ''}
                       onChange={e => handleInputChange(field.key, e.target.value)}
                       placeholder="0"
-                      className={`w-full h-10 rounded-md bg-[#0C0B0A] border border-[#1E1D1B] text-[#F0EDE8] text-sm focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/30 ${field.prefix ? 'pl-7' : 'px-3'} ${field.suffix ? 'pr-12' : 'pr-3'}`}
+                      className={`w-full h-10 rounded-md bg-app-bg border border-border-default text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-violet-400/30 ${field.prefix ? 'pl-7' : 'px-3'} ${field.suffix ? 'pr-12' : 'pr-3'}`}
                     />
                     {field.suffix && (
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#8A8580]">{field.suffix}</span>
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-muted">{field.suffix}</span>
                     )}
                   </div>
                 )}
@@ -289,29 +288,29 @@ export function ManualCalculator({ onBack }: Props) {
         </div>
 
         {/* RIGHT: Results */}
-        <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
-          <h3 className="text-xs uppercase tracking-wider text-[#8A8580] font-medium mb-4">Results</h3>
+        <div className="bg-app-recessed border border-border-default rounded-xl p-5">
+          <h3 className="text-xs uppercase tracking-wider text-text-muted font-medium mb-4">Results</h3>
 
           {!outputs ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <p className="text-[#8A8580] text-sm">Enter inputs to see results</p>
-              <p className="text-[#8A8580]/60 text-xs mt-1">Results update as you type</p>
+              <p className="text-text-muted text-sm">Enter inputs to see results</p>
+              <p className="text-text-muted/60 text-xs mt-1">Results update as you type</p>
             </div>
           ) : (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
               {/* Key metric */}
-              <div className="text-center pb-4 border-b border-[#1E1D1B]">
-                <p className="text-xs text-[#8A8580] uppercase tracking-wider mb-1">{keyMetric.label}</p>
+              <div className="text-center pb-4 border-b border-border-default">
+                <p className="text-xs text-text-muted uppercase tracking-wider mb-1">{keyMetric.label}</p>
                 <p className={`text-4xl font-light ${
-                  typeof keyMetricValue === 'number' && keyMetricValue > 0 ? 'text-[#4ADE80]' :
-                  typeof keyMetricValue === 'number' && keyMetricValue < 0 ? 'text-[#F87171]' :
-                  'text-[#F0EDE8]'
+                  typeof keyMetricValue === 'number' && keyMetricValue > 0 ? 'text-profit' :
+                  typeof keyMetricValue === 'number' && keyMetricValue < 0 ? 'text-loss' :
+                  'text-text-primary'
                 }`}>
                   {keyMetric.prefix || ''}{typeof keyMetricValue === 'number' ? keyMetricValue.toLocaleString(undefined, { maximumFractionDigits: 0 }) : '—'}
                 </p>
                 {riskScore !== null && (
-                  <p className="text-xs text-[#8A8580] mt-2">
-                    Risk Score: <span className={riskScore <= 33 ? 'text-[#4ADE80]' : riskScore <= 66 ? 'text-[#FBBF24]' : 'text-[#F87171]'}>{riskScore}/100</span>
+                  <p className="text-xs text-text-muted mt-2">
+                    Risk Score: <span className={riskScore <= 33 ? 'text-profit' : riskScore <= 66 ? 'text-warning' : 'text-loss'}>{riskScore}/100</span>
                   </p>
                 )}
               </div>
@@ -324,9 +323,9 @@ export function ManualCalculator({ onBack }: Props) {
                   const numVal = typeof v === 'number' ? v : parseFloat(String(v))
                   if (isNaN(numVal)) return null
                   return (
-                    <div key={k} className="bg-[#0C0B0A] rounded-lg p-3">
-                      <p className="text-[10px] text-[#8A8580] uppercase tracking-wider mb-0.5">{meta.label}</p>
-                      <p className="text-lg text-[#F0EDE8] font-light">
+                    <div key={k} className="bg-app-bg rounded-lg p-3">
+                      <p className="text-[10px] text-text-muted uppercase tracking-wider mb-0.5">{meta.label}</p>
+                      <p className="text-lg text-text-primary font-light">
                         {meta.prefix || ''}{numVal.toLocaleString(undefined, { maximumFractionDigits: 2 })}{meta.suffix || ''}
                       </p>
                     </div>
@@ -335,36 +334,36 @@ export function ManualCalculator({ onBack }: Props) {
               </div>
 
               {/* Save as Property */}
-              <div className="pt-4 border-t border-[#1E1D1B]">
+              <div className="pt-4 border-t border-border-default">
                 {!showSave ? (
                   <button
                     onClick={() => setShowSave(true)}
-                    className="flex items-center gap-2 text-sm text-[#8B7AFF] hover:text-[#A89FFF] transition-colors"
+                    className="flex items-center gap-2 text-sm text-violet-400 hover:text-violet-300 transition-colors"
                   >
                     <Save size={14} />
                     Save as Property
                   </button>
                 ) : (
                   <div className="space-y-2">
-                    <p className="text-xs text-[#8A8580]">Add an address to save this analysis</p>
+                    <p className="text-xs text-text-muted">Add an address to save this analysis</p>
                     <input
                       type="text"
                       value={saveAddress}
                       onChange={e => setSaveAddress(e.target.value)}
                       placeholder="e.g. 613 N 14th St, Sheboygan, WI"
-                      className="w-full h-10 px-3 rounded-md bg-[#0C0B0A] border border-[#1E1D1B] text-[#F0EDE8] text-sm focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/30"
+                      className="w-full h-10 px-3 rounded-md bg-app-bg border border-border-default text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-violet-400/30"
                     />
                     <div className="flex gap-2">
                       <button
                         onClick={handleSave}
                         disabled={saving || saveAddress.length < 5}
-                        className="px-4 py-2 rounded-lg text-sm bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="px-4 py-2 rounded-lg text-sm bg-violet-400 text-white hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         {saving ? <Loader2 size={14} className="animate-spin" /> : 'Save'}
                       </button>
                       <button
                         onClick={() => { setShowSave(false); setSaveAddress('') }}
-                        className="px-4 py-2 rounded-lg text-sm text-[#8A8580] hover:text-[#C5C0B8] transition-colors"
+                        className="px-4 py-2 rounded-lg text-sm text-text-muted hover:text-text-secondary transition-colors"
                       >
                         Cancel
                       </button>
@@ -376,8 +375,8 @@ export function ManualCalculator({ onBack }: Props) {
           )}
 
           {calculating && (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#141311]/50 rounded-xl">
-              <Loader2 size={20} className="animate-spin text-[#8B7AFF]" />
+            <div className="absolute inset-0 flex items-center justify-center bg-app-recessed/50 rounded-xl">
+              <Loader2 size={20} className="animate-spin text-violet-400" />
             </div>
           )}
         </div>

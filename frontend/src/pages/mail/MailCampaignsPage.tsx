@@ -2,6 +2,7 @@
 
 import { Link } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
+import { motion } from 'framer-motion'
 import { Mail, Plus, Trash2, BarChart2, Edit2, Lock } from 'lucide-react'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { useBillingStatus } from '@/hooks/useBilling'
@@ -11,6 +12,7 @@ import { ComingSoonGate } from '@/components/ComingSoonGate'
 import { EmptyState } from '@/components/EmptyState'
 import { useMailCampaigns, useDeleteMailCampaign } from '@/hooks/useMailCampaigns'
 import { cn } from '@/lib/utils'
+import { safeStaggerContainer, safeStaggerItem } from '@/lib/motion'
 import type { MailCampaignListItem } from '@/types'
 
 // ---------------------------------------------------------------------------
@@ -18,11 +20,11 @@ import type { MailCampaignListItem } from '@/types'
 // ---------------------------------------------------------------------------
 
 const STATUS_STYLES: Record<MailCampaignListItem['status'], string> = {
-  draft:     'bg-[#8A8580]/15 text-[#8A8580]',
-  scheduled: 'bg-[#60A5FA]/15 text-[#60A5FA]',
-  sending:   'bg-[#FBBF24]/15 text-[#FBBF24]',
-  sent:      'bg-[#4ADE80]/15 text-[#4ADE80]',
-  cancelled: 'bg-[#EF4444]/15 text-[#EF4444]',
+  draft:     'bg-text-muted/15 text-text-muted',
+  scheduled: 'bg-info/15 text-info',
+  sending:   'bg-warning/15 text-warning',
+  sent:      'bg-profit/15 text-profit',
+  cancelled: 'bg-loss/15 text-loss',
 }
 
 const MAIL_TYPE_LABELS: Record<string, string> = {
@@ -64,18 +66,18 @@ function StatusBadge({ status }: { status: MailCampaignListItem['status'] }) {
 
 function SkeletonCard() {
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-4 space-y-3 animate-pulse">
+    <div className="bg-app-recessed border border-border-default rounded-xl p-4 space-y-3 animate-pulse">
       <div className="flex items-center justify-between">
-        <div className="h-4 w-48 bg-[#1E1D1B] rounded" />
-        <div className="h-5 w-16 bg-[#1E1D1B] rounded" />
+        <div className="h-4 w-48 bg-border-default rounded" />
+        <div className="h-5 w-16 bg-border-default rounded" />
       </div>
-      <div className="h-3 w-32 bg-[#1E1D1B] rounded" />
-      <div className="h-3 w-64 bg-[#1E1D1B] rounded" />
+      <div className="h-3 w-32 bg-border-default rounded" />
+      <div className="h-3 w-64 bg-border-default rounded" />
       <div className="flex justify-between">
-        <div className="h-3 w-24 bg-[#1E1D1B] rounded" />
+        <div className="h-3 w-24 bg-border-default rounded" />
         <div className="flex gap-2">
-          <div className="h-6 w-12 bg-[#1E1D1B] rounded" />
-          <div className="h-6 w-16 bg-[#1E1D1B] rounded" />
+          <div className="h-6 w-12 bg-border-default rounded" />
+          <div className="h-6 w-16 bg-border-default rounded" />
         </div>
       </div>
     </div>
@@ -102,12 +104,11 @@ function CampaignCard({ campaign }: { campaign: MailCampaignListItem }) {
     : `Created ${formatDate(campaign.created_at)}`
 
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-4 hover:border-[#8B7AFF]/30 transition-colors">
+    <div className="bg-app-recessed border border-border-default rounded-xl p-4 hover:border-violet-400/30 transition-colors">
       {/* Row 1: name + status */}
       <div className="flex items-center justify-between gap-3 mb-1">
         <span
-          className="text-sm text-[#F0EDE8] truncate"
-          style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+          className="text-sm text-text-primary font-brand font-light truncate"
         >
           {campaign.name}
         </span>
@@ -116,15 +117,15 @@ function CampaignCard({ campaign }: { campaign: MailCampaignListItem }) {
 
       {/* Row 2: mail type + date */}
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-xs text-[#8A8580]">
+        <span className="text-xs text-text-muted">
           {MAIL_TYPE_LABELS[campaign.mail_type] ?? campaign.mail_type}
         </span>
-        <span className="text-[#1E1D1B]">·</span>
-        <span className="text-xs text-[#8A8580]">{dateLabel}</span>
+        <span className="text-border-default">·</span>
+        <span className="text-xs text-text-muted">{dateLabel}</span>
       </div>
 
       {/* Row 3: stats */}
-      <p className="text-xs text-[#8A8580] mb-3">
+      <p className="text-xs text-text-muted mb-3">
         {campaign.total_recipients} recipients
         {' · '}
         {campaign.total_delivered} delivered
@@ -139,7 +140,7 @@ function CampaignCard({ campaign }: { campaign: MailCampaignListItem }) {
         {isDraft && (
           <Link
             to={`/mail-campaigns/${campaign.id}`}
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-[#8A8580] hover:text-[#F0EDE8] hover:bg-[#1E1D1B] transition-colors"
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-text-muted hover:text-text-primary hover:bg-border-default transition-colors"
           >
             <Edit2 size={12} />
             Edit
@@ -148,7 +149,7 @@ function CampaignCard({ campaign }: { campaign: MailCampaignListItem }) {
 
         <Link
           to={`/mail-campaigns/${campaign.id}/analytics`}
-          className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-[#8A8580] hover:text-[#F0EDE8] hover:bg-[#1E1D1B] transition-colors"
+          className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-text-muted hover:text-text-primary hover:bg-border-default transition-colors"
         >
           <BarChart2 size={12} />
           Analytics
@@ -158,7 +159,7 @@ function CampaignCard({ campaign }: { campaign: MailCampaignListItem }) {
           <button
             onClick={handleDelete}
             disabled={deleteMutation.isPending}
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-[#8A8580] hover:text-[#EF4444] hover:bg-[#1E1D1B] transition-colors disabled:opacity-40"
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-text-muted hover:text-loss hover:bg-border-default transition-colors disabled:opacity-40"
           >
             <Trash2 size={12} />
             Delete
@@ -192,10 +193,10 @@ export default function MailCampaignsPage() {
         <ComingSoonGate service="direct_mail" featureName="Direct Mail">
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] px-4 text-center">
           <div className="max-w-sm">
-            <div className="w-14 h-14 rounded-2xl bg-[#8B7AFF]/10 flex items-center justify-center mx-auto mb-6">
-              <Lock size={24} className="text-[#8B7AFF]" />
+            <div className="w-14 h-14 rounded-2xl bg-violet-400/10 flex items-center justify-center mx-auto mb-6">
+              <Lock size={24} className="text-violet-400" />
             </div>
-            <h1 className="text-2xl text-text-primary mb-3" style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
+            <h1 className="text-2xl text-text-primary mb-3 font-brand font-light">
               Available on Titanium
             </h1>
             <p className="text-sm text-text-secondary mb-6">
@@ -203,7 +204,7 @@ export default function MailCampaignsPage() {
             </p>
             <Link
               to="/pricing"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium bg-violet-400 text-white hover:bg-violet-500 transition-colors"
             >
               View Plans
             </Link>
@@ -217,18 +218,22 @@ export default function MailCampaignsPage() {
   return (
     <AppShell title="Mail Campaigns">
       <ComingSoonGate service="direct_mail" featureName="Direct Mail">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <motion.div
+        variants={safeStaggerContainer(100)}
+        initial="hidden"
+        animate="visible"
+        className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6"
+      >
         {/* Header */}
-        <div className="flex items-center justify-between gap-4">
+        <motion.div variants={safeStaggerItem} className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <h1
-              className="text-2xl text-[#F0EDE8]"
-              style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+              className="text-2xl text-text-primary font-brand font-light"
             >
               Mail Campaigns
             </h1>
             {count > 0 && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-[#1E1D1B] text-[#8A8580]">
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-border-default text-text-muted">
                 {count}
               </span>
             )}
@@ -236,15 +241,15 @@ export default function MailCampaignsPage() {
 
           <Link
             to="/mail-campaigns/new"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors"
-            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-brand font-light bg-violet-400 text-white hover:bg-violet-500 transition-colors"
           >
             <Plus size={15} />
             Create Campaign
           </Link>
-        </div>
+        </motion.div>
 
         {/* Body */}
+        <motion.div variants={safeStaggerItem}>
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((n) => <SkeletonCard key={n} />)}
@@ -269,7 +274,8 @@ export default function MailCampaignsPage() {
             ))}
           </div>
         )}
-      </div>
+        </motion.div>
+      </motion.div>
       </ComingSoonGate>
     </AppShell>
   )

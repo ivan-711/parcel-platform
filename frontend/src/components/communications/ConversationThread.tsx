@@ -63,24 +63,24 @@ function MessageBubble({ message }: { message: ThreadMessage }) {
         className={cn(
           'max-w-[75%] px-3 py-2 rounded-xl border space-y-1',
           isOutbound
-            ? 'bg-[#8B7AFF]/15 border-[#8B7AFF]/30'
-            : 'bg-[#141311] border-[#1E1D1B]'
+            ? 'bg-violet-400/15 border-violet-400/30'
+            : 'bg-app-recessed border-border-default'
         )}
       >
         {/* Subject (email only) */}
         {message.channel === 'email' && message.subject && (
-          <p className="text-[10px] text-[#8A8580] font-medium truncate">{message.subject}</p>
+          <p className="text-[10px] text-text-muted font-medium truncate">{message.subject}</p>
         )}
 
         {/* Body */}
-        <p className="text-sm text-[#F0EDE8] whitespace-pre-wrap break-words">
+        <p className="text-sm text-text-primary whitespace-pre-wrap break-words">
           {message.body ?? ''}
         </p>
 
         {/* Meta: timestamp + channel + status */}
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-[10px] text-[#8A8580]">{formatTime(message.occurred_at)}</span>
-          <ChannelIcon size={10} className="text-[#8A8580]" />
+          <span className="text-[10px] text-text-muted">{formatTime(message.occurred_at)}</span>
+          <ChannelIcon size={10} className="text-text-muted" />
           <StatusBadge status={message.status} errorMessage={message.error_message} />
         </div>
       </div>
@@ -172,7 +172,7 @@ export function ConversationThread({ contactId, contactPhone, contactEmail }: Pr
       {/* Messages area */}
       <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto pr-1">
         {messages.length === 0 ? (
-          <p className="text-sm text-[#8A8580] text-center py-8">
+          <p className="text-sm text-text-muted text-center py-8">
             No messages yet. Send the first one below.
           </p>
         ) : (
@@ -184,7 +184,7 @@ export function ConversationThread({ contactId, contactPhone, contactEmail }: Pr
       </div>
 
       {/* Compose area */}
-      <div className="bg-[#0C0B0A] border border-[#1E1D1B] rounded-xl p-3 space-y-2.5">
+      <div className="bg-app-bg border border-border-default rounded-xl p-3 space-y-2.5">
         {/* Channel toggle */}
         <div className="flex items-center gap-1.5">
           {contactPhone && (
@@ -193,8 +193,8 @@ export function ConversationThread({ contactId, contactPhone, contactEmail }: Pr
               className={cn(
                 'flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer',
                 channel === 'sms'
-                  ? 'bg-[#8B7AFF]/15 text-[#A89FFF] border border-[#8B7AFF]/30'
-                  : 'text-[#8A8580] hover:text-[#C5C0B8]'
+                  ? 'bg-violet-400/15 text-violet-300 border border-violet-400/30'
+                  : 'text-text-muted hover:text-text-secondary'
               )}
             >
               <MessageSquare size={12} />
@@ -207,8 +207,8 @@ export function ConversationThread({ contactId, contactPhone, contactEmail }: Pr
               className={cn(
                 'flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer',
                 channel === 'email'
-                  ? 'bg-[#8B7AFF]/15 text-[#A89FFF] border border-[#8B7AFF]/30'
-                  : 'text-[#8A8580] hover:text-[#C5C0B8]'
+                  ? 'bg-violet-400/15 text-violet-300 border border-violet-400/30'
+                  : 'text-text-muted hover:text-text-secondary'
               )}
             >
               <Mail size={12} />
@@ -224,7 +224,7 @@ export function ConversationThread({ contactId, contactPhone, contactEmail }: Pr
             value={subject}
             onChange={e => setSubject(e.target.value)}
             placeholder="Subject"
-            className="w-full h-9 px-3 rounded-lg bg-[#141311] border border-[#1E1D1B] text-sm text-[#F0EDE8] placeholder-[#8A8580]/60 focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-all"
+            className="w-full h-9 px-3 rounded-lg bg-app-recessed border border-border-default text-sm text-text-primary placeholder-text-muted/60 focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 transition-all"
           />
         )}
 
@@ -237,14 +237,14 @@ export function ConversationThread({ contactId, contactPhone, contactEmail }: Pr
               onKeyDown={handleKeyDown}
               placeholder={channel === 'sms' ? 'Send a text…' : 'Write your email…'}
               rows={channel === 'email' ? 3 : 2}
-              className="w-full px-3 py-2 rounded-lg bg-[#141311] border border-[#1E1D1B] text-sm text-[#F0EDE8] placeholder-[#8A8580]/60 focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-all resize-none"
+              className="w-full px-3 py-2 rounded-lg bg-app-recessed border border-border-default text-sm text-text-primary placeholder-text-muted/60 focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 transition-all resize-none"
             />
             {/* SMS character counter */}
             {channel === 'sms' && smsLen > 0 && (
               <span
                 className={cn(
                   'absolute bottom-2 right-2 text-[10px] pointer-events-none',
-                  smsWarn ? 'text-[#EF4444]' : 'text-[#8A8580]'
+                  smsWarn ? 'text-loss' : 'text-text-muted'
                 )}
               >
                 {smsLen}/160{smsWarn ? ` (${smsSegments} msg)` : ''}
@@ -256,8 +256,9 @@ export function ConversationThread({ contactId, contactPhone, contactEmail }: Pr
           <button
             onClick={handleSend}
             disabled={!canSend}
-            className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors disabled:opacity-40 cursor-pointer flex-shrink-0"
+            className="w-9 h-9 flex items-center justify-center rounded-lg bg-violet-400 text-white hover:bg-violet-500 transition-colors disabled:opacity-40 cursor-pointer flex-shrink-0"
             title={channel === 'sms' ? 'Send (Enter)' : 'Send (Ctrl+Enter)'}
+            aria-label="Send message"
           >
             {isSending ? (
               <Loader2 size={16} className="animate-spin" />
@@ -268,7 +269,7 @@ export function ConversationThread({ contactId, contactPhone, contactEmail }: Pr
         </div>
 
         {/* Keyboard hint */}
-        <p className="text-[10px] text-[#8A8580]/60">
+        <p className="text-[10px] text-text-muted/60">
           {channel === 'sms' ? 'Press Enter to send' : 'Press Ctrl+Enter to send'}
         </p>
       </div>

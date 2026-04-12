@@ -1,5 +1,6 @@
 // frontend/src/pages/transactions/TransactionsPage.tsx
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { DollarSign, Plus, Trash2 } from 'lucide-react'
 import { Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Line, ComposedChart, CartesianGrid } from 'recharts'
 import { CHART_ANIMATION } from '@/lib/chart-theme'
@@ -7,6 +8,7 @@ import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
 import { AddTransactionModal } from '@/components/transactions/AddTransactionModal'
 import { cn } from '@/lib/utils'
+import { safeStaggerContainer, safeStaggerItem } from '@/lib/motion'
 import { useTransactions, useTransactionSummary, useDeleteTransaction } from '@/hooks/useTransactions'
 import { useProperties } from '@/hooks/useProperties'
 import type { TransactionFilters } from '@/types'
@@ -29,9 +31,9 @@ function getDateRange(range: DateRange): { date_from?: string; date_to?: string 
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  income: 'bg-[#4ADE80]/15 text-[#4ADE80] border-[#4ADE80]/30',
-  expense: 'bg-[#F87171]/15 text-[#F87171] border-[#F87171]/30',
-  transfer: 'bg-[#60A5FA]/15 text-[#60A5FA] border-[#60A5FA]/30',
+  income: 'bg-profit-bg text-profit border-profit/30',
+  expense: 'bg-loss-bg text-loss border-loss/30',
+  transfer: 'bg-info-bg text-info border-info/30',
 }
 
 export default function TransactionsPage() {
@@ -81,38 +83,43 @@ export default function TransactionsPage() {
 
   return (
     <AppShell title="Transactions">
-      <div className="space-y-6">
+      <motion.div
+        variants={safeStaggerContainer(100)}
+        initial="hidden"
+        animate="visible"
+        className="space-y-6"
+      >
         {/* Header */}
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <h1 className="text-xl sm:text-2xl text-[#F0EDE8]" style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
+        <motion.div variants={safeStaggerItem} className="flex items-center justify-between flex-wrap gap-3">
+          <h1 className="font-brand font-light text-xl sm:text-2xl text-text-primary">
             Transactions
           </h1>
           <button
             onClick={() => setShowAddModal(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-violet-400 text-white hover:bg-violet-500 transition-colors cursor-pointer"
           >
             <Plus size={14} /> Add Transaction
           </button>
-        </div>
+        </motion.div>
 
         {/* KPI row */}
-        <div className="grid grid-cols-3 gap-3">
-          <KpiCard label="Income (this month)" value={monthIncome} color="text-[#4ADE80]" />
-          <KpiCard label="Expenses (this month)" value={monthExpenses} color="text-[#F87171]" />
-          <KpiCard label="Net (this month)" value={monthNet} color={monthNet >= 0 ? 'text-[#4ADE80]' : 'text-[#F87171]'} />
-        </div>
+        <motion.div variants={safeStaggerItem} className="grid grid-cols-3 gap-3">
+          <KpiCard label="Income (this month)" value={monthIncome} color="text-profit" />
+          <KpiCard label="Expenses (this month)" value={monthExpenses} color="text-loss" />
+          <KpiCard label="Net (this month)" value={monthNet} color={monthNet >= 0 ? 'text-profit' : 'text-loss'} />
+        </motion.div>
 
         {/* Filters */}
-        <div className="flex items-center gap-3 flex-wrap">
+        <motion.div variants={safeStaggerItem} className="flex items-center gap-3 flex-wrap">
           {/* Category pills */}
-          <div className="flex items-center gap-1 p-1 bg-[#141311] rounded-lg border border-[#1E1D1B]">
+          <div className="flex items-center gap-1 p-1 bg-app-recessed rounded-lg border border-border-default">
             {['all', 'income', 'expense', 'transfer'].map(c => (
               <button
                 key={c}
                 onClick={() => { setCategoryFilter(c); setPage(1) }}
                 className={cn(
                   'px-3 py-1.5 text-xs rounded-md transition-colors cursor-pointer capitalize',
-                  categoryFilter === c ? 'bg-[#8B7AFF]/15 text-[#8B7AFF]' : 'text-[#8A8580] hover:text-[#C5C0B8]'
+                  categoryFilter === c ? 'bg-violet-400/15 text-violet-400' : 'text-text-muted hover:text-text-secondary'
                 )}
               >
                 {c === 'all' ? 'All' : c}
@@ -124,7 +131,7 @@ export default function TransactionsPage() {
           <select
             value={propertyFilter}
             onChange={(e) => { setPropertyFilter(e.target.value); setPage(1) }}
-            className="px-3 py-2 bg-[#141311] border border-[#1E1D1B] rounded-lg text-xs text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+            className="px-3 py-2 bg-app-recessed border border-border-default rounded-lg text-xs text-text-primary focus:border-violet-400 outline-none"
           >
             <option value="">All Properties</option>
             {properties.map(p => (
@@ -133,7 +140,7 @@ export default function TransactionsPage() {
           </select>
 
           {/* Date range */}
-          <div className="flex items-center gap-1 p-1 bg-[#141311] rounded-lg border border-[#1E1D1B]">
+          <div className="flex items-center gap-1 p-1 bg-app-recessed rounded-lg border border-border-default">
             {([
               { value: 'this_month', label: 'This Month' },
               { value: 'last_3', label: 'Last 3 Mo' },
@@ -145,19 +152,19 @@ export default function TransactionsPage() {
                 onClick={() => { setDateRange(r.value); setPage(1) }}
                 className={cn(
                   'px-3 py-1.5 text-xs rounded-md transition-colors cursor-pointer',
-                  dateRange === r.value ? 'bg-[#8B7AFF]/15 text-[#8B7AFF]' : 'text-[#8A8580] hover:text-[#C5C0B8]'
+                  dateRange === r.value ? 'bg-violet-400/15 text-violet-400' : 'text-text-muted hover:text-text-secondary'
                 )}
               >
                 {r.label}
               </button>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Table */}
         {isLoading ? (
           <div className="space-y-2">
-            {[1, 2, 3].map(i => <div key={i} className="h-12 bg-[#141311] rounded-lg animate-pulse" />)}
+            {[1, 2, 3].map(i => <div key={i} className="h-12 bg-app-recessed rounded-lg animate-pulse" />)}
           </div>
         ) : transactions.length === 0 ? (
           <EmptyState
@@ -166,11 +173,11 @@ export default function TransactionsPage() {
             description="Start tracking your income and expenses."
           />
         ) : (
-          <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl overflow-hidden">
+          <div className="bg-app-recessed border border-border-default rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-[10px] text-[#8A8580] uppercase tracking-wider border-b border-[#1E1D1B]">
+                  <tr className="text-[10px] text-text-muted uppercase tracking-wider border-b border-border-default">
                     <th className="text-left py-3 px-4">Date</th>
                     <th className="text-left py-3 px-4">Property</th>
                     <th className="text-left py-3 px-4">Description</th>
@@ -187,25 +194,26 @@ export default function TransactionsPage() {
                     const catColor = CATEGORY_COLORS[txn.category || ''] || CATEGORY_COLORS.expense
                     const typeLabel = (txn.transaction_type || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
                     return (
-                      <tr key={txn.id} className="border-b border-[#1E1D1B]/50 last:border-0 hover:bg-[#1A1918] transition-colors">
-                        <td className="py-3 px-4 text-[#C5C0B8] whitespace-nowrap">
+                      <tr key={txn.id} className="border-b border-border-default/50 last:border-0 hover:bg-app-surface transition-colors">
+                        <td className="py-3 px-4 text-text-secondary whitespace-nowrap">
                           {new Date(txn.occurred_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                         </td>
-                        <td className="py-3 px-4 text-[#F0EDE8] max-w-[200px] truncate">{txn.property_address || '—'}</td>
-                        <td className="py-3 px-4 text-[#C5C0B8] max-w-[200px] truncate">{txn.description || '—'}</td>
+                        <td className="py-3 px-4 text-text-primary max-w-[200px] truncate">{txn.property_address || '—'}</td>
+                        <td className="py-3 px-4 text-text-secondary max-w-[200px] truncate">{txn.description || '—'}</td>
                         <td className="py-3 px-4">
                           <span className={cn('text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border', catColor)}>
                             {txn.category || '—'}
                           </span>
                         </td>
-                        <td className="py-3 px-4 text-xs text-[#8A8580]">{typeLabel}</td>
-                        <td className={cn('py-3 px-4 text-right tabular-nums font-medium', isPositive ? 'text-[#4ADE80]' : 'text-[#F87171]')}>
+                        <td className="py-3 px-4 text-xs text-text-muted">{typeLabel}</td>
+                        <td className={cn('py-3 px-4 text-right tabular-nums font-medium', isPositive ? 'text-profit' : 'text-loss')}>
                           {isPositive ? '+' : ''}${Math.abs(amt).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                         <td className="py-3 px-4 text-right">
                           <button
                             onClick={() => handleDelete(txn.id)}
-                            className="p-1 rounded text-[#8A8580] hover:text-[#F87171] hover:bg-[#F87171]/10 transition-colors cursor-pointer"
+                            aria-label="Delete transaction"
+                            className="p-1 rounded text-text-muted hover:text-loss hover:bg-loss-bg transition-colors cursor-pointer"
                           >
                             <Trash2 size={14} />
                           </button>
@@ -219,8 +227,8 @@ export default function TransactionsPage() {
 
             {/* Pagination */}
             {txnData && txnData.pages > 1 && (
-              <div className="flex items-center justify-between px-4 py-3 border-t border-[#1E1D1B]">
-                <span className="text-xs text-[#8A8580]">{txnData.total} transactions</span>
+              <div className="flex items-center justify-between px-4 py-3 border-t border-border-default">
+                <span className="text-xs text-text-muted">{txnData.total} transactions</span>
                 <div className="flex gap-1">
                   {Array.from({ length: Math.min(txnData.pages, 5) }, (_, i) => i + 1).map(p => (
                     <button
@@ -228,7 +236,7 @@ export default function TransactionsPage() {
                       onClick={() => setPage(p)}
                       className={cn(
                         'w-8 h-8 text-xs rounded transition-colors cursor-pointer',
-                        p === page ? 'bg-[#8B7AFF]/15 text-[#8B7AFF]' : 'text-[#8A8580] hover:text-[#C5C0B8]'
+                        p === page ? 'bg-violet-400/15 text-violet-400' : 'text-text-muted hover:text-text-secondary'
                       )}
                     >
                       {p}
@@ -282,7 +290,7 @@ export default function TransactionsPage() {
             </ResponsiveContainer>
           </div>
         )}
-      </div>
+      </motion.div>
 
       <AddTransactionModal
         open={showAddModal}
@@ -295,8 +303,8 @@ export default function TransactionsPage() {
 
 function KpiCard({ label, value, color }: { label: string; value: number; color: string }) {
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-4">
-      <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1">{label}</p>
+    <div className="bg-app-recessed border border-border-default rounded-xl p-4">
+      <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">{label}</p>
       <p className={cn('text-xl font-medium tabular-nums', color)}>
         ${Math.abs(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
       </p>

@@ -9,23 +9,23 @@ import type { DocumentListItem } from '@/types'
 function StatusBadge({ status }: { status: DocumentListItem['status'] }) {
   if (status === 'complete') {
     return (
-      <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#6DBEA3] bg-[#6DBEA3]/10 border border-[#6DBEA3]/20 rounded-full px-2 py-0.5">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#6DBEA3]" />
+      <span className="inline-flex items-center gap-1 text-[10px] font-medium text-success bg-success-bg border border-success/20 rounded-full px-2 py-0.5">
+        <span className="w-1.5 h-1.5 rounded-full bg-success" />
         Done
       </span>
     )
   }
   if (status === 'failed') {
     return (
-      <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#D4766A] bg-[#D4766A]/10 border border-[#D4766A]/20 rounded-full px-2 py-0.5">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#D4766A]" />
+      <span className="inline-flex items-center gap-1 text-[10px] font-medium text-error bg-error-bg border border-error/20 rounded-full px-2 py-0.5">
+        <span className="w-1.5 h-1.5 rounded-full bg-error" />
         Failed
       </span>
     )
   }
   return (
-    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#D4A867] bg-[#D4A867]/10 border border-[#D4A867]/20 rounded-full px-2 py-0.5">
-      <span className="w-1.5 h-1.5 rounded-full bg-[#D4A867] animate-pulse" />
+    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-warning bg-warning-bg border border-warning/20 rounded-full px-2 py-0.5">
+      <span className="w-1.5 h-1.5 rounded-full bg-warning animate-pulse" />
       Processing
     </span>
   )
@@ -44,10 +44,12 @@ function DocRow({
   return (
     <button
       onClick={onSelect}
+      aria-selected={isSelected}
+      aria-label={`Document: ${doc.original_filename}`}
       className={cn(
         'w-full text-left px-3 py-2.5 rounded-lg transition-colors',
         isSelected
-          ? 'bg-[#8B7AFF]/[0.08] border border-[#8B7AFF]/25'
+          ? 'bg-violet-400/[0.08] border border-violet-400/25'
           : 'hover:bg-layer-2 border border-transparent',
       )}
     >
@@ -104,7 +106,7 @@ export function DocumentList({ documents, isLoading, selectedId, onSelect }: Doc
   }
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-1" role="listbox" aria-label="Document list">
       {documents.map((doc) => (
         <DocRow
           key={doc.id}

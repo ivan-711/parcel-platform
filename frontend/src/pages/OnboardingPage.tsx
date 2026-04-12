@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import {
   Repeat,
   Hammer,
@@ -26,22 +27,13 @@ const PERSONAS: { value: OnboardingPersona; label: string; icon: typeof Home }[]
   { value: 'beginner', label: "I'm just getting started", icon: Compass },
 ]
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.03 },
-  },
-}
+const staggerContainer = prefersReducedMotion
+  ? { hidden: {}, visible: {} }
+  : { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.03 } } }
 
-const staggerItem = {
-  hidden: { opacity: 0, y: 12 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] },
-  },
-}
+const staggerItem = prefersReducedMotion
+  ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+  : { hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } } }
 
 export default function OnboardingPage() {
   const [selected, setSelected] = useState<OnboardingPersona | null>(null)
@@ -99,14 +91,13 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0C0B0A] flex flex-col items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-app-bg flex flex-col items-center justify-center px-4 py-12">
       {/* Logo */}
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="text-[#F0EDE8]/40 text-sm tracking-[0.2em] uppercase mb-10"
-        style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+        className="text-text-primary/40 text-sm tracking-[0.2em] uppercase mb-10 font-brand font-light"
       >
         Parcel
       </motion.p>
@@ -116,8 +107,7 @@ export default function OnboardingPage() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.05 }}
-        className="text-[#F0EDE8] text-2xl sm:text-3xl font-light text-center mb-2"
-        style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+        className="text-text-primary text-2xl sm:text-3xl font-brand font-light text-center mb-2"
       >
         What best describes you?
       </motion.h1>
@@ -126,7 +116,7 @@ export default function OnboardingPage() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
-        className="text-[#C5C0B8] text-sm sm:text-base text-center mb-10"
+        className="text-text-secondary text-sm sm:text-base text-center mb-10"
       >
         This helps us personalize your experience
       </motion.p>
@@ -150,17 +140,17 @@ export default function OnboardingPage() {
                 flex items-center gap-3 px-4 py-4 rounded-xl text-left transition-all duration-200
                 min-h-[52px]
                 ${isSelected
-                  ? 'bg-[#1A1918] border border-[#8B7AFF] shadow-[0_0_16px_rgba(139,122,255,0.1)]'
-                  : 'bg-[#141311] border border-[#1E1D1B] hover:border-[#8B7AFF]/50'
+                  ? 'bg-app-surface border border-violet-400 shadow-[0_0_16px_rgba(139,122,255,0.1)]'
+                  : 'bg-app-recessed border border-border-default hover:border-violet-400/50'
                 }
                 ${loading ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}
               `}
             >
               <Icon
                 size={18}
-                className={isSelected ? 'text-[#8B7AFF]' : 'text-[#8B7AFF]/60'}
+                className={isSelected ? 'text-violet-400' : 'text-violet-400/60'}
               />
-              <span className={`text-sm ${isSelected ? 'text-[#F0EDE8]' : 'text-[#C5C0B8]'}`}>
+              <span className={`text-sm font-brand ${isSelected ? 'text-text-primary' : 'text-text-secondary'}`}>
                 {label}
               </span>
             </motion.button>
@@ -182,8 +172,8 @@ export default function OnboardingPage() {
             w-full sm:w-auto sm:min-w-[200px] sm:mx-auto sm:block
             h-11 rounded-lg text-sm font-medium transition-all duration-200
             ${selected && !loading
-              ? 'bg-[#8B7AFF] text-white hover:bg-[#7B6AEF]'
-              : 'bg-[#1E1D1B] text-[#8A8580] cursor-not-allowed'
+              ? 'bg-violet-400 text-white hover:bg-violet-500'
+              : 'bg-border-default text-text-muted cursor-not-allowed'
             }
           `}
         >
@@ -199,7 +189,7 @@ export default function OnboardingPage() {
       </motion.div>
 
       {/* Helper text */}
-      <p className="text-[#8A8580] text-xs mt-3 text-center">
+      <p className="text-text-muted text-xs mt-3 text-center">
         Please select an option to continue
       </p>
 
@@ -207,7 +197,7 @@ export default function OnboardingPage() {
       <button
         onClick={handleSkip}
         disabled={loading}
-        className="mt-4 text-[#8A8580] text-xs hover:underline hover:text-[#C5C0B8] transition-colors"
+        className="mt-4 text-text-muted text-xs hover:underline hover:text-text-secondary transition-colors"
       >
         Skip for now
       </button>

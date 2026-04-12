@@ -65,7 +65,7 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
         'mx-3 mb-3 rounded-lg border p-3',
         isUrgent
           ? 'border-warning/10 bg-warning/[0.06]'
-          : 'border-[#8B7AFF]/10 bg-[#8B7AFF]/[0.06]'
+          : 'border-violet-400/10 bg-violet-400/[0.06]'
       )}
     >
       <div className="flex items-start gap-2">
@@ -73,14 +73,14 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
           size={16}
           className={cn(
             'mt-0.5 shrink-0',
-            isUrgent ? 'text-warning' : 'text-[#8B7AFF]'
+            isUrgent ? 'text-warning' : 'text-violet-400'
           )}
         />
         <div className="min-w-0 flex-1">
           <p
             className={cn(
               'text-sm font-medium',
-              isUrgent ? 'text-warning' : 'text-[#A89FFF]'
+              isUrgent ? 'text-warning' : 'text-violet-300'
             )}
           >
             {isUrgent
@@ -99,7 +99,7 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
           ) : (
             <Link
               to="/pricing"
-              className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] mt-1 inline-block transition-colors"
+              className="text-xs text-violet-400 hover:text-violet-300 mt-1 inline-block transition-colors"
             >
               Upgrade
             </Link>

@@ -74,10 +74,10 @@ function formatShareValue(key: string, value: number | string | null | undefined
 ═══════════════════════════════════════════════════════════════════════════ */
 
 function getRiskColor(score: number): string {
-  if (score <= 30) return '#6DBEA3'
-  if (score <= 60) return '#D4A867'
-  if (score <= 80) return '#D4766A'
-  return '#C45E52'
+  if (score <= 30) return 'var(--color-profit)'
+  if (score <= 60) return 'var(--color-warning)'
+  if (score <= 80) return 'var(--color-loss)'
+  return 'var(--color-loss)'
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -87,10 +87,10 @@ function getRiskColor(score: number): string {
 function ParcelLogo() {
   return (
     <Link to="/" className="flex items-center gap-2 group">
-      <div className="w-6 h-6 rounded bg-[#8B7AFF] flex items-center justify-center">
+      <div className="w-6 h-6 rounded bg-violet-400 flex items-center justify-center">
         <span className="text-[10px] font-bold text-text-primary">P</span>
       </div>
-      <span className="text-sm font-semibold text-text-primary tracking-tight group-hover:text-[#8B7AFF] transition-colors">
+      <span className="text-sm font-semibold text-text-primary tracking-tight group-hover:text-violet-400 transition-colors">
         Parcel
       </span>
     </Link>
@@ -104,7 +104,7 @@ function ParcelLogo() {
 function LoadingState() {
   return (
     <div className="min-h-screen bg-app-bg">
-      <div className="sticky top-0 z-50 backdrop-blur-xl bg-[#0C0B0A]/85 border-b border-border-subtle">
+      <div className="sticky top-0 z-50 backdrop-blur-xl bg-app-bg/85 border-b border-border-subtle">
         <div className="max-w-[720px] mx-auto px-6 h-14 flex items-center">
           <ParcelLogo />
         </div>
@@ -129,7 +129,7 @@ function LoadingState() {
 function ErrorState() {
   return (
     <div className="min-h-screen bg-app-bg">
-      <div className="sticky top-0 z-50 backdrop-blur-xl bg-[#0C0B0A]/85 border-b border-border-subtle">
+      <div className="sticky top-0 z-50 backdrop-blur-xl bg-app-bg/85 border-b border-border-subtle">
         <div className="max-w-[720px] mx-auto px-6 h-14 flex items-center">
           <ParcelLogo />
         </div>
@@ -143,7 +143,7 @@ function ErrorState() {
             This deal is no longer available or has not been shared publicly.
           </h2>
           <Link to="/">
-            <Button className="bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent text-sm mt-2 hover:opacity-90">
+            <Button variant="outline" className="border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong text-sm mt-2">
               Go to Parcel
               <ArrowRight size={14} className="ml-1.5" />
             </Button>
@@ -201,7 +201,7 @@ export default function ShareDealPage() {
       className="min-h-screen bg-app-bg"
     >
       {/* ── Sticky Header ── */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#0C0B0A]/85 border-b border-border-subtle">
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-app-bg/85 border-b border-border-subtle">
         <div className="max-w-[720px] mx-auto px-6 h-14 flex items-center justify-between">
           <ParcelLogo />
           <span className="text-[10px] text-text-secondary uppercase tracking-[0.08em]">
@@ -219,7 +219,7 @@ export default function ShareDealPage() {
               {deal.property_type}
             </span>
           </div>
-          <h1 className="text-[24px] font-semibold text-text-primary tracking-tight">
+          <h1 className="font-brand text-[24px] font-light text-text-primary tracking-tight">
             {deal.address}
           </h1>
           <p className="text-[12px] text-text-secondary">
@@ -231,7 +231,7 @@ export default function ShareDealPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {/* Card 1: Primary metric (emphasized) */}
           {deal.primary_metric_label && (
-            <div className="rounded-xl bg-app-surface border border-border-subtle p-5 space-y-1 border-l-4 border-l-[#8B7AFF]">
+            <div className="rounded-xl bg-app-surface border border-border-subtle p-5 space-y-1">
               <p className="text-[11px] uppercase tracking-[0.08em] text-text-secondary">
                 {deal.primary_metric_label}
               </p>
@@ -347,7 +347,7 @@ export default function ShareDealPage() {
         <div className="max-w-[720px] mx-auto px-6 py-8 flex items-center justify-between">
           <span className="text-[13px] text-text-secondary">Analyzed with Parcel</span>
           <Link to="/">
-            <Button className="bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent text-sm hover:opacity-90">
+            <Button variant="outline" className="border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong text-sm">
               Get started free
               <ArrowRight size={14} className="ml-1.5" />
             </Button>

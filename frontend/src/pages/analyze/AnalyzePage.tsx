@@ -289,19 +289,18 @@ export default function AnalyzePage() {
         >
           {/* Heading */}
           <h1
-            className="text-3xl sm:text-4xl text-[#F0EDE8] mb-3"
-            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+            className="text-3xl sm:text-4xl text-text-primary font-brand font-light mb-3"
           >
             Analyze a Property
           </h1>
-          <p className="text-[#C5C0B8] text-sm sm:text-base mb-8">
+          <p className="text-text-secondary text-sm sm:text-base mb-8">
             Enter any US address to get an AI-powered analysis in seconds
           </p>
 
           {/* Address input + Analyze button — flex siblings, no overlap */}
           <div className="flex items-center gap-2 mb-2">
             <div className="relative flex-1 min-w-0">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8A8580] z-10 pointer-events-none">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted z-10 pointer-events-none">
                 <MapPin size={18} />
               </div>
               {isMapsEnabled ? (
@@ -322,7 +321,7 @@ export default function AnalyzePage() {
             <button
               onClick={handleSubmit}
               disabled={!address.trim()}
-              className="shrink-0 h-12 px-5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] disabled:opacity-40 disabled:cursor-not-allowed"
+              className="shrink-0 h-12 px-5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all bg-accent-primary text-white hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Analyze
             </button>
@@ -333,7 +332,7 @@ export default function AnalyzePage() {
             <motion.p
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-1.5 text-[#F87171] text-xs mb-2 justify-center"
+              className="flex items-center gap-1.5 text-loss text-xs mb-2 justify-center"
             >
               <AlertCircle size={12} />
               {error}
@@ -341,16 +340,16 @@ export default function AnalyzePage() {
           )}
 
           {/* Powered by */}
-          <p className="flex items-center gap-1.5 text-[#8A8580]/60 text-xs justify-center mt-3 mb-10">
+          <p className="flex items-center gap-1.5 text-text-muted/60 text-xs justify-center mt-3 mb-10">
             <Sparkles size={12} />
             Powered by market data + AI
           </p>
 
           {/* Divider */}
           <div className="flex items-center gap-3 mb-8">
-            <div className="flex-1 h-px bg-[#1E1D1B]" />
-            <span className="text-xs text-[#8A8580]">or</span>
-            <div className="flex-1 h-px bg-[#1E1D1B]" />
+            <div className="flex-1 h-px bg-border-default" />
+            <span className="text-xs text-text-muted">or</span>
+            <div className="flex-1 h-px bg-border-default" />
           </div>
 
           {/* Manual mode link */}
@@ -359,7 +358,7 @@ export default function AnalyzePage() {
               setState('manual')
               try { (window as any).posthog?.capture?.('manual_mode_entered') } catch {}
             }}
-            className="flex items-center gap-1.5 text-sm text-[#C5C0B8] hover:text-[#F0EDE8] transition-colors mx-auto"
+            className="flex items-center gap-1.5 text-sm text-text-secondary hover:text-text-primary transition-colors mx-auto"
           >
             Run the numbers manually
             <ArrowRight size={14} />
@@ -384,8 +383,8 @@ function AddressFallbackInput({ address, onChange, onKeyDown, hasError }: {
       onChange={e => onChange(e.target.value)}
       onKeyDown={onKeyDown}
       placeholder="Enter an address — e.g. 613 N 14th St, Sheboygan, WI"
-      className={`w-full h-12 pl-11 pr-4 rounded-xl bg-[#141311] text-[#F0EDE8] text-sm placeholder-[#8A8580]/60 focus:outline-none focus:ring-2 transition-all ${
-        hasError ? 'border border-[#F87171] focus:ring-[#F87171]/30' : 'border border-[#1E1D1B] focus:ring-[#8B7AFF]/30'
+      className={`w-full h-12 pl-11 pr-4 rounded-xl bg-app-recessed text-text-primary text-sm placeholder-text-muted/60 focus:outline-none focus:ring-2 transition-all ${
+        hasError ? 'border border-loss focus:ring-loss/30' : 'border border-border-default focus:ring-accent-primary/30'
       }`}
     />
   )

@@ -34,7 +34,7 @@ import { CashFlowProjection } from '@/components/charts/CashFlowProjection'
 
 import { useDeal, useAddToPipeline, useUpdateDeal } from '@/hooks/useDeals'
 import { api } from '@/lib/api'
-import { staggerContainer, staggerItem, slideUp } from '@/lib/motion'
+import { safeStaggerContainer, safeStaggerItem, safeSlideUp } from '@/lib/motion'
 import {
   formatLabel,
   formatCurrency,
@@ -130,14 +130,14 @@ export default function ResultsPage() {
     return (
       <AppShell title="Deal Results">
         <div className="max-w-5xl mx-auto">
-          <div className="rounded-xl border border-[#D4766A]/20 bg-[#D4766A]/10 p-6 flex items-start gap-3">
-            <AlertTriangle size={20} className="text-[#D4766A] shrink-0 mt-0.5" />
+          <div className="rounded-xl border border-loss/20 bg-loss/10 p-6 flex items-start gap-3">
+            <AlertTriangle size={20} className="text-loss shrink-0 mt-0.5" />
             <div className="space-y-2">
               <p className="text-sm font-medium text-text-primary">Failed to load deal</p>
               <p className="text-xs text-text-secondary">
                 {error instanceof Error ? error.message : 'Something went wrong.'}
               </p>
-              <Link to="/deals" className="text-xs text-[#8B7AFF] hover:underline">
+              <Link to="/deals" className="text-xs text-accent-primary hover:underline">
                 Back to My Deals
               </Link>
             </div>
@@ -298,7 +298,7 @@ export default function ResultsPage() {
             <p className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">
               {kpi.label}
             </p>
-            <p className="text-kpi-display text-3xl text-[#7CCBA5]">&infin;</p>
+            <p className="text-kpi-display text-3xl text-profit">&infin;</p>
           </div>
         )
       }
@@ -342,7 +342,7 @@ export default function ResultsPage() {
           </p>
           <p
             className={`text-kpi-display text-3xl ${
-              numValue >= 0 ? 'text-[#7CCBA5]' : 'text-[#D4766A]'
+              numValue >= 0 ? 'text-profit' : 'text-loss'
             }`}
           >
             {formatted}
@@ -360,21 +360,21 @@ export default function ResultsPage() {
     <AppShell title="Deal Results">
       <motion.div
         className="max-w-5xl mx-auto space-y-6"
-        variants={staggerContainer(60)}
+        variants={safeStaggerContainer(60)}
         initial="hidden"
         animate="visible"
       >
         {/* Breadcrumbs */}
-        <motion.nav variants={staggerItem} aria-label="Breadcrumb">
+        <motion.nav variants={safeStaggerItem} aria-label="Breadcrumb">
           <ol className="flex items-center gap-1.5 text-xs">
             <li>
-              <Link to="/dashboard" className="text-text-muted hover:text-[#8B7AFF] transition-colors">
+              <Link to="/dashboard" className="text-text-muted hover:text-accent-primary transition-colors">
                 Dashboard
               </Link>
             </li>
             <li aria-hidden="true"><ChevronRight size={12} className="text-text-disabled" /></li>
             <li>
-              <Link to="/analyze" className="text-text-muted hover:text-[#8B7AFF] transition-colors">
+              <Link to="/analyze" className="text-text-muted hover:text-accent-primary transition-colors">
                 Analyzer
               </Link>
             </li>
@@ -382,7 +382,7 @@ export default function ResultsPage() {
             <li>
               <Link
                 to={`/analyze/${deal.strategy}`}
-                className="text-text-muted hover:text-[#8B7AFF] transition-colors"
+                className="text-text-muted hover:text-accent-primary transition-colors"
               >
                 {STRATEGY_DISPLAY_NAMES[deal.strategy] ?? deal.strategy}
               </Link>
@@ -395,18 +395,18 @@ export default function ResultsPage() {
         </motion.nav>
 
         {/* Header */}
-        <motion.div variants={staggerItem} className="flex items-center gap-3">
+        <motion.div variants={safeStaggerItem} className="flex items-center gap-3">
           <StrategyBadge strategy={deal.strategy as Strategy} />
           <h2 className="text-lg font-semibold text-text-primary">{deal.address}</h2>
         </motion.div>
 
         {/* Section 1: KPI Row */}
-        <motion.div variants={staggerItem} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <motion.div variants={safeStaggerItem} className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {kpis.map(renderKPI)}
         </motion.div>
 
         {/* Section 2: Two Columns */}
-        <motion.div variants={staggerItem} className="grid md:grid-cols-5 gap-6">
+        <motion.div variants={safeStaggerItem} className="grid md:grid-cols-5 gap-6">
           {/* Left — Outputs Table */}
           <div className="md:col-span-3 rounded-xl border border-border-subtle bg-app-surface overflow-hidden shadow-xs">
             <div className="px-4 py-3 border-b border-border-subtle">
@@ -471,7 +471,7 @@ export default function ResultsPage() {
         </motion.div>
 
         {/* Section 3: Cash Flow Projection */}
-        <motion.div variants={staggerItem}>
+        <motion.div variants={safeStaggerItem}>
           <CashFlowProjection
             outputs={outputs as Record<string, number | string>}
             strategy={deal.strategy as Strategy}
@@ -480,7 +480,7 @@ export default function ResultsPage() {
         </motion.div>
 
         {/* Section 4: Actions */}
-        <motion.div variants={slideUp} className="flex gap-2 sm:gap-3 justify-end flex-wrap">
+        <motion.div variants={safeSlideUp} className="flex gap-2 sm:gap-3 justify-end flex-wrap">
           <Button variant="ghost" asChild>
             <Link to="/analyze" className="gap-2">
               <ArrowLeft size={14} />
@@ -492,7 +492,7 @@ export default function ResultsPage() {
               <button
                 type="button"
                 disabled
-                className="inline-flex items-center gap-2 rounded-lg border border-[#8B7AFF]/20 bg-[#8B7AFF]/10 px-4 py-2 min-h-[44px] md:min-h-0 text-sm font-medium text-[#8B7AFF] cursor-default"
+                className="inline-flex items-center gap-2 rounded-lg border border-accent-primary/20 bg-accent-primary/10 px-4 py-2 min-h-[44px] md:min-h-0 text-sm font-medium text-accent-primary cursor-default"
               >
                 <Check size={14} />
                 In Pipeline
@@ -505,7 +505,7 @@ export default function ResultsPage() {
                 disabled={addToPipeline.isPending}
                 aria-haspopup="true"
                 aria-expanded={stageMenuOpen}
-                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] px-4 py-2 min-h-[44px] md:min-h-0 text-sm font-medium text-accent-text-on-accent hover:opacity-90 transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-accent-primary to-accent-hover px-4 py-2 min-h-[44px] md:min-h-0 text-sm font-medium text-accent-text-on-accent hover:opacity-90 transition-colors disabled:opacity-50"
               >
                 <PlusCircle size={14} />
                 {addToPipeline.isPending ? 'Adding...' : 'Add to Pipeline'}
@@ -551,7 +551,7 @@ export default function ResultsPage() {
           )}
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" className="gap-2 text-[#D4766A] hover:text-[#D4766A] hover:bg-[#D4766A]/10">
+              <Button variant="ghost" className="gap-2 text-loss hover:text-loss hover:bg-loss/10">
                 <Trash2 size={14} />
                 Delete
               </Button>
@@ -565,7 +565,7 @@ export default function ResultsPage() {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel className="bg-layer-3 border-border-default text-text-secondary hover:bg-layer-4">Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => deleteDeal.mutate()} className="bg-[#D4766A] hover:bg-[#D4766A]/90 text-[#0C0B0A]">
+                <AlertDialogAction onClick={() => deleteDeal.mutate()} className="bg-loss hover:bg-loss/90 text-app-bg">
                   {deleteDeal.isPending ? 'Deleting...' : 'Delete'}
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -597,7 +597,7 @@ export default function ResultsPage() {
           <Button
             onClick={handleSave}
             disabled={saved || updateDeal.isPending}
-            className="gap-2 bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
+            className="gap-2 bg-gradient-to-r from-accent-primary to-accent-hover text-accent-text-on-accent hover:opacity-90"
           >
             {saved ? (
               <>
@@ -614,8 +614,8 @@ export default function ResultsPage() {
         </motion.div>
 
         {/* Disclaimer */}
-        <motion.div variants={staggerItem} className="flex items-start gap-3 rounded-xl border border-[#D4A867]/20 bg-[#D4A867]/10 px-4 py-3">
-          <AlertTriangle size={16} className="text-[#D4A867] shrink-0 mt-0.5" />
+        <motion.div variants={safeStaggerItem} className="flex items-start gap-3 rounded-xl border border-warning/20 bg-warning/10 px-4 py-3">
+          <AlertTriangle size={16} className="text-warning shrink-0 mt-0.5" />
           <p className="text-xs text-text-secondary leading-relaxed">
             This analysis is for informational purposes only. It does not constitute an appraisal, financial advice, or investment recommendation. AI-generated content may contain errors. Consult a qualified professional before making investment decisions.
           </p>

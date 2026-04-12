@@ -32,10 +32,10 @@ export default function FinancingDashboardPage() {
         <div className="space-y-6">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-24 bg-[#141311] rounded-xl animate-pulse" />
+              <div key={i} className="h-24 bg-app-recessed rounded-xl animate-pulse" />
             ))}
           </div>
-          <div className="h-60 bg-[#141311] rounded-xl animate-pulse" />
+          <div className="h-60 bg-app-recessed rounded-xl animate-pulse" />
         </div>
       </AppShell>
     )
@@ -63,14 +63,13 @@ export default function FinancingDashboardPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1
-            className="text-xl sm:text-2xl text-[#F0EDE8]"
-            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+            className="text-xl sm:text-2xl text-text-primary font-brand font-light"
           >
             Financing Dashboard
           </h1>
           <Link
             to="/obligations"
-            className="text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors"
+            className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
           >
             View Obligations →
           </Link>
@@ -109,7 +108,7 @@ export default function FinancingDashboardPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-[10px] uppercase tracking-wider text-[#8A8580] border-b border-[#1E1D1B]">
+                  <tr className="text-[10px] uppercase tracking-wider text-text-muted border-b border-border-default">
                     <th className="text-left py-2 pr-4">Property</th>
                     <th className="text-right py-2 px-4">Monthly Spread</th>
                     <th className="text-right py-2 pl-4">Annual Spread</th>
@@ -117,24 +116,24 @@ export default function FinancingDashboardPage() {
                 </thead>
                 <tbody>
                   {data.wrap_spreads.map((ws, i) => (
-                    <tr key={i} className="border-b border-[#1E1D1B]/50 last:border-0">
-                      <td className="py-3 pr-4 text-[#F0EDE8]">{ws.property_address}</td>
-                      <td className="py-3 px-4 text-right text-[#4ADE80] tabular-nums font-medium">
+                    <tr key={i} className="border-b border-border-default/50 last:border-0">
+                      <td className="py-3 pr-4 text-text-primary">{ws.property_address}</td>
+                      <td className="py-3 px-4 text-right text-profit tabular-nums font-medium">
                         ${ws.monthly_spread.toLocaleString()}
                       </td>
-                      <td className="py-3 pl-4 text-right text-[#C5C0B8] tabular-nums">
+                      <td className="py-3 pl-4 text-right text-text-secondary tabular-nums">
                         ${ws.annual_spread.toLocaleString()}
                       </td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr className="border-t border-[#1E1D1B]">
-                    <td className="py-3 pr-4 text-xs text-[#8A8580] font-medium">TOTAL</td>
-                    <td className="py-3 px-4 text-right text-[#4ADE80] tabular-nums font-medium">
+                  <tr className="border-t border-border-default">
+                    <td className="py-3 pr-4 text-xs text-text-muted font-medium">TOTAL</td>
+                    <td className="py-3 px-4 text-right text-profit tabular-nums font-medium">
                       ${data.wrap_spreads.reduce((s, w) => s + w.monthly_spread, 0).toLocaleString()}
                     </td>
-                    <td className="py-3 pl-4 text-right text-[#C5C0B8] tabular-nums">
+                    <td className="py-3 pl-4 text-right text-text-secondary tabular-nums">
                       ${data.wrap_spreads.reduce((s, w) => s + w.annual_spread, 0).toLocaleString()}
                     </td>
                   </tr>
@@ -186,18 +185,18 @@ function KpiCard({
   subtitle?: string
 }) {
   const valueColor =
-    variant === 'success' ? 'text-[#4ADE80]' :
-    variant === 'danger' ? 'text-[#F87171]' :
-    'text-[#F0EDE8]'
+    variant === 'success' ? 'text-profit' :
+    variant === 'danger' ? 'text-loss' :
+    'text-text-primary'
 
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-4">
+    <div className="bg-app-recessed border border-border-default rounded-xl p-4">
       <div className="flex items-center gap-2 mb-2">
-        <Icon size={14} className="text-[#8A8580]" />
-        <span className="text-[10px] uppercase tracking-wider text-[#8A8580]">{label}</span>
+        <Icon size={14} className="text-text-muted" />
+        <span className="text-[10px] uppercase tracking-wider text-text-muted">{label}</span>
       </div>
       <p className={cn('text-xl font-medium tabular-nums', valueColor)}>{value}</p>
-      {subtitle && <p className="text-xs text-[#F87171] mt-1">{subtitle}</p>}
+      {subtitle && <p className="text-xs text-loss mt-1">{subtitle}</p>}
     </div>
   )
 }
@@ -206,8 +205,8 @@ function KpiCard({
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
-      <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium mb-4">
+    <div className="bg-app-recessed border border-border-default rounded-xl p-5">
+      <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium mb-4">
         {title}
       </h3>
       {children}
@@ -218,18 +217,18 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 /* ─── Due-on-Sale Risk Card ─── */
 
 const RISK_BADGE: Record<string, string> = {
-  high: 'bg-[#F87171]/15 text-[#F87171] border-[#F87171]/30',
-  medium: 'bg-[#FBBF24]/15 text-[#FBBF24] border-[#FBBF24]/30',
-  low: 'bg-[#4ADE80]/15 text-[#4ADE80] border-[#4ADE80]/30',
+  high: 'bg-loss-bg text-loss border-loss/30',
+  medium: 'bg-warning-bg text-warning border-warning/30',
+  low: 'bg-profit-bg text-profit border-profit/30',
 }
 
 function DueOnSaleRiskCard({ risk }: { risk: DueOnSaleRiskItem }) {
   const badge = RISK_BADGE[risk.risk_level] || RISK_BADGE.low
   return (
-    <div className="flex items-center justify-between p-3 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B]">
+    <div className="flex items-center justify-between p-3 rounded-lg bg-app-bg border border-border-default">
       <div className="min-w-0">
-        <p className="text-sm text-[#F0EDE8] truncate">{risk.property_address}</p>
-        <p className="text-xs text-[#8A8580] mt-0.5">{risk.instrument_name}</p>
+        <p className="text-sm text-text-primary truncate">{risk.property_address}</p>
+        <p className="text-xs text-text-muted mt-0.5">{risk.instrument_name}</p>
       </div>
       <span className={cn('text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border shrink-0 ml-3', badge)}>
         {risk.risk_level}
@@ -243,27 +242,27 @@ function DueOnSaleRiskCard({ risk }: { risk: DueOnSaleRiskItem }) {
 function BalloonCard({ balloon }: { balloon: BalloonAlert }) {
   const days = balloon.days_until ?? 999
   const color =
-    days < 90 ? 'text-[#F87171]' :
-    days < 180 ? 'text-[#FBBF24]' :
-    'text-[#4ADE80]'
+    days < 90 ? 'text-loss' :
+    days < 180 ? 'text-warning' :
+    'text-profit'
 
   const borderColor =
-    days < 90 ? 'border-l-[#F87171]' :
-    days < 180 ? 'border-l-[#FBBF24]' :
-    'border-l-[#4ADE80]'
+    days < 90 ? 'border-l-loss' :
+    days < 180 ? 'border-l-warning' :
+    'border-l-profit'
 
   return (
-    <div className={cn('flex-shrink-0 w-[260px] bg-[#0C0B0A] border border-[#1E1D1B] border-l-[3px] rounded-xl p-4', borderColor)}>
-      <p className="text-sm text-[#F0EDE8] font-medium truncate">{balloon.property_address}</p>
-      <p className="text-xs text-[#8A8580] mt-1">{balloon.instrument_name}</p>
+    <div className={cn('flex-shrink-0 w-[260px] bg-app-bg border border-border-default rounded-xl p-4', borderColor)}>
+      <p className="text-sm text-text-primary font-medium truncate">{balloon.property_address}</p>
+      <p className="text-xs text-text-muted mt-1">{balloon.instrument_name}</p>
       {balloon.balloon_amount != null && (
-        <p className="text-lg text-[#F0EDE8] font-medium tabular-nums mt-2">
+        <p className="text-lg text-text-primary font-medium tabular-nums mt-2">
           ${Number(balloon.balloon_amount).toLocaleString()}
         </p>
       )}
       <div className="flex items-center justify-between mt-2">
         {balloon.balloon_date && (
-          <span className="text-xs text-[#8A8580]">
+          <span className="text-xs text-text-muted">
             {new Date(balloon.balloon_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </span>
         )}

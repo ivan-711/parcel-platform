@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import {
   FileSearch,
   Download,
@@ -85,7 +86,7 @@ function DetailPanel({
               {doc.original_filename}
             </h2>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
-              <Badge className="bg-[#8B7AFF]/10 text-[#8B7AFF] border-[#8B7AFF]/20 text-[10px]">
+              <Badge className="bg-violet-400/10 text-violet-400 border-violet-400/20 text-[10px]">
                 {formatDocumentType(doc.document_type)}
               </Badge>
               <span className="text-xs text-text-secondary tabular-nums">
@@ -100,13 +101,13 @@ function DetailPanel({
         {/* Embedding status indicator */}
         {doc.embedding_status === 'processing' && (
           <div className="mt-3 flex items-center gap-2 text-xs text-text-secondary">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#8B7AFF] animate-pulse shrink-0" />
+            <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse shrink-0" />
             {doc.embedding_meta?.total_chunks
               ? `Indexing for AI chat... (chunk ${doc.embedding_meta.processed_chunks ?? 0} of ${doc.embedding_meta.total_chunks})`
               : 'Analyzing document structure...'}
             <div className="flex-1 h-1 bg-layer-3 rounded-full overflow-hidden max-w-[120px]">
               <div
-                className="h-full bg-[#8B7AFF] rounded-full transition-all duration-500"
+                className="h-full bg-violet-400 rounded-full transition-all duration-500"
                 style={{
                   width: doc.embedding_meta?.total_chunks
                     ? `${Math.round(((doc.embedding_meta.processed_chunks ?? 0) / doc.embedding_meta.total_chunks) * 100)}%`
@@ -118,18 +119,18 @@ function DetailPanel({
         )}
         {doc.embedding_status === 'failed' && (
           <div className="mt-3 flex items-center gap-1.5 text-xs text-text-secondary">
-            <AlertCircle size={12} className="text-[#D4A867]" />
+            <AlertCircle size={12} className="text-warning" />
             AI chat indexing failed — basic document chat still available
           </div>
         )}
         {doc.embedding_status === 'complete' && (
-          <div className="mt-3 flex items-center gap-1.5 text-xs text-[#4ADE80]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#4ADE80] shrink-0" />
+          <div className="mt-3 flex items-center gap-1.5 text-xs text-profit">
+            <span className="w-1.5 h-1.5 rounded-full bg-profit shrink-0" />
             Ready for AI chat
           </div>
         )}
         {doc.embedding_meta?.truncated && (
-          <div className="mt-3 flex items-start gap-1.5 text-xs text-[#D4A867]">
+          <div className="mt-3 flex items-start gap-1.5 text-xs text-warning">
             <AlertCircle size={12} className="mt-0.5 shrink-0" />
             <span>
               This document was partially processed (first{' '}
@@ -161,7 +162,7 @@ function DetailPanel({
           <Button
             variant="outline"
             size="sm"
-            className="h-7 text-xs gap-1.5 text-[#D4766A] hover:text-[#D4766A] border-border-default hover:border-[#D4766A]/30 bg-transparent hover:bg-[#D4766A]/10"
+            className="h-7 text-xs gap-1.5 text-error hover:text-error border-border-default hover:border-error/30 bg-transparent hover:bg-error-bg"
             onClick={onDelete}
             disabled={isDeleting}
           >
@@ -210,7 +211,7 @@ function DetailPanel({
           </h3>
           <div className="space-y-3">
             {doc.risk_flags.map((flag, i) => {
-              const borderColor = flag.severity === 'high' ? 'border-l-[#D4766A]' : flag.severity === 'medium' ? 'border-l-[#D4A867]' : 'border-l-[#7B9FCC]'
+              const borderColor = flag.severity === 'high' ? 'border-l-error' : flag.severity === 'medium' ? 'border-l-warning' : 'border-l-info'
               return (
                 <div key={i} className={cn('flex gap-2.5 border-l-2 pl-3', borderColor)}>
                   <div className="min-w-0 flex-1">
@@ -268,7 +269,7 @@ function DetailPanel({
           {doc.key_terms.length > 8 && (
             <button
               onClick={() => setShowAllTerms(!showAllTerms)}
-              className="flex items-center gap-1 mt-2 text-xs text-[#8B7AFF] hover:text-[#6C5CE7] transition-colors"
+              className="flex items-center gap-1 mt-2 text-xs text-violet-400 hover:text-violet-600 transition-colors"
             >
               {showAllTerms ? (
                 <>
@@ -352,11 +353,11 @@ export function RightPanelContent({
   if (isError) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center px-6 gap-3">
-        <AlertCircle size={32} className="text-[#D4766A]" />
+        <AlertCircle size={32} className="text-error" />
         <p className="text-sm text-text-secondary">Failed to load document</p>
         <button
           onClick={() => queryClient.invalidateQueries({ queryKey: ['document', selectedId] })}
-          className="text-xs font-medium text-[#8B7AFF] hover:text-[#6C5CE7] transition-colors"
+          className="text-xs font-medium text-violet-400 hover:text-violet-600 transition-colors"
         >
           Try again
         </button>
@@ -399,18 +400,18 @@ export function RightPanelContent({
             Back to list
           </button>
         )}
-        <div className="rounded-lg border border-[#D4766A]/20 bg-[#D4766A]/[0.06] p-4">
+        <div className="rounded-lg border border-error/20 bg-error/[0.06] p-4">
           <div className="flex items-start gap-3">
-            <AlertCircle size={16} className="text-[#D4766A] mt-0.5 shrink-0" />
+            <AlertCircle size={16} className="text-error mt-0.5 shrink-0" />
             <div>
-              <h3 className="text-sm font-semibold text-[#D4766A]">Analysis failed</h3>
+              <h3 className="text-sm font-semibold text-error">Analysis failed</h3>
               <p className="text-xs text-text-secondary mt-1">
                 {doc.processing_error ?? 'An unexpected error occurred while processing this document.'}
               </p>
               <Button
                 variant="outline"
                 size="sm"
-                className="mt-3 h-7 text-xs text-[#D4766A] border-[#D4766A]/20 hover:border-[#D4766A]/40 bg-transparent hover:bg-[#D4766A]/10"
+                className="mt-3 h-7 text-xs text-error border-error/20 hover:border-error/40 bg-transparent hover:bg-error-bg"
                 onClick={() => deleteMutation.mutate(doc.id)}
                 disabled={deleteMutation.isPending}
               >
@@ -428,10 +429,10 @@ export function RightPanelContent({
     <AnimatePresence mode="wait">
       <motion.div
         key={doc.id}
-        initial={{ opacity: 0, y: 8 }}
+        initial={prefersReducedMotion ? {} : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -8 }}
-        transition={{ duration: 0.2, ease: 'easeOut' }}
+        exit={prefersReducedMotion ? {} : { opacity: 0, y: -8 }}
+        transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: 'easeOut' }}
       >
         <DetailPanel
           doc={doc}

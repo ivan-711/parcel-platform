@@ -56,32 +56,32 @@ export function DealSidePanel({ card, isOpen, onClose }: Props) {
 
   if (!card) return null
 
-  const strategyColors = STRATEGY_COLORS[card.strategy] ?? { bg: 'rgba(122,120,114,0.12)', text: '#7A7872' }
+  const strategyColors = STRATEGY_COLORS[card.strategy] ?? { bg: 'rgba(122,120,114,0.12)', text: 'var(--text-muted)' }
   const stageInfo = STAGES.find(s => s.key === card.stage)
 
   const daysColor = card.days_in_stage >= 30
-    ? 'text-[#F87171]'
+    ? 'text-loss'
     : card.days_in_stage >= 14
-      ? 'text-[#FBBF24]'
-      : 'text-[#4ADE80]'
+      ? 'text-warning'
+      : 'text-profit'
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => { if (!open) onClose() }}>
       <SheetContent
         side="right"
-        className="w-full sm:w-[480px] p-0 bg-[#0C0B0A] border-l border-[#1E1D1B] overflow-y-auto"
+        className="w-full sm:w-[480px] p-0 bg-app-bg border-l border-border-default overflow-y-auto"
       >
         <SheetTitle className="sr-only">Deal Details</SheetTitle>
 
         {/* Header */}
-        <div className="px-6 py-5 border-b border-[#1E1D1B]">
+        <div className="px-6 py-5 border-b border-border-default">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h2 className="text-lg text-[#F0EDE8] font-medium truncate">
+              <h2 className="text-lg text-text-primary font-medium truncate">
                 {card.address}
               </h2>
               {(card.city || card.state) && (
-                <p className="text-sm text-[#8A8580] mt-0.5">
+                <p className="text-sm text-text-muted mt-0.5">
                   {[card.city, card.state].filter(Boolean).join(', ')}
                 </p>
               )}
@@ -93,7 +93,7 @@ export function DealSidePanel({ card, isOpen, onClose }: Props) {
                   {STRATEGY_LABELS[card.strategy] ?? card.strategy}
                 </span>
                 {stageInfo && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#1E1D1B] text-[#C5C0B8]">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-border-default text-text-secondary">
                     <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: stageInfo.color }} />
                     {stageInfo.label}
                   </span>
@@ -102,7 +102,8 @@ export function DealSidePanel({ card, isOpen, onClose }: Props) {
             </div>
             <button
               onClick={onClose}
-              className="w-7 h-7 rounded-md flex items-center justify-center text-[#8A8580] hover:text-[#C5C0B8] hover:bg-[#141311] transition-colors cursor-pointer shrink-0"
+              aria-label="Close deal panel"
+              className="w-7 h-7 rounded-md flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-app-recessed transition-colors cursor-pointer shrink-0"
             >
               <X size={16} />
             </button>
@@ -130,8 +131,8 @@ export function DealSidePanel({ card, isOpen, onClose }: Props) {
         </div>
 
         {/* Move Stage */}
-        <div className="px-6 py-3 border-t border-[#1E1D1B]">
-          <p className="text-[10px] uppercase tracking-wider text-[#8A8580] font-medium mb-2">
+        <div className="px-6 py-3 border-t border-border-default">
+          <p className="text-[10px] uppercase tracking-wider text-text-muted font-medium mb-2">
             Move Stage
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -150,8 +151,8 @@ export function DealSidePanel({ card, isOpen, onClose }: Props) {
                 className={cn(
                   'flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer',
                   card.stage === stage.key
-                    ? 'bg-[#8B7AFF]/15 text-[#A89FFF] border border-[#8B7AFF]/30'
-                    : 'text-[#8A8580] hover:text-[#C5C0B8] hover:bg-[#141311]'
+                    ? 'bg-accent-primary/15 text-accent-secondary border border-accent-primary/30'
+                    : 'text-text-muted hover:text-text-secondary hover:bg-app-recessed'
                 )}
               >
                 <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: stage.color }} />
@@ -162,25 +163,25 @@ export function DealSidePanel({ card, isOpen, onClose }: Props) {
         </div>
 
         {/* Contacts placeholder */}
-        <div className="px-6 py-4 border-t border-[#1E1D1B]">
-          <p className="text-[10px] uppercase tracking-wider text-[#8A8580] font-medium mb-2">
+        <div className="px-6 py-4 border-t border-border-default">
+          <p className="text-[10px] uppercase tracking-wider text-text-muted font-medium mb-2">
             Linked Contacts
           </p>
-          <div className="flex items-center gap-2 py-3 text-sm text-[#8A8580]">
+          <div className="flex items-center gap-2 py-3 text-sm text-text-muted">
             <Users size={14} />
             No linked contacts
           </div>
         </div>
 
         {/* Tasks */}
-        <div className="px-6 py-4 border-t border-[#1E1D1B]">
-          <p className="text-[10px] uppercase tracking-wider text-[#8A8580] font-medium mb-2">
+        <div className="px-6 py-4 border-t border-border-default">
+          <p className="text-[10px] uppercase tracking-wider text-text-muted font-medium mb-2">
             Tasks
           </p>
           {tasksData && tasksData.tasks.length > 0 ? (
             <TaskList tasks={tasksData.tasks} compact />
           ) : (
-            <p className="text-sm text-[#8A8580] py-2">No tasks.</p>
+            <p className="text-sm text-text-muted py-2">No tasks.</p>
           )}
           <div className="mt-2">
             <AddTaskForm dealId={card.deal_id} />
@@ -188,7 +189,7 @@ export function DealSidePanel({ card, isOpen, onClose }: Props) {
         </div>
 
         {/* Actions */}
-        <div className="px-6 py-4 border-t border-[#1E1D1B]">
+        <div className="px-6 py-4 border-t border-border-default">
           <Link
             to={`/analyze/deal/${card.deal_id}`}
             onClick={() => {
@@ -196,7 +197,7 @@ export function DealSidePanel({ card, isOpen, onClose }: Props) {
                 (window as any).posthog?.capture?.('deal_side_panel_action', { action: 'view_analysis' })
               } catch { /* ignore */ }
             }}
-            className="inline-flex items-center gap-1.5 text-sm text-[#8B7AFF] hover:text-[#A89FFF] transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-accent-primary hover:text-accent-secondary transition-colors"
           >
             <ExternalLink size={14} />
             View Full Analysis
@@ -219,12 +220,12 @@ function StatBox({
   valueColor?: string
 }) {
   return (
-    <div className="bg-[#141311] rounded-lg p-3">
+    <div className="bg-app-recessed rounded-lg p-3">
       <div className="flex items-center gap-1.5 mb-1">
-        <Icon size={12} className="text-[#8A8580]" />
-        <p className="text-[10px] uppercase tracking-wider text-[#8A8580]">{label}</p>
+        <Icon size={12} className="text-text-muted" />
+        <p className="text-[10px] uppercase tracking-wider text-text-muted">{label}</p>
       </div>
-      <p className={cn('text-sm font-medium tabular-nums', valueColor || 'text-[#F0EDE8]')}>
+      <p className={cn('text-sm font-medium tabular-nums', valueColor || 'text-text-primary')}>
         {value}
       </p>
     </div>

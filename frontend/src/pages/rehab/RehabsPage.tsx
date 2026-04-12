@@ -18,10 +18,10 @@ import type { RehabProject, CreateRehabProjectRequest } from '@/types'
 /* ─── Status badge config ─── */
 
 const STATUS_STYLES: Record<string, { label: string; cls: string }> = {
-  planning: { label: 'Planning', cls: 'bg-[#8A8580]/15 text-[#C5C0B8]' },
-  in_progress: { label: 'In Progress', cls: 'bg-[#60A5FA]/15 text-[#60A5FA]' },
-  completed: { label: 'Completed', cls: 'bg-[#4ADE80]/15 text-[#4ADE80]' },
-  on_hold: { label: 'On Hold', cls: 'bg-[#FBBF24]/15 text-[#FBBF24]' },
+  planning: { label: 'Planning', cls: 'bg-text-muted/15 text-text-secondary' },
+  in_progress: { label: 'In Progress', cls: 'bg-info-bg text-info' },
+  completed: { label: 'Completed', cls: 'bg-profit/15 text-profit' },
+  on_hold: { label: 'On Hold', cls: 'bg-warning-bg text-warning' },
 }
 
 /* ─── Helpers ─── */
@@ -73,7 +73,7 @@ export default function RehabsPage() {
       <AppShell title="Rehab Projects">
         <div className="space-y-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-36 bg-[#141311] rounded-xl animate-pulse" />
+            <div key={i} className="h-36 bg-app-recessed rounded-xl animate-pulse" />
           ))}
         </div>
       </AppShell>
@@ -86,14 +86,13 @@ export default function RehabsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1
-            className="text-xl sm:text-2xl text-[#F0EDE8]"
-            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+            className="text-xl sm:text-2xl text-text-primary font-brand font-light"
           >
             Rehab Projects
           </h1>
           <button
             onClick={() => setShowCreate(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-[#8B7AFF] text-white font-medium hover:bg-[#7B6AEF] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-violet-400 text-white font-medium hover:bg-violet-500 transition-colors cursor-pointer"
           >
             <Plus size={16} />
             New Project
@@ -147,15 +146,15 @@ function ProjectCard({ project, index, propertyMap }: { project: RehabProject; i
     >
       <Link
         to={`/rehabs/${project.id}`}
-        className="block bg-[#141311] border border-[#1E1D1B] rounded-xl p-4 hover:border-[#2A2826] transition-colors group"
+        className="block bg-app-recessed border border-border-default rounded-xl p-4 hover:border-border-strong transition-colors group"
       >
         {/* Top row: address + status */}
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="min-w-0">
-            <p className="text-sm text-[#F0EDE8] font-medium truncate">
+            <p className="text-sm text-text-primary font-medium truncate">
               {propertyAddress || project.name}
             </p>
-            <p className="text-xs text-[#8A8580] mt-0.5 truncate">{project.name}</p>
+            <p className="text-xs text-text-muted mt-0.5 truncate">{project.name}</p>
           </div>
           <span className={`shrink-0 px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider ${status.cls}`}>
             {status.label}
@@ -164,9 +163,9 @@ function ProjectCard({ project, index, propertyMap }: { project: RehabProject; i
 
         {/* Budget progress bar */}
         <div className="mb-2">
-          <div className="h-1.5 bg-[#1E1D1B] rounded-full overflow-hidden">
+          <div className="h-1.5 bg-border-default rounded-full overflow-hidden">
             <div
-              className={`h-full rounded-full transition-all ${overBudget ? 'bg-[#F87171]' : 'bg-[#4ADE80]'}`}
+              className={`h-full rounded-full transition-all ${overBudget ? 'bg-loss' : 'bg-profit'}`}
               style={{ width: `${estimated > 0 ? Math.min((actual / estimated) * 100, 100) : 0}%` }}
             />
           </div>
@@ -174,12 +173,12 @@ function ProjectCard({ project, index, propertyMap }: { project: RehabProject; i
 
         {/* Budget label */}
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs text-[#8A8580]">
+          <span className="text-xs text-text-muted">
             {estimated > 0 ? (
               <>
                 {formatBudget(actual)} of {formatBudget(estimated)}
                 {overBudget && (
-                  <span className="text-[#F87171] ml-1">(over budget)</span>
+                  <span className="text-loss ml-1">(over budget)</span>
                 )}
               </>
             ) : (
@@ -187,7 +186,7 @@ function ProjectCard({ project, index, propertyMap }: { project: RehabProject; i
             )}
           </span>
           {budgetPct > 0 && (
-            <span className={`text-xs tabular-nums ${overBudget ? 'text-[#F87171]' : 'text-[#8A8580]'}`}>
+            <span className={`text-xs tabular-nums ${overBudget ? 'text-loss' : 'text-text-muted'}`}>
               {Math.round(actual / estimated * 100)}%
             </span>
           )}
@@ -195,14 +194,14 @@ function ProjectCard({ project, index, propertyMap }: { project: RehabProject; i
 
         {/* Completion */}
         {project.item_count > 0 && (
-          <p className="text-xs text-[#8A8580]">
+          <p className="text-xs text-text-muted">
             {completedCount} of {project.item_count} items ({Math.round(project.completion_pct ?? 0)}%)
           </p>
         )}
 
         {/* Date range */}
         {(project.start_date || project.target_completion) && (
-          <div className="flex items-center gap-1.5 mt-2 text-xs text-[#8A8580]">
+          <div className="flex items-center gap-1.5 mt-2 text-xs text-text-muted">
             <Calendar size={12} className="shrink-0" />
             <span>
               {project.start_date ? formatDate(project.start_date) : '?'}
@@ -259,12 +258,11 @@ function CreateProjectModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle
-            className="text-lg text-[#F0EDE8]"
-            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+            className="text-lg text-text-primary font-brand font-light"
           >
             New Rehab Project
           </DialogTitle>
-          <DialogDescription className="text-sm text-[#8A8580]">
+          <DialogDescription className="text-sm text-text-muted">
             Track renovation costs for a property.
           </DialogDescription>
         </DialogHeader>
@@ -272,7 +270,7 @@ function CreateProjectModal({
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
           {/* Name */}
           <div>
-            <label className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1 block">
+            <label className="text-[10px] uppercase tracking-wider text-text-muted mb-1 block">
               Project Name
             </label>
             <input
@@ -280,20 +278,20 @@ function CreateProjectModal({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Kitchen & Bath Reno"
-              className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] placeholder:text-[#8A8580]/50 focus:border-[#8B7AFF] outline-none transition-colors"
+              className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary placeholder:text-text-muted/50 focus:border-violet-400 outline-none transition-colors"
               required
             />
           </div>
 
           {/* Property selector */}
           <div>
-            <label className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1 block">
+            <label className="text-[10px] uppercase tracking-wider text-text-muted mb-1 block">
               Property
             </label>
             <select
               value={propertyId}
               onChange={(e) => setPropertyId(e.target.value)}
-              className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none transition-colors"
+              className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none transition-colors"
               required
             >
               <option value="" disabled>
@@ -316,10 +314,10 @@ function CreateProjectModal({
                 onChange={(e) => setImportBricked(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-9 h-5 bg-[#1E1D1B] rounded-full peer-checked:bg-[#8B7AFF] transition-colors" />
-              <div className="absolute left-0.5 top-0.5 w-4 h-4 bg-[#C5C0B8] rounded-full transition-transform peer-checked:translate-x-4 peer-checked:bg-white" />
+              <div className="w-9 h-5 bg-border-default rounded-full peer-checked:bg-violet-400 transition-colors" />
+              <div className="absolute left-0.5 top-0.5 w-4 h-4 bg-text-secondary rounded-full transition-transform peer-checked:translate-x-4 peer-checked:bg-white" />
             </div>
-            <span className="text-sm text-[#C5C0B8] group-hover:text-[#F0EDE8] transition-colors">
+            <span className="text-sm text-text-secondary group-hover:text-text-primary transition-colors">
               Import AI repair estimates
             </span>
           </label>
@@ -328,7 +326,7 @@ function CreateProjectModal({
           <button
             type="submit"
             disabled={createMutation.isPending || !name.trim() || !propertyId}
-            className="w-full px-4 py-2.5 text-sm rounded-lg bg-[#8B7AFF] text-white font-medium hover:bg-[#7B6AEF] transition-colors disabled:opacity-50 cursor-pointer"
+            className="w-full px-4 py-2.5 text-sm rounded-lg bg-violet-400 text-white font-medium hover:bg-violet-500 transition-colors disabled:opacity-50 cursor-pointer"
           >
             {createMutation.isPending ? 'Creating...' : 'Create'}
           </button>

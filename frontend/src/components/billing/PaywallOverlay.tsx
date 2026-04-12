@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import { Lock } from 'lucide-react'
 import { FEATURE_LABELS, type GatedFeature } from '@/types'
 import { useCheckout } from '@/hooks/useBilling'
@@ -83,18 +84,18 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
       className="absolute inset-0 z-20 flex items-center justify-center"
     >
       {/* Gradient mask */}
-      <div className="absolute inset-0 bg-[#0C0B0A]/80 backdrop-blur-xl backdrop-saturate-150" aria-hidden="true" />
+      <div className="absolute inset-0 bg-app-bg/80 backdrop-blur-xl backdrop-saturate-150" aria-hidden="true" />
 
       {/* Card */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={prefersReducedMotion ? {} : { opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+        transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
         className="relative z-10 w-full max-w-md bg-app-surface rounded-xl border border-border-default shadow-2xl p-8 mx-4"
       >
         {/* Lock icon */}
-        <div className="mx-auto w-12 h-12 rounded-xl bg-[#8B7AFF]/10 ring-1 ring-[#8B7AFF]/20 flex items-center justify-center mb-5">
-          <Lock size={24} className="text-[#8B7AFF]" />
+        <div className="mx-auto w-12 h-12 rounded-xl bg-violet-400/10 ring-1 ring-violet-400/20 flex items-center justify-center mb-5">
+          <Lock size={24} className="text-violet-400" />
         </div>
 
         <h3 className="text-lg font-semibold text-text-primary text-center">
@@ -107,7 +108,7 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
         <button
           onClick={() => checkout.mutate({ plan: 'pro', interval: 'annual' })}
           disabled={checkout.isPending}
-          className="w-full h-11 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-accent-text-on-accent text-sm font-medium transition-all disabled:opacity-50 cursor-pointer"
+          className="w-full h-11 rounded-lg bg-gradient-to-r from-violet-400 to-violet-600 hover:brightness-110 hover:shadow-[0_0_20px_rgba(139,122,255,0.3)] text-accent-text-on-accent text-sm font-medium transition-all disabled:opacity-50 cursor-pointer"
         >
           {checkout.isPending ? 'Redirecting...' : 'Upgrade to Carbon'}
         </button>
@@ -115,7 +116,7 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
         <div className="flex items-center justify-center gap-4 mt-4">
           <Link
             to="/pricing"
-            className="text-sm text-[#8B7AFF] hover:text-[#A89FFF] transition-colors"
+            className="text-sm text-violet-400 hover:text-violet-300 transition-colors"
           >
             Compare plans &rarr;
           </Link>

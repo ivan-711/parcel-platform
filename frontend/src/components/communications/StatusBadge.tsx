@@ -11,14 +11,14 @@ interface StatusConfig {
 }
 
 const STATUS_MAP: Record<DeliveryStatus, StatusConfig> = {
-  logged:    { icon: Edit3,         color: '#8A8580', label: 'Logged' },
-  queued:    { icon: Clock,         color: '#8A8580', label: 'Queued' },
-  sent:      { icon: Check,         color: '#60A5FA', label: 'Sent' },
-  delivered: { icon: CheckCheck,    color: '#4ADE80', label: 'Delivered' },
-  opened:    { icon: Eye,           color: '#60A5FA', label: 'Opened' },
-  clicked:   { icon: ExternalLink,  color: '#8B7AFF', label: 'Clicked' },
-  failed:    { icon: AlertCircle,   color: '#EF4444', label: 'Failed' },
-  bounced:   { icon: XCircle,       color: '#EF4444', label: 'Bounced' },
+  logged:    { icon: Edit3,         color: 'var(--text-muted)', label: 'Logged' },
+  queued:    { icon: Clock,         color: 'var(--text-muted)', label: 'Queued' },
+  sent:      { icon: Check,         color: 'var(--accent-info)', label: 'Sent' },
+  delivered: { icon: CheckCheck,    color: 'var(--color-profit)', label: 'Delivered' },
+  opened:    { icon: Eye,           color: 'var(--accent-info)', label: 'Opened' },
+  clicked:   { icon: ExternalLink,  color: 'var(--accent-primary)', label: 'Clicked' },
+  failed:    { icon: AlertCircle,   color: 'var(--color-loss)', label: 'Failed' },
+  bounced:   { icon: XCircle,       color: 'var(--color-loss)', label: 'Bounced' },
 }
 
 interface Props {

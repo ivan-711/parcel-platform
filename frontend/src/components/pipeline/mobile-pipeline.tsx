@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import { Inbox } from 'lucide-react'
 import { STAGES } from './constants'
 import type { PipelineCard, Stage } from './constants'
@@ -73,23 +74,23 @@ export function MobilePipeline({ board, isLoading, onRemove, onCloseDeal, onMove
                 transition-all duration-200
                 min-h-[44px]
                 cursor-pointer
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B7AFF]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg
                 ${isActive
-                  ? 'bg-[#8B7AFF] text-accent-text-on-accent shadow-sm'
+                  ? 'bg-accent-primary text-accent-text-on-accent shadow-sm'
                   : 'bg-layer-2 text-text-secondary hover:bg-layer-3'
                 }
               `}
             >
               <span
                 className="w-2 h-2 rounded-full flex-shrink-0"
-                style={{ backgroundColor: isActive ? '#0C0B0A' : stage.color }}
+                style={{ backgroundColor: isActive ? 'var(--app-bg)' : stage.color }}
               />
               {stage.label}
               <span
                 className={`
                   text-[11px] tabular-nums px-1.5 py-0.5 rounded-full min-w-[22px] text-center
                   ${isActive
-                    ? 'bg-[#0C0B0A]/20 text-accent-text-on-accent'
+                    ? 'bg-app-bg/20 text-accent-text-on-accent'
                     : 'bg-layer-3 text-text-muted'
                   }
                 `}
@@ -112,7 +113,7 @@ export function MobilePipeline({ board, isLoading, onRemove, onCloseDeal, onMove
           <ColumnSkeleton />
         ) : cards.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
-            <Inbox size={28} className="text-[#7A7872]/40" />
+            <Inbox size={28} className="text-text-disabled/40" />
             <p className="text-sm text-text-secondary">
               No deals in {STAGES.find((s) => s.key === activeStage)?.label ?? activeStage}
             </p>
@@ -121,18 +122,18 @@ export function MobilePipeline({ board, isLoading, onRemove, onCloseDeal, onMove
           <AnimatePresence mode="wait">
             <motion.div
               key={activeStage}
-              initial={{ opacity: 0, x: 12 }}
+              initial={prefersReducedMotion ? {} : { opacity: 0, x: 12 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -12 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
+              exit={prefersReducedMotion ? {} : { opacity: 0, x: -12 }}
+              transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: 'easeOut' }}
               className="flex flex-col gap-3"
             >
               {cards.map((card, i) => (
                 <motion.div
                   key={card.pipeline_id}
-                  initial={{ opacity: 0, y: 8 }}
+                  initial={prefersReducedMotion ? {} : { opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.18, delay: i * 0.04 }}
+                  transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.18, delay: i * 0.04 }}
                 >
                   <DealCard
                     card={card}

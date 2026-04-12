@@ -180,7 +180,7 @@ export default function MyDeals() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h1 className="text-3xl font-semibold tracking-tight text-text-primary">My Deals</h1>
+          <h1 className="text-3xl font-brand font-semibold tracking-tight text-text-primary">My Deals</h1>
           <div className="flex items-center gap-2 flex-wrap">
             {selectionMode ? (
               <>
@@ -199,7 +199,7 @@ export default function MyDeals() {
                 <button
                   onClick={() => setBulkDeleteOpen(true)}
                   disabled={selectedIds.size === 0}
-                  className="inline-flex items-center gap-2 px-4 py-2 min-h-[44px] md:min-h-0 rounded-lg bg-[#D4766A] hover:bg-[#D4766A]/80 text-text-primary text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-2 px-4 py-2 min-h-[44px] md:min-h-0 rounded-lg bg-error hover:bg-error/80 text-text-primary text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Delete Selected ({selectedIds.size})
                 </button>
@@ -239,7 +239,7 @@ export default function MyDeals() {
             onChange={(e) => { setSearchQuery(e.target.value); setPage(1) }}
             placeholder="Search deals by address..."
             aria-label="Search deals by address"
-            className="w-full pl-9 pr-9 py-2 rounded-lg bg-app-recessed border border-border-default text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-colors"
+            className="w-full pl-9 pr-9 py-2 rounded-lg bg-app-recessed border border-border-default text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:border-accent-primary/40 focus:ring-2 focus:ring-accent-primary/20 transition-colors"
           />
           {searchQuery && (
             <button
@@ -280,8 +280,8 @@ export default function MyDeals() {
 
         {/* Error state */}
         {isError && (
-          <div className="rounded-xl border border-[#D4766A]/20 bg-[#D4766A]/10 p-6 flex items-start gap-3 max-w-lg">
-            <AlertCircle size={20} className="text-[#D4766A] shrink-0 mt-0.5" />
+          <div className="rounded-xl border border-error/20 bg-error-bg p-6 flex items-start gap-3 max-w-lg">
+            <AlertCircle size={20} className="text-error shrink-0 mt-0.5" />
             <div className="space-y-2">
               <p className="text-sm font-medium text-text-primary">Failed to load deals</p>
               <p className="text-xs text-text-secondary">
@@ -397,7 +397,7 @@ export default function MyDeals() {
               <AlertDialogCancel className="bg-layer-2 border-border-default text-text-primary hover:bg-layer-3">Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => { if (deletingId) deleteDeal.mutate(deletingId) }}
-                className="bg-[#D4766A] hover:bg-[#D4766A]/80 text-text-primary"
+                className="bg-error hover:bg-error/80 text-text-primary"
               >
                 {deleteDeal.isPending ? 'Deleting...' : 'Delete'}
               </AlertDialogAction>
@@ -419,7 +419,7 @@ export default function MyDeals() {
               <AlertDialogAction
                 onClick={handleBulkDelete}
                 disabled={isDeleting}
-                className="bg-[#D4766A] hover:bg-[#D4766A]/80 text-text-primary"
+                className="bg-error hover:bg-error/80 text-text-primary"
               >
                 {isDeleting ? 'Deleting...' : 'Delete All'}
               </AlertDialogAction>

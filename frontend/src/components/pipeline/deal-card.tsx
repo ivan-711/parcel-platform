@@ -1,16 +1,18 @@
 /** DealCard — individual pipeline deal card with context menu for close/remove actions. */
 
 import { memo, useState, useRef, useEffect, useCallback } from 'react'
+import { motion } from 'framer-motion'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, MoreHorizontal, Trash2, CheckCircle2, ArrowRight } from 'lucide-react'
+import { prefersReducedMotion } from '@/lib/motion'
 import { SampleBadge } from '@/components/SampleBadge'
 import { STAGES, STRATEGY_COLORS, STRATEGY_LABELS } from './constants'
 import type { PipelineCard, Stage } from './constants'
 
 /** Strategy badge — color-coded pill by strategy key. */
 function StrategyBadge({ strategy }: { strategy: string }) {
-  const colors = STRATEGY_COLORS[strategy] ?? { bg: 'rgba(122,120,114,0.12)', text: '#7A7872' }
+  const colors = STRATEGY_COLORS[strategy] ?? { bg: 'rgba(122,120,114,0.12)', text: 'var(--text-muted)' }
   return (
     <span
       className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
@@ -91,20 +93,21 @@ export const DealCard = memo(function DealCard({ card: rawCard, isDragging = fal
 
   // Days-in-stage text color
   const daysColor = card.days_in_stage >= 30
-    ? 'text-[#D4766A]'
+    ? 'text-loss'
     : card.days_in_stage >= 14
-      ? 'text-[#D4A867]'
-      : 'text-[#7A7872]'
+      ? 'text-warning'
+      : 'text-text-disabled'
 
   return (
-    <div
+    <motion.div
+      whileHover={prefersReducedMotion || isDragging ? undefined : { y: -2 }}
       className={[
-        'group relative rounded-xl border bg-app-elevated py-3.5 px-4 space-y-2.5 transition-all duration-150 outline-none',
+        'group relative rounded-xl border bg-app-elevated py-3.5 px-4 space-y-2.5 transition-shadow duration-200 outline-none',
         isDragging
           ? 'opacity-50 border-dashed border-border-default shadow-[0_0_24px_rgba(139,122,255,0.15)]'
           : isFocused
-            ? 'ring-2 ring-[#8B7AFF]/40 ring-offset-2 ring-offset-app-bg border-[#8B7AFF]/40'
-            : 'border-border-default hover:border-border-emphasis hover:-translate-y-px',
+            ? 'ring-2 ring-accent-primary/40 ring-offset-2 ring-offset-app-bg border-accent-primary/40'
+            : 'border-border-default hover:border-border-emphasis hover:shadow-lg',
         onCardClick && !isDragging ? 'cursor-pointer' : '',
       ].join(' ')}
       onClick={() => {
@@ -121,7 +124,7 @@ export const DealCard = memo(function DealCard({ card: rawCard, isDragging = fal
             {card.is_sample && <SampleBadge />}
           </div>
           {(card.city || card.state) && (
-            <p className="text-[11px] text-[#8A8580] mt-0.5">
+            <p className="text-[11px] text-text-muted mt-0.5">
               {[card.city, card.state].filter(Boolean).join(', ')}
             </p>
           )}
@@ -145,7 +148,7 @@ export const DealCard = memo(function DealCard({ card: rawCard, isDragging = fal
           )}
           <GripVertical
             size={14}
-            className="hidden md:block text-[#7A7872]/50 hover:text-[#7A7872] cursor-grab active:cursor-grabbing transition-colors"
+            className="hidden md:block text-text-disabled/50 hover:text-text-disabled cursor-grab active:cursor-grabbing transition-colors"
           />
         </div>
       </div>
@@ -167,7 +170,7 @@ export const DealCard = memo(function DealCard({ card: rawCard, isDragging = fal
           {onCloseDeal && card.stage !== 'dead' && (
             <button
               type="button"
-              className="flex items-center gap-2 px-3 py-2 text-[13px] text-text-secondary hover:bg-layer-2 hover:text-[#7CCBA5] w-full transition-colors min-h-[44px]"
+              className="flex items-center gap-2 px-3 py-2 text-[13px] text-text-secondary hover:bg-layer-2 hover:text-profit w-full transition-colors min-h-[44px]"
               onClick={() => {
                 onCloseDeal(card)
                 setMenuOpen(false)
@@ -181,7 +184,7 @@ export const DealCard = memo(function DealCard({ card: rawCard, isDragging = fal
             <>
               <button
                 type="button"
-                className="flex items-center justify-between gap-2 px-3 py-2 text-[13px] text-text-secondary hover:bg-layer-2 hover:text-[#8B7AFF] w-full transition-colors min-h-[44px]"
+                className="flex items-center justify-between gap-2 px-3 py-2 text-[13px] text-text-secondary hover:bg-layer-2 hover:text-accent-primary w-full transition-colors min-h-[44px]"
                 onClick={() => setShowMoveMenu((v) => !v)}
               >
                 <span className="flex items-center gap-2">
@@ -218,7 +221,7 @@ export const DealCard = memo(function DealCard({ card: rawCard, isDragging = fal
               {(onCloseDeal || onMoveStage) && <div className="border-t border-border-default" />}
               <button
                 type="button"
-                className="flex items-center gap-2 px-3 py-2 text-[13px] text-text-secondary hover:bg-layer-2 hover:text-[#D4766A] w-full transition-colors min-h-[44px]"
+                className="flex items-center gap-2 px-3 py-2 text-[13px] text-text-secondary hover:bg-layer-2 hover:text-error w-full transition-colors min-h-[44px]"
                 onClick={() => {
                   onRemove(card.pipeline_id, card.stage)
                   setMenuOpen(false)
@@ -249,7 +252,7 @@ export const DealCard = memo(function DealCard({ card: rawCard, isDragging = fal
           <RiskDot days={card.days_in_stage} />
         </span>
       </div>
-    </div>
+    </motion.div>
   )
 })
 

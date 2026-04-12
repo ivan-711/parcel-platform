@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import {
   Users,
   Mail,
@@ -30,6 +31,7 @@ import {
   useDeleteContact,
 } from '@/hooks/useContacts'
 import { useSequences } from '@/hooks/useSequences'
+import { safeStaggerContainer, safeStaggerItem } from '@/lib/motion'
 import { api } from '@/lib/api'
 
 export default function ContactDetailPage() {
@@ -75,8 +77,8 @@ export default function ContactDetailPage() {
     return (
       <AppShell title="Contact">
         <div className="space-y-4">
-          <div className="h-8 w-48 bg-[#141311] rounded animate-pulse" />
-          <div className="h-40 bg-[#141311] rounded-xl animate-pulse" />
+          <div className="h-8 w-48 bg-app-recessed rounded animate-pulse" />
+          <div className="h-40 bg-app-recessed rounded-xl animate-pulse" />
         </div>
       </AppShell>
     )
@@ -106,28 +108,32 @@ export default function ContactDetailPage() {
         { label: fullName },
       ]}
     >
-      <div className="space-y-6">
+      <motion.div
+        variants={safeStaggerContainer(100)}
+        initial="hidden"
+        animate="visible"
+        className="space-y-6"
+      >
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <motion.div variants={safeStaggerItem} className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-1">
               <h1
-                className="text-xl sm:text-2xl text-[#F0EDE8]"
-                style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+                className="text-xl sm:text-2xl text-text-primary font-brand font-light"
               >
                 {fullName}
               </h1>
               <TypeBadge type={contact.contact_type} />
             </div>
             {contact.company && (
-              <p className="text-sm text-[#8A8580]">{contact.company}</p>
+              <p className="text-sm text-text-muted">{contact.company}</p>
             )}
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => setEditOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#C5C0B8] border border-[#1E1D1B] hover:bg-[#141311] hover:text-[#F0EDE8] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-text-secondary border border-border-default hover:bg-app-recessed hover:text-text-primary transition-colors cursor-pointer"
             >
               <Pencil size={14} />
               Edit
@@ -138,13 +144,13 @@ export default function ContactDetailPage() {
             <div className="relative">
               <button
                 onClick={() => setSeqDropdownOpen(v => !v)}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#C5C0B8] border border-[#1E1D1B] hover:bg-[#141311] hover:text-[#F0EDE8] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-text-secondary border border-border-default hover:bg-app-recessed hover:text-text-primary transition-colors cursor-pointer"
               >
                 <Repeat size={14} />
                 Add to Sequence
               </button>
               {seqDropdownOpen && activeSequences.length > 0 && (
-                <div className="absolute right-0 top-full mt-1 w-56 bg-[#141311] border border-[#1E1D1B] rounded-xl shadow-xl z-20 py-1">
+                <div className="absolute right-0 top-full mt-1 w-56 bg-app-recessed border border-border-default rounded-xl shadow-xl z-20 py-1">
                   {activeSequences.map(seq => (
                     <button
                       key={seq.id}
@@ -158,10 +164,10 @@ export default function ContactDetailPage() {
                           toast.error(err instanceof Error ? err.message : 'Failed to enroll')
                         }
                       }}
-                      className="w-full text-left px-3 py-2 text-sm text-[#C5C0B8] hover:bg-[#1E1D1B] hover:text-[#F0EDE8] transition-colors"
+                      className="w-full text-left px-3 py-2 text-sm text-text-secondary hover:bg-border-default hover:text-text-primary transition-colors"
                     >
                       {seq.name}
-                      <span className="text-[10px] text-[#8A8580] ml-1">
+                      <span className="text-[10px] text-text-muted ml-1">
                         ({seq.step_count} steps)
                       </span>
                     </button>
@@ -169,55 +175,55 @@ export default function ContactDetailPage() {
                 </div>
               )}
               {seqDropdownOpen && activeSequences.length === 0 && (
-                <div className="absolute right-0 top-full mt-1 w-56 bg-[#141311] border border-[#1E1D1B] rounded-xl shadow-xl z-20 p-3">
-                  <p className="text-xs text-[#8A8580]">No active sequences. Create one first.</p>
+                <div className="absolute right-0 top-full mt-1 w-56 bg-app-recessed border border-border-default rounded-xl shadow-xl z-20 p-3">
+                  <p className="text-xs text-text-muted">No active sequences. Create one first.</p>
                 </div>
               )}
             </div>
             <Link
               to="/mail-campaigns/new"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#C5C0B8] border border-[#1E1D1B] hover:bg-[#141311] hover:text-[#F0EDE8] transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-text-secondary border border-border-default hover:bg-app-recessed hover:text-text-primary transition-colors"
             >
               <Mail size={14} />
               Send Mail
             </Link>
             <button
               onClick={handleDelete}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[#F87171] border border-[#F87171]/20 hover:bg-[#F87171]/10 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-loss border border-loss/20 hover:bg-loss-bg transition-colors cursor-pointer"
             >
               <Trash2 size={14} />
               Delete
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Two-column layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <motion.div variants={safeStaggerItem} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: Contact Info */}
           <div className="space-y-6">
             <Card title="Contact Information">
               <div className="space-y-3">
                 {contact.email && (
                   <InfoRow icon={Mail} label="Email">
-                    <a href={`mailto:${contact.email}`} className="text-[#8B7AFF] hover:text-[#A89FFF] transition-colors">
+                    <a href={`mailto:${contact.email}`} className="text-violet-400 hover:text-violet-300 transition-colors">
                       {contact.email}
                     </a>
                   </InfoRow>
                 )}
                 {contact.phone && (
                   <InfoRow icon={Phone} label="Phone">
-                    <a href={`tel:${contact.phone}`} className="text-[#C5C0B8] hover:text-[#F0EDE8] transition-colors">
+                    <a href={`tel:${contact.phone}`} className="text-text-secondary hover:text-text-primary transition-colors">
                       {contact.phone}
                     </a>
                   </InfoRow>
                 )}
                 {contact.company && (
                   <InfoRow icon={Building} label="Company">
-                    <span className="text-[#C5C0B8]">{contact.company}</span>
+                    <span className="text-text-secondary">{contact.company}</span>
                   </InfoRow>
                 )}
                 {!contact.email && !contact.phone && !contact.company && (
-                  <p className="text-sm text-[#8A8580]">No contact details added.</p>
+                  <p className="text-sm text-text-muted">No contact details added.</p>
                 )}
               </div>
             </Card>
@@ -225,7 +231,7 @@ export default function ContactDetailPage() {
             {/* Notes */}
             {contact.notes && (
               <Card title="Notes">
-                <p className="text-sm text-[#C5C0B8] whitespace-pre-line">{contact.notes}</p>
+                <p className="text-sm text-text-secondary whitespace-pre-line">{contact.notes}</p>
               </Card>
             )}
 
@@ -236,7 +242,7 @@ export default function ContactDetailPage() {
                   {contact.tags.map((tag, i) => (
                     <span
                       key={i}
-                      className="text-xs px-2 py-0.5 rounded bg-[#1E1D1B] text-[#C5C0B8]"
+                      className="text-xs px-2 py-0.5 rounded bg-border-default text-text-secondary"
                     >
                       {tag}
                     </span>
@@ -265,7 +271,7 @@ export default function ContactDetailPage() {
             {/* Tasks */}
             <Card title="Tasks">
               {(!tasksData || tasksData.tasks.length === 0) ? (
-                <p className="text-sm text-[#8A8580] py-2">No tasks for this contact.</p>
+                <p className="text-sm text-text-muted py-2">No tasks for this contact.</p>
               ) : (
                 <TaskList tasks={tasksData.tasks} compact />
               )}
@@ -282,10 +288,10 @@ export default function ContactDetailPage() {
               {/* Conversation Thread — only if contact has phone or email */}
               {(contact.phone || contact.email) && (
                 <div>
-                  <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium mb-3">
+                  <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium mb-3">
                     Conversation
                   </h3>
-                  <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
+                  <div className="bg-app-recessed border border-border-default rounded-xl p-5">
                     <ConversationThread
                       contactId={contactId!}
                       contactPhone={contact.phone}
@@ -298,12 +304,12 @@ export default function ContactDetailPage() {
               {/* Activity Log */}
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium">
+                  <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium">
                     Activity Log
                   </h3>
                   <button
                     onClick={() => setShowLogForm(!showLogForm)}
-                    className="inline-flex items-center gap-1 text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 transition-colors cursor-pointer"
                   >
                     <Plus size={12} />
                     Log Activity
@@ -319,7 +325,7 @@ export default function ContactDetailPage() {
                   </div>
                 )}
 
-                <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
+                <div className="bg-app-recessed border border-border-default rounded-xl p-5">
                   <CommunicationLog
                     communications={communications ?? []}
                     loading={commsLoading}
@@ -331,14 +337,14 @@ export default function ContactDetailPage() {
             {/* Linked Deals */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium">
+                <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium">
                   Linked Deals
                 </h3>
               </div>
 
-              <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
+              <div className="bg-app-recessed border border-border-default rounded-xl p-5">
                 {!linkedDeals || linkedDeals.length === 0 ? (
-                  <p className="text-sm text-[#8A8580] py-4 text-center">
+                  <p className="text-sm text-text-muted py-4 text-center">
                     No deals linked to this contact.
                   </p>
                 ) : (
@@ -346,15 +352,15 @@ export default function ContactDetailPage() {
                     {linkedDeals.map((deal) => (
                       <div
                         key={deal.deal_id}
-                        className="flex items-center justify-between p-3 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B]"
+                        className="flex items-center justify-between p-3 rounded-lg bg-app-bg border border-border-default"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-[#1E1D1B] flex items-center justify-center">
-                            <GitBranch size={14} className="text-[#8A8580]" />
+                          <div className="w-8 h-8 rounded-lg bg-border-default flex items-center justify-center">
+                            <GitBranch size={14} className="text-text-muted" />
                           </div>
                           <div>
-                            <p className="text-sm text-[#F0EDE8]">{deal.address}</p>
-                            <p className="text-xs text-[#8A8580]">
+                            <p className="text-sm text-text-primary">{deal.address}</p>
+                            <p className="text-xs text-text-muted">
                               {deal.strategy.replace(/_/g, ' ')} · {deal.status}
                               {deal.role && ` · ${deal.role}`}
                             </p>
@@ -367,8 +373,8 @@ export default function ContactDetailPage() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Edit modal */}
       <ContactModal
@@ -382,8 +388,8 @@ export default function ContactDetailPage() {
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
-      <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium mb-4">
+    <div className="bg-app-recessed border border-border-default rounded-xl p-5">
+      <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium mb-4">
         {title}
       </h3>
       {children}
@@ -402,11 +408,11 @@ function InfoRow({
 }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="w-7 h-7 rounded-md bg-[#1E1D1B] flex items-center justify-center shrink-0">
-        <Icon size={13} className="text-[#8A8580]" />
+      <div className="w-7 h-7 rounded-md bg-border-default flex items-center justify-center shrink-0">
+        <Icon size={13} className="text-text-muted" />
       </div>
       <div>
-        <p className="text-[10px] uppercase tracking-wider text-[#8A8580]">{label}</p>
+        <p className="text-[10px] uppercase tracking-wider text-text-muted">{label}</p>
         <div className="text-sm">{children}</div>
       </div>
     </div>
@@ -415,9 +421,9 @@ function InfoRow({
 
 function MetricBox({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-[#0C0B0A] rounded-lg p-3">
-      <p className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1">{label}</p>
-      <p className="text-sm text-[#F0EDE8] font-medium tabular-nums">{value}</p>
+    <div className="bg-app-bg rounded-lg p-3">
+      <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">{label}</p>
+      <p className="text-sm text-text-primary font-medium tabular-nums">{value}</p>
     </div>
   )
 }

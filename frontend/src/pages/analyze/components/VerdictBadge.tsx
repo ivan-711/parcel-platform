@@ -19,7 +19,7 @@ const VERDICT_TIERS: Array<{ max: number } & VerdictConfig> = [
 ]
 
 const INCOMPLETE_VERDICT: VerdictConfig = {
-  label: 'Incomplete', bg: 'rgba(138,133,128,0.10)', text: '#8A8580', border: 'rgba(138,133,128,0.20)',
+  label: 'Incomplete', bg: 'rgba(138,133,128,0.10)', text: 'var(--text-muted)', border: 'rgba(138,133,128,0.20)',
 }
 
 const WHOLESALE_MAP: Record<string, VerdictConfig> = {
@@ -112,8 +112,8 @@ export function VerdictBadge({ scenario }: Props) {
             {flags.map((f, i) => (
               <div key={i} className="flex items-start gap-2 text-xs">
                 <span className={`mt-0.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${
-                  f.severity === 'low' ? 'bg-[#6DBEA3]' :
-                  f.severity === 'medium' ? 'bg-[#D4A867]' : 'bg-[#D4766A]'
+                  f.severity === 'low' ? 'bg-success' :
+                  f.severity === 'medium' ? 'bg-warning' : 'bg-error'
                 }`} />
                 <span className="text-text-secondary">{f.explanation || f.flag}</span>
               </div>

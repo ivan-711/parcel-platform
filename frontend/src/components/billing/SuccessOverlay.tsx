@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import { Check, Sparkles, BarChart3, MessageSquare, FileText, GitBranch } from 'lucide-react'
 
 const FEATURES = [
@@ -109,30 +110,30 @@ export function SuccessOverlay() {
     <AnimatePresence>
       {show && (
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={prefersReducedMotion ? {} : { opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#0C0B0A]/80 backdrop-blur-xl backdrop-saturate-150"
+          exit={prefersReducedMotion ? {} : { opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-app-bg/80 backdrop-blur-xl backdrop-saturate-150"
           onClick={dismiss}
         >
           <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={prefersReducedMotion ? {} : { opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+            exit={prefersReducedMotion ? {} : { opacity: 0, scale: 0.95 }}
+            transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
             className="relative z-10 w-full max-w-md bg-app-surface rounded-xl border border-border-default shadow-2xl p-8 mx-4"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Animated checkmark */}
-            <div className="mx-auto w-16 h-16 rounded-full bg-[#6DBEA3]/15 flex items-center justify-center mb-6">
+            <div className="mx-auto w-16 h-16 rounded-full bg-success/15 flex items-center justify-center mb-6">
               <motion.div
-                initial={{ scale: 0 }}
+                initial={prefersReducedMotion ? {} : { scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+                transition={prefersReducedMotion ? { duration: 0 } : { delay: 0.2, type: 'spring', stiffness: 200 }}
               >
-                <Check size={32} className="text-[#6DBEA3]" strokeWidth={3} />
+                <Check size={32} className="text-success" strokeWidth={3} />
               </motion.div>
             </div>
 
@@ -147,8 +148,8 @@ export function SuccessOverlay() {
             <ul className="space-y-3 mb-8">
               {FEATURES.map(({ label }) => (
                 <li key={label} className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-[#8B7AFF]/15 flex items-center justify-center shrink-0">
-                    <Check size={12} className="text-[#8B7AFF]" />
+                  <div className="w-5 h-5 rounded-full bg-violet-400/15 flex items-center justify-center shrink-0">
+                    <Check size={12} className="text-violet-400" />
                   </div>
                   <span className="text-sm text-text-secondary">{label}</span>
                 </li>
@@ -160,7 +161,7 @@ export function SuccessOverlay() {
                 dismiss()
                 navigate('/analyze')
               }}
-              className="w-full h-11 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-accent-text-on-accent text-sm font-medium transition-all cursor-pointer"
+              className="w-full h-11 rounded-lg bg-gradient-to-r from-violet-400 to-violet-600 hover:brightness-110 hover:shadow-[0_0_20px_rgba(139,122,255,0.3)] text-accent-text-on-accent text-sm font-medium transition-all cursor-pointer"
             >
               Start Analyzing Deals
             </button>

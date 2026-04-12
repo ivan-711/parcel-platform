@@ -2,8 +2,10 @@
 
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { ArrowLeft, Upload, FileText, X } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
+import { safeStaggerContainer, safeStaggerItem } from '@/lib/motion'
 import { useBatchStatus } from '@/hooks/useSkipTracing'
 import { api } from '@/lib/api'
 import { toast } from 'sonner'
@@ -143,69 +145,74 @@ export default function BatchSkipTracePage() {
         { label: 'Batch Upload' },
       ]}
     >
-      <div className="max-w-3xl space-y-6">
+      <motion.div
+        variants={safeStaggerContainer(100)}
+        initial="hidden"
+        animate="visible"
+        className="max-w-3xl space-y-6"
+      >
 
         {/* Back link */}
-        <div className="flex items-center gap-3">
+        <motion.div variants={safeStaggerItem} className="flex items-center gap-3">
           <Link
             to="/skip-tracing"
-            className="inline-flex items-center gap-1.5 text-sm text-[#8A8580] hover:text-[#C5C0B8] transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-text-secondary transition-colors"
           >
             <ArrowLeft size={14} />
             Back to Skip Tracing
           </Link>
-        </div>
+        </motion.div>
 
-        <div>
+        <motion.div variants={safeStaggerItem}>
           <h1
-            className="text-2xl text-[#F0EDE8] mb-1"
-            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+            className="text-2xl text-text-primary font-brand font-light mb-1"
           >
             Batch Skip Trace
           </h1>
-          <p className="text-sm text-[#8A8580]">
+          <p className="text-sm text-text-muted">
             Upload a CSV with address, city, state, and zip columns to trace multiple owners at once.
           </p>
-        </div>
+        </motion.div>
 
         {/* Drop zone */}
-        <div
+        <motion.div variants={safeStaggerItem}><div
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`bg-[#0C0B0A] border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
+          className={`bg-app-bg border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
             dragOver
-              ? 'border-[#8B7AFF]/60 bg-[#8B7AFF]/5'
-              : 'border-[#1E1D1B] hover:border-[#8B7AFF]/30'
+              ? 'border-accent-primary/60 bg-accent-primary/5'
+              : 'border-border-default hover:border-accent-primary/30'
           }`}
         >
           {file ? (
             <div className="flex items-center justify-center gap-3">
-              <FileText size={20} className="text-[#8B7AFF]" />
-              <span className="text-sm text-[#F0EDE8]">{file.name}</span>
-              <span className="text-xs text-[#8A8580]">({records.length} records)</span>
+              <FileText size={20} className="text-accent-primary" />
+              <span className="text-sm text-text-primary">{file.name}</span>
+              <span className="text-xs text-text-muted">({records.length} records)</span>
               <button
                 onClick={clearFile}
-                className="ml-2 inline-flex items-center p-1 rounded text-[#8A8580] hover:text-[#F87171] hover:bg-[#F87171]/10 transition-colors"
+                aria-label="Remove file"
+                className="ml-2 inline-flex items-center p-1 rounded text-text-muted hover:text-loss hover:bg-loss-bg transition-colors"
               >
                 <X size={14} />
               </button>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-3">
-              <Upload size={24} className="text-[#8A8580]" />
+              <Upload size={24} className="text-text-muted" />
               <div>
-                <p className="text-sm text-[#C5C0B8]">Drag and drop your CSV here</p>
-                <p className="text-xs text-[#8A8580] mt-1">or</p>
+                <p className="text-sm text-text-secondary">Drag and drop your CSV here</p>
+                <p className="text-xs text-text-muted mt-1">or</p>
               </div>
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm border border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/30 hover:text-[#8B7AFF] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-accent-primary/30 hover:text-accent-primary transition-colors cursor-pointer"
               >
                 Browse Files
               </button>
-              <p className="text-xs text-[#8A8580]">
-                Required columns: <span className="font-mono text-[#C5C0B8]">address, city, state, zip</span>
+              <p className="text-xs text-text-muted">
+                Required columns: <span className="font-mono text-text-secondary">address, city, state, zip</span>
               </p>
             </div>
           )}
@@ -216,37 +223,37 @@ export default function BatchSkipTracePage() {
             className="hidden"
             onChange={handleInputChange}
           />
-        </div>
+        </div></motion.div>
 
         {/* Preview table */}
         {records.length > 0 && (
-          <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-[#1E1D1B]">
-              <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium">
+          <div className="bg-app-recessed border border-border-default rounded-xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-border-default">
+              <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium">
                 Preview — first {Math.min(5, records.length)} of {records.length} rows
               </h3>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-[#1E1D1B]">
+                  <tr className="border-b border-border-default">
                     {['Address', 'City', 'State', 'Zip'].map((col) => (
                       <th
                         key={col}
-                        className="px-4 py-2 text-left text-[10px] uppercase tracking-wider text-[#8A8580] font-medium"
+                        className="px-4 py-2 text-left text-[10px] uppercase tracking-wider text-text-muted font-medium"
                       >
                         {col}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1E1D1B]">
+                <tbody className="divide-y divide-border-default">
                   {records.slice(0, 5).map((row, i) => (
                     <tr key={i}>
-                      <td className="px-4 py-2 text-[#F0EDE8]">{row.address}</td>
-                      <td className="px-4 py-2 text-[#C5C0B8]">{row.city}</td>
-                      <td className="px-4 py-2 text-[#C5C0B8]">{row.state}</td>
-                      <td className="px-4 py-2 text-[#C5C0B8]">{row.zip_code}</td>
+                      <td className="px-4 py-2 text-text-primary">{row.address}</td>
+                      <td className="px-4 py-2 text-text-secondary">{row.city}</td>
+                      <td className="px-4 py-2 text-text-secondary">{row.state}</td>
+                      <td className="px-4 py-2 text-text-secondary">{row.zip_code}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -257,7 +264,7 @@ export default function BatchSkipTracePage() {
 
         {/* Controls */}
         {records.length > 0 && !batchId && (
-          <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="bg-app-recessed border border-border-default rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             {/* Auto-create toggle */}
             <label className="flex items-center gap-3 cursor-pointer select-none">
               <button
@@ -265,7 +272,7 @@ export default function BatchSkipTracePage() {
                 aria-checked={autoCreate}
                 onClick={() => setAutoCreate((v) => !v)}
                 className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                  autoCreate ? 'bg-[#8B7AFF]' : 'bg-[#1E1D1B]'
+                  autoCreate ? 'bg-accent-primary' : 'bg-border-default'
                 }`}
               >
                 <span
@@ -274,13 +281,13 @@ export default function BatchSkipTracePage() {
                   }`}
                 />
               </button>
-              <span className="text-sm text-[#C5C0B8]">Auto-create contacts on match</span>
+              <span className="text-sm text-text-secondary">Auto-create contacts on match</span>
             </label>
 
             <button
               onClick={handleTraceAll}
               disabled={isSubmitting}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-accent-primary text-accent-text-on-accent hover:bg-accent-hover transition-colors disabled:opacity-50"
             >
               {isSubmitting ? 'Starting...' : `Trace All ${records.length} Addresses`}
             </button>
@@ -289,25 +296,25 @@ export default function BatchSkipTracePage() {
 
         {/* Progress */}
         {batchId && batchStatus && !isComplete && !isFailed && (
-          <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5 space-y-3">
+          <div className="bg-app-recessed border border-border-default rounded-xl p-5 space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium">Processing</h3>
-              <span className="text-xs text-[#8A8580]">
+              <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium">Processing</h3>
+              <span className="text-xs text-text-muted">
                 {batchStatus.completed} / {batchStatus.total}
               </span>
             </div>
-            <div className="w-full h-1.5 bg-[#1E1D1B] rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-border-default rounded-full overflow-hidden">
               <div
-                className="h-full bg-[#8B7AFF] rounded-full transition-all duration-500"
+                className="h-full bg-accent-primary rounded-full transition-all duration-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <div className="flex items-center gap-4 text-xs text-[#8A8580]">
+            <div className="flex items-center gap-4 text-xs text-text-muted">
               <span>
-                <span className="text-[#4ADE80]">{batchStatus.found ?? 0}</span> found
+                <span className="text-profit">{batchStatus.found ?? 0}</span> found
               </span>
               <span>
-                <span className="text-[#F87171]">{batchStatus.not_found ?? 0}</span> not found
+                <span className="text-loss">{batchStatus.not_found ?? 0}</span> not found
               </span>
             </div>
           </div>
@@ -315,16 +322,16 @@ export default function BatchSkipTracePage() {
 
         {/* Results summary */}
         {isComplete && batchStatus && (
-          <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-5">
-            <h3 className="text-[11px] uppercase tracking-wider text-[#8A8580] font-medium mb-3">Complete</h3>
-            <p className="text-sm text-[#F0EDE8]">
+          <div className="bg-app-recessed border border-border-default rounded-xl p-5">
+            <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium mb-3">Complete</h3>
+            <p className="text-sm text-text-primary">
               {batchStatus.total} addresses processed:{' '}
-              <span className="text-[#4ADE80]">{batchStatus.found ?? 0} found</span>,{' '}
-              <span className="text-[#8A8580]">{batchStatus.not_found ?? 0} not found</span>
+              <span className="text-profit">{batchStatus.found ?? 0} found</span>,{' '}
+              <span className="text-text-muted">{batchStatus.not_found ?? 0} not found</span>
             </p>
             <Link
               to="/skip-tracing"
-              className="inline-flex items-center gap-1.5 mt-4 text-sm text-[#8B7AFF] hover:text-[#A89FFF] transition-colors"
+              className="inline-flex items-center gap-1.5 mt-4 text-sm text-accent-primary hover:text-accent-secondary transition-colors"
             >
               View history →
             </Link>
@@ -333,18 +340,18 @@ export default function BatchSkipTracePage() {
 
         {/* Failed state */}
         {isFailed && (
-          <div className="bg-[#141311] border border-[#F87171]/20 rounded-xl p-5">
-            <p className="text-sm text-[#F87171]">Batch processing failed. Please try again.</p>
+          <div className="bg-app-recessed border border-loss/20 rounded-xl p-5">
+            <p className="text-sm text-loss">Batch processing failed. Please try again.</p>
             <button
               onClick={clearFile}
-              className="mt-3 text-sm text-[#8A8580] hover:text-[#C5C0B8] transition-colors"
+              className="mt-3 text-sm text-text-muted hover:text-text-secondary transition-colors"
             >
               Start over
             </button>
           </div>
         )}
 
-      </div>
+      </motion.div>
     </AppShell>
   )
 }

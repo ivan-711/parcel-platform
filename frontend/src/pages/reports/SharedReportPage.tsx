@@ -115,10 +115,10 @@ function ReportLogo({ brandKit }: { brandKit?: { logo_url?: string; company_name
 
   return (
     <Link to="/" className="flex items-center gap-2 group">
-      <div className="w-6 h-6 rounded bg-[#8B7AFF] flex items-center justify-center">
+      <div className="w-6 h-6 rounded bg-violet-400 flex items-center justify-center">
         <span className="text-[10px] font-bold text-white">P</span>
       </div>
-      <span className="text-sm font-semibold text-text-primary tracking-tight group-hover:text-[#8B7AFF] transition-colors">
+      <span className="text-sm font-semibold text-text-primary tracking-tight group-hover:text-violet-400 transition-colors">
         Parcel
       </span>
     </Link>
@@ -132,7 +132,7 @@ function ReportLogo({ brandKit }: { brandKit?: { logo_url?: string; company_name
 function LoadingState() {
   return (
     <div className="min-h-screen bg-app-bg">
-      <div className="sticky top-0 z-50 backdrop-blur-xl bg-[#0C0B0A]/85 border-b border-border-subtle">
+      <div className="sticky top-0 z-50 backdrop-blur-xl bg-app-bg/85 border-b border-border-subtle">
         <div className="max-w-[720px] mx-auto px-6 h-14 flex items-center">
           <ReportLogo />
         </div>
@@ -151,7 +151,7 @@ function LoadingState() {
 function ErrorState() {
   return (
     <div className="min-h-screen bg-app-bg">
-      <div className="sticky top-0 z-50 backdrop-blur-xl bg-[#0C0B0A]/85 border-b border-border-subtle">
+      <div className="sticky top-0 z-50 backdrop-blur-xl bg-app-bg/85 border-b border-border-subtle">
         <div className="max-w-[720px] mx-auto px-6 h-14 flex items-center">
           <ReportLogo />
         </div>
@@ -165,7 +165,7 @@ function ErrorState() {
             This report is no longer available.
           </h2>
           <Link to="/">
-            <Button className="bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-white text-sm mt-2 hover:opacity-90">
+            <Button className="bg-gradient-to-r from-violet-400 to-violet-600 text-white text-sm mt-2 hover:opacity-90">
               Go to Parcel
               <ArrowRight size={14} className="ml-1.5" />
             </Button>
@@ -274,7 +274,7 @@ export default function SharedReportPage() {
       className="min-h-screen bg-app-bg print:bg-white"
     >
       {/* Sticky header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#0C0B0A]/85 border-b border-border-subtle print:hidden">
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-app-bg/85 border-b border-border-subtle print:hidden">
         <div className="max-w-[720px] mx-auto px-6 h-14 flex items-center justify-between">
           <ReportLogo brandKit={brandKit} />
           <div className="flex items-center gap-2">
@@ -466,7 +466,7 @@ export default function SharedReportPage() {
           <div className="flex items-center justify-between">
             <span className="text-[13px] text-text-secondary">Powered by Parcel</span>
             <a href="https://parceldesk.io" target="_blank" rel="noopener noreferrer">
-              <Button className="bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-white text-sm hover:opacity-90">
+              <Button className="bg-gradient-to-r from-violet-400 to-violet-600 text-white text-sm hover:opacity-90">
                 Try Parcel Free
                 <ArrowRight size={14} className="ml-1.5" />
               </Button>

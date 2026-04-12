@@ -88,11 +88,10 @@ export function RecordPaymentModal({ open, onOpenChange, defaults, instruments =
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px] bg-[#141311] border-[#1E1D1B]">
+      <DialogContent className="sm:max-w-[480px] bg-app-recessed border-border-default">
         <DialogHeader>
           <DialogTitle
-            className="text-[#F0EDE8]"
-            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+            className="text-text-primary font-brand font-light"
           >
             Record Payment
           </DialogTitle>
@@ -101,11 +100,12 @@ export function RecordPaymentModal({ open, onOpenChange, defaults, instruments =
         <div className="space-y-4 mt-2">
           {/* Instrument selector */}
           {!defaults?.instrumentId && instruments.length > 0 && (
-            <Field label="Instrument">
+            <Field id="payment-instrument" label="Instrument">
               <select
+                id="payment-instrument"
                 value={instrumentId}
                 onChange={(e) => setInstrumentId(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+                className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
               >
                 <option value="">Select instrument...</option>
                 {instruments.map((i) => (
@@ -116,46 +116,50 @@ export function RecordPaymentModal({ open, onOpenChange, defaults, instruments =
           )}
           {defaults?.instrumentName && (
             <Field label="Instrument">
-              <p className="text-sm text-[#F0EDE8]">{defaults.instrumentName}</p>
+              <p className="text-sm text-text-primary">{defaults.instrumentName}</p>
             </Field>
           )}
 
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Amount ($)">
+            <Field id="payment-amount" label="Amount ($)">
               <input
+                id="payment-amount"
                 type="number"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+                className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
                 placeholder="0.00"
               />
             </Field>
-            <Field label="Payment Date">
+            <Field id="payment-date" label="Payment Date">
               <input
+                id="payment-date"
                 type="date"
                 value={paymentDate}
                 onChange={(e) => setPaymentDate(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+                className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
               />
             </Field>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Direction">
+            <Field id="payment-direction" label="Direction">
               <select
+                id="payment-direction"
                 value={direction}
                 onChange={(e) => setDirection(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+                className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
               >
                 <option value="outgoing">Outgoing (you pay)</option>
                 <option value="incoming">Incoming (you collect)</option>
               </select>
             </Field>
-            <Field label="Payment Type">
+            <Field id="payment-type" label="Payment Type">
               <select
+                id="payment-type"
                 value={paymentType}
                 onChange={(e) => setPaymentType(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+                className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
               >
                 <option value="regular">Regular</option>
                 <option value="extra_principal">Extra Principal</option>
@@ -168,31 +172,34 @@ export function RecordPaymentModal({ open, onOpenChange, defaults, instruments =
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Principal Portion ($)">
+            <Field id="payment-principal" label="Principal Portion ($)">
               <input
+                id="payment-principal"
                 type="number"
                 value={principalPortion}
                 onChange={(e) => setPrincipalPortion(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+                className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
                 placeholder="Auto"
               />
             </Field>
-            <Field label="Interest Portion ($)">
+            <Field id="payment-interest" label="Interest Portion ($)">
               <input
+                id="payment-interest"
                 type="number"
                 value={interestPortion}
                 onChange={(e) => setInterestPortion(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+                className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
                 placeholder="Auto"
               />
             </Field>
           </div>
 
-          <Field label="Payment Method">
+          <Field id="payment-method" label="Payment Method">
             <select
+              id="payment-method"
               value={paymentMethod}
               onChange={(e) => setPaymentMethod(e.target.value)}
-              className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+              className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
             >
               <option value="bank_transfer">Bank Transfer</option>
               <option value="check">Check</option>
@@ -201,29 +208,31 @@ export function RecordPaymentModal({ open, onOpenChange, defaults, instruments =
             </select>
           </Field>
 
-          <Field label="Confirmation # (optional)">
+          <Field id="payment-confirmation" label="Confirmation # (optional)">
             <input
+              id="payment-confirmation"
               type="text"
               value={confirmationNumber}
               onChange={(e) => setConfirmationNumber(e.target.value)}
-              className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+              className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
               placeholder="Optional"
             />
           </Field>
 
-          <Field label="Notes (optional)">
+          <Field id="payment-notes" label="Notes (optional)">
             <textarea
+              id="payment-notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
-              className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none resize-none"
+              className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none resize-none"
             />
           </Field>
 
           <button
             onClick={handleSubmit}
             disabled={!instrumentId || !amount || recordMutation.isPending}
-            className="w-full py-2.5 text-sm rounded-lg bg-[#8B7AFF] text-white font-medium hover:bg-[#7B6AEF] transition-colors disabled:opacity-50 cursor-pointer"
+            className="w-full py-2.5 text-sm rounded-lg bg-violet-400 text-white font-medium hover:bg-violet-500 transition-colors disabled:opacity-50 cursor-pointer"
           >
             {recordMutation.isPending ? 'Recording...' : 'Record Payment'}
           </button>
@@ -233,10 +242,10 @@ export function RecordPaymentModal({ open, onOpenChange, defaults, instruments =
   )
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ id, label, children }: { id?: string; label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1 block">{label}</label>
+      <label htmlFor={id} className="text-[10px] uppercase tracking-wider text-text-muted mb-1 block">{label}</label>
       {children}
     </div>
   )

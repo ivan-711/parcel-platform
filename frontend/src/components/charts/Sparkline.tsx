@@ -14,7 +14,7 @@ interface SparklineProps {
 
 export function Sparkline({
   data,
-  color = '#8B7AFF',
+  color = 'var(--chart-accent)',
   height = 40,
   strokeWidth = 1.5,
   gradientOpacity = 0.20,

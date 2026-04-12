@@ -28,7 +28,7 @@ import {
   MapPin,
 } from 'lucide-react'
 import { api } from '@/lib/api'
-import { DURATION, EASING } from '@/lib/motion'
+import { DURATION, EASING, prefersReducedMotion } from '@/lib/motion'
 import type { DealListItem } from '@/types'
 
 interface CommandPaletteProps {
@@ -105,26 +105,22 @@ function useDebouncedValue<T>(value: T, delayMs: number): T {
 }
 
 /** Overlay animation variants. */
-const overlayVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: DURATION.fast } },
-  exit: { opacity: 0, transition: { duration: DURATION.fast } },
-}
+const overlayVariants = prefersReducedMotion
+  ? { hidden: {}, visible: {}, exit: {} }
+  : {
+      hidden: { opacity: 0 },
+      visible: { opacity: 1, transition: { duration: DURATION.fast } },
+      exit: { opacity: 0, transition: { duration: DURATION.fast } },
+    }
 
 /** Dialog content animation variants — scale from 0.95, opacity fade. */
-const contentVariants = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: DURATION.normal, ease: EASING.snappy },
-  },
-  exit: {
-    opacity: 0,
-    scale: 0.95,
-    transition: { duration: DURATION.fast },
-  },
-}
+const contentVariants = prefersReducedMotion
+  ? { hidden: {}, visible: {}, exit: {} }
+  : {
+      hidden: { opacity: 0, scale: 0.95 },
+      visible: { opacity: 1, scale: 1, transition: { duration: DURATION.normal, ease: EASING.snappy } },
+      exit: { opacity: 0, scale: 0.95, transition: { duration: DURATION.fast } },
+    }
 
 /** Command Palette — global search and navigation dialog. */
 function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
@@ -194,7 +190,7 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         <>
           {/* Backdrop overlay */}
           <motion.div
-            className="fixed inset-0 z-50 bg-[#0C0B0A]/75 backdrop-blur-[20px] backdrop-saturate-[180%]"
+            className="fixed inset-0 z-50 bg-app-bg/75 backdrop-blur-[20px] backdrop-saturate-[180%]"
             variants={overlayVariants}
             initial="hidden"
             animate="visible"
@@ -206,15 +202,40 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
           {/* Dialog content */}
           <motion.div
             className="fixed inset-0 z-50 flex items-start justify-center pt-[20vh]"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Command palette"
             variants={contentVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
+            onKeyDown={(e: React.KeyboardEvent) => {
+              // Focus trap: prevent Tab from escaping the dialog
+              if (e.key === 'Tab') {
+                const focusable = e.currentTarget.querySelectorAll<HTMLElement>(
+                  'input, button, [tabindex]:not([tabindex="-1"]), [cmdk-item]'
+                )
+                if (focusable.length === 0) return
+                const first = focusable[0]
+                const last = focusable[focusable.length - 1]
+                if (e.shiftKey) {
+                  if (document.activeElement === first) {
+                    e.preventDefault()
+                    last.focus()
+                  }
+                } else {
+                  if (document.activeElement === last) {
+                    e.preventDefault()
+                    first.focus()
+                  }
+                }
+              }
+            }}
           >
             <CommandPrimitive
               label="Command palette"
               loop
-              className="w-full max-w-xl rounded-2xl border border-[#3A3835] bg-[#1A1916]/95 backdrop-blur-xl shadow-2xl overflow-hidden"
+              className="w-full max-w-xl rounded-2xl border border-border-strong bg-app-surface/95 backdrop-blur-xl shadow-2xl overflow-hidden"
               onKeyDown={(e: React.KeyboardEvent) => {
                 if (e.key === 'Escape') {
                   e.preventDefault()
@@ -224,13 +245,13 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             >
               {/* Search input */}
               <div className="flex items-center gap-3 border-b border-border-default px-4">
-                <Search size={16} className="shrink-0 text-[#8B7AFF]" />
+                <Search size={16} className="shrink-0 text-violet-400" />
                 <CommandPrimitive.Input
                   ref={inputRef}
                   value={search}
                   onValueChange={setSearch}
                   placeholder="Search deals, pages, actions..."
-                  className="flex-1 h-12 bg-transparent text-sm text-text-primary placeholder:text-text-disabled outline-none"
+                  className="flex-1 h-12 bg-transparent text-sm text-text-primary placeholder:text-text-disabled outline-none focus-ring rounded"
                 />
                 <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-border-default bg-layer-3 px-1.5 py-0.5 text-[10px] font-mono text-text-muted">
                   ESC
@@ -256,9 +277,9 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                         value={page.label}
                         keywords={page.keywords}
                         onSelect={() => handleSelect(page.path)}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-text-secondary cursor-pointer transition-colors data-[selected=true]:bg-[#8B7AFF]/[0.08] data-[selected=true]:border-l-2 data-[selected=true]:border-l-[#8B7AFF] data-[selected=true]:pl-[calc(0.75rem-2px)] data-[selected=true]:text-text-primary"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-text-secondary cursor-pointer transition-colors data-[selected=true]:bg-violet-400/[0.08] data-[selected=true]:border-l-2 data-[selected=true]:border-l-violet-400 data-[selected=true]:pl-[calc(0.75rem-2px)] data-[selected=true]:text-text-primary"
                       >
-                        <Icon size={16} className="shrink-0 text-text-secondary data-[selected=true]:text-[#8B7AFF]" />
+                        <Icon size={16} className="shrink-0 text-text-secondary data-[selected=true]:text-violet-400" />
                         <span>{page.label}</span>
                       </CommandPrimitive.Item>
                     )
@@ -278,7 +299,7 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                         value={`action ${action.label}`}
                         keywords={action.keywords}
                         onSelect={() => handleSelect(action.path)}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-text-secondary cursor-pointer transition-colors data-[selected=true]:bg-[#8B7AFF]/[0.08] data-[selected=true]:border-l-2 data-[selected=true]:border-l-[#8B7AFF] data-[selected=true]:pl-[calc(0.75rem-2px)] data-[selected=true]:text-text-primary"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-text-secondary cursor-pointer transition-colors data-[selected=true]:bg-violet-400/[0.08] data-[selected=true]:border-l-2 data-[selected=true]:border-l-violet-400 data-[selected=true]:pl-[calc(0.75rem-2px)] data-[selected=true]:text-text-primary"
                       >
                         <ActionIcon size={16} className="shrink-0 text-text-secondary" />
                         <div className="flex flex-col">
@@ -310,7 +331,7 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                         keywords={[deal.strategy, deal.address, deal.zip_code]}
                         onSelect={() => handleSelect(deal.property_id ? `/analyze/results/${deal.property_id}` : `/analyze/deal/${deal.id}`)}
                         forceMount
-                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-text-secondary cursor-pointer transition-colors data-[selected=true]:bg-[#8B7AFF]/[0.08] data-[selected=true]:border-l-2 data-[selected=true]:border-l-[#8B7AFF] data-[selected=true]:pl-[calc(0.75rem-2px)] data-[selected=true]:text-text-primary"
+                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-text-secondary cursor-pointer transition-colors data-[selected=true]:bg-violet-400/[0.08] data-[selected=true]:border-l-2 data-[selected=true]:border-l-violet-400 data-[selected=true]:pl-[calc(0.75rem-2px)] data-[selected=true]:text-text-primary"
                       >
                         <MapPin size={16} className="shrink-0 text-text-secondary" />
                         <div className="flex flex-col min-w-0">

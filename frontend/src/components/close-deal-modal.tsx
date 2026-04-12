@@ -124,91 +124,102 @@ export function CloseDealModal({
           <div className="mt-4 space-y-4">
             {/* Closed Date */}
             <div>
-              <label className="mb-1 block text-xs font-medium text-text-secondary">
+              <label htmlFor="close-deal-date" className="mb-1 block text-xs font-medium text-text-secondary">
                 Closed Date
               </label>
               <input
+                id="close-deal-date"
                 type="date"
                 value={closedDate}
                 onChange={(e) => setClosedDate(e.target.value)}
-                className="w-full rounded-lg border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary focus:border-[#8B7AFF]/50 focus:outline-none focus:ring-1 focus:ring-[#8B7AFF]/20"
+                aria-required="true"
+                aria-describedby={errors.closedDate ? 'close-deal-date-error' : undefined}
+                className="w-full rounded-lg border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary focus:border-violet-400/50 focus:outline-none focus:ring-1 focus:ring-violet-400/20"
               />
               {errors.closedDate && (
-                <p className="mt-1 text-xs text-[#D4766A]">{errors.closedDate}</p>
+                <p id="close-deal-date-error" className="mt-1 text-xs text-loss">{errors.closedDate}</p>
               )}
             </div>
 
             {/* Closed Price */}
             <div>
-              <label className="mb-1 block text-xs font-medium text-text-secondary">
+              <label htmlFor="close-deal-price" className="mb-1 block text-xs font-medium text-text-secondary">
                 Closed Price
               </label>
               <input
+                id="close-deal-price"
                 type="number"
                 value={closedPrice}
                 onChange={(e) => setClosedPrice(e.target.value)}
                 placeholder="e.g. 250000"
-                className="w-full rounded-lg border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary placeholder:text-text-disabled tabular-nums focus:border-[#8B7AFF]/50 focus:outline-none focus:ring-1 focus:ring-[#8B7AFF]/20"
+                aria-required="true"
+                aria-describedby={errors.closedPrice ? 'close-deal-price-error' : undefined}
+                className="w-full rounded-lg border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary placeholder:text-text-disabled tabular-nums focus:border-violet-400/50 focus:outline-none focus:ring-1 focus:ring-violet-400/20"
               />
               {errors.closedPrice && (
-                <p className="mt-1 text-xs text-[#D4766A]">{errors.closedPrice}</p>
+                <p id="close-deal-price-error" className="mt-1 text-xs text-loss">{errors.closedPrice}</p>
               )}
             </div>
 
             {/* Profit / Assignment Fee */}
             <div>
-              <label className="mb-1 block text-xs font-medium text-text-secondary">
+              <label htmlFor="close-deal-profit" className="mb-1 block text-xs font-medium text-text-secondary">
                 Profit / Assignment Fee
               </label>
               <input
+                id="close-deal-profit"
                 type="number"
                 value={profit}
                 onChange={(e) => setProfit(e.target.value)}
                 placeholder="e.g. 18500"
-                className="w-full rounded-lg border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary placeholder:text-text-disabled tabular-nums focus:border-[#8B7AFF]/50 focus:outline-none focus:ring-1 focus:ring-[#8B7AFF]/20"
+                aria-required="true"
+                aria-describedby={errors.profit ? 'close-deal-profit-error' : undefined}
+                className="w-full rounded-lg border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary placeholder:text-text-disabled tabular-nums focus:border-violet-400/50 focus:outline-none focus:ring-1 focus:ring-violet-400/20"
               />
               {errors.profit && (
-                <p className="mt-1 text-xs text-[#D4766A]">{errors.profit}</p>
+                <p id="close-deal-profit-error" className="mt-1 text-xs text-loss">{errors.profit}</p>
               )}
             </div>
 
             {/* Monthly Cash Flow */}
             <div>
-              <label className="mb-1 block text-xs font-medium text-text-secondary">
+              <label htmlFor="close-deal-cashflow" className="mb-1 block text-xs font-medium text-text-secondary">
                 Monthly Cash Flow
               </label>
               <input
+                id="close-deal-cashflow"
                 type="number"
                 value={monthlyCashFlow}
                 onChange={(e) => setMonthlyCashFlow(e.target.value)}
                 placeholder="0 if wholesale/flip"
-                className="w-full rounded-lg border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary placeholder:text-text-disabled tabular-nums focus:border-[#8B7AFF]/50 focus:outline-none focus:ring-1 focus:ring-[#8B7AFF]/20"
+                className="w-full rounded-lg border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary placeholder:text-text-disabled tabular-nums focus:border-violet-400/50 focus:outline-none focus:ring-1 focus:ring-violet-400/20"
               />
             </div>
 
             {/* Notes */}
             <div>
-              <label className="mb-1 block text-xs font-medium text-text-secondary">
+              <label htmlFor="close-deal-notes" className="mb-1 block text-xs font-medium text-text-secondary">
                 Notes
               </label>
               <textarea
+                id="close-deal-notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="How did this deal go?"
                 rows={3}
-                className="w-full rounded-lg border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary placeholder:text-text-disabled focus:border-[#8B7AFF]/50 focus:outline-none focus:ring-1 focus:ring-[#8B7AFF]/20 resize-none"
+                className="w-full rounded-lg border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary placeholder:text-text-disabled focus:border-violet-400/50 focus:outline-none focus:ring-1 focus:ring-violet-400/20 resize-none"
               />
             </div>
 
             {submitError && (
-              <p className="text-sm text-[#D4766A]">{submitError}</p>
+              <p className="text-sm text-loss">{submitError}</p>
             )}
 
             <button
               type="button"
               onClick={handleSubmit}
               disabled={closeDealMutation.isPending}
-              className="w-full rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] px-4 py-2.5 text-sm font-medium text-accent-text-on-accent hover:opacity-90 transition-opacity disabled:opacity-50"
+              className="w-full rounded-lg bg-gradient-to-r from-violet-400 to-violet-500 px-4 py-2.5 text-sm font-medium text-accent-text-on-accent hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {closeDealMutation.isPending ? 'Closing...' : 'Add to Portfolio'}
             </button>

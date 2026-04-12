@@ -36,7 +36,7 @@ export function MobileTabBar() {
   return (
     <>
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0C0B0A] border-t border-[#1E1D1B] h-16 pb-[env(safe-area-inset-bottom)] flex items-center justify-around"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-app-bg border-t border-border-default h-16 pb-[env(safe-area-inset-bottom)] flex items-center justify-around"
         aria-label="Mobile navigation"
       >
         {MOBILE_PRIMARY_TABS.map((tab) => {
@@ -48,11 +48,11 @@ export function MobileTabBar() {
               to={tab.path}
               onClick={() => trackEvent('mobile_tab_clicked', { tab: tab.label })}
               className={cn(
-                'flex flex-col items-center justify-center gap-0.5 min-w-[64px] min-h-[44px] py-2 active:opacity-70 transition-colors duration-150',
-                active ? 'text-[#8B7AFF]' : 'text-[#8A8580]'
+                'flex flex-col items-center justify-center gap-0.5 min-w-[64px] min-h-[44px] py-2 active:opacity-70 transition-colors duration-150 focus-ring rounded-lg',
+                active ? 'text-violet-400' : 'text-text-muted'
               )}
             >
-              <div className={cn('w-4 h-0.5 rounded-full mx-auto mb-0.5', active ? 'bg-[#8B7AFF]' : 'bg-transparent')} />
+              <div className={cn('w-4 h-0.5 rounded-full mx-auto mb-0.5', active ? 'bg-violet-400' : 'bg-transparent')} />
               <Icon className="w-5 h-5" />
               <span className="text-[10px] font-medium tracking-wide">{tab.label}</span>
             </Link>
@@ -66,11 +66,11 @@ export function MobileTabBar() {
             trackEvent('mobile_more_opened')
           }}
           className={cn(
-            'flex flex-col items-center justify-center gap-0.5 min-w-[64px] min-h-[44px] py-2 active:opacity-70 transition-colors duration-150 cursor-pointer',
-            isMoreActive ? 'text-[#8B7AFF]' : 'text-[#8A8580]'
+            'flex flex-col items-center justify-center gap-0.5 min-w-[64px] min-h-[44px] py-2 active:opacity-70 transition-colors duration-150 cursor-pointer focus-ring rounded-lg',
+            isMoreActive ? 'text-violet-400' : 'text-text-muted'
           )}
         >
-          <div className={cn('w-4 h-0.5 rounded-full mx-auto mb-0.5', isMoreActive ? 'bg-[#8B7AFF]' : 'bg-transparent')} />
+          <div className={cn('w-4 h-0.5 rounded-full mx-auto mb-0.5', isMoreActive ? 'bg-violet-400' : 'bg-transparent')} />
           <MORE_ICON className="w-5 h-5" />
           <span className="text-[10px] font-medium tracking-wide">More</span>
         </button>
@@ -78,10 +78,10 @@ export function MobileTabBar() {
 
       {/* More bottom sheet — grouped by section */}
       <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
-        <SheetContent side="bottom" className="rounded-t-2xl bg-[#141311] max-h-[70vh] p-0 overflow-y-auto">
+        <SheetContent side="bottom" className="rounded-t-2xl bg-app-recessed max-h-[70vh] p-0 overflow-y-auto">
           <SheetTitle className="sr-only">More navigation</SheetTitle>
           {/* Drag handle */}
-          <div className="w-10 h-1 rounded-full bg-[#1E1D1B] mx-auto mt-3 mb-2 sticky top-0" />
+          <div className="w-10 h-1 rounded-full bg-border-default mx-auto mt-3 mb-2 sticky top-0" />
 
           <nav className="pb-8" aria-label="More pages">
             {NAV_SECTIONS.map((section) => {
@@ -93,7 +93,7 @@ export function MobileTabBar() {
 
               return (
                 <div key={section.label}>
-                  <p className="text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-5 mt-4 mb-1.5">
+                  <p className="text-[10px] uppercase tracking-wider text-text-muted font-medium px-5 mt-4 mb-1.5">
                     {section.label}
                   </p>
                   {items.map((item) => {
@@ -108,11 +108,11 @@ export function MobileTabBar() {
                             handleLockedClick(item.label, item.path)
                             setMoreOpen(false)
                           }}
-                          className="flex items-center gap-3 w-full h-12 px-5 text-sm opacity-50 text-[#C5C0B8] hover:bg-[#1A1918] transition-colors cursor-pointer"
+                          className="flex items-center gap-3 w-full h-12 px-5 text-sm opacity-50 text-text-secondary hover:bg-app-surface transition-colors cursor-pointer focus-ring rounded-lg"
                         >
                           <Icon className="w-5 h-5 shrink-0" />
                           <span className="flex-1 text-left">{item.label}</span>
-                          <Lock size={12} className="shrink-0 text-[#8A8580]" />
+                          <Lock size={12} className="shrink-0 text-text-muted" />
                         </button>
                       )
                     }
@@ -126,8 +126,8 @@ export function MobileTabBar() {
                           trackEvent('mobile_tab_clicked', { tab: item.label })
                         }}
                         className={cn(
-                          'flex items-center gap-3 w-full h-12 px-5 text-sm transition-colors duration-150 cursor-pointer',
-                          active ? 'text-[#8B7AFF]' : 'text-[#F0EDE8] hover:bg-[#1A1918]'
+                          'flex items-center gap-3 w-full h-12 px-5 text-sm transition-colors duration-150 cursor-pointer focus-ring rounded-lg',
+                          active ? 'text-violet-400' : 'text-text-primary hover:bg-app-surface'
                         )}
                       >
                         <Icon className="w-5 h-5 shrink-0" />
@@ -141,7 +141,7 @@ export function MobileTabBar() {
 
             {/* Bottom nav items in More sheet */}
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-5 mt-4 mb-1.5">
+              <p className="text-[10px] uppercase tracking-wider text-text-muted font-medium px-5 mt-4 mb-1.5">
                 ACCOUNT
               </p>
               {BOTTOM_NAV.map((item) => {
@@ -154,11 +154,11 @@ export function MobileTabBar() {
                         handleLockedClick(item.label, item.path)
                         setMoreOpen(false)
                       }}
-                      className="flex items-center gap-3 w-full h-12 px-5 text-sm opacity-50 text-[#C5C0B8] hover:bg-[#1A1918] transition-colors cursor-pointer"
+                      className="flex items-center gap-3 w-full h-12 px-5 text-sm opacity-50 text-text-secondary hover:bg-app-surface transition-colors cursor-pointer focus-ring rounded-lg"
                     >
                       <Icon className="w-5 h-5 shrink-0" />
                       <span className="flex-1 text-left">{item.label}</span>
-                      <Lock size={12} className="shrink-0 text-[#8A8580]" />
+                      <Lock size={12} className="shrink-0 text-text-muted" />
                     </button>
                   )
                 }
@@ -169,7 +169,7 @@ export function MobileTabBar() {
                       navigate(item.path)
                       setMoreOpen(false)
                     }}
-                    className="flex items-center gap-3 w-full h-12 px-5 text-sm text-[#F0EDE8] hover:bg-[#1A1918] transition-colors cursor-pointer"
+                    className="flex items-center gap-3 w-full h-12 px-5 text-sm text-text-primary hover:bg-app-surface transition-colors cursor-pointer focus-ring rounded-lg"
                   >
                     <Icon className="w-5 h-5 shrink-0" />
                     {item.label}

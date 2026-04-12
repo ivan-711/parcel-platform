@@ -51,7 +51,7 @@ import { DealSidePanel } from '@/components/pipeline/DealSidePanel'
 
 /** Strategy badge used inside the drag overlay. */
 function OverlayStrategyBadge({ strategy }: { strategy: string }) {
-  const colors = STRATEGY_COLORS[strategy] ?? { bg: 'rgba(122,120,114,0.12)', text: '#7A7872' }
+  const colors = STRATEGY_COLORS[strategy] ?? { bg: 'rgba(122,120,114,0.12)', text: 'var(--text-muted)' }
   return (
     <span
       className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
@@ -313,7 +313,7 @@ export default function PipelinePage() {
         action={
           <Link
             to="/analyze"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#8B7AFF] hover:bg-[#7B6AEF] text-accent-text-on-accent text-xs font-medium transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent-primary hover:bg-accent-hover text-accent-text-on-accent text-xs font-medium transition-colors"
           >
             <Plus size={14} />
             Add Deal
@@ -335,8 +335,8 @@ export default function PipelinePage() {
             className={cn(
               'text-xs px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors cursor-pointer',
               strategyFilter === opt.value
-                ? 'bg-[#8B7AFF]/15 text-[#A89FFF] border border-[#8B7AFF]/30'
-                : 'bg-[#141311] text-[#8A8580] border border-[#1E1D1B] hover:text-[#C5C0B8]'
+                ? 'bg-accent-primary/15 text-accent-secondary border border-accent-primary/30'
+                : 'bg-app-recessed text-text-muted border border-border-default hover:text-text-secondary'
             )}
           >
             {opt.label}
@@ -448,7 +448,7 @@ export default function PipelinePage() {
             <AlertDialogCancel className="bg-layer-2 border-border-default text-text-secondary hover:bg-layer-3 hover:text-text-primary">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmRemoveCard}
-              className="bg-[#D4766A] hover:bg-[#C45E52] text-text-primary"
+              className="bg-error hover:bg-error-strong text-text-primary"
             >
               {removeMutation.isPending ? 'Removing...' : 'Remove'}
             </AlertDialogAction>

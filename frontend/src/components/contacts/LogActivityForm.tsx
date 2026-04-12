@@ -56,7 +56,7 @@ export function LogActivityForm({ contactId, onLogged }: Props) {
   }
 
   return (
-    <div className="bg-[#0C0B0A] border border-[#1E1D1B] rounded-xl p-4 space-y-3">
+    <div className="bg-app-bg border border-border-default rounded-xl p-4 space-y-3">
       {/* Channel selector */}
       <div className="flex items-center gap-1.5">
         {CHANNELS.map((ch) => {
@@ -68,8 +68,8 @@ export function LogActivityForm({ contactId, onLogged }: Props) {
               className={cn(
                 'flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer',
                 channel === ch.value
-                  ? 'bg-[#8B7AFF]/15 text-[#A89FFF] border border-[#8B7AFF]/30'
-                  : 'text-[#8A8580] hover:text-[#C5C0B8]'
+                  ? 'bg-violet-400/15 text-violet-300 border border-violet-400/30'
+                  : 'text-text-muted hover:text-text-secondary'
               )}
             >
               <Icon size={12} />
@@ -89,8 +89,8 @@ export function LogActivityForm({ contactId, onLogged }: Props) {
               className={cn(
                 'text-xs px-3 py-1 rounded-lg transition-colors cursor-pointer capitalize',
                 direction === d
-                  ? 'bg-[#141311] text-[#F0EDE8] border border-[#1E1D1B]'
-                  : 'text-[#8A8580] hover:text-[#C5C0B8]'
+                  ? 'bg-app-recessed text-text-primary border border-border-default'
+                  : 'text-text-muted hover:text-text-secondary'
               )}
             >
               {d}
@@ -100,28 +100,36 @@ export function LogActivityForm({ contactId, onLogged }: Props) {
       )}
 
       {/* Subject */}
-      <input
-        type="text"
-        value={subject}
-        onChange={e => setSubject(e.target.value)}
-        placeholder="Subject (optional)"
-        className="w-full h-9 px-3 rounded-lg bg-[#141311] border border-[#1E1D1B] text-sm text-[#F0EDE8] placeholder-[#8A8580]/60 focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-all"
-      />
+      <div>
+        <label htmlFor="log-activity-subject" className="sr-only">Subject</label>
+        <input
+          id="log-activity-subject"
+          type="text"
+          value={subject}
+          onChange={e => setSubject(e.target.value)}
+          placeholder="Subject (optional)"
+          className="w-full h-9 px-3 rounded-lg bg-app-recessed border border-border-default text-sm text-text-primary placeholder-text-muted/60 focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 transition-all"
+        />
+      </div>
 
       {/* Notes */}
-      <textarea
-        value={body}
-        onChange={e => setBody(e.target.value)}
-        placeholder="Notes..."
-        rows={2}
-        className="w-full px-3 py-2 rounded-lg bg-[#141311] border border-[#1E1D1B] text-sm text-[#F0EDE8] placeholder-[#8A8580]/60 focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-all resize-none"
-      />
+      <div>
+        <label htmlFor="log-activity-notes" className="sr-only">Notes</label>
+        <textarea
+          id="log-activity-notes"
+          value={body}
+          onChange={e => setBody(e.target.value)}
+          placeholder="Notes..."
+          rows={2}
+          className="w-full px-3 py-2 rounded-lg bg-app-recessed border border-border-default text-sm text-text-primary placeholder-text-muted/60 focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 transition-all resize-none"
+        />
+      </div>
 
       {/* Save */}
       <button
         onClick={handleSave}
         disabled={logMutation.isPending}
-        className="px-4 py-2 rounded-lg text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors disabled:opacity-40 cursor-pointer"
+        className="px-4 py-2 rounded-lg text-sm font-medium bg-violet-400 text-white hover:bg-violet-500 transition-colors disabled:opacity-40 cursor-pointer"
       >
         {logMutation.isPending ? 'Saving...' : 'Log Activity'}
       </button>

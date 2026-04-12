@@ -180,7 +180,7 @@ function WholesaleForm() {
   return (
     <motion.div {...shakeProps} className="relative rounded-xl border border-border-default bg-app-surface shadow-xs p-6">
       {createDeal.isPending && (
-        <div className="absolute inset-0 rounded-xl bg-[#1A1916]/80 z-10 flex items-center justify-center">
+        <div className="absolute inset-0 rounded-xl bg-app-surface/80 z-10 flex items-center justify-center">
           <div className="h-full w-full animate-pulse rounded-xl bg-layer-2" />
         </div>
       )}
@@ -193,10 +193,10 @@ function WholesaleForm() {
             <Input
               id="address"
               placeholder="123 Main St, City, State"
-              className={`bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.address ? 'border-[#D4766A]' : ''}`}
+              className={`bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.address ? 'border-loss' : ''}`}
               {...register('address')}
             />
-            {errors.address && <p className="text-[#D4766A] text-xs">{errors.address.message}</p>}
+            {errors.address && <p className="text-loss text-xs">{errors.address.message}</p>}
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="zip_code" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">Zip Code</Label>
@@ -204,10 +204,10 @@ function WholesaleForm() {
               id="zip_code"
               placeholder="00000"
               maxLength={5}
-              className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled w-32 ${errors.zip_code ? 'border-[#D4766A]' : ''}`}
+              className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled w-32 ${errors.zip_code ? 'border-loss' : ''}`}
               {...register('zip_code')}
             />
-            {errors.zip_code && <p className="text-[#D4766A] text-xs">{errors.zip_code.message}</p>}
+            {errors.zip_code && <p className="text-loss text-xs">{errors.zip_code.message}</p>}
           </div>
         </div>
 
@@ -233,7 +233,7 @@ function WholesaleForm() {
                   placeholder="0"
                   className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${
                     field.adornment === 'dollar' ? 'pl-7' : 'pr-8'
-                  } ${errors[field.name] ? 'border-[#D4766A]' : ''}`}
+                  } ${errors[field.name] ? 'border-loss' : ''}`}
                   {...register(field.name, { valueAsNumber: true })}
                 />
                 {field.adornment === 'percent' && (
@@ -243,7 +243,7 @@ function WholesaleForm() {
                 )}
               </div>
               {errors[field.name] && (
-                <p className="text-[#D4766A] text-xs">{errors[field.name]?.message}</p>
+                <p className="text-loss text-xs">{errors[field.name]?.message}</p>
               )}
             </div>
           ))}
@@ -253,12 +253,12 @@ function WholesaleForm() {
           <Button
             type="submit"
             disabled={createDeal.isPending}
-            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
+            className="w-full bg-gradient-to-r from-accent-primary to-accent-hover text-accent-text-on-accent hover:opacity-90"
           >
             {createDeal.isPending ? 'Calculating...' : 'Analyze Deal'}
           </Button>
           {createDeal.isError && (
-            <p className="text-[#D4766A] text-sm mt-2">
+            <p className="text-loss text-sm mt-2">
               {createDeal.error?.message ?? 'Something went wrong. Please try again.'}
             </p>
           )}
@@ -304,7 +304,7 @@ function BuyAndHoldForm() {
   return (
     <motion.div {...shakeProps} className="relative rounded-xl border border-border-default bg-app-surface shadow-xs p-6">
       {createDeal.isPending && (
-        <div className="absolute inset-0 rounded-xl bg-[#1A1916]/80 z-10 flex items-center justify-center">
+        <div className="absolute inset-0 rounded-xl bg-app-surface/80 z-10 flex items-center justify-center">
           <div className="h-full w-full animate-pulse rounded-xl bg-layer-2" />
         </div>
       )}
@@ -317,10 +317,10 @@ function BuyAndHoldForm() {
             <Input
               id="bh-address"
               placeholder="123 Main St, City, State"
-              className={`bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.address ? 'border-[#D4766A]' : ''}`}
+              className={`bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.address ? 'border-loss' : ''}`}
               {...register('address')}
             />
-            {errors.address && <p className="text-[#D4766A] text-xs">{errors.address.message}</p>}
+            {errors.address && <p className="text-loss text-xs">{errors.address.message}</p>}
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="bh-zip" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">Zip Code</Label>
@@ -328,10 +328,10 @@ function BuyAndHoldForm() {
               id="bh-zip"
               placeholder="00000"
               maxLength={5}
-              className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled w-32 ${errors.zip_code ? 'border-[#D4766A]' : ''}`}
+              className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled w-32 ${errors.zip_code ? 'border-loss' : ''}`}
               {...register('zip_code')}
             />
-            {errors.zip_code && <p className="text-[#D4766A] text-xs">{errors.zip_code.message}</p>}
+            {errors.zip_code && <p className="text-loss text-xs">{errors.zip_code.message}</p>}
           </div>
         </div>
 
@@ -357,7 +357,7 @@ function BuyAndHoldForm() {
                   placeholder="0"
                   className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${
                     field.adornment === 'dollar' ? 'pl-7' : 'pr-8'
-                  } ${errors[field.name] ? 'border-[#D4766A]' : ''}`}
+                  } ${errors[field.name] ? 'border-loss' : ''}`}
                   {...register(field.name, { valueAsNumber: true })}
                 />
                 {field.adornment === 'percent' && (
@@ -367,7 +367,7 @@ function BuyAndHoldForm() {
                 )}
               </div>
               {errors[field.name] && (
-                <p className="text-[#D4766A] text-xs">{errors[field.name]?.message}</p>
+                <p className="text-loss text-xs">{errors[field.name]?.message}</p>
               )}
             </div>
           ))}
@@ -393,7 +393,7 @@ function BuyAndHoldForm() {
                   variant={field.value === 15 ? 'default' : 'outline'}
                   className={`flex-1 tabular-nums ${
                     field.value === 15
-                      ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent border-transparent'
+                      ? 'bg-gradient-to-r from-accent-primary to-accent-hover text-accent-text-on-accent border-transparent'
                       : 'border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong'
                   }`}
                   onClick={() => field.onChange(15)}
@@ -405,7 +405,7 @@ function BuyAndHoldForm() {
                   variant={field.value === 30 ? 'default' : 'outline'}
                   className={`flex-1 tabular-nums ${
                     field.value === 30
-                      ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent border-transparent'
+                      ? 'bg-gradient-to-r from-accent-primary to-accent-hover text-accent-text-on-accent border-transparent'
                       : 'border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong'
                   }`}
                   onClick={() => field.onChange(30)}
@@ -416,7 +416,7 @@ function BuyAndHoldForm() {
             )}
           />
           {errors.loan_term_years && (
-            <p className="text-[#D4766A] text-xs">{errors.loan_term_years.message}</p>
+            <p className="text-loss text-xs">{errors.loan_term_years.message}</p>
           )}
         </div>
 
@@ -424,12 +424,12 @@ function BuyAndHoldForm() {
           <Button
             type="submit"
             disabled={createDeal.isPending}
-            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
+            className="w-full bg-gradient-to-r from-accent-primary to-accent-hover text-accent-text-on-accent hover:opacity-90"
           >
             {createDeal.isPending ? 'Calculating...' : 'Analyze Deal'}
           </Button>
           {createDeal.isError && (
-            <p className="text-[#D4766A] text-sm mt-2">
+            <p className="text-loss text-sm mt-2">
               {createDeal.error?.message ?? 'Something went wrong. Please try again.'}
             </p>
           )}
@@ -512,7 +512,7 @@ function FlipForm() {
   return (
     <motion.div {...shakeProps} className="relative rounded-xl border border-border-default bg-app-surface shadow-xs p-6">
       {createDeal.isPending && (
-        <div className="absolute inset-0 rounded-xl bg-[#1A1916]/80 z-10 flex items-center justify-center">
+        <div className="absolute inset-0 rounded-xl bg-app-surface/80 z-10 flex items-center justify-center">
           <div className="h-full w-full animate-pulse rounded-xl bg-layer-2" />
         </div>
       )}
@@ -525,10 +525,10 @@ function FlipForm() {
             <Input
               id="flip-address"
               placeholder="123 Main St, City, State"
-              className={`bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.address ? 'border-[#D4766A]' : ''}`}
+              className={`bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.address ? 'border-loss' : ''}`}
               {...register('address')}
             />
-            {errors.address && <p className="text-[#D4766A] text-xs">{errors.address.message}</p>}
+            {errors.address && <p className="text-loss text-xs">{errors.address.message}</p>}
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="flip-zip" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">Zip Code</Label>
@@ -536,10 +536,10 @@ function FlipForm() {
               id="flip-zip"
               placeholder="00000"
               maxLength={5}
-              className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled w-32 ${errors.zip_code ? 'border-[#D4766A]' : ''}`}
+              className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled w-32 ${errors.zip_code ? 'border-loss' : ''}`}
               {...register('zip_code')}
             />
-            {errors.zip_code && <p className="text-[#D4766A] text-xs">{errors.zip_code.message}</p>}
+            {errors.zip_code && <p className="text-loss text-xs">{errors.zip_code.message}</p>}
           </div>
         </div>
 
@@ -564,7 +564,7 @@ function FlipForm() {
                   placeholder="0"
                   className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${
                     field.adornment === 'dollar' ? 'pl-7' : field.adornment === 'percent' ? 'pr-8' : ''
-                  } ${errors[field.name] ? 'border-[#D4766A]' : ''}`}
+                  } ${errors[field.name] ? 'border-loss' : ''}`}
                   {...register(field.name, { valueAsNumber: true })}
                 />
                 {field.adornment === 'percent' && (
@@ -574,7 +574,7 @@ function FlipForm() {
                 )}
               </div>
               {errors[field.name] && (
-                <p className="text-[#D4766A] text-xs">{errors[field.name]?.message}</p>
+                <p className="text-loss text-xs">{errors[field.name]?.message}</p>
               )}
             </div>
           ))}
@@ -584,12 +584,12 @@ function FlipForm() {
           <Button
             type="submit"
             disabled={createDeal.isPending}
-            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
+            className="w-full bg-gradient-to-r from-accent-primary to-accent-hover text-accent-text-on-accent hover:opacity-90"
           >
             {createDeal.isPending ? 'Calculating...' : 'Analyze Deal'}
           </Button>
           {createDeal.isError && (
-            <p className="text-[#D4766A] text-sm mt-2">
+            <p className="text-loss text-sm mt-2">
               {createDeal.error?.message ?? 'Something went wrong. Please try again.'}
             </p>
           )}
@@ -686,7 +686,7 @@ function BRRRRForm() {
   return (
     <motion.div {...shakeProps} className="relative rounded-xl border border-border-default bg-app-surface shadow-xs p-6">
       {createDeal.isPending && (
-        <div className="absolute inset-0 rounded-xl bg-[#1A1916]/80 z-10 flex items-center justify-center">
+        <div className="absolute inset-0 rounded-xl bg-app-surface/80 z-10 flex items-center justify-center">
           <div className="h-full w-full animate-pulse rounded-xl bg-layer-2" />
         </div>
       )}
@@ -699,10 +699,10 @@ function BRRRRForm() {
             <Input
               id="brrrr-address"
               placeholder="123 Main St, City, State"
-              className={`bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.address ? 'border-[#D4766A]' : ''}`}
+              className={`bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.address ? 'border-loss' : ''}`}
               {...register('address')}
             />
-            {errors.address && <p className="text-[#D4766A] text-xs">{errors.address.message}</p>}
+            {errors.address && <p className="text-loss text-xs">{errors.address.message}</p>}
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="brrrr-zip" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">Zip Code</Label>
@@ -710,10 +710,10 @@ function BRRRRForm() {
               id="brrrr-zip"
               placeholder="00000"
               maxLength={5}
-              className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled w-32 ${errors.zip_code ? 'border-[#D4766A]' : ''}`}
+              className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled w-32 ${errors.zip_code ? 'border-loss' : ''}`}
               {...register('zip_code')}
             />
-            {errors.zip_code && <p className="text-[#D4766A] text-xs">{errors.zip_code.message}</p>}
+            {errors.zip_code && <p className="text-loss text-xs">{errors.zip_code.message}</p>}
           </div>
         </div>
 
@@ -738,7 +738,7 @@ function BRRRRForm() {
                   placeholder="0"
                   className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${
                     field.adornment === 'dollar' ? 'pl-7' : field.adornment === 'percent' ? 'pr-8' : ''
-                  } ${errors[field.name] ? 'border-[#D4766A]' : ''}`}
+                  } ${errors[field.name] ? 'border-loss' : ''}`}
                   {...register(field.name, { valueAsNumber: true })}
                 />
                 {field.adornment === 'percent' && (
@@ -748,7 +748,7 @@ function BRRRRForm() {
                 )}
               </div>
               {errors[field.name] && (
-                <p className="text-[#D4766A] text-xs">{errors[field.name]?.message}</p>
+                <p className="text-loss text-xs">{errors[field.name]?.message}</p>
               )}
             </div>
           ))}
@@ -774,7 +774,7 @@ function BRRRRForm() {
                   variant={field.value === 15 ? 'default' : 'outline'}
                   className={`flex-1 tabular-nums ${
                     field.value === 15
-                      ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent border-transparent'
+                      ? 'bg-gradient-to-r from-accent-primary to-accent-hover text-accent-text-on-accent border-transparent'
                       : 'border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong'
                   }`}
                   onClick={() => field.onChange(15)}
@@ -786,7 +786,7 @@ function BRRRRForm() {
                   variant={field.value === 30 ? 'default' : 'outline'}
                   className={`flex-1 tabular-nums ${
                     field.value === 30
-                      ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent border-transparent'
+                      ? 'bg-gradient-to-r from-accent-primary to-accent-hover text-accent-text-on-accent border-transparent'
                       : 'border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong'
                   }`}
                   onClick={() => field.onChange(30)}
@@ -797,7 +797,7 @@ function BRRRRForm() {
             )}
           />
           {errors.new_loan_term_years && (
-            <p className="text-[#D4766A] text-xs">{errors.new_loan_term_years.message}</p>
+            <p className="text-loss text-xs">{errors.new_loan_term_years.message}</p>
           )}
         </div>
 
@@ -805,12 +805,12 @@ function BRRRRForm() {
           <Button
             type="submit"
             disabled={createDeal.isPending}
-            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
+            className="w-full bg-gradient-to-r from-accent-primary to-accent-hover text-accent-text-on-accent hover:opacity-90"
           >
             {createDeal.isPending ? 'Calculating...' : 'Analyze Deal'}
           </Button>
           {createDeal.isError && (
-            <p className="text-[#D4766A] text-sm mt-2">
+            <p className="text-loss text-sm mt-2">
               {createDeal.error?.message ?? 'Something went wrong. Please try again.'}
             </p>
           )}
@@ -875,7 +875,7 @@ function CreativeFinanceForm() {
   return (
     <motion.div {...shakeProps} className="relative rounded-xl border border-border-default bg-app-surface shadow-xs p-6">
       {createDeal.isPending && (
-        <div className="absolute inset-0 rounded-xl bg-[#1A1916]/80 z-10 flex items-center justify-center">
+        <div className="absolute inset-0 rounded-xl bg-app-surface/80 z-10 flex items-center justify-center">
           <div className="h-full w-full animate-pulse rounded-xl bg-layer-2" />
         </div>
       )}
@@ -888,10 +888,10 @@ function CreativeFinanceForm() {
             <Input
               id="cf-address"
               placeholder="123 Main St, City, State"
-              className={`bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.address ? 'border-[#D4766A]' : ''}`}
+              className={`bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.address ? 'border-loss' : ''}`}
               {...register('address')}
             />
-            {errors.address && <p className="text-[#D4766A] text-xs">{errors.address.message}</p>}
+            {errors.address && <p className="text-loss text-xs">{errors.address.message}</p>}
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="cf-zip" className="text-xs font-medium text-text-secondary uppercase tracking-[0.08em]">Zip Code</Label>
@@ -899,10 +899,10 @@ function CreativeFinanceForm() {
               id="cf-zip"
               placeholder="00000"
               maxLength={5}
-              className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled w-32 ${errors.zip_code ? 'border-[#D4766A]' : ''}`}
+              className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled w-32 ${errors.zip_code ? 'border-loss' : ''}`}
               {...register('zip_code')}
             />
-            {errors.zip_code && <p className="text-[#D4766A] text-xs">{errors.zip_code.message}</p>}
+            {errors.zip_code && <p className="text-loss text-xs">{errors.zip_code.message}</p>}
           </div>
         </div>
 
@@ -922,7 +922,7 @@ function CreativeFinanceForm() {
               variant={financeType === 'subject_to' ? 'default' : 'outline'}
               className={`flex-1 tabular-nums ${
                 financeType === 'subject_to'
-                  ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent border-transparent'
+                  ? 'bg-gradient-to-r from-accent-primary to-accent-hover text-accent-text-on-accent border-transparent'
                   : 'border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong'
               }`}
               onClick={() => handleFinanceTypeChange('subject_to')}
@@ -934,7 +934,7 @@ function CreativeFinanceForm() {
               variant={financeType === 'seller_finance' ? 'default' : 'outline'}
               className={`flex-1 tabular-nums ${
                 financeType === 'seller_finance'
-                  ? 'bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent border-transparent'
+                  ? 'bg-gradient-to-r from-accent-primary to-accent-hover text-accent-text-on-accent border-transparent'
                   : 'border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong'
               }`}
               onClick={() => handleFinanceTypeChange('seller_finance')}
@@ -964,12 +964,12 @@ function CreativeFinanceForm() {
                 step="any"
                 min={0}
                 placeholder="0"
-                className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.existing_loan_balance ? 'border-[#D4766A]' : ''}`}
+                className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.existing_loan_balance ? 'border-loss' : ''}`}
                 {...register('existing_loan_balance', { valueAsNumber: true })}
               />
             </div>
             {errors.existing_loan_balance && (
-              <p className="text-[#D4766A] text-xs">{errors.existing_loan_balance.message}</p>
+              <p className="text-loss text-xs">{errors.existing_loan_balance.message}</p>
             )}
           </div>
 
@@ -991,12 +991,12 @@ function CreativeFinanceForm() {
                 step="any"
                 min={0}
                 placeholder="0"
-                className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.monthly_rent_estimate ? 'border-[#D4766A]' : ''}`}
+                className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.monthly_rent_estimate ? 'border-loss' : ''}`}
                 {...register('monthly_rent_estimate', { valueAsNumber: true })}
               />
             </div>
             {errors.monthly_rent_estimate && (
-              <p className="text-[#D4766A] text-xs">{errors.monthly_rent_estimate.message}</p>
+              <p className="text-loss text-xs">{errors.monthly_rent_estimate.message}</p>
             )}
           </div>
 
@@ -1018,12 +1018,12 @@ function CreativeFinanceForm() {
                 step="any"
                 min={0}
                 placeholder="0"
-                className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.monthly_expenses ? 'border-[#D4766A]' : ''}`}
+                className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.monthly_expenses ? 'border-loss' : ''}`}
                 {...register('monthly_expenses', { valueAsNumber: true })}
               />
             </div>
             {errors.monthly_expenses && (
-              <p className="text-[#D4766A] text-xs">{errors.monthly_expenses.message}</p>
+              <p className="text-loss text-xs">{errors.monthly_expenses.message}</p>
             )}
           </div>
 
@@ -1045,12 +1045,12 @@ function CreativeFinanceForm() {
                 step="any"
                 min={0}
                 placeholder="0"
-                className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.arv ? 'border-[#D4766A]' : ''}`}
+                className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.arv ? 'border-loss' : ''}`}
                 {...register('arv', { valueAsNumber: true })}
               />
             </div>
             {errors.arv && (
-              <p className="text-[#D4766A] text-xs">{errors.arv.message}</p>
+              <p className="text-loss text-xs">{errors.arv.message}</p>
             )}
           </div>
         </div>
@@ -1076,13 +1076,13 @@ function CreativeFinanceForm() {
                     step="any"
                     min={0}
                     placeholder="0"
-                    className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pr-8 ${errors.existing_interest_rate ? 'border-[#D4766A]' : ''}`}
+                    className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pr-8 ${errors.existing_interest_rate ? 'border-loss' : ''}`}
                     {...register('existing_interest_rate', { valueAsNumber: true })}
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">%</span>
                 </div>
                 {errors.existing_interest_rate && (
-                  <p className="text-[#D4766A] text-xs">{errors.existing_interest_rate.message}</p>
+                  <p className="text-loss text-xs">{errors.existing_interest_rate.message}</p>
                 )}
               </div>
 
@@ -1104,12 +1104,12 @@ function CreativeFinanceForm() {
                     step="any"
                     min={0}
                     placeholder="0"
-                    className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.monthly_piti ? 'border-[#D4766A]' : ''}`}
+                    className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.monthly_piti ? 'border-loss' : ''}`}
                     {...register('monthly_piti', { valueAsNumber: true })}
                   />
                 </div>
                 {errors.monthly_piti && (
-                  <p className="text-[#D4766A] text-xs">{errors.monthly_piti.message}</p>
+                  <p className="text-loss text-xs">{errors.monthly_piti.message}</p>
                 )}
               </div>
             </>
@@ -1132,13 +1132,13 @@ function CreativeFinanceForm() {
                     step="any"
                     min={0}
                     placeholder="0"
-                    className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pr-8 ${errors.new_rate ? 'border-[#D4766A]' : ''}`}
+                    className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pr-8 ${errors.new_rate ? 'border-loss' : ''}`}
                     {...register('new_rate', { valueAsNumber: true })}
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-text-disabled text-sm tabular-nums">%</span>
                 </div>
                 {errors.new_rate && (
-                  <p className="text-[#D4766A] text-xs">{errors.new_rate.message}</p>
+                  <p className="text-loss text-xs">{errors.new_rate.message}</p>
                 )}
               </div>
 
@@ -1159,12 +1159,12 @@ function CreativeFinanceForm() {
                     step="1"
                     min={0}
                     placeholder="30"
-                    className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.new_term_years ? 'border-[#D4766A]' : ''}`}
+                    className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled ${errors.new_term_years ? 'border-loss' : ''}`}
                     {...register('new_term_years', { valueAsNumber: true })}
                   />
                 </div>
                 {errors.new_term_years && (
-                  <p className="text-[#D4766A] text-xs">{errors.new_term_years.message}</p>
+                  <p className="text-loss text-xs">{errors.new_term_years.message}</p>
                 )}
               </div>
 
@@ -1186,12 +1186,12 @@ function CreativeFinanceForm() {
                     step="any"
                     min={0}
                     placeholder="0"
-                    className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.monthly_piti ? 'border-[#D4766A]' : ''}`}
+                    className={`tabular-nums bg-app-recessed border-border-default text-text-primary placeholder:text-text-disabled pl-7 ${errors.monthly_piti ? 'border-loss' : ''}`}
                     {...register('monthly_piti', { valueAsNumber: true })}
                   />
                 </div>
                 {errors.monthly_piti && (
-                  <p className="text-[#D4766A] text-xs">{errors.monthly_piti.message}</p>
+                  <p className="text-loss text-xs">{errors.monthly_piti.message}</p>
                 )}
               </div>
             </>
@@ -1202,12 +1202,12 @@ function CreativeFinanceForm() {
           <Button
             type="submit"
             disabled={createDeal.isPending}
-            className="w-full bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
+            className="w-full bg-gradient-to-r from-accent-primary to-accent-hover text-accent-text-on-accent hover:opacity-90"
           >
             {createDeal.isPending ? 'Calculating...' : 'Analyze Deal'}
           </Button>
           {createDeal.isError && (
-            <p className="text-[#D4766A] text-sm mt-2">
+            <p className="text-loss text-sm mt-2">
               {createDeal.error?.message ?? 'Something went wrong. Please try again.'}
             </p>
           )}
@@ -1229,7 +1229,7 @@ export default function AnalyzerFormPage() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center space-y-3">
             <p className="text-text-secondary text-sm">Strategy not found.</p>
-            <Link to="/analyze" className="text-[#8B7AFF] text-sm hover:underline">
+            <Link to="/analyze" className="text-accent-primary text-sm hover:underline">
               Back to Analyzer
             </Link>
           </div>
@@ -1249,7 +1249,7 @@ export default function AnalyzerFormPage() {
             </p>
             <Link
               to="/analyze"
-              className="inline-flex items-center gap-2 text-[#8B7AFF] text-sm hover:underline"
+              className="inline-flex items-center gap-2 text-accent-primary text-sm hover:underline"
             >
               <ArrowLeft size={14} />
               Back to Analyzer
@@ -1267,13 +1267,13 @@ export default function AnalyzerFormPage() {
         <nav aria-label="Breadcrumb" className="mb-4">
           <ol className="flex items-center gap-1.5 text-xs">
             <li>
-              <Link to="/dashboard" className="text-text-muted hover:text-[#8B7AFF] transition-colors">
+              <Link to="/dashboard" className="text-text-muted hover:text-accent-primary transition-colors">
                 Dashboard
               </Link>
             </li>
             <li aria-hidden="true"><ChevronRight size={12} className="text-text-disabled" /></li>
             <li>
-              <Link to="/analyze" className="text-text-muted hover:text-[#8B7AFF] transition-colors">
+              <Link to="/analyze" className="text-text-muted hover:text-accent-primary transition-colors">
                 Analyzer
               </Link>
             </li>

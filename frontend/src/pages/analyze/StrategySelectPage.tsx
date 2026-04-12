@@ -2,6 +2,7 @@
 
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import { ArrowRight } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
@@ -41,17 +42,13 @@ const STRATEGIES: StrategyOption[] = [
   },
 ]
 
-const containerVariants = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.05 },
-  },
-}
+const containerVariants = prefersReducedMotion
+  ? { hidden: {}, show: {} }
+  : { hidden: {}, show: { transition: { staggerChildren: 0.05 } } }
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 6 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.18 } },
-}
+const itemVariants = prefersReducedMotion
+  ? { hidden: { opacity: 1 }, show: { opacity: 1 } }
+  : { hidden: { opacity: 0, y: 6 }, show: { opacity: 1, y: 0, transition: { duration: 0.18 } } }
 
 export default function StrategySelectPage() {
   return (
@@ -74,14 +71,14 @@ export default function StrategySelectPage() {
             <motion.div key={s.strategy} variants={itemVariants}>
               <Link
                 to={`/analyze/${s.strategy}`}
-                className="group flex flex-col gap-3 rounded-xl border border-border-default bg-app-surface p-5 hover:border-[#8B7AFF]/40 hover:bg-app-elevated shadow-xs hover:shadow-[0_0_24px_rgba(139,122,255,0.08)] transition-all duration-150"
+                className="group flex flex-col gap-3 rounded-xl border border-border-default bg-app-surface p-5 hover:border-violet-400/40 hover:bg-app-elevated shadow-xs hover:shadow-[0_0_24px_rgba(139,122,255,0.08)] transition-all duration-150"
               >
                 <StrategyBadge strategy={s.strategy} />
                 <span className="font-semibold text-text-primary">{s.name}</span>
                 <span className="text-sm text-text-secondary leading-relaxed">{s.description}</span>
                 <ArrowRight
                   size={16}
-                  className="text-text-muted group-hover:text-[#8B7AFF] transition-colors mt-auto"
+                  className="text-text-muted group-hover:text-violet-400 transition-colors mt-auto"
                 />
               </Link>
             </motion.div>

@@ -125,6 +125,10 @@ export const safePageVariants = prefersReducedMotion
   ? { initial: {}, animate: {}, exit: {} }
   : pageVariants
 
+export const safeCardContainerVariants = prefersReducedMotion
+  ? { hidden: {}, visible: {} }
+  : cardContainerVariants
+
 export const safeCardVariants = prefersReducedMotion
   ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
   : cardVariants
@@ -169,6 +173,26 @@ export const staggerItem: Variants = {
     y: 0,
     transition: { duration: duration.normal, ease: ease.luxury },
   },
+}
+
+// ── Safe Shared Variants (reduced motion) ────────────────────────────────────
+
+export const safeFadeIn = prefersReducedMotion
+  ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+  : fadeIn
+
+export const safeSlideUp = prefersReducedMotion
+  ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+  : slideUp
+
+export const safeStaggerItem = prefersReducedMotion
+  ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+  : staggerItem
+
+export function safeStaggerContainer(delayMs = 50): Variants {
+  return prefersReducedMotion
+    ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+    : staggerContainer(delayMs)
 }
 
 // ── Utility Variants ──────────────────────────────────────────────────────────

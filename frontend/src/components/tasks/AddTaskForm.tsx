@@ -6,10 +6,10 @@ import { cn } from '@/lib/utils'
 import type { TaskPriority } from '@/types'
 
 const PRIORITIES: { value: TaskPriority; label: string; color: string }[] = [
-  { value: 'low', label: 'Low', color: '#8A8580' },
-  { value: 'normal', label: 'Normal', color: '#8B7AFF' },
+  { value: 'low', label: 'Low', color: 'var(--text-muted)' },
+  { value: 'normal', label: 'Normal', color: 'var(--accent-primary)' },
   { value: 'high', label: 'High', color: '#F97316' },
-  { value: 'urgent', label: 'Urgent', color: '#F87171' },
+  { value: 'urgent', label: 'Urgent', color: 'var(--color-loss)' },
 ]
 
 interface Props {
@@ -66,7 +66,7 @@ export function AddTaskForm({ propertyId, dealId, contactId, onCreated }: Props)
     return (
       <button
         onClick={() => setExpanded(true)}
-        className="inline-flex items-center gap-1.5 text-xs text-[#8B7AFF] hover:text-[#A89FFF] transition-colors cursor-pointer"
+        className="inline-flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 transition-colors cursor-pointer"
       >
         <Plus size={12} />
         Add Task
@@ -75,17 +75,22 @@ export function AddTaskForm({ propertyId, dealId, contactId, onCreated }: Props)
   }
 
   return (
-    <div className="bg-[#0C0B0A] border border-[#1E1D1B] rounded-xl p-4 space-y-3">
+    <div className="bg-app-bg border border-border-default rounded-xl p-4 space-y-3">
       {/* Title */}
-      <input
-        type="text"
-        value={title}
-        onChange={e => setTitle(e.target.value)}
-        placeholder="Task title..."
-        autoFocus
-        className="w-full h-9 px-3 rounded-lg bg-[#141311] border border-[#1E1D1B] text-sm text-[#F0EDE8] placeholder-[#8A8580]/60 focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-all"
-        onKeyDown={e => { if (e.key === 'Enter' && title.trim()) handleSubmit() }}
-      />
+      <div>
+        <label htmlFor="task-title" className="sr-only">Task title</label>
+        <input
+          id="task-title"
+          type="text"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          placeholder="Task title..."
+          autoFocus
+          aria-required="true"
+          className="w-full h-9 px-3 rounded-lg bg-app-recessed border border-border-default text-sm text-text-primary placeholder-text-muted/60 focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 transition-all"
+          onKeyDown={e => { if (e.key === 'Enter' && title.trim()) handleSubmit() }}
+        />
+      </div>
 
       {/* Priority pills */}
       <div className="flex items-center gap-1.5">
@@ -96,8 +101,8 @@ export function AddTaskForm({ propertyId, dealId, contactId, onCreated }: Props)
             className={cn(
               'flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-colors cursor-pointer',
               priority === p.value
-                ? 'bg-[#141311] text-[#F0EDE8] border border-[#1E1D1B]'
-                : 'text-[#8A8580] hover:text-[#C5C0B8]'
+                ? 'bg-app-recessed text-text-primary border border-border-default'
+                : 'text-text-muted hover:text-text-secondary'
             )}
           >
             <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.color }} />
@@ -107,34 +112,42 @@ export function AddTaskForm({ propertyId, dealId, contactId, onCreated }: Props)
       </div>
 
       {/* Due date */}
-      <input
-        type="date"
-        value={dueDate}
-        onChange={e => setDueDate(e.target.value)}
-        className="h-9 px-3 rounded-lg bg-[#141311] border border-[#1E1D1B] text-sm text-[#C5C0B8] focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-all"
-      />
+      <div>
+        <label htmlFor="task-due-date" className="sr-only">Due date</label>
+        <input
+          id="task-due-date"
+          type="date"
+          value={dueDate}
+          onChange={e => setDueDate(e.target.value)}
+          className="h-9 px-3 rounded-lg bg-app-recessed border border-border-default text-sm text-text-secondary focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 transition-all"
+        />
+      </div>
 
       {/* Description */}
-      <textarea
-        value={description}
-        onChange={e => setDescription(e.target.value)}
-        placeholder="Description (optional)..."
-        rows={2}
-        className="w-full px-3 py-2 rounded-lg bg-[#141311] border border-[#1E1D1B] text-sm text-[#F0EDE8] placeholder-[#8A8580]/60 focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-all resize-none"
-      />
+      <div>
+        <label htmlFor="task-description" className="sr-only">Description</label>
+        <textarea
+          id="task-description"
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+          placeholder="Description (optional)..."
+          rows={2}
+          className="w-full px-3 py-2 rounded-lg bg-app-recessed border border-border-default text-sm text-text-primary placeholder-text-muted/60 focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 transition-all resize-none"
+        />
+      </div>
 
       {/* Actions */}
       <div className="flex items-center gap-2">
         <button
           onClick={handleSubmit}
           disabled={!title.trim() || createMutation.isPending}
-          className="px-4 py-2 rounded-lg text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors disabled:opacity-40 cursor-pointer"
+          className="px-4 py-2 rounded-lg text-sm font-medium bg-violet-400 text-white hover:bg-violet-500 transition-colors disabled:opacity-40 cursor-pointer"
         >
           {createMutation.isPending ? 'Adding...' : 'Add Task'}
         </button>
         <button
           onClick={() => { setExpanded(false); setTitle(''); setDescription('') }}
-          className="px-3 py-2 rounded-lg text-sm text-[#8A8580] hover:text-[#C5C0B8] transition-colors cursor-pointer"
+          className="px-3 py-2 rounded-lg text-sm text-text-muted hover:text-text-secondary transition-colors cursor-pointer"
         >
           Cancel
         </button>

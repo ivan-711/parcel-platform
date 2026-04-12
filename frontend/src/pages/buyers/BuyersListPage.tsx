@@ -1,7 +1,9 @@
 // frontend/src/pages/buyers/BuyersListPage.tsx
 import { useState, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { Tag, Plus, Phone, Mail, Search, ShieldCheck } from 'lucide-react'
+import { prefersReducedMotion } from '@/lib/motion'
 import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
 import { AddBuyerModal } from '@/components/buyers/AddBuyerModal'
@@ -11,10 +13,10 @@ import type { BuyerFilters, BuyerListItem, BuyBox } from '@/types'
 
 // ── Funding badge colors ──────────────────────────────────
 const FUNDING_COLORS: Record<string, string> = {
-  cash: 'bg-[#4ADE80]/15 text-[#4ADE80] border-[#4ADE80]/30',
-  hard_money: 'bg-[#FBBF24]/15 text-[#FBBF24] border-[#FBBF24]/30',
-  conventional: 'bg-[#60A5FA]/15 text-[#60A5FA] border-[#60A5FA]/30',
-  creative: 'bg-[#8B7AFF]/15 text-[#8B7AFF] border-[#8B7AFF]/30',
+  cash: 'bg-profit-bg text-profit border-profit/30',
+  hard_money: 'bg-warning-bg text-warning border-warning/30',
+  conventional: 'bg-info-bg text-info border-info/30',
+  creative: 'bg-violet-400/15 text-violet-400 border-violet-400/30',
 }
 
 const FUNDING_PILLS = [
@@ -115,20 +117,19 @@ export default function BuyersListPage() {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-3">
             <h1
-              className="text-xl sm:text-2xl text-[#F0EDE8]"
-              style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+              className="text-xl sm:text-2xl text-text-primary font-brand font-light"
             >
               Buyer List
             </h1>
             {list.length > 0 && (
-              <span className="px-2 py-0.5 text-xs rounded-full bg-[#1E1D1B] text-[#8A8580]">
+              <span className="px-2 py-0.5 text-xs rounded-full bg-border-default text-text-muted">
                 {list.length}
               </span>
             )}
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg bg-violet-400 text-white hover:bg-violet-500 transition-colors cursor-pointer"
           >
             <Plus size={14} /> Add Buyer
           </button>
@@ -137,7 +138,7 @@ export default function BuyersListPage() {
         {/* Filter bar */}
         <div className="flex items-center gap-3 flex-wrap">
           {/* Funding pills */}
-          <div className="flex items-center gap-1 p-1 bg-[#141311] rounded-lg border border-[#1E1D1B]">
+          <div className="flex items-center gap-1 p-1 bg-app-recessed rounded-lg border border-border-default">
             {FUNDING_PILLS.map(p => (
               <button
                 key={p.value}
@@ -145,8 +146,8 @@ export default function BuyersListPage() {
                 className={cn(
                   'px-3 py-1.5 text-xs rounded-md transition-colors cursor-pointer whitespace-nowrap',
                   fundingFilter === p.value
-                    ? 'bg-[#8B7AFF]/15 text-[#8B7AFF]'
-                    : 'text-[#8A8580] hover:text-[#C5C0B8]',
+                    ? 'bg-violet-400/15 text-violet-400'
+                    : 'text-text-muted hover:text-text-secondary',
                 )}
               >
                 {p.label}
@@ -156,13 +157,13 @@ export default function BuyersListPage() {
 
           {/* Market search */}
           <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A8580] pointer-events-none" />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
             <input
               type="text"
               placeholder="Search market..."
               value={marketSearch}
               onChange={e => handleMarketChange(e.target.value)}
-              className="pl-8 pr-3 py-2 w-44 bg-[#141311] border border-[#1E1D1B] rounded-lg text-xs text-[#F0EDE8] placeholder-[#8A8580] focus:border-[#8B7AFF] outline-none"
+              className="pl-8 pr-3 py-2 w-44 bg-app-recessed border border-border-default rounded-lg text-xs text-text-primary placeholder-text-muted focus:border-violet-400 outline-none"
             />
           </div>
 
@@ -170,7 +171,7 @@ export default function BuyersListPage() {
           <select
             value={strategyFilter}
             onChange={e => setStrategyFilter(e.target.value)}
-            className="px-3 py-2 bg-[#141311] border border-[#1E1D1B] rounded-lg text-xs text-[#F0EDE8] focus:border-[#8B7AFF] outline-none cursor-pointer"
+            className="px-3 py-2 bg-app-recessed border border-border-default rounded-lg text-xs text-text-primary focus:border-violet-400 outline-none cursor-pointer"
           >
             {STRATEGY_OPTIONS.map(s => (
               <option key={s.value} value={s.value}>
@@ -185,8 +186,8 @@ export default function BuyersListPage() {
             className={cn(
               'inline-flex items-center gap-1.5 px-3 py-2 text-xs rounded-lg border transition-colors cursor-pointer',
               pofOnly
-                ? 'bg-[#4ADE80]/15 text-[#4ADE80] border-[#4ADE80]/30'
-                : 'bg-[#141311] text-[#8A8580] border-[#1E1D1B] hover:text-[#C5C0B8]',
+                ? 'bg-profit-bg text-profit border-profit/30'
+                : 'bg-app-recessed text-text-muted border-border-default hover:text-text-secondary',
             )}
           >
             <ShieldCheck size={13} /> Has POF
@@ -197,7 +198,7 @@ export default function BuyersListPage() {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-40 bg-[#141311] rounded-xl animate-pulse" />
+              <div key={i} className="h-40 bg-app-recessed rounded-xl animate-pulse" />
             ))}
           </div>
         ) : list.length === 0 ? (
@@ -227,23 +228,24 @@ function BuyerCard({ buyer }: { buyer: BuyerListItem }) {
     || 'Unknown'
   const ft = (buyer.funding_type ?? ((buyer as unknown as Record<string, unknown>).funding_types as string[] | undefined)?.[0] ?? '')
     .toLowerCase().replace(/\s+/g, '_')
-  const fundingCls = FUNDING_COLORS[ft] ?? 'bg-[#1E1D1B] text-[#8A8580] border-[#1E1D1B]'
+  const fundingCls = FUNDING_COLORS[ft] ?? 'bg-border-default text-text-muted border-border-default'
   const firstBox = buyer.buy_boxes?.[0]
   const summary = firstBox ? buyBoxSummary(firstBox) : null
 
   return (
+    <motion.div whileHover={prefersReducedMotion ? undefined : { y: -2 }}>
     <Link
       to={`/buyers/${buyer.id}`}
-      className="block bg-[#141311] border border-[#1E1D1B] rounded-xl p-4 hover:border-[#8B7AFF]/30 transition-colors group"
+      className="block bg-app-recessed border border-border-default rounded-xl p-4 hover:border-violet-400/30 transition-shadow duration-200 hover:shadow-lg group"
     >
       {/* Row 1: Name + badges */}
       <div className="flex items-start justify-between gap-3 mb-2">
         <div className="min-w-0">
-          <p className="text-sm text-[#F0EDE8] font-medium truncate group-hover:text-[#8B7AFF] transition-colors">
+          <p className="text-sm text-text-primary font-medium truncate group-hover:text-violet-400 transition-colors">
             {fullName}
           </p>
           {buyer.company && (
-            <p className="text-xs text-[#8A8580] truncate">{buyer.company}</p>
+            <p className="text-xs text-text-muted truncate">{buyer.company}</p>
           )}
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
@@ -253,7 +255,7 @@ function BuyerCard({ buyer }: { buyer: BuyerListItem }) {
             </span>
           )}
           {buyer.has_pof && (
-            <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border bg-[#4ADE80]/15 text-[#4ADE80] border-[#4ADE80]/30">
+            <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border bg-profit-bg text-profit border-profit/30">
               POF &#x2713;
             </span>
           )}
@@ -261,26 +263,26 @@ function BuyerCard({ buyer }: { buyer: BuyerListItem }) {
       </div>
 
       {/* Row 2: Contact */}
-      <div className="flex items-center gap-4 text-xs text-[#C5C0B8] mb-3">
+      <div className="flex items-center gap-4 text-xs text-text-secondary mb-3">
         {buyer.phone && (
           <span className="inline-flex items-center gap-1">
-            <Phone size={12} className="text-[#8A8580]" /> {buyer.phone}
+            <Phone size={12} className="text-text-muted" /> {buyer.phone}
           </span>
         )}
         {buyer.email && (
           <span className="inline-flex items-center gap-1 truncate">
-            <Mail size={12} className="text-[#8A8580]" /> {buyer.email}
+            <Mail size={12} className="text-text-muted" /> {buyer.email}
           </span>
         )}
       </div>
 
       {/* Row 3: Buy box summary */}
       {summary && (
-        <p className="text-xs text-[#8A8580] mb-3 truncate">{summary}</p>
+        <p className="text-xs text-text-muted mb-3 truncate">{summary}</p>
       )}
 
       {/* Row 4: Stats */}
-      <div className="flex items-center gap-4 text-[11px] text-[#8A8580]">
+      <div className="flex items-center gap-4 text-[11px] text-text-muted">
         {(buyer.deal_count ?? (buyer as unknown as Record<string, unknown>).total_deals) != null && (
           <span>{buyer.deal_count ?? (buyer as unknown as Record<string, unknown>).total_deals as number} deal{(buyer.deal_count ?? (buyer as unknown as Record<string, unknown>).total_deals as number) !== 1 ? 's' : ''}</span>
         )}
@@ -289,5 +291,6 @@ function BuyerCard({ buyer }: { buyer: BuyerListItem }) {
         )}
       </div>
     </Link>
+    </motion.div>
   )
 }

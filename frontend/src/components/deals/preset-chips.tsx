@@ -1,6 +1,7 @@
 /** PresetChips — row of saved filter preset buttons with delete capability. */
 
 import { motion, AnimatePresence } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import { X } from 'lucide-react'
 import type { FilterPreset } from '@/types'
 
@@ -20,17 +21,17 @@ export function PresetChips({ presets, onApply, onDelete, isPresetActive }: Pres
         {presets.map((preset) => (
           <motion.div
             key={preset.id}
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={prefersReducedMotion ? {} : { opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.15 }}
+            exit={prefersReducedMotion ? {} : { opacity: 0, scale: 0.9 }}
+            transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.15 }}
             className="inline-flex items-center shrink-0"
           >
             <button
               onClick={() => onApply(preset)}
               className={`inline-flex items-center gap-1.5 rounded-l-full px-3 py-1 text-sm border-y border-l transition-colors ${
                 isPresetActive(preset)
-                  ? 'border-[#8B7AFF]/20 text-text-primary bg-[#8B7AFF]/[0.08]'
+                  ? 'border-violet-400/20 text-text-primary bg-violet-400/[0.08]'
                   : 'bg-layer-2 border-border-default text-text-secondary hover:border-border-strong'
               }`}
             >
@@ -41,7 +42,7 @@ export function PresetChips({ presets, onApply, onDelete, isPresetActive }: Pres
               aria-label={`Delete preset ${preset.name}`}
               className={`inline-flex items-center rounded-r-full px-1.5 py-1 border-y border-r transition-colors hover:bg-layer-3 ${
                 isPresetActive(preset)
-                  ? 'border-[#8B7AFF]/20 text-text-primary bg-[#8B7AFF]/[0.08]'
+                  ? 'border-violet-400/20 text-text-primary bg-violet-400/[0.08]'
                   : 'bg-layer-2 border-border-default text-text-secondary'
               }`}
             >

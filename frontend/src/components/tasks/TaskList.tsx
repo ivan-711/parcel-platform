@@ -56,7 +56,7 @@ export function TaskList({ tasks, compact, grouped }: Props) {
     <div className="space-y-4">
       {groups.map(group => (
         <div key={group.label}>
-          <p className="text-[10px] uppercase tracking-wider text-[#8A8580] font-medium px-3 mb-1">
+          <p className="text-[10px] uppercase tracking-wider text-text-muted font-medium px-3 mb-1">
             {group.label}
           </p>
           <AnimatePresence mode="popLayout">

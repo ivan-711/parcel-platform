@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import { CreditCard, ExternalLink } from 'lucide-react'
 import { useBillingStatus, usePortal, useCancelSubscription } from '@/hooks/useBilling'
 import { PlanBadge } from '@/components/billing/PlanBadge'
@@ -23,25 +24,20 @@ const CANCEL_REASONS = [
   'Other',
 ]
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 6 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.18, ease: 'easeOut' as const },
-  },
-}
+const itemVariants = prefersReducedMotion
+  ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+  : { hidden: { opacity: 0, y: 6 }, visible: { opacity: 1, y: 0, transition: { duration: 0.18, ease: 'easeOut' as const } } }
 
 function StatusBadge({ status }: { status: string | null }) {
   if (!status) return null
 
   const styles: Record<string, string> = {
-    active: 'bg-[#6DBEA3]/10 text-[#6DBEA3]',
-    trialing: 'bg-[#8B7AFF]/10 text-[#8B7AFF]',
-    past_due: 'bg-[#D4A867]/10 text-[#D4A867]',
-    canceled: 'bg-[#D4766A]/10 text-[#D4766A]',
+    active: 'bg-profit/10 text-profit',
+    trialing: 'bg-violet-400/10 text-violet-400',
+    past_due: 'bg-warning/10 text-warning',
+    canceled: 'bg-loss/10 text-loss',
     incomplete: 'bg-layer-3 text-text-secondary',
-    unpaid: 'bg-[#D4766A]/10 text-[#D4766A]',
+    unpaid: 'bg-loss/10 text-loss',
   }
 
   const labels: Record<string, string> = {
@@ -104,8 +100,8 @@ export function BillingSettings() {
         <div className="bg-app-surface border border-border-strong rounded-xl p-6 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[#8B7AFF]/10 flex items-center justify-center">
-                <CreditCard size={20} className="text-[#8B7AFF]" />
+              <div className="w-10 h-10 rounded-lg bg-violet-400/10 flex items-center justify-center">
+                <CreditCard size={20} className="text-violet-400" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
@@ -125,12 +121,12 @@ export function BillingSettings() {
                   </p>
                 )}
                 {isCanceled && billing.current_period_end && (
-                  <p className="text-sm text-[#D4A867] mt-1">
+                  <p className="text-sm text-warning mt-1">
                     Plan downgrades to Free on {formatDate(billing.current_period_end)}
                   </p>
                 )}
                 {billing.status === 'past_due' && (
-                  <p className="text-sm text-[#D4A867] mt-1">
+                  <p className="text-sm text-warning mt-1">
                     Payment failed. Please update your payment method to avoid service interruption.
                   </p>
                 )}
@@ -142,14 +138,14 @@ export function BillingSettings() {
             {plan === 'free' && !billing.trial_active ? (
               <Link
                 to="/pricing"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-accent-text-on-accent text-sm font-medium transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-violet-400 to-violet-600 hover:brightness-110 hover:shadow-[0_0_20px_rgba(139,122,255,0.3)] text-accent-text-on-accent text-sm font-medium transition-all"
               >
                 Upgrade to Carbon
               </Link>
             ) : billing.trial_active ? (
               <Link
                 to="/pricing"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] hover:brightness-110 text-accent-text-on-accent text-sm font-medium transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-violet-400 to-violet-600 hover:brightness-110 hover:shadow-[0_0_20px_rgba(139,122,255,0.3)] text-accent-text-on-accent text-sm font-medium transition-all"
               >
                 Upgrade to Carbon — Keep Full Access
               </Link>
@@ -166,7 +162,7 @@ export function BillingSettings() {
                 {!isCanceled && (
                   <button
                     onClick={() => setCancelOpen(true)}
-                    className="text-sm text-[#D4766A] hover:text-text-primary transition-colors cursor-pointer"
+                    className="text-sm text-loss hover:text-text-primary transition-colors cursor-pointer"
                   >
                     Cancel Subscription
                   </button>
@@ -215,7 +211,7 @@ export function BillingSettings() {
                 id="cancel-reason"
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
-                className="w-full rounded-lg border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/20 focus:border-[#8B7AFF]/40"
+                className="w-full rounded-lg border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-violet-400/20 focus:border-violet-400/40"
               >
                 <option value="">Select a reason</option>
                 {CANCEL_REASONS.map((r) => (
@@ -238,7 +234,7 @@ export function BillingSettings() {
                   )
                 }}
                 disabled={cancelSub.isPending}
-                className="px-4 py-2 rounded-lg bg-[#D4766A] hover:bg-[#D4766A]/90 text-text-primary text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer"
+                className="px-4 py-2 rounded-lg bg-loss hover:bg-loss/90 text-text-primary text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {cancelSub.isPending ? 'Canceling...' : 'Cancel at End of Period'}
               </button>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { Check, AlertCircle, Monitor, Moon, Sun, MessageSquare } from 'lucide-react'
@@ -17,22 +18,13 @@ import { getTheme, setTheme, type Theme } from '@/lib/theme'
 import { BillingSettings } from './BillingSettings'
 import { SuccessOverlay } from '@/components/billing/SuccessOverlay'
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08 },
-  },
-}
+const containerVariants = prefersReducedMotion
+  ? { hidden: {}, visible: {} }
+  : { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.08 } } }
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 6 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.18, ease: 'easeOut' },
-  },
-}
+const itemVariants = prefersReducedMotion
+  ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+  : { hidden: { opacity: 0, y: 6 }, visible: { opacity: 1, y: 0, transition: { duration: 0.18, ease: 'easeOut' } } }
 
 const tabs = [
   { id: 'profile', label: 'Profile' },
@@ -85,15 +77,15 @@ function SMSCompliance() {
 
   return (
     <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="space-y-6">
-      <div className="rounded-xl border border-[#1E1D1B] bg-[#141311] p-6 shadow-xs">
+      <div className="rounded-xl border border-border-default bg-app-recessed p-6 shadow-xs">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-2">
-            <MessageSquare size={16} className="text-[#8B7AFF] mt-0.5 shrink-0" />
-            <h2 className="font-light text-text-primary" style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
+            <MessageSquare size={16} className="text-violet-400 mt-0.5 shrink-0" />
+            <h2 className="font-brand font-light text-text-primary">
               SMS Compliance
             </h2>
           </div>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border bg-error/15 text-error border-error/30">
             {status === 'not_registered' ? 'Not Registered' : 'Registered'}
           </span>
         </div>
@@ -110,30 +102,33 @@ function SMSCompliance() {
         {!showForm ? (
           <button
             onClick={() => setShowForm(true)}
-            className="px-4 py-2 rounded-lg bg-[#8B7AFF] text-white text-sm font-medium hover:brightness-110 transition-all"
+            className="px-4 py-2 rounded-lg bg-violet-400 text-white text-sm font-medium hover:brightness-110 transition-all"
           >
             Register Your Brand
           </button>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4 mt-4 border-t border-[#1E1D1B] pt-5">
+          <form onSubmit={handleSubmit} className="space-y-4 mt-4 border-t border-border-default pt-5">
             <div className="space-y-1.5">
-              <label className="text-sm text-[#8A8580]">Business Name</label>
+              <label htmlFor="sms-business-name" className="text-sm text-text-muted">Business Name</label>
               <input
+                id="sms-business-name"
                 type="text"
                 value={form.businessName}
                 onChange={(e) => handleChange('businessName', e.target.value)}
                 required
+                aria-required="true"
                 placeholder="Your legal business name"
-                className="w-full px-3 py-2 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B] text-[#F0EDE8] text-sm placeholder:text-[#4A4845] focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
+                className="w-full px-3 py-2 rounded-lg bg-app-bg border border-border-default text-text-primary text-sm placeholder:text-text-disabled focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm text-[#8A8580]">Business Type</label>
+              <label htmlFor="sms-business-type" className="text-sm text-text-muted">Business Type</label>
               <select
+                id="sms-business-type"
                 value={form.businessType}
                 onChange={(e) => handleChange('businessType', e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B] text-[#F0EDE8] text-sm focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
+                className="w-full px-3 py-2 rounded-lg bg-app-bg border border-border-default text-text-primary text-sm focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20"
               >
                 <option value="Sole Proprietor">Sole Proprietor</option>
                 <option value="LLC">LLC</option>
@@ -143,54 +138,60 @@ function SMSCompliance() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm text-[#8A8580]">EIN</label>
+              <label htmlFor="sms-ein" className="text-sm text-text-muted">EIN</label>
               <input
+                id="sms-ein"
                 type="text"
                 value={form.ein}
                 onChange={(e) => handleChange('ein', e.target.value)}
                 placeholder="Optional for sole proprietors"
-                className="w-full px-3 py-2 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B] text-[#F0EDE8] text-sm placeholder:text-[#4A4845] focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
+                className="w-full px-3 py-2 rounded-lg bg-app-bg border border-border-default text-text-primary text-sm placeholder:text-text-disabled focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm text-[#8A8580]">Business Address</label>
+              <label htmlFor="sms-business-address" className="text-sm text-text-muted">Business Address</label>
               <input
+                id="sms-business-address"
                 type="text"
                 value={form.address}
                 onChange={(e) => handleChange('address', e.target.value)}
                 required
+                aria-required="true"
                 placeholder="123 Main St, City, State, ZIP"
-                className="w-full px-3 py-2 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B] text-[#F0EDE8] text-sm placeholder:text-[#4A4845] focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
+                className="w-full px-3 py-2 rounded-lg bg-app-bg border border-border-default text-text-primary text-sm placeholder:text-text-disabled focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm text-[#8A8580]">Website</label>
+              <label htmlFor="sms-website" className="text-sm text-text-muted">Website</label>
               <input
+                id="sms-website"
                 type="url"
                 value={form.website}
                 onChange={(e) => handleChange('website', e.target.value)}
                 placeholder="https://yoursite.com"
-                className="w-full px-3 py-2 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B] text-[#F0EDE8] text-sm placeholder:text-[#4A4845] focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20"
+                className="w-full px-3 py-2 rounded-lg bg-app-bg border border-border-default text-text-primary text-sm placeholder:text-text-disabled focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm text-[#8A8580]">Use Case</label>
+              <label htmlFor="sms-use-case" className="text-sm text-text-muted">Use Case</label>
               <textarea
+                id="sms-use-case"
                 value={form.useCase}
                 onChange={(e) => handleChange('useCase', e.target.value)}
                 required
+                aria-required="true"
                 rows={3}
-                className="w-full px-3 py-2 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B] text-[#F0EDE8] text-sm placeholder:text-[#4A4845] focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 resize-none"
+                className="w-full px-3 py-2 rounded-lg bg-app-bg border border-border-default text-text-primary text-sm placeholder:text-text-disabled focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 resize-none"
               />
             </div>
 
             <div className="flex gap-2 pt-1">
               <button
                 type="submit"
-                className="px-4 py-2 rounded-lg bg-[#8B7AFF] text-white text-sm font-medium hover:brightness-110 transition-all"
+                className="px-4 py-2 rounded-lg bg-violet-400 text-white text-sm font-medium hover:brightness-110 transition-all"
               >
                 Save Registration Info
               </button>
@@ -250,20 +251,20 @@ function DataManagement() {
         {!confirming ? (
           <button
             onClick={() => setConfirming(true)}
-            className="px-4 py-2 rounded-lg text-sm border border-[#F87171]/30 text-[#F87171] hover:bg-[#F87171]/10 transition-colors"
+            className="px-4 py-2 rounded-lg text-sm border border-loss/30 text-loss hover:bg-loss/10 transition-colors"
           >
             Clear Sample Data
           </button>
         ) : (
-          <div className="p-4 rounded-lg border border-[#F87171]/20 bg-[#F87171]/5">
-            <p className="text-sm text-[#F87171] mb-3">
+          <div className="p-4 rounded-lg border border-loss/20 bg-loss/5">
+            <p className="text-sm text-loss mb-3">
               Are you sure? This will permanently remove all sample data. This cannot be undone.
             </p>
             <div className="flex gap-2">
               <button
                 onClick={handleClear}
                 disabled={clearing}
-                className="px-4 py-2 rounded-lg text-sm bg-[#F87171] text-white hover:bg-[#E56060] disabled:opacity-50 transition-colors"
+                className="px-4 py-2 rounded-lg text-sm bg-loss text-white hover:bg-loss/90 disabled:opacity-50 transition-colors"
               >
                 {clearing ? 'Clearing...' : 'Yes, clear all sample data'}
               </button>
@@ -302,15 +303,15 @@ function DeleteAccountSection() {
 
   return (
     <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="mt-6">
-      <div className="rounded-xl border border-[#F87171]/20 bg-[#F87171]/[0.03] p-6">
-        <h3 className="text-sm font-medium text-[#F87171] mb-1">Danger Zone</h3>
+      <div className="rounded-xl border border-loss/20 bg-loss/[0.03] p-6">
+        <h3 className="text-sm font-medium text-loss mb-1">Danger Zone</h3>
         <p className="text-xs text-text-secondary mb-4">
           Permanently delete your account and all associated data.
         </p>
         {!open ? (
           <button
             onClick={() => setOpen(true)}
-            className="px-4 py-2 rounded-lg text-sm border border-[#F87171]/30 text-[#F87171] hover:bg-[#F87171]/10 transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-lg text-sm border border-loss/30 text-loss hover:bg-loss/10 transition-colors cursor-pointer"
           >
             Delete my account
           </button>
@@ -321,20 +322,21 @@ function DeleteAccountSection() {
               saved deals, contacts, documents, skip traces, mail campaigns, and settings. This action
               cannot be undone. If you have an active subscription, it will be canceled.
             </p>
-            <label className="flex items-start gap-2 text-xs text-text-secondary">
+            <label htmlFor="delete-account-confirm" className="flex items-start gap-2 text-xs text-text-secondary">
               <input
+                id="delete-account-confirm"
                 type="text"
                 value={confirmation}
                 onChange={(e) => setConfirmation(e.target.value)}
                 placeholder='Type "DELETE" to confirm'
-                className="w-full h-9 px-3 rounded-md bg-app-recessed border border-[#F87171]/30 text-text-primary text-sm placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-[#F87171]/30"
+                className="w-full h-9 px-3 rounded-md bg-app-recessed border border-loss/30 text-text-primary text-sm placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-loss/30"
               />
             </label>
             <div className="flex gap-2">
               <button
                 onClick={handleDelete}
                 disabled={confirmation !== 'DELETE' || deleting}
-                className="px-4 py-2 rounded-lg text-sm bg-[#F87171] text-white hover:bg-[#E56060] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-lg text-sm bg-loss text-white hover:bg-loss/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
               >
                 {deleting ? 'Deleting...' : 'Delete my account'}
               </button>
@@ -527,14 +529,14 @@ export default function SettingsPage() {
   if (profileError) {
     return (
       <AppShell title="Settings">
-        <div className="rounded-xl border border-[#D4766A]/20 bg-[#D4766A]/5 p-6 flex items-start gap-3 max-w-lg">
-          <AlertCircle size={20} className="text-[#D4766A] shrink-0 mt-0.5" />
+        <div className="rounded-xl border border-loss/20 bg-loss/5 p-6 flex items-start gap-3 max-w-lg">
+          <AlertCircle size={20} className="text-loss shrink-0 mt-0.5" />
           <div className="space-y-2">
             <p className="text-sm font-medium text-text-primary">Failed to load settings</p>
             <p className="text-xs text-text-secondary">Something went wrong. Please try again.</p>
             <button
               onClick={() => queryClient.invalidateQueries({ queryKey: ['me'] })}
-              className="text-xs font-medium text-[#8B7AFF] hover:text-[#A89FFF] transition-colors"
+              className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
             >
               Try again
             </button>
@@ -607,7 +609,7 @@ export default function SettingsPage() {
               <div className="bg-app-surface border border-border-strong rounded-xl p-6 shadow-xs">
                 <h2 className="text-sm font-semibold text-text-primary mb-4">Profile</h2>
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 rounded-full bg-app-elevated border border-border-strong flex items-center justify-center text-[#8B7AFF] text-lg font-semibold">
+                  <div className="w-16 h-16 rounded-full bg-app-elevated border border-border-strong flex items-center justify-center text-violet-400 text-lg font-semibold">
                     {user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
                   </div>
                   <div>
@@ -623,7 +625,7 @@ export default function SettingsPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Your name"
-                      className="bg-app-recessed border border-border-default text-text-primary placeholder:text-text-disabled focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/40 focus:ring-offset-2 focus:ring-offset-app-bg"
+                      className="bg-app-recessed border border-border-default text-text-primary placeholder:text-text-disabled focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/40 focus:ring-offset-2 focus:ring-offset-app-bg"
                     />
                   </div>
                   <div className="space-y-2">
@@ -634,7 +636,7 @@ export default function SettingsPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
-                      className="bg-app-recessed border border-border-default text-text-primary placeholder:text-text-disabled focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/40 focus:ring-offset-2 focus:ring-offset-app-bg"
+                      className="bg-app-recessed border border-border-default text-text-primary placeholder:text-text-disabled focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/40 focus:ring-offset-2 focus:ring-offset-app-bg"
                     />
                   </div>
                   <div className="space-y-2">
@@ -648,7 +650,7 @@ export default function SettingsPage() {
                   </div>
 
                   {profileMsg && (
-                    <p className={profileMsg.type === 'success' ? 'text-[#6DBEA3] text-sm' : 'text-[#D4766A] text-sm'}>
+                    <p className={profileMsg.type === 'success' ? 'text-profit text-sm' : 'text-loss text-sm'}>
                       {profileMsg.text}
                     </p>
                   )}
@@ -656,7 +658,7 @@ export default function SettingsPage() {
                   <button
                     type="submit"
                     disabled={profileMutation.isPending}
-                    className="px-4 py-2 min-h-[44px] md:min-h-0 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 min-h-[44px] md:min-h-0 rounded-lg border border-border-default bg-transparent text-text-primary text-sm font-medium hover:bg-layer-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {profileMutation.isPending ? 'Saving...' : 'Save changes'}
                   </button>
@@ -682,7 +684,7 @@ export default function SettingsPage() {
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       required
-                      className="bg-app-recessed border border-border-default text-text-primary focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/40 focus:ring-offset-2 focus:ring-offset-app-bg"
+                      className="bg-app-recessed border border-border-default text-text-primary focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/40 focus:ring-offset-2 focus:ring-offset-app-bg"
                     />
                   </div>
                   <div className="space-y-2">
@@ -693,7 +695,7 @@ export default function SettingsPage() {
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       required
-                      className="bg-app-recessed border border-border-default text-text-primary focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/40 focus:ring-offset-2 focus:ring-offset-app-bg"
+                      className="bg-app-recessed border border-border-default text-text-primary focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/40 focus:ring-offset-2 focus:ring-offset-app-bg"
                     />
                   </div>
                   <div className="space-y-2">
@@ -707,15 +709,16 @@ export default function SettingsPage() {
                         if (confirmError) setConfirmError('')
                       }}
                       required
-                      className="bg-app-recessed border border-border-default text-text-primary focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/40 focus:ring-offset-2 focus:ring-offset-app-bg"
+                      aria-describedby={confirmError ? 'confirm-password-error' : undefined}
+                      className="bg-app-recessed border border-border-default text-text-primary focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/40 focus:ring-offset-2 focus:ring-offset-app-bg"
                     />
                     {confirmError && (
-                      <p className="text-[#D4766A] text-sm">{confirmError}</p>
+                      <p id="confirm-password-error" className="text-loss text-sm">{confirmError}</p>
                     )}
                   </div>
 
                   {passwordMsg && (
-                    <p className={passwordMsg.type === 'success' ? 'text-[#6DBEA3] text-sm' : 'text-[#D4766A] text-sm'}>
+                    <p className={passwordMsg.type === 'success' ? 'text-profit text-sm' : 'text-loss text-sm'}>
                       {passwordMsg.text}
                     </p>
                   )}
@@ -723,7 +726,7 @@ export default function SettingsPage() {
                   <button
                     type="submit"
                     disabled={passwordMutation.isPending}
-                    className="px-4 py-2 min-h-[44px] md:min-h-0 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 min-h-[44px] md:min-h-0 rounded-lg border border-border-default bg-transparent text-text-primary text-sm font-medium hover:bg-layer-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {passwordMutation.isPending ? 'Updating...' : 'Update password'}
                   </button>
@@ -750,13 +753,13 @@ export default function SettingsPage() {
                 />
               </div>
               {notifSaved && (
-                <p className="flex items-center gap-1 text-[#6DBEA3] text-sm mt-3">
+                <p className="flex items-center gap-1 text-profit text-sm mt-3">
                   <Check size={14} />
                   Saved
                 </p>
               )}
               {notifError && (
-                <p className="text-[#D4766A] text-sm mt-3">Failed to save</p>
+                <p className="text-loss text-sm mt-3">Failed to save</p>
               )}
             </div>
           </motion.div>

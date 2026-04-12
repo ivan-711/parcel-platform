@@ -41,8 +41,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       return (
         <div className="min-h-screen bg-app-bg flex items-center justify-center p-6">
           <div className="max-w-md w-full bg-app-surface border border-border-subtle rounded-xl p-8 text-center space-y-6">
-            <div className="mx-auto w-14 h-14 rounded-full bg-[#D4766A]/10 flex items-center justify-center">
-              <AlertTriangle className="w-7 h-7 text-[#D4766A]" />
+            <div className="mx-auto w-14 h-14 rounded-full bg-loss/10 flex items-center justify-center">
+              <AlertTriangle className="w-7 h-7 text-loss" />
             </div>
 
             <div className="space-y-2">
@@ -53,7 +53,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             </div>
 
             {this.state.error && import.meta.env.DEV && (
-              <pre className="text-left text-xs text-[#D4766A] bg-app-bg border border-border-subtle rounded-lg p-3 overflow-auto max-h-32">
+              <pre className="text-left text-xs text-loss bg-app-bg border border-border-subtle rounded-lg p-3 overflow-auto max-h-32">
                 {this.state.error.message}
               </pre>
             )}
@@ -69,7 +69,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               </Button>
               <Button
                 onClick={this.handleReset}
-                className="gap-2 bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
+                className="gap-2 bg-gradient-to-r from-violet-400 to-violet-500 text-accent-text-on-accent hover:opacity-90"
               >
                 <RefreshCw size={14} />
                 Try Again
@@ -106,8 +106,8 @@ export class PageErrorBoundary extends Component<
     if (this.state.hasError) {
       return (
         <div className="flex flex-col items-center justify-center py-20 px-6 text-center space-y-4">
-          <div className="w-12 h-12 rounded-full bg-[#D4766A]/10 flex items-center justify-center">
-            <AlertTriangle className="w-6 h-6 text-[#D4766A]" />
+          <div className="w-12 h-12 rounded-full bg-loss/10 flex items-center justify-center">
+            <AlertTriangle className="w-6 h-6 text-loss" />
           </div>
           <div className="space-y-1">
             <p className="text-base font-medium text-text-primary">This section encountered an error</p>

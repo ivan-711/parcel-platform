@@ -88,7 +88,7 @@ export function CreateReportModal({
       <DialogContent className="sm:max-w-[440px] bg-app-elevated border-border-default">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-text-primary">
-            <FileText size={16} className="text-[#8B7AFF]" />
+            <FileText size={16} className="text-violet-400" />
             Generate Report
           </DialogTitle>
         </DialogHeader>
@@ -103,7 +103,7 @@ export function CreateReportModal({
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-lg border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-[#8B7AFF]/20 focus:border-[#8B7AFF]/40"
+              className="w-full rounded-lg border border-border-default bg-app-recessed px-3 py-2 text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-violet-400/20 focus:border-violet-400/40"
               placeholder="Analysis Report — 613 N 14th St"
             />
           </div>
@@ -120,7 +120,7 @@ export function CreateReportModal({
                   onClick={() => setAudience(a)}
                   className={`px-3 py-2 rounded-lg border text-xs font-medium capitalize transition-colors cursor-pointer ${
                     audience === a
-                      ? 'border-[#8B7AFF] bg-[#8B7AFF]/10 text-[#8B7AFF]'
+                      ? 'border-violet-400 bg-violet-400/10 text-violet-400'
                       : 'border-border-default bg-transparent text-text-secondary hover:bg-layer-2'
                   }`}
                 >
@@ -132,8 +132,8 @@ export function CreateReportModal({
 
           {/* Missing context warning */}
           {(!propertyId || !scenarioId) && (
-            <div className="rounded-lg bg-[#D4A867]/10 border border-[#D4A867]/20 p-3">
-              <p className="text-xs text-[#D4A867]">
+            <div className="rounded-lg bg-warning-bg border border-warning/20 p-3">
+              <p className="text-xs text-warning">
                 Open this modal from a property analysis to pre-fill the property and scenario data.
               </p>
             </div>
@@ -153,7 +153,7 @@ export function CreateReportModal({
               size="sm"
               disabled={!canSubmit || createMutation.isPending}
               onClick={() => createMutation.mutate()}
-              className="bg-[#8B7AFF] hover:bg-[#6C5CE7] text-white gap-1.5"
+              className="bg-violet-400 hover:bg-violet-600 text-white gap-1.5"
             >
               <Link2 size={12} />
               {createMutation.isPending ? 'Creating...' : 'Create & Copy Link'}

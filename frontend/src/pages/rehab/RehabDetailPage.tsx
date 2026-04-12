@@ -23,28 +23,28 @@ import type { RehabItem, RehabCategorySummary, CreateRehabItemRequest } from '@/
 /* ─── Constants ─── */
 
 const CATEGORY_COLORS: Record<string, string> = {
-  kitchen: 'bg-[#FBBF24]/15 text-[#FBBF24] border-[#FBBF24]/30',
-  bathroom: 'bg-[#60A5FA]/15 text-[#60A5FA] border-[#60A5FA]/30',
-  flooring: 'bg-[#8B7AFF]/15 text-[#A89FFF] border-[#8B7AFF]/30',
-  roof: 'bg-[#F87171]/15 text-[#F87171] border-[#F87171]/30',
-  hvac: 'bg-[#2DD4BF]/15 text-[#2DD4BF] border-[#2DD4BF]/30',
-  plumbing: 'bg-[#60A5FA]/15 text-[#93C5FD] border-[#60A5FA]/30',
-  electrical: 'bg-[#FBBF24]/15 text-[#FCD34D] border-[#FBBF24]/30',
-  exterior: 'bg-[#34D399]/15 text-[#34D399] border-[#34D399]/30',
-  foundation: 'bg-[#F87171]/15 text-[#FCA5A5] border-[#F87171]/30',
-  windows_doors: 'bg-[#C084FC]/15 text-[#C084FC] border-[#C084FC]/30',
-  painting: 'bg-[#FB923C]/15 text-[#FB923C] border-[#FB923C]/30',
-  landscaping: 'bg-[#4ADE80]/15 text-[#4ADE80] border-[#4ADE80]/30',
-  general: 'bg-[#8A8580]/15 text-[#C5C0B8] border-[#8A8580]/30',
-  permits: 'bg-[#8A8580]/15 text-[#C5C0B8] border-[#8A8580]/30',
-  other: 'bg-[#8A8580]/15 text-[#C5C0B8] border-[#8A8580]/30',
+  kitchen: 'bg-warning-bg text-warning border-warning/30',
+  bathroom: 'bg-info-bg text-info border-info/30',
+  flooring: 'bg-violet-400/15 text-violet-300 border-violet-400/30',
+  roof: 'bg-loss-bg text-loss border-loss/30',
+  hvac: 'bg-success-bg text-success border-success/30',
+  plumbing: 'bg-info-bg text-info border-info/30',
+  electrical: 'bg-warning-bg text-warning border-warning/30',
+  exterior: 'bg-success-bg text-success border-success/30',
+  foundation: 'bg-loss-bg text-loss border-loss/30',
+  windows_doors: 'bg-violet-400/15 text-violet-300 border-violet-400/30',
+  painting: 'bg-warning-bg text-warning border-warning/30',
+  landscaping: 'bg-profit-bg text-profit border-profit/30',
+  general: 'bg-gray-9/15 text-text-secondary border-gray-9/30',
+  permits: 'bg-gray-9/15 text-text-secondary border-gray-9/30',
+  other: 'bg-gray-9/15 text-text-secondary border-gray-9/30',
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  planned: 'bg-[#8A8580]/15 text-[#C5C0B8] border-[#8A8580]/30',
-  in_progress: 'bg-[#60A5FA]/15 text-[#60A5FA] border-[#60A5FA]/30',
-  completed: 'bg-[#4ADE80]/15 text-[#4ADE80] border-[#4ADE80]/30',
-  skipped: 'bg-[#FBBF24]/15 text-[#FBBF24] border-[#FBBF24]/30',
+  planned: 'bg-gray-9/15 text-text-secondary border-gray-9/30',
+  in_progress: 'bg-info-bg text-info border-info/30',
+  completed: 'bg-profit-bg text-profit border-profit/30',
+  skipped: 'bg-warning-bg text-warning border-warning/30',
 }
 
 const PROJECT_STATUSES = [
@@ -118,7 +118,7 @@ export default function RehabDetailPage() {
     return (
       <AppShell title="Rehab Project">
         <div className="flex items-center justify-center py-20">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#8B7AFF] border-t-transparent" />
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-violet-400 border-t-transparent" />
         </div>
       </AppShell>
     )
@@ -127,9 +127,9 @@ export default function RehabDetailPage() {
   if (!project) {
     return (
       <AppShell title="Rehab Project">
-        <div className="py-20 text-center text-[#8A8580]">
+        <div className="py-20 text-center text-text-muted">
           Project not found.{' '}
-          <Link to="/rehabs" className="text-[#8B7AFF] hover:underline">
+          <Link to="/rehabs" className="text-violet-400 hover:underline">
             Back to projects
           </Link>
         </div>
@@ -156,7 +156,7 @@ export default function RehabDetailPage() {
           {/* Breadcrumb */}
           <Link
             to="/rehabs"
-            className="inline-flex items-center gap-1.5 text-sm text-[#8A8580] transition-colors hover:text-[#F0EDE8]"
+            className="inline-flex items-center gap-1.5 text-sm text-text-muted transition-colors hover:text-text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Rehab Projects
@@ -164,12 +164,12 @@ export default function RehabDetailPage() {
 
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-light tracking-tight text-[#F0EDE8]">
+              <h1 className="text-2xl font-light tracking-tight text-text-primary">
                 {project.name}
               </h1>
 
               {hasAiImports && (
-                <span className="inline-flex items-center gap-1 rounded-full border border-[#8B7AFF]/30 bg-[#8B7AFF]/10 px-2 py-0.5 text-xs text-[#A89FFF]">
+                <span className="inline-flex items-center gap-1 rounded-full border border-violet-400/30 bg-violet-400/10 px-2 py-0.5 text-xs text-violet-300">
                   <Sparkles className="h-3 w-3" />
                   AI Estimated
                 </span>
@@ -179,7 +179,7 @@ export default function RehabDetailPage() {
               <div className="relative">
                 <button
                   onClick={() => setStatusOpen(!statusOpen)}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#1E1D1B] bg-[#141311] px-3 py-1.5 text-sm text-[#C5C0B8] transition-colors hover:border-[#2a2826]"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-border-default bg-app-recessed px-3 py-1.5 text-sm text-text-secondary transition-colors hover:border-border-strong"
                 >
                   {formatStatus(project.status)}
                   <ChevronDown className="h-3.5 w-3.5" />
@@ -191,16 +191,16 @@ export default function RehabDetailPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -4 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute left-0 top-full z-20 mt-1 w-40 rounded-lg border border-[#1E1D1B] bg-[#141311] py-1 shadow-xl"
+                      className="absolute left-0 top-full z-20 mt-1 w-40 rounded-lg border border-border-default bg-app-recessed py-1 shadow-xl"
                     >
                       {PROJECT_STATUSES.map((s) => (
                         <button
                           key={s.value}
                           onClick={() => handleStatusChange(s.value)}
-                          className={`w-full px-3 py-1.5 text-left text-sm transition-colors hover:bg-[#1E1D1B] ${
+                          className={`w-full px-3 py-1.5 text-left text-sm transition-colors hover:bg-app-elevated ${
                             project.status === s.value
-                              ? 'text-[#8B7AFF]'
-                              : 'text-[#C5C0B8]'
+                              ? 'text-violet-400'
+                              : 'text-text-secondary'
                           }`}
                         >
                           {s.label}
@@ -215,23 +215,23 @@ export default function RehabDetailPage() {
 
           {/* Budget KPIs */}
           <div className="grid grid-cols-3 gap-3">
-            <div className="rounded-xl border border-[#1E1D1B] bg-[#141311] px-4 py-3">
-              <p className="text-xs text-[#8A8580]">Estimated</p>
-              <p className="text-lg font-light text-[#F0EDE8]">
+            <div className="rounded-xl border border-border-default bg-app-recessed px-4 py-3">
+              <p className="text-xs text-text-muted">Estimated</p>
+              <p className="text-lg font-light text-text-primary">
                 {formatCurrency(totalEstimated)}
               </p>
             </div>
-            <div className="rounded-xl border border-[#1E1D1B] bg-[#141311] px-4 py-3">
-              <p className="text-xs text-[#8A8580]">Actual</p>
-              <p className="text-lg font-light text-[#F0EDE8]">
+            <div className="rounded-xl border border-border-default bg-app-recessed px-4 py-3">
+              <p className="text-xs text-text-muted">Actual</p>
+              <p className="text-lg font-light text-text-primary">
                 {formatCurrency(totalActual)}
               </p>
             </div>
-            <div className="rounded-xl border border-[#1E1D1B] bg-[#141311] px-4 py-3">
-              <p className="text-xs text-[#8A8580]">Variance</p>
+            <div className="rounded-xl border border-border-default bg-app-recessed px-4 py-3">
+              <p className="text-xs text-text-muted">Variance</p>
               <p
                 className={`inline-flex items-center gap-1 text-lg font-light ${
-                  variance <= 0 ? 'text-[#4ADE80]' : 'text-[#F87171]'
+                  variance <= 0 ? 'text-profit' : 'text-loss'
                 }`}
               >
                 {variance <= 0 ? (
@@ -246,13 +246,13 @@ export default function RehabDetailPage() {
         </div>
 
         {/* ── Items Table ── */}
-        <div className="rounded-xl border border-[#1E1D1B] bg-[#141311]">
-          <div className="flex items-center justify-between border-b border-[#1E1D1B] px-4 py-3">
-            <h2 className="text-sm font-medium text-[#F0EDE8]">Line Items</h2>
+        <div className="rounded-xl border border-border-default bg-app-recessed">
+          <div className="flex items-center justify-between border-b border-border-default px-4 py-3">
+            <h2 className="text-sm font-medium text-text-primary">Line Items</h2>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowAddForm(!showAddForm)}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-[#8B7AFF] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#7B6AEF]"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-violet-400 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-violet-500"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add Item
@@ -284,7 +284,7 @@ export default function RehabDetailPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[#1E1D1B] text-left text-xs text-[#8A8580]">
+                <tr className="border-b border-border-default text-left text-xs text-text-muted">
                   <th className="px-4 py-2.5 font-medium">Category</th>
                   <th className="px-4 py-2.5 font-medium">Description</th>
                   <th className="px-4 py-2.5 font-medium text-right">Estimated</th>
@@ -299,7 +299,7 @@ export default function RehabDetailPage() {
                   <tr>
                     <td
                       colSpan={7}
-                      className="px-4 py-8 text-center text-[#8A8580]"
+                      className="px-4 py-8 text-center text-text-muted"
                     >
                       No items yet. Click "Add Item" to get started.
                     </td>
@@ -321,7 +321,7 @@ export default function RehabDetailPage() {
         {/* ── Category Summary Cards ── */}
         {summary && summary.by_category.length > 0 && (
           <div>
-            <h2 className="mb-3 text-sm font-medium text-[#F0EDE8]">
+            <h2 className="mb-3 text-sm font-medium text-text-primary">
               Category Breakdown
             </h2>
             <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
@@ -351,7 +351,7 @@ function ItemRow({
     STATUS_COLORS[item.status] ?? STATUS_COLORS.planned
 
   return (
-    <tr className="border-b border-[#1E1D1B]/60 transition-colors hover:bg-[#1E1D1B]/30">
+    <tr className="border-b border-border-default/60 transition-colors hover:bg-app-elevated/30">
       <td className="px-4 py-2.5">
         <span
           className={`inline-block rounded-full border px-2 py-0.5 text-xs ${catColor}`}
@@ -359,14 +359,14 @@ function ItemRow({
           {formatCategory(item.category)}
         </span>
       </td>
-      <td className="px-4 py-2.5 text-[#C5C0B8]">{item.description}</td>
-      <td className="px-4 py-2.5 text-right tabular-nums text-[#C5C0B8]">
+      <td className="px-4 py-2.5 text-text-secondary">{item.description}</td>
+      <td className="px-4 py-2.5 text-right tabular-nums text-text-secondary">
         {formatCurrency(item.estimated_cost)}
       </td>
-      <td className="px-4 py-2.5 text-right tabular-nums text-[#C5C0B8]">
+      <td className="px-4 py-2.5 text-right tabular-nums text-text-secondary">
         {item.actual_cost != null ? formatCurrency(item.actual_cost) : '—'}
       </td>
-      <td className="px-4 py-2.5 text-[#8A8580]">
+      <td className="px-4 py-2.5 text-text-muted">
         {item.contractor_name || '—'}
       </td>
       <td className="px-4 py-2.5">
@@ -379,7 +379,7 @@ function ItemRow({
       <td className="px-4 py-2.5">
         <button
           onClick={onDelete}
-          className="rounded-md p-1 text-[#8A8580] transition-colors hover:bg-[#F87171]/10 hover:text-[#F87171]"
+          className="rounded-md p-1 text-text-muted transition-colors hover:bg-loss-bg hover:text-loss"
           title="Delete item"
         >
           <Trash2 className="h-3.5 w-3.5" />
@@ -416,12 +416,12 @@ function AddItemForm({
   }
 
   const inputCls =
-    'w-full rounded-lg border border-[#1E1D1B] bg-[#0C0B0A] px-3 py-2 text-sm text-[#F0EDE8] placeholder:text-[#8A8580]/60 focus:border-[#8B7AFF]/50 focus:outline-none focus:ring-1 focus:ring-[#8B7AFF]/30'
+    'w-full rounded-lg border border-border-default bg-app-bg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted/60 focus:border-violet-400/50 focus:outline-none focus:ring-1 focus:ring-violet-400/30'
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="grid grid-cols-2 gap-3 border-b border-[#1E1D1B] bg-[#0C0B0A]/40 px-4 py-3 md:grid-cols-5"
+      className="grid grid-cols-2 gap-3 border-b border-border-default bg-app-bg/40 px-4 py-3 md:grid-cols-5"
     >
       <select
         value={category}
@@ -461,7 +461,7 @@ function AddItemForm({
       <button
         type="submit"
         disabled={isSubmitting || !description.trim()}
-        className="rounded-lg bg-[#8B7AFF] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#7B6AEF] disabled:opacity-40"
+        className="rounded-lg bg-violet-400 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-500 disabled:opacity-40"
       >
         {isSubmitting ? 'Adding...' : 'Add'}
       </button>
@@ -479,29 +479,29 @@ function CategoryCard({ data }: { data: RehabCategorySummary }) {
       ? Math.min(100, Math.round((data.actual / data.estimated) * 100))
       : 0
   const barColor =
-    data.actual <= data.estimated ? 'bg-[#4ADE80]' : 'bg-[#F87171]'
+    data.actual <= data.estimated ? 'bg-profit' : 'bg-loss'
 
   return (
-    <div className="rounded-xl border border-[#1E1D1B] bg-[#141311] p-4">
+    <div className="rounded-xl border border-border-default bg-app-recessed p-4">
       <div className="mb-3 flex items-center justify-between">
         <span
           className={`inline-block rounded-full border px-2 py-0.5 text-xs ${catColor}`}
         >
           {formatCategory(data.category)}
         </span>
-        <span className="text-xs text-[#8A8580]">
+        <span className="text-xs text-text-muted">
           {data.completed_count} of {data.item_count} complete
         </span>
       </div>
 
       <div className="mb-2 flex items-baseline justify-between text-sm">
-        <span className="text-[#8A8580]">
+        <span className="text-text-muted">
           {formatCurrency(data.actual)}{' '}
-          <span className="text-[#8A8580]/60">/ {formatCurrency(data.estimated)}</span>
+          <span className="text-text-muted/60">/ {formatCurrency(data.estimated)}</span>
         </span>
         <span
           className={`text-xs ${
-            data.variance <= 0 ? 'text-[#4ADE80]' : 'text-[#F87171]'
+            data.variance <= 0 ? 'text-profit' : 'text-loss'
           }`}
         >
           {data.variance <= 0 ? '' : '+'}
@@ -510,7 +510,7 @@ function CategoryCard({ data }: { data: RehabCategorySummary }) {
       </div>
 
       {/* Mini bar */}
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#1E1D1B]">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-border-default">
         <div
           className={`h-full rounded-full transition-all ${barColor}`}
           style={{ width: `${pct}%` }}

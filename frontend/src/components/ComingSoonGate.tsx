@@ -33,12 +33,11 @@ export function ComingSoonGate({ service, featureName, children }: ComingSoonGat
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] px-4 text-center">
       <div className="max-w-sm">
-        <div className="w-14 h-14 rounded-2xl bg-[#8B7AFF]/10 flex items-center justify-center mx-auto mb-6">
-          <Clock size={24} className="text-[#8B7AFF]" />
+        <div className="w-14 h-14 rounded-2xl bg-violet-400/10 flex items-center justify-center mx-auto mb-6">
+          <Clock size={24} className="text-violet-400" />
         </div>
         <h1
-          className="text-2xl text-text-primary mb-3"
-          style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+          className="text-2xl text-text-primary mb-3 font-brand font-light"
         >
           Coming Soon
         </h1>

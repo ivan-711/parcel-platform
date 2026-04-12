@@ -15,12 +15,12 @@ export function ConceptTooltip({ term, definition, children }: ConceptTooltipPro
     <TooltipProvider delayDuration={200}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="border-b border-dashed border-[#5C5A56] cursor-help">
+          <span className="border-b border-dashed border-text-disabled cursor-help">
             {children}
           </span>
         </TooltipTrigger>
         <TooltipContent
-          className="max-w-[280px] bg-[#2A2924] border border-border-strong p-3 rounded-lg shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)]"
+          className="max-w-[280px] bg-app-overlay border border-border-strong p-3 rounded-lg shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)]"
           sideOffset={4}
         >
           <p className="text-sm font-semibold text-text-primary mb-1">{term}</p>

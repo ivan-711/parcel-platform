@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState, useEffect, useMemo } from 'react'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { motion, AnimatePresence } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import { Inbox } from 'lucide-react'
 import { ColumnSkeleton } from './column-skeleton'
 import { SortableDealCard } from './deal-card'
@@ -115,8 +116,8 @@ export function KanbanColumn({
           <ColumnSkeleton />
         ) : cards.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[100px] py-8 border border-dashed border-border-default rounded-xl">
-            <Inbox size={16} className="text-[#7A7872]/40 mb-1.5" />
-            <p className="text-[12px] text-[#7A7872]/50">No deals</p>
+            <Inbox size={16} className="text-text-disabled/40 mb-1.5" />
+            <p className="text-[12px] text-text-disabled/50">No deals</p>
           </div>
         ) : (
           <SortableContext
@@ -127,10 +128,10 @@ export function KanbanColumn({
               {cards.map((card, i) => (
                 <motion.div
                   key={card.pipeline_id}
-                  initial={{ opacity: 0, y: 8 }}
+                  initial={prefersReducedMotion ? {} : { opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.18, delay: Math.min(i, 8) * 0.04 }}
+                  exit={prefersReducedMotion ? {} : { opacity: 0, y: -4 }}
+                  transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.18, delay: Math.min(i, 8) * 0.04 }}
                 >
                   <SortableDealCard
                     card={card}

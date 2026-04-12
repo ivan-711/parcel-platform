@@ -108,15 +108,15 @@ function Toggle({
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
-        <p className="text-sm text-[#F0EDE8]">{label}</p>
-        {description && <p className="text-xs text-[#8A8580] mt-0.5">{description}</p>}
+        <p className="text-sm text-text-primary">{label}</p>
+        {description && <p className="text-xs text-text-muted mt-0.5">{description}</p>}
       </div>
       <button
         type="button"
         onClick={() => onChange(!checked)}
         className={cn(
-          'relative inline-flex h-5 w-9 flex-shrink-0 rounded-full border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-[#8B7AFF] focus:ring-offset-2 focus:ring-offset-[#0C0B0A]',
-          checked ? 'bg-[#8B7AFF]' : 'bg-[#2A2927]',
+          'relative inline-flex h-5 w-9 flex-shrink-0 rounded-full border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2 focus:ring-offset-app-bg',
+          checked ? 'bg-violet-400' : 'bg-app-overlay',
         )}
         role="switch"
         aria-checked={checked}
@@ -144,7 +144,7 @@ function ChannelToggle({
   onChange: (v: 'sms' | 'email') => void
 }) {
   return (
-    <div className="flex rounded-lg overflow-hidden border border-[#1E1D1B]">
+    <div className="flex rounded-lg overflow-hidden border border-border-default">
       {(['sms', 'email'] as const).map((ch) => (
         <button
           key={ch}
@@ -153,8 +153,8 @@ function ChannelToggle({
           className={cn(
             'flex items-center gap-1.5 px-3 py-1.5 text-xs transition-colors',
             value === ch
-              ? 'bg-[#8B7AFF] text-white'
-              : 'bg-[#141311] text-[#8A8580] hover:text-[#F0EDE8] hover:bg-[#1E1D1B]',
+              ? 'bg-violet-400 text-white'
+              : 'bg-app-recessed text-text-muted hover:text-text-primary hover:bg-border-default',
           )}
         >
           {ch === 'sms' ? <MessageSquare size={11} /> : <Mail size={11} />}
@@ -216,7 +216,7 @@ function StepCard({
   const collapsedBody = step.body_template.slice(0, 60) + (step.body_template.length > 60 ? '…' : '')
 
   return (
-    <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl overflow-hidden hover:border-[#8B7AFF]/25 transition-colors">
+    <div className="bg-app-recessed border border-border-default rounded-xl overflow-hidden hover:border-violet-400/25 transition-colors">
       {/* Collapsed header — always visible */}
       <button
         type="button"
@@ -225,42 +225,42 @@ function StepCard({
       >
         <div className="flex items-center gap-3 min-w-0">
           {/* Channel icon */}
-          <span className="flex-shrink-0 w-7 h-7 rounded-full bg-[#8B7AFF]/15 text-[#8B7AFF] flex items-center justify-center">
+          <span className="flex-shrink-0 w-7 h-7 rounded-full bg-violet-400/15 text-violet-400 flex items-center justify-center">
             {step.channel === 'sms' ? <MessageSquare size={13} /> : <Mail size={13} />}
           </span>
           <div className="min-w-0">
-            <p className="text-xs text-[#C5C0B8] truncate">
-              <span className="uppercase tracking-wide text-[10px] text-[#8A8580] mr-1.5">
+            <p className="text-xs text-text-secondary truncate">
+              <span className="uppercase tracking-wide text-[10px] text-text-muted mr-1.5">
                 {step.channel}
               </span>
               · {delaySummary(step.delay_days, step.delay_hours)}
             </p>
             {!isExpanded && step.body_template && (
-              <p className="text-xs text-[#8A8580] truncate mt-0.5">{collapsedBody}</p>
+              <p className="text-xs text-text-muted truncate mt-0.5">{collapsedBody}</p>
             )}
           </div>
         </div>
-        <span className="flex-shrink-0 text-[#8A8580]">
+        <span className="flex-shrink-0 text-text-muted">
           {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </span>
       </button>
 
       {/* Expanded editor */}
       {isExpanded && (
-        <div className="border-t border-[#1E1D1B] px-4 pb-4 pt-3 space-y-4">
+        <div className="border-t border-border-default px-4 pb-4 pt-3 space-y-4">
           {/* Channel + delay row */}
           <div className="flex flex-wrap items-center gap-3">
             <ChannelToggle value={step.channel} onChange={(ch) => onChange({ ...step, channel: ch })} />
 
             {/* Delay inputs */}
-            <div className="flex items-center gap-1.5 text-xs text-[#8A8580]">
+            <div className="flex items-center gap-1.5 text-xs text-text-muted">
               <span>Wait</span>
               <input
                 type="number"
                 min={0}
                 value={step.delay_days}
                 onChange={(e) => onChange({ ...step, delay_days: Math.max(0, parseInt(e.target.value) || 0) })}
-                className="w-12 px-2 py-1 bg-[#1E1D1B] border border-[#2A2927] rounded text-[#F0EDE8] text-xs text-center focus:outline-none focus:border-[#8B7AFF]"
+                className="w-12 px-2 py-1 bg-border-default border border-border-strong rounded text-text-primary text-xs text-center focus:outline-none focus:border-violet-400"
               />
               <span>days</span>
               <input
@@ -269,7 +269,7 @@ function StepCard({
                 max={23}
                 value={step.delay_hours}
                 onChange={(e) => onChange({ ...step, delay_hours: Math.max(0, Math.min(23, parseInt(e.target.value) || 0)) })}
-                className="w-12 px-2 py-1 bg-[#1E1D1B] border border-[#2A2927] rounded text-[#F0EDE8] text-xs text-center focus:outline-none focus:border-[#8B7AFF]"
+                className="w-12 px-2 py-1 bg-border-default border border-border-strong rounded text-text-primary text-xs text-center focus:outline-none focus:border-violet-400"
               />
               <span>hrs after {index === 0 ? 'enrollment' : 'previous step'}</span>
             </div>
@@ -278,27 +278,27 @@ function StepCard({
           {/* Subject (email only) */}
           {step.channel === 'email' && (
             <div>
-              <label className="block text-xs text-[#8A8580] mb-1">Subject</label>
+              <label className="block text-xs text-text-muted mb-1">Subject</label>
               <input
                 type="text"
                 value={step.subject}
                 onChange={(e) => onChange({ ...step, subject: e.target.value })}
                 placeholder="Subject line…"
-                className="w-full px-3 py-2 bg-[#1E1D1B] border border-[#2A2927] rounded-lg text-sm text-[#F0EDE8] placeholder-[#8A8580] focus:outline-none focus:border-[#8B7AFF]"
+                className="w-full px-3 py-2 bg-border-default border border-border-strong rounded-lg text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-violet-400"
               />
             </div>
           )}
 
           {/* Body template */}
           <div>
-            <label className="block text-xs text-[#8A8580] mb-1">Message</label>
+            <label className="block text-xs text-text-muted mb-1">Message</label>
             <textarea
               ref={textareaRef}
               value={step.body_template}
               onChange={(e) => onChange({ ...step, body_template: e.target.value })}
               placeholder="Write your message… use variables below to personalize."
               rows={4}
-              className="w-full px-3 py-2 bg-[#1E1D1B] border border-[#2A2927] rounded-lg text-sm text-[#F0EDE8] placeholder-[#8A8580] resize-none overflow-hidden focus:outline-none focus:border-[#8B7AFF]"
+              className="w-full px-3 py-2 bg-border-default border border-border-strong rounded-lg text-sm text-text-primary placeholder-text-muted resize-none overflow-hidden focus:outline-none focus:border-violet-400"
             />
           </div>
 
@@ -309,7 +309,7 @@ function StepCard({
                 key={v}
                 type="button"
                 onClick={() => insertVariable(v)}
-                className="px-2 py-0.5 rounded text-[11px] bg-[#8B7AFF]/10 text-[#8B7AFF] border border-[#8B7AFF]/20 hover:bg-[#8B7AFF]/20 transition-colors font-mono"
+                className="px-2 py-0.5 rounded text-[11px] bg-violet-400/10 text-violet-400 border border-violet-400/20 hover:bg-violet-400/20 transition-colors font-mono"
               >
                 {v}
               </button>
@@ -318,15 +318,15 @@ function StepCard({
 
           {/* Preview */}
           {step.body_template && (
-            <div className="rounded-lg bg-[#0C0B0A] border border-[#1E1D1B] px-3 py-2.5">
-              <p className="text-[10px] text-[#8A8580] mb-1.5 uppercase tracking-wide">Preview</p>
+            <div className="rounded-lg bg-app-bg border border-border-default px-3 py-2.5">
+              <p className="text-[10px] text-text-muted mb-1.5 uppercase tracking-wide">Preview</p>
               {step.channel === 'email' && step.subject && (
-                <p className="text-xs text-[#C5C0B8] mb-1">
-                  <span className="text-[#8A8580]">Subject: </span>
+                <p className="text-xs text-text-secondary mb-1">
+                  <span className="text-text-muted">Subject: </span>
                   {renderPreview(step.subject)}
                 </p>
               )}
-              <p className="text-xs text-[#C5C0B8] whitespace-pre-wrap">{previewText}</p>
+              <p className="text-xs text-text-secondary whitespace-pre-wrap">{previewText}</p>
             </div>
           )}
 
@@ -334,18 +334,18 @@ function StepCard({
           <div className="flex justify-end pt-1">
             {confirmDelete ? (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-[#8A8580]">Remove this step?</span>
+                <span className="text-xs text-text-muted">Remove this step?</span>
                 <button
                   type="button"
                   onClick={() => setConfirmDelete(false)}
-                  className="text-xs text-[#8A8580] hover:text-[#F0EDE8] transition-colors"
+                  className="text-xs text-text-muted hover:text-text-primary transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={onDelete}
-                  className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                  className="text-xs text-loss hover:text-loss/80 transition-colors"
                 >
                   Remove
                 </button>
@@ -354,7 +354,7 @@ function StepCard({
               <button
                 type="button"
                 onClick={() => setConfirmDelete(true)}
-                className="inline-flex items-center gap-1 text-xs text-[#8A8580] hover:text-red-400 transition-colors"
+                className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-loss transition-colors"
               >
                 <Trash2 size={12} />
                 Remove step
@@ -509,13 +509,12 @@ export default function SequenceBuilderPage() {
           <div className="flex items-center gap-3">
             <Link
               to="/sequences"
-              className="text-[#8A8580] hover:text-[#F0EDE8] transition-colors"
+              className="text-text-muted hover:text-text-primary transition-colors"
             >
               <ArrowLeft size={18} />
             </Link>
             <h1
-              className="text-xl text-[#F0EDE8]"
-              style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+              className="text-xl text-text-primary font-brand font-light"
             >
               {pageTitle}
             </h1>
@@ -524,8 +523,7 @@ export default function SequenceBuilderPage() {
             type="button"
             onClick={handleSave}
             disabled={!canSave}
-            className="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-            style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+            className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-brand font-light bg-violet-400 text-white hover:bg-violet-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {isSaving ? 'Saving…' : 'Save'}
           </button>
@@ -534,42 +532,41 @@ export default function SequenceBuilderPage() {
         {/* Loading skeleton for edit mode */}
         {isEdit && loadingExisting ? (
           <div className="space-y-4 animate-pulse">
-            <div className="h-10 rounded-lg bg-[#141311]" />
-            <div className="h-20 rounded-lg bg-[#141311]" />
-            <div className="h-14 rounded-xl bg-[#141311]" />
-            <div className="h-14 rounded-xl bg-[#141311]" />
+            <div className="h-10 rounded-lg bg-app-recessed" />
+            <div className="h-20 rounded-lg bg-app-recessed" />
+            <div className="h-14 rounded-xl bg-app-recessed" />
+            <div className="h-14 rounded-xl bg-app-recessed" />
           </div>
         ) : (
           <>
             {/* Sequence info */}
-            <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-4 space-y-3">
+            <div className="bg-app-recessed border border-border-default rounded-xl p-4 space-y-3">
               <div>
-                <label className="block text-xs text-[#8A8580] mb-1">Name</label>
+                <label className="block text-xs text-text-muted mb-1">Name</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Cold Outreach — Absentee Owners"
-                  className="w-full px-3 py-2 bg-[#1E1D1B] border border-[#2A2927] rounded-lg text-sm text-[#F0EDE8] placeholder-[#8A8580] focus:outline-none focus:border-[#8B7AFF]"
+                  className="w-full px-3 py-2 bg-border-default border border-border-strong rounded-lg text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-violet-400"
                 />
               </div>
               <div>
-                <label className="block text-xs text-[#8A8580] mb-1">Description</label>
+                <label className="block text-xs text-text-muted mb-1">Description</label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Optional — describe who this sequence is for."
                   rows={2}
-                  className="w-full px-3 py-2 bg-[#1E1D1B] border border-[#2A2927] rounded-lg text-sm text-[#F0EDE8] placeholder-[#8A8580] resize-none focus:outline-none focus:border-[#8B7AFF]"
+                  className="w-full px-3 py-2 bg-border-default border border-border-strong rounded-lg text-sm text-text-primary placeholder-text-muted resize-none focus:outline-none focus:border-violet-400"
                 />
               </div>
             </div>
 
             {/* Stop rules */}
-            <div className="bg-[#141311] border border-[#1E1D1B] rounded-xl p-4 space-y-4">
+            <div className="bg-app-recessed border border-border-default rounded-xl p-4 space-y-4">
               <p
-                className="text-xs text-[#8A8580] uppercase tracking-wider"
-                style={{ fontFamily: 'Satoshi, sans-serif' }}
+                className="text-xs text-text-muted uppercase tracking-wider font-brand"
               >
                 Stop Rules
               </p>
@@ -590,23 +587,22 @@ export default function SequenceBuilderPage() {
             {/* Step timeline */}
             <div>
               <p
-                className="text-xs text-[#8A8580] uppercase tracking-wider mb-3"
-                style={{ fontFamily: 'Satoshi, sans-serif' }}
+                className="text-xs text-text-muted uppercase tracking-wider mb-3 font-brand"
               >
                 Steps{steps.length > 0 ? ` · ${steps.length}` : ''}
               </p>
 
               {steps.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-[#1E1D1B] px-4 py-8 text-center">
-                  <p className="text-sm text-[#8A8580]">No steps yet.</p>
-                  <p className="text-xs text-[#8A8580] mt-1">Add a step to start building your sequence.</p>
+                <div className="rounded-xl border border-dashed border-border-default px-4 py-8 text-center">
+                  <p className="text-sm text-text-muted">No steps yet.</p>
+                  <p className="text-xs text-text-muted mt-1">Add a step to start building your sequence.</p>
                 </div>
               ) : (
                 <div className="relative">
                   {steps.map((step, i) => (
                     <div key={step.id} className="relative">
                       {/* Step label */}
-                      <p className="text-[11px] text-[#8A8580] mb-1.5 ml-0.5">Step {i + 1}</p>
+                      <p className="text-[11px] text-text-muted mb-1.5 ml-0.5">Step {i + 1}</p>
 
                       <StepCard
                         step={step}
@@ -620,7 +616,7 @@ export default function SequenceBuilderPage() {
                       {/* Connecting line between steps */}
                       {i < steps.length - 1 && (
                         <div className="flex justify-start ml-3.5 my-1">
-                          <div className="w-px h-5 bg-[#2A2927]" />
+                          <div className="w-px h-5 bg-app-overlay" />
                         </div>
                       )}
                     </div>
@@ -632,8 +628,7 @@ export default function SequenceBuilderPage() {
               <button
                 type="button"
                 onClick={addStep}
-                className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-dashed border-[#2A2927] text-sm text-[#8A8580] hover:text-[#8B7AFF] hover:border-[#8B7AFF]/40 transition-colors"
-                style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}
+                className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-dashed border-app-overlay text-sm text-text-muted font-brand font-light hover:text-violet-400 hover:border-violet-400/40 transition-colors"
               >
                 <Plus size={14} />
                 Add Step

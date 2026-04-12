@@ -49,7 +49,7 @@ export function DealCard({
         <button
           type="button"
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(deal.id) }}
-          className="absolute top-3 right-10 p-1 rounded text-[#D4766A]/60 hover:text-[#D4766A] hover:bg-[#D4766A]/10 transition-all opacity-0 group-hover:opacity-100"
+          className="absolute top-3 right-10 p-1 rounded text-loss/60 hover:text-loss hover:bg-loss/10 transition-all opacity-0 group-hover:opacity-100"
           aria-label="Delete deal"
         >
           <Trash2 size={14} />

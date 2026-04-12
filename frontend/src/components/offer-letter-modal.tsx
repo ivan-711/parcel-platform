@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
+import { prefersReducedMotion } from '@/lib/motion'
 import { Copy, Check, Download, RefreshCw } from 'lucide-react'
 import {
   Dialog,
@@ -77,9 +78,9 @@ export function OfferLetterModal({
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose() }}>
       <DialogContent className="border-border-default bg-app-elevated sm:max-w-2xl">
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
+          initial={prefersReducedMotion ? {} : { opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.15 }}
+          transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.15 }}
         >
           <DialogHeader>
             <div className="flex items-center gap-2">
@@ -113,7 +114,7 @@ export function OfferLetterModal({
             {/* Error State */}
             {isError && (
               <div className="text-center py-6 space-y-3">
-                <p className="text-sm text-[#D4766A]">
+                <p className="text-sm text-loss">
                   {error instanceof Error ? error.message : 'Failed to generate offer letter'}
                 </p>
                 <Button
@@ -145,7 +146,7 @@ export function OfferLetterModal({
                   </Button>
                   <Button
                     onClick={handleDownloadPDF}
-                    className="gap-2 bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent hover:opacity-90"
+                    className="gap-2 bg-gradient-to-r from-violet-400 to-violet-500 text-accent-text-on-accent hover:opacity-90"
                   >
                     <Download size={14} />
                     Download as PDF

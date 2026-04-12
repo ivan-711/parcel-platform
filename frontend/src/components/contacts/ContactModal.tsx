@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { X } from 'lucide-react'
 import { toast } from 'sonner'
 import { useCreateContact, useUpdateContact } from '@/hooks/useContacts'
 import { cn } from '@/lib/utils'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import type { ContactDetail, ContactType } from '@/types'
 
 interface Props {
@@ -13,12 +13,12 @@ interface Props {
 
 const TYPE_OPTIONS: { value: ContactType; label: string; color: string }[] = [
   { value: 'seller', label: 'Seller', color: '#F97316' },
-  { value: 'buyer', label: 'Buyer', color: '#4ADE80' },
-  { value: 'agent', label: 'Agent', color: '#60A5FA' },
+  { value: 'buyer', label: 'Buyer', color: '#7CCBA5' },
+  { value: 'agent', label: 'Agent', color: '#7B9FCC' },
   { value: 'lender', label: 'Lender', color: '#8B7AFF' },
   { value: 'contractor', label: 'Contractor', color: '#8A8580' },
   { value: 'tenant', label: 'Tenant', color: '#2DD4BF' },
-  { value: 'partner', label: 'Partner', color: '#FBBF24' },
+  { value: 'partner', label: 'Partner', color: '#D4A867' },
   { value: 'other', label: 'Other', color: '#8A8580' },
 ]
 
@@ -94,57 +94,46 @@ export function ContactModal({ open, onOpenChange, contact }: Props) {
     }
   }
 
-  if (!open) return null
-
   const isPending = createMutation.isPending || updateMutation.isPending
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-[#0C0B0A]/75 backdrop-blur-sm"
-        onClick={() => onOpenChange(false)}
-      />
-
-      {/* Dialog */}
-      <div className="relative w-full max-w-lg mx-4 bg-[#141311] border border-[#1E1D1B] rounded-2xl shadow-2xl">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg bg-app-recessed p-0">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E1D1B]">
-          <h2 className="text-lg text-[#F0EDE8] font-medium">
+        <DialogHeader className="px-6 py-4 border-b border-border-default space-y-0">
+          <DialogTitle className="text-lg text-text-primary font-medium">
             {isEdit ? 'Edit Contact' : 'Add Contact'}
-          </h2>
-          <button
-            onClick={() => onOpenChange(false)}
-            className="w-7 h-7 rounded-md flex items-center justify-center text-[#8A8580] hover:text-[#C5C0B8] hover:bg-[#1A1918] transition-colors cursor-pointer"
-          >
-            <X size={16} />
-          </button>
-        </div>
+          </DialogTitle>
+        </DialogHeader>
 
         {/* Body */}
         <div className="px-6 py-4 space-y-4 max-h-[60vh] overflow-y-auto">
           {/* Name row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-[#8A8580] mb-1 block">First Name *</label>
+              <label htmlFor="contact-first-name" className="text-xs text-text-muted mb-1 block">First Name *</label>
               <input
+                id="contact-first-name"
                 type="text"
                 value={firstName}
                 onChange={e => { setFirstName(e.target.value); setError('') }}
+                aria-required="true"
+                aria-describedby={error ? 'contact-first-name-error' : undefined}
                 className={cn(
-                  'w-full h-10 px-3 rounded-lg bg-[#0C0B0A] border text-sm text-[#F0EDE8] focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-all',
-                  error ? 'border-[#F87171]' : 'border-[#1E1D1B]'
+                  'w-full h-10 px-3 rounded-lg bg-app-bg border text-sm text-text-primary focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 transition-all',
+                  error ? 'border-loss' : 'border-border-default'
                 )}
               />
-              {error && <p className="text-xs text-[#F87171] mt-1">{error}</p>}
+              {error && <p id="contact-first-name-error" className="text-xs text-loss mt-1">{error}</p>}
             </div>
             <div>
-              <label className="text-xs text-[#8A8580] mb-1 block">Last Name</label>
+              <label htmlFor="contact-last-name" className="text-xs text-text-muted mb-1 block">Last Name</label>
               <input
+                id="contact-last-name"
                 type="text"
                 value={lastName}
                 onChange={e => setLastName(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B] text-sm text-[#F0EDE8] focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-all"
+                className="w-full h-10 px-3 rounded-lg bg-app-bg border border-border-default text-sm text-text-primary focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 transition-all"
               />
             </div>
           </div>
@@ -152,39 +141,42 @@ export function ContactModal({ open, onOpenChange, contact }: Props) {
           {/* Email + Phone */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-[#8A8580] mb-1 block">Email</label>
+              <label htmlFor="contact-email" className="text-xs text-text-muted mb-1 block">Email</label>
               <input
+                id="contact-email"
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B] text-sm text-[#F0EDE8] focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-all"
+                className="w-full h-10 px-3 rounded-lg bg-app-bg border border-border-default text-sm text-text-primary focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 transition-all"
               />
             </div>
             <div>
-              <label className="text-xs text-[#8A8580] mb-1 block">Phone</label>
+              <label htmlFor="contact-phone" className="text-xs text-text-muted mb-1 block">Phone</label>
               <input
+                id="contact-phone"
                 type="tel"
                 value={phone}
                 onChange={e => setPhone(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B] text-sm text-[#F0EDE8] focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-all"
+                className="w-full h-10 px-3 rounded-lg bg-app-bg border border-border-default text-sm text-text-primary focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 transition-all"
               />
             </div>
           </div>
 
           {/* Company */}
           <div>
-            <label className="text-xs text-[#8A8580] mb-1 block">Company</label>
+            <label htmlFor="contact-company" className="text-xs text-text-muted mb-1 block">Company</label>
             <input
+              id="contact-company"
               type="text"
               value={company}
               onChange={e => setCompany(e.target.value)}
-              className="w-full h-10 px-3 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B] text-sm text-[#F0EDE8] focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-all"
+              className="w-full h-10 px-3 rounded-lg bg-app-bg border border-border-default text-sm text-text-primary focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 transition-all"
             />
           </div>
 
           {/* Type */}
           <div>
-            <label className="text-xs text-[#8A8580] mb-1 block">Type</label>
+            <label className="text-xs text-text-muted mb-1 block">Type</label>
             <div className="flex flex-wrap gap-1.5">
               {TYPE_OPTIONS.map(opt => (
                 <button
@@ -193,8 +185,8 @@ export function ContactModal({ open, onOpenChange, contact }: Props) {
                   className={cn(
                     'flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors cursor-pointer',
                     contactType === opt.value
-                      ? 'bg-[#8B7AFF]/15 text-[#F0EDE8] border-[#8B7AFF]/30'
-                      : 'bg-[#0C0B0A] text-[#8A8580] border-[#1E1D1B] hover:text-[#C5C0B8]'
+                      ? 'bg-violet-400/15 text-text-primary border-violet-400/30'
+                      : 'bg-app-bg text-text-muted border-border-default hover:text-text-secondary'
                   )}
                 >
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: opt.color }} />
@@ -206,33 +198,34 @@ export function ContactModal({ open, onOpenChange, contact }: Props) {
 
           {/* Notes */}
           <div>
-            <label className="text-xs text-[#8A8580] mb-1 block">Notes</label>
+            <label htmlFor="contact-notes" className="text-xs text-text-muted mb-1 block">Notes</label>
             <textarea
+              id="contact-notes"
               value={notes}
               onChange={e => setNotes(e.target.value)}
               rows={3}
-              className="w-full px-3 py-2 rounded-lg bg-[#0C0B0A] border border-[#1E1D1B] text-sm text-[#F0EDE8] focus:outline-none focus:border-[#8B7AFF]/40 focus:ring-2 focus:ring-[#8B7AFF]/20 transition-all resize-none"
+              className="w-full px-3 py-2 rounded-lg bg-app-bg border border-border-default text-sm text-text-primary focus:outline-none focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/20 transition-all resize-none"
             />
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-[#1E1D1B]">
+        <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-border-default">
           <button
             onClick={() => onOpenChange(false)}
-            className="px-4 py-2 rounded-lg text-sm text-[#C5C0B8] hover:text-[#F0EDE8] hover:bg-[#1A1918] transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-lg text-sm text-text-secondary hover:text-text-primary hover:bg-app-surface transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={isPending}
-            className="px-4 py-2 rounded-lg text-sm font-medium bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors disabled:opacity-40 cursor-pointer"
+            className="px-4 py-2 rounded-lg text-sm font-medium bg-violet-400 text-white hover:bg-violet-500 transition-colors disabled:opacity-40 cursor-pointer"
           >
             {isPending ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Contact'}
           </button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }

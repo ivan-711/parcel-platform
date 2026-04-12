@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Home, ArrowLeft } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 /** 404 page shown for invalid routes. */
 export default function NotFound() {
@@ -13,12 +14,11 @@ export default function NotFound() {
         </p>
 
         <div className="mt-8 flex items-center justify-center gap-3">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#8B7AFF] to-[#6C5CE7] text-accent-text-on-accent text-sm font-medium hover:opacity-90 transition-opacity"
-          >
-            <Home size={16} />
-            Back to Dashboard
+          <Link to="/">
+            <Button variant="outline" className="inline-flex items-center gap-2 border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong text-sm font-medium">
+              <Home size={16} />
+              Back to Dashboard
+            </Button>
           </Link>
           <button
             onClick={() => window.history.back()}

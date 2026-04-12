@@ -23,7 +23,7 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { TrendingUp } from 'lucide-react'
-import { slideUp } from '@/lib/motion'
+import { safeSlideUp } from '@/lib/motion'
 import { CHART_COLORS, CHART_AXIS, CHART_GRID, CHART_ANIMATION } from '@/lib/chart-theme'
 import type { Strategy } from '@/types'
 
@@ -267,7 +267,7 @@ function ChartTooltip({
           </span>
           <span
             className={`text-sm font-medium tabular-nums ${
-              entry.value >= 0 ? 'text-text-primary' : 'text-[#D4766A]'
+              entry.value >= 0 ? 'text-text-primary' : 'text-[var(--chart-negative)]'
             }`}
           >
             {formatTooltipCurrency(entry.value)}
@@ -288,7 +288,7 @@ export function CashFlowProjection({ outputs, strategy, dealId }: CashFlowProjec
   if (!data) {
     return (
       <motion.div
-        variants={slideUp}
+        variants={safeSlideUp}
         initial="hidden"
         animate="visible"
         className="rounded-xl border border-border-subtle bg-app-surface p-6 shadow-xs"
@@ -313,7 +313,7 @@ export function CashFlowProjection({ outputs, strategy, dealId }: CashFlowProjec
 
   return (
     <motion.div
-      variants={slideUp}
+      variants={safeSlideUp}
       initial="hidden"
       animate="visible"
       className="rounded-xl border border-border-subtle bg-app-surface p-6 shadow-xs"
@@ -324,11 +324,11 @@ export function CashFlowProjection({ outputs, strategy, dealId }: CashFlowProjec
         </h3>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
-            <span className="inline-block h-2 w-2 rounded-full bg-[#8B7AFF]" />
+            <span className="inline-block h-2 w-2 rounded-full bg-[var(--chart-accent)]" />
             <span className="text-xs text-text-secondary">Monthly</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="inline-block h-2 w-2 rounded-full bg-[#6DBEA3]" />
+            <span className="inline-block h-2 w-2 rounded-full bg-[var(--chart-positive)]" />
             <span className="text-xs text-text-secondary">Cumulative</span>
           </div>
         </div>
@@ -342,9 +342,9 @@ export function CashFlowProjection({ outputs, strategy, dealId }: CashFlowProjec
           >
             <defs>
               <linearGradient id="cashFlowGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#8B7AFF" stopOpacity={0.30} />
-                <stop offset="50%" stopColor="#8B7AFF" stopOpacity={0.05} />
-                <stop offset="100%" stopColor="#8B7AFF" stopOpacity={0} />
+                <stop offset="0%" stopColor="var(--chart-accent)" stopOpacity={0.30} />
+                <stop offset="50%" stopColor="var(--chart-accent)" stopOpacity={0.05} />
+                <stop offset="100%" stopColor="var(--chart-accent)" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -369,7 +369,7 @@ export function CashFlowProjection({ outputs, strategy, dealId }: CashFlowProjec
             />
             <Tooltip
               content={<ChartTooltip />}
-              cursor={{ stroke: '#8B7AFF', strokeOpacity: 0.3 }}
+              cursor={{ stroke: 'var(--chart-cursor-stroke)', strokeOpacity: 0.3 }}
             />
             <Area
               type="monotone"

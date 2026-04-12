@@ -17,8 +17,8 @@ export function PipelineError({ error, onRetry }: PipelineErrorProps) {
       <PageContent>
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4 max-w-md text-center">
-            <div className="w-12 h-12 rounded-xl bg-[#D4766A]/10 border border-[#D4766A]/20 flex items-center justify-center">
-              <AlertTriangle size={24} className="text-[#D4766A]" />
+            <div className="w-12 h-12 rounded-xl bg-error-bg border border-error/20 flex items-center justify-center">
+              <AlertTriangle size={24} className="text-error" />
             </div>
             <div className="space-y-1">
               <p className="text-sm font-medium text-text-primary">Failed to load pipeline</p>
@@ -28,7 +28,7 @@ export function PipelineError({ error, onRetry }: PipelineErrorProps) {
             </div>
             <button
               onClick={onRetry}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#8B7AFF] hover:bg-[#7B6AEF] text-accent-text-on-accent text-[13px] font-medium transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-accent-primary hover:bg-accent-hover text-accent-text-on-accent text-[13px] font-medium transition-colors"
             >
               Try again
             </button>

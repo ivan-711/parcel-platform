@@ -1,5 +1,4 @@
-// Fonts — self-hosted via Fontsource (bundled into Vite build)
-import '@fontsource-variable/inter'
+// Fonts — JetBrains Mono via Fontsource, General Sans + Satoshi self-hosted in public/fonts
 import '@fontsource-variable/jetbrains-mono'
 
 import React from 'react'

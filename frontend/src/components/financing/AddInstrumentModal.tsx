@@ -2,7 +2,6 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 // framer-motion not needed for this modal
 import {
-  X,
   Building,
   ArrowRight,
   ArrowLeft,
@@ -16,6 +15,7 @@ import {
   Check,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useCreateInstrument } from '@/hooks/useFinancing'
 import type { CreateInstrumentRequest, FinancingInstrumentType } from '@/types/financing'
 
@@ -158,25 +158,16 @@ export function AddInstrumentModal({ open, onOpenChange, propertyId, propertyAdd
     setFormData({ property_id: propertyId, requires_insurance: true })
   }
 
-  if (!open) return null
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-[#0C0B0A]/75 backdrop-blur-sm" onClick={handleClose} />
-
-      <div className="relative w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto bg-[#141311] border border-[#1E1D1B] rounded-2xl shadow-2xl scrollbar-luxury">
+    <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose() }}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-app-recessed p-0 scrollbar-luxury">
         {/* Header */}
-        <div className="sticky top-0 z-10 bg-[#141311] border-b border-[#1E1D1B] px-6 py-4 flex items-center justify-between">
-          <div>
-            <h2 className="text-lg text-[#F0EDE8]" style={{ fontFamily: 'Satoshi, sans-serif', fontWeight: 300 }}>
-              Add Instrument
-            </h2>
-            <p className="text-xs text-[#8A8580] mt-0.5">Step {step} of 4</p>
-          </div>
-          <button onClick={handleClose} className="p-2 rounded-lg text-[#8A8580] hover:bg-[#1E1D1B] transition-colors cursor-pointer">
-            <X size={18} />
-          </button>
-        </div>
+        <DialogHeader className="sticky top-0 z-10 bg-app-recessed border-b border-border-default px-6 py-4 space-y-0">
+          <DialogTitle className="text-lg text-text-primary font-brand font-light">
+            Add Instrument
+          </DialogTitle>
+          <p className="text-xs text-text-muted mt-0.5">Step {step} of 4</p>
+        </DialogHeader>
 
         {/* Step progress */}
         <div className="px-6 pt-4">
@@ -186,7 +177,7 @@ export function AddInstrumentModal({ open, onOpenChange, propertyId, propertyAdd
                 key={s}
                 className={cn(
                   'h-1 rounded-full flex-1 transition-colors',
-                  s <= step ? 'bg-[#8B7AFF]' : 'bg-[#1E1D1B]'
+                  s <= step ? 'bg-violet-400' : 'bg-border-default'
                 )}
               />
             ))}
@@ -227,10 +218,10 @@ export function AddInstrumentModal({ open, onOpenChange, propertyId, propertyAdd
 
         {/* Footer */}
         {step > 1 && (
-          <div className="sticky bottom-0 bg-[#141311] border-t border-[#1E1D1B] px-6 py-4 flex items-center justify-between">
+          <div className="sticky bottom-0 bg-app-recessed border-t border-border-default px-6 py-4 flex items-center justify-between">
             <button
               onClick={() => setStep(step - 1)}
-              className="inline-flex items-center gap-1 px-3 py-2 text-sm text-[#C5C0B8] hover:text-[#F0EDE8] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 px-3 py-2 text-sm text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
             >
               <ArrowLeft size={14} /> Back
             </button>
@@ -242,7 +233,7 @@ export function AddInstrumentModal({ open, onOpenChange, propertyId, propertyAdd
                   } catch { /* ignore */ }
                   setStep(step + 1)
                 }}
-                className="inline-flex items-center gap-1 px-4 py-2 text-sm rounded-lg bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 px-4 py-2 text-sm rounded-lg bg-violet-400 text-white hover:bg-violet-500 transition-colors cursor-pointer"
               >
                 Continue <ArrowRight size={14} />
               </button>
@@ -250,7 +241,7 @@ export function AddInstrumentModal({ open, onOpenChange, propertyId, propertyAdd
               <button
                 onClick={handleSubmit}
                 disabled={createMutation.isPending}
-                className="inline-flex items-center gap-1 px-4 py-2 text-sm rounded-lg bg-[#8B7AFF] text-white hover:bg-[#7B6AEF] transition-colors disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-1 px-4 py-2 text-sm rounded-lg bg-violet-400 text-white hover:bg-violet-500 transition-colors disabled:opacity-50 cursor-pointer"
               >
                 <Check size={14} />
                 {createMutation.isPending ? 'Creating...' : 'Create Instrument'}
@@ -258,8 +249,8 @@ export function AddInstrumentModal({ open, onOpenChange, propertyId, propertyAdd
             )}
           </div>
         )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -274,7 +265,7 @@ function Step1TypeSelect({
 }) {
   return (
     <div>
-      <p className="text-sm text-[#C5C0B8] mb-4">What type of financing instrument is this?</p>
+      <p className="text-sm text-text-secondary mb-4">What type of financing instrument is this?</p>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         {INSTRUMENT_TYPES.map((t) => {
           const Icon = t.icon
@@ -285,13 +276,13 @@ function Step1TypeSelect({
               className={cn(
                 'text-left p-3 rounded-lg border transition-colors cursor-pointer',
                 selectedType === t.type
-                  ? 'bg-[#8B7AFF]/10 border-[#8B7AFF]/40 text-[#F0EDE8]'
-                  : 'bg-[#0C0B0A] border-[#1E1D1B] text-[#C5C0B8] hover:border-[#8B7AFF]/20'
+                  ? 'bg-violet-400/10 border-violet-400/40 text-text-primary'
+                  : 'bg-app-bg border-border-default text-text-secondary hover:border-violet-400/20'
               )}
             >
-              <Icon size={16} className="text-[#8A8580] mb-1.5" />
+              <Icon size={16} className="text-text-muted mb-1.5" />
               <p className="text-sm font-medium">{t.label}</p>
-              <p className="text-[10px] text-[#8A8580] mt-0.5">{t.description}</p>
+              <p className="text-[10px] text-text-muted mt-0.5">{t.description}</p>
             </button>
           )
         })}
@@ -318,32 +309,35 @@ function Step2CoreTerms({
   const instrumentType = formData.instrument_type
   return (
     <div className="space-y-4">
-      <FormField label="Name">
+      <FormField id="instrument-name" label="Name">
         <input
+          id="instrument-name"
           type="text"
           value={formData.name ?? ''}
           onChange={(e) => updateField('name', e.target.value)}
-          className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+          className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
         />
       </FormField>
 
       <div className="grid grid-cols-2 gap-3">
-        <FormField label="Position">
+        <FormField id="instrument-position" label="Position">
           <select
+            id="instrument-position"
             value={formData.position ?? 1}
             onChange={(e) => updateField('position', Number(e.target.value))}
-            className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+            className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
           >
             <option value={1}>1st Position</option>
             <option value={2}>2nd Position</option>
             <option value={3}>3rd Position</option>
           </select>
         </FormField>
-        <FormField label="Rate Type">
+        <FormField id="instrument-rate-type" label="Rate Type">
           <select
+            id="instrument-rate-type"
             value={formData.rate_type ?? 'fixed'}
             onChange={(e) => updateField('rate_type', e.target.value)}
-            className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+            className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
           >
             <option value="fixed">Fixed</option>
             <option value="adjustable">Adjustable</option>
@@ -353,59 +347,60 @@ function Step2CoreTerms({
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <NumberField label="Original Balance ($)" value={formData.original_balance} onChange={(v) => updateField('original_balance', v)} />
-        <NumberField label="Current Balance ($)" value={formData.current_balance ?? formData.original_balance} onChange={(v) => updateField('current_balance', v)} />
+        <NumberField id="instrument-original-balance" label="Original Balance ($)" value={formData.original_balance} onChange={(v) => updateField('original_balance', v)} />
+        <NumberField id="instrument-current-balance" label="Current Balance ($)" value={formData.current_balance ?? formData.original_balance} onChange={(v) => updateField('current_balance', v)} />
       </div>
 
       <div className="grid grid-cols-3 gap-3">
-        <NumberField label="Interest Rate (%)" value={formData.interest_rate} onChange={(v) => updateField('interest_rate', v)} step="0.01" />
-        <NumberField label="Term (months)" value={formData.term_months} onChange={(v) => updateField('term_months', v)} />
+        <NumberField id="instrument-interest-rate" label="Interest Rate (%)" value={formData.interest_rate} onChange={(v) => updateField('interest_rate', v)} step="0.01" />
+        <NumberField id="instrument-term-months" label="Term (months)" value={formData.term_months} onChange={(v) => updateField('term_months', v)} />
         <div>
           <NumberField
+            id="instrument-monthly-payment"
             label="Monthly Payment ($)"
             value={formData.monthly_payment ?? calculatedPayment}
             onChange={(v) => updateField('monthly_payment', v)}
           />
           {calculatedPayment && !formData.monthly_payment && (
-            <span className="text-[10px] text-[#8B7AFF] mt-0.5 block">Calculated</span>
+            <span className="text-[10px] text-violet-400 mt-0.5 block">Calculated</span>
           )}
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <FormField label="Origination Date">
-          <input type="date" value={formData.origination_date ?? ''} onChange={(e) => updateField('origination_date', e.target.value)} className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none" />
+        <FormField id="instrument-origination-date" label="Origination Date">
+          <input id="instrument-origination-date" type="date" value={formData.origination_date ?? ''} onChange={(e) => updateField('origination_date', e.target.value)} className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none" />
         </FormField>
         <div>
-          <FormField label="Maturity Date">
-            <input type="date" value={formData.maturity_date ?? calculatedMaturity ?? ''} onChange={(e) => updateField('maturity_date', e.target.value)} className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none" />
+          <FormField id="instrument-maturity-date" label="Maturity Date">
+            <input id="instrument-maturity-date" type="date" value={formData.maturity_date ?? calculatedMaturity ?? ''} onChange={(e) => updateField('maturity_date', e.target.value)} className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none" />
           </FormField>
           {calculatedMaturity && !formData.maturity_date && (
-            <span className="text-[10px] text-[#8B7AFF] mt-0.5 block">Calculated</span>
+            <span className="text-[10px] text-violet-400 mt-0.5 block">Calculated</span>
           )}
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <NumberField label="Amortization Period (months)" value={formData.amortization_months ?? formData.term_months} onChange={(v) => updateField('amortization_months', v)} />
-        <FormField label="First Payment Date">
-          <input type="date" value={formData.first_payment_date ?? ''} onChange={(e) => updateField('first_payment_date', e.target.value)} className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none" />
+        <NumberField id="instrument-amortization" label="Amortization Period (months)" value={formData.amortization_months ?? formData.term_months} onChange={(v) => updateField('amortization_months', v)} />
+        <FormField id="instrument-first-payment-date" label="First Payment Date">
+          <input id="instrument-first-payment-date" type="date" value={formData.first_payment_date ?? ''} onChange={(e) => updateField('first_payment_date', e.target.value)} className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none" />
         </FormField>
       </div>
 
       {/* Sub-to specific */}
       {instrumentType === 'sub_to_mortgage' && (
-        <div className="space-y-3 pt-3 border-t border-[#1E1D1B]">
-          <p className="text-xs text-[#8A8580] font-medium uppercase tracking-wider">Sub-To Details</p>
-          <FormField label="Original Borrower">
-            <input type="text" value={formData.original_borrower ?? ''} onChange={(e) => updateField('original_borrower', e.target.value)} className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none" />
+        <div className="space-y-3 pt-3 border-t border-border-default">
+          <p className="text-xs text-text-muted font-medium uppercase tracking-wider">Sub-To Details</p>
+          <FormField id="instrument-original-borrower" label="Original Borrower">
+            <input id="instrument-original-borrower" type="text" value={formData.original_borrower ?? ''} onChange={(e) => updateField('original_borrower', e.target.value)} className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none" />
           </FormField>
           <div className="grid grid-cols-2 gap-3">
-            <FormField label="Servicer">
-              <input type="text" value={formData.servicer ?? ''} onChange={(e) => updateField('servicer', e.target.value)} className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none" />
+            <FormField id="instrument-servicer" label="Servicer">
+              <input id="instrument-servicer" type="text" value={formData.servicer ?? ''} onChange={(e) => updateField('servicer', e.target.value)} className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none" />
             </FormField>
-            <FormField label="Loan # (last 4)">
-              <input type="text" maxLength={4} value={formData.loan_number_last4 ?? ''} onChange={(e) => updateField('loan_number_last4', e.target.value)} className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none" />
+            <FormField id="instrument-loan-last4" label="Loan # (last 4)">
+              <input id="instrument-loan-last4" type="text" maxLength={4} value={formData.loan_number_last4 ?? ''} onChange={(e) => updateField('loan_number_last4', e.target.value)} className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none" />
             </FormField>
           </div>
         </div>
@@ -413,14 +408,15 @@ function Step2CoreTerms({
 
       {/* Wrap specific */}
       {instrumentType === 'wrap_mortgage' && (
-        <div className="space-y-3 pt-3 border-t border-[#1E1D1B]">
-          <p className="text-xs text-[#8A8580] font-medium uppercase tracking-wider">Wrap Details</p>
+        <div className="space-y-3 pt-3 border-t border-border-default">
+          <p className="text-xs text-text-muted font-medium uppercase tracking-wider">Wrap Details</p>
           {existingInstruments.length > 0 && (
-            <FormField label="Underlying Instrument">
+            <FormField id="instrument-underlying" label="Underlying Instrument">
               <select
+                id="instrument-underlying"
                 value={formData.underlying_instrument_id ?? ''}
                 onChange={(e) => updateField('underlying_instrument_id', e.target.value || undefined)}
-                className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+                className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
               >
                 <option value="">Select instrument...</option>
                 {existingInstruments.map((inst) => (
@@ -430,44 +426,44 @@ function Step2CoreTerms({
             </FormField>
           )}
           <div className="grid grid-cols-2 gap-3">
-            <NumberField label="Wrap Rate (%)" value={formData.wrap_rate} onChange={(v) => updateField('wrap_rate', v)} step="0.01" />
-            <NumberField label="Wrap Payment ($)" value={formData.wrap_payment} onChange={(v) => updateField('wrap_payment', v)} />
+            <NumberField id="instrument-wrap-rate" label="Wrap Rate (%)" value={formData.wrap_rate} onChange={(v) => updateField('wrap_rate', v)} step="0.01" />
+            <NumberField id="instrument-wrap-payment" label="Wrap Payment ($)" value={formData.wrap_payment} onChange={(v) => updateField('wrap_payment', v)} />
           </div>
         </div>
       )}
 
       {/* Lease option specific */}
       {instrumentType === 'lease_option' && (
-        <div className="space-y-3 pt-3 border-t border-[#1E1D1B]">
-          <p className="text-xs text-[#8A8580] font-medium uppercase tracking-wider">Lease Option Details</p>
+        <div className="space-y-3 pt-3 border-t border-border-default">
+          <p className="text-xs text-text-muted font-medium uppercase tracking-wider">Lease Option Details</p>
           <div className="grid grid-cols-2 gap-3">
-            <NumberField label="Option Consideration ($)" value={formData.option_consideration} onChange={(v) => updateField('option_consideration', v)} />
-            <FormField label="Option Expiration">
-              <input type="date" value={formData.option_expiration ?? ''} onChange={(e) => updateField('option_expiration', e.target.value)} className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none" />
+            <NumberField id="instrument-option-consideration" label="Option Consideration ($)" value={formData.option_consideration} onChange={(v) => updateField('option_consideration', v)} />
+            <FormField id="instrument-option-expiration" label="Option Expiration">
+              <input id="instrument-option-expiration" type="date" value={formData.option_expiration ?? ''} onChange={(e) => updateField('option_expiration', e.target.value)} className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none" />
             </FormField>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <NumberField label="Monthly Credit ($)" value={formData.monthly_credit} onChange={(v) => updateField('monthly_credit', v)} />
-            <NumberField label="Strike Price ($)" value={formData.strike_price} onChange={(v) => updateField('strike_price', v)} />
+            <NumberField id="instrument-monthly-credit" label="Monthly Credit ($)" value={formData.monthly_credit} onChange={(v) => updateField('monthly_credit', v)} />
+            <NumberField id="instrument-strike-price" label="Strike Price ($)" value={formData.strike_price} onChange={(v) => updateField('strike_price', v)} />
           </div>
         </div>
       )}
 
       {/* Seller finance specific */}
       {instrumentType === 'seller_finance' && (
-        <div className="space-y-3 pt-3 border-t border-[#1E1D1B]">
-          <p className="text-xs text-[#8A8580] font-medium uppercase tracking-wider">Seller Finance Details</p>
+        <div className="space-y-3 pt-3 border-t border-border-default">
+          <p className="text-xs text-text-muted font-medium uppercase tracking-wider">Seller Finance Details</p>
           <div className="grid grid-cols-3 gap-3">
-            <NumberField label="Down Payment ($)" value={formData.down_payment} onChange={(v) => updateField('down_payment', v)} />
-            <NumberField label="Late Fee (%)" value={formData.late_fee_pct} onChange={(v) => updateField('late_fee_pct', v)} step="0.1" />
-            <NumberField label="Grace Days" value={formData.late_fee_grace_days} onChange={(v) => updateField('late_fee_grace_days', v)} />
+            <NumberField id="instrument-down-payment" label="Down Payment ($)" value={formData.down_payment} onChange={(v) => updateField('down_payment', v)} />
+            <NumberField id="instrument-late-fee-pct" label="Late Fee (%)" value={formData.late_fee_pct} onChange={(v) => updateField('late_fee_pct', v)} step="0.1" />
+            <NumberField id="instrument-grace-days" label="Grace Days" value={formData.late_fee_grace_days} onChange={(v) => updateField('late_fee_grace_days', v)} />
           </div>
-          <label className="flex items-center gap-2 text-sm text-[#C5C0B8] cursor-pointer">
+          <label className="flex items-center gap-2 text-sm text-text-secondary cursor-pointer">
             <input
               type="checkbox"
               checked={formData.prepayment_penalty ?? false}
               onChange={(e) => updateField('prepayment_penalty', e.target.checked)}
-              className="rounded border-[#1E1D1B] bg-[#0C0B0A]"
+              className="rounded border-border-default bg-app-bg"
             />
             Prepayment penalty
           </label>
@@ -490,50 +486,51 @@ function Step3BalloonInsurance({
     <div className="space-y-4">
       {/* Balloon */}
       <div>
-        <label className="flex items-center gap-2 text-sm text-[#C5C0B8] cursor-pointer mb-3">
+        <label className="flex items-center gap-2 text-sm text-text-secondary cursor-pointer mb-3">
           <input
             type="checkbox"
             checked={formData.has_balloon ?? false}
             onChange={(e) => updateField('has_balloon', e.target.checked)}
-            className="rounded border-[#1E1D1B] bg-[#0C0B0A]"
+            className="rounded border-border-default bg-app-bg"
           />
           Has balloon payment
         </label>
         {formData.has_balloon && (
           <div className="grid grid-cols-2 gap-3 ml-6">
-            <FormField label="Balloon Date">
-              <input type="date" value={formData.balloon_date ?? ''} onChange={(e) => updateField('balloon_date', e.target.value)} className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none" />
+            <FormField id="instrument-balloon-date" label="Balloon Date">
+              <input id="instrument-balloon-date" type="date" value={formData.balloon_date ?? ''} onChange={(e) => updateField('balloon_date', e.target.value)} className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none" />
             </FormField>
-            <NumberField label="Balloon Amount ($)" value={formData.balloon_amount} onChange={(v) => updateField('balloon_amount', v)} />
+            <NumberField id="instrument-balloon-amount" label="Balloon Amount ($)" value={formData.balloon_amount} onChange={(v) => updateField('balloon_amount', v)} />
           </div>
         )}
       </div>
 
       {/* Insurance */}
       <div>
-        <label className="flex items-center gap-2 text-sm text-[#C5C0B8] cursor-pointer mb-3">
+        <label className="flex items-center gap-2 text-sm text-text-secondary cursor-pointer mb-3">
           <input
             type="checkbox"
             checked={formData.requires_insurance ?? true}
             onChange={(e) => updateField('requires_insurance', e.target.checked)}
-            className="rounded border-[#1E1D1B] bg-[#0C0B0A]"
+            className="rounded border-border-default bg-app-bg"
           />
           Requires insurance
         </label>
         {formData.requires_insurance && (
           <div className="ml-6">
-            <NumberField label="Escrow Amount ($)" value={formData.escrow_amount} onChange={(v) => updateField('escrow_amount', v)} />
+            <NumberField id="instrument-escrow-amount" label="Escrow Amount ($)" value={formData.escrow_amount} onChange={(v) => updateField('escrow_amount', v)} />
           </div>
         )}
       </div>
 
       {/* Notes */}
-      <FormField label="Notes (optional)">
+      <FormField id="instrument-notes" label="Notes (optional)">
         <textarea
+          id="instrument-notes"
           value={formData.notes ?? ''}
           onChange={(e) => updateField('notes', e.target.value)}
           rows={3}
-          className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none resize-none"
+          className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none resize-none"
         />
       </FormField>
     </div>
@@ -571,12 +568,12 @@ function Step4Review({
 
   return (
     <div>
-      <p className="text-sm text-[#C5C0B8] mb-4">Review your instrument details before creating.</p>
-      <div className="bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg p-4 space-y-2">
+      <p className="text-sm text-text-secondary mb-4">Review your instrument details before creating.</p>
+      <div className="bg-app-bg border border-border-default rounded-lg p-4 space-y-2">
         {rows.map(([label, value]) => (
           <div key={label} className="flex items-center justify-between py-1 text-sm">
-            <span className="text-[#8A8580]">{label}</span>
-            <span className="text-[#F0EDE8] tabular-nums">{value}</span>
+            <span className="text-text-muted">{label}</span>
+            <span className="text-text-primary tabular-nums">{value}</span>
           </div>
         ))}
       </div>
@@ -586,34 +583,37 @@ function Step4Review({
 
 /* ─── Shared Form Components ─── */
 
-function FormField({ label, children }: { label: string; children: React.ReactNode }) {
+function FormField({ id, label, children }: { id?: string; label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="text-[10px] uppercase tracking-wider text-[#8A8580] mb-1 block">{label}</label>
+      <label htmlFor={id} className="text-[10px] uppercase tracking-wider text-text-muted mb-1 block">{label}</label>
       {children}
     </div>
   )
 }
 
 function NumberField({
+  id,
   label,
   value,
   onChange,
   step = '1',
 }: {
+  id?: string
   label: string
   value: number | null | undefined
   onChange: (v: number | undefined) => void
   step?: string
 }) {
   return (
-    <FormField label={label}>
+    <FormField id={id} label={label}>
       <input
+        id={id}
         type="number"
         step={step}
         value={value ?? ''}
         onChange={(e) => onChange(e.target.value ? Number(e.target.value) : undefined)}
-        className="w-full px-3 py-2 bg-[#0C0B0A] border border-[#1E1D1B] rounded-lg text-sm text-[#F0EDE8] focus:border-[#8B7AFF] outline-none"
+        className="w-full px-3 py-2 bg-app-bg border border-border-default rounded-lg text-sm text-text-primary focus:border-violet-400 outline-none"
         placeholder="0"
       />
     </FormField>
