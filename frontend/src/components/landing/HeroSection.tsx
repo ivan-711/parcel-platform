@@ -1,36 +1,70 @@
 /**
- * HeroSection — cinematic scroll-hijack hero.
+ * HeroSection — scroll-driven frame sequence hero.
  *
- * Brand atmosphere → product reveal in a single scroll gesture.
- * Scroll/touch input is captured and drives a 0→1 progress value.
- * At progress=1 scroll hijack releases and native scrolling resumes.
- * Adapted from 21st.dev ScrollExpandMedia for React/Vite (no Next.js).
+ * Desktop: 121 WebP frames rendered on canvas, driven by scroll position.
+ * Mobile / Reduced motion: static building-complete.jpg fallback.
+ * Layout: text + CTA left, building animation right.
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
+import { Link } from 'react-router-dom'
+import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion'
+import { ease, prefersReducedMotion } from '@/lib/motion'
 import { scrollToSection } from './landing-utils'
-import { SpiralBackground } from './SpiralBackground'
 
-// ── Scroll Hijack Hook ──────────────────────────────────────────────────────
+const TOTAL_FRAMES = 121
+const PRELOAD_COUNT = 10
 
-function useScrollHijack() {
-  const [scrollProgress, setScrollProgress] = useState(0)
-  const [mediaFullyExpanded, setMediaFullyExpanded] = useState(false)
+function frameSrc(index: number): string {
+  const padded = String(index).padStart(4, '0')
+  return `/images/hero-frames/frame_${padded}.webp`
+}
+
+function useFrameImages() {
+  const imagesRef = useRef<HTMLImageElement[]>([])
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    const images: HTMLImageElement[] = new Array(TOTAL_FRAMES)
+
+    let eagersLoaded = 0
+    const onEagerLoad = () => {
+      eagersLoaded++
+      if (eagersLoaded >= PRELOAD_COUNT) {
+        setReady(true)
+        for (let i = PRELOAD_COUNT + 1; i <= TOTAL_FRAMES; i++) {
+          const img = new Image()
+          img.src = frameSrc(i)
+          images[i - 1] = img
+        }
+      }
+    }
+
+    for (let i = 1; i <= PRELOAD_COUNT; i++) {
+      const img = new Image()
+      img.src = frameSrc(i)
+      img.onload = onEagerLoad
+      img.onerror = onEagerLoad
+      images[i - 1] = img
+    }
+
+    for (let i = PRELOAD_COUNT + 1; i <= TOTAL_FRAMES; i++) {
+      images[i - 1] = new Image()
+    }
+
+    imagesRef.current = images
+  }, [])
+
+  return { imagesRef, ready }
+}
+
+export function HeroSection() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const { imagesRef, ready } = useFrameImages()
+  const currentFrameRef = useRef(0)
   const [isMobile, setIsMobile] = useState(false)
 
-  const touchStartY = useRef(0)
-  const progressRef = useRef(0) // mirror for event handlers (avoids stale closures)
-  const expandedRef = useRef(false)
-
-  // Sync refs with state
-  useEffect(() => {
-    progressRef.current = scrollProgress
-  }, [scrollProgress])
-  useEffect(() => {
-    expandedRef.current = mediaFullyExpanded
-  }, [mediaFullyExpanded])
-
-  // Mobile detection
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
     check()
@@ -38,270 +72,134 @@ function useScrollHijack() {
     return () => window.removeEventListener('resize', check)
   }, [])
 
-  // Core scroll hijack
+  const useStaticFallback = isMobile || prefersReducedMotion
+
+  // `end end` (not `end start`) so progress 0→1 maps to the 100vh sticky
+  // phase — the exact window during which the inner `sticky top-0 h-[100vh]`
+  // child is pinned to the viewport. Using `end start` stretches the 121
+  // frames across 200vh of scroll, wasting half the animation on the
+  // element scrolling away off-screen.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end end'],
+  })
+
+  const headlineOpacity = useTransform(scrollYProgress, [0, 0.6, 1], [1, 1, 0])
+
+  const drawFrame = useCallback((index: number) => {
+    const canvas = canvasRef.current
+    const images = imagesRef.current
+    if (!canvas || !images.length) return
+
+    const img = images[index]
+    if (!img || !img.complete || !img.naturalWidth) return
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    if (canvas.width !== img.naturalWidth || canvas.height !== img.naturalHeight) {
+      canvas.width = img.naturalWidth
+      canvas.height = img.naturalHeight
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.drawImage(img, 0, 0)
+  }, [imagesRef])
+
   useEffect(() => {
-    const applyDelta = (delta: number) => {
-      const next = Math.min(1, Math.max(0, progressRef.current + delta))
-      progressRef.current = next
-      setScrollProgress(next)
+    if (!ready || useStaticFallback) return
+    drawFrame(0)
+    currentFrameRef.current = 0
+  }, [ready, useStaticFallback, drawFrame])
 
-      if (next >= 1 && !expandedRef.current) {
-        expandedRef.current = true
-        setMediaFullyExpanded(true)
-      }
-      if (next < 1 && expandedRef.current) {
-        expandedRef.current = false
-        setMediaFullyExpanded(false)
-      }
+  useMotionValueEvent(scrollYProgress, 'change', (progress) => {
+    if (useStaticFallback) return
+    const frameIndex = Math.min(
+      TOTAL_FRAMES - 1,
+      Math.floor(progress * TOTAL_FRAMES)
+    )
+    if (frameIndex !== currentFrameRef.current) {
+      currentFrameRef.current = frameIndex
+      drawFrame(frameIndex)
     }
-
-    // ── Wheel (desktop) ──
-    const onWheel = (e: WheelEvent) => {
-      // Fully expanded + scrolling down → let native scroll happen
-      if (expandedRef.current && e.deltaY > 0) return
-
-      // Fully expanded + scrolling up + near top of page → reverse expansion
-      if (expandedRef.current && e.deltaY < 0 && window.scrollY <= 5) {
-        e.preventDefault()
-        applyDelta(-Math.abs(e.deltaY) * 0.0009)
-        return
-      }
-
-      // Not fully expanded → hijack scroll
-      if (!expandedRef.current) {
-        e.preventDefault()
-        applyDelta(e.deltaY * 0.0009)
-      }
-    }
-
-    // ── Touch (mobile) ──
-    const onTouchStart = (e: TouchEvent) => {
-      touchStartY.current = e.touches[0].clientY
-    }
-
-    const onTouchMove = (e: TouchEvent) => {
-      const deltaY = touchStartY.current - e.touches[0].clientY
-      touchStartY.current = e.touches[0].clientY
-
-      // Fully expanded + scrolling down → native scroll
-      if (expandedRef.current && deltaY > 0) return
-
-      // Fully expanded + scrolling up + near top → reverse
-      if (expandedRef.current && deltaY < 0 && window.scrollY <= 5) {
-        e.preventDefault()
-        applyDelta(deltaY * 0.008)
-        return
-      }
-
-      // Not expanded → hijack
-      if (!expandedRef.current) {
-        e.preventDefault()
-        const sensitivity = deltaY > 0 ? 0.005 : 0.008
-        applyDelta(deltaY * sensitivity)
-      }
-    }
-
-    const onTouchEnd = () => {
-      touchStartY.current = 0
-    }
-
-    // ── Scroll lock while hijacking ──
-    const onScroll = () => {
-      if (!expandedRef.current) {
-        window.scrollTo(0, 0)
-      }
-    }
-
-    // ── Keyboard bypass ──
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (expandedRef.current) return
-      if (['ArrowDown', 'Enter', 'Escape', ' '].includes(e.key)) {
-        e.preventDefault()
-        progressRef.current = 1
-        setScrollProgress(1)
-        expandedRef.current = true
-        setMediaFullyExpanded(true)
-      }
-    }
-
-    window.addEventListener('wheel', onWheel, { passive: false })
-    window.addEventListener('touchstart', onTouchStart, { passive: true })
-    window.addEventListener('touchmove', onTouchMove, { passive: false })
-    window.addEventListener('touchend', onTouchEnd, { passive: true })
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('keydown', onKeyDown)
-
-    return () => {
-      window.removeEventListener('wheel', onWheel)
-      window.removeEventListener('touchstart', onTouchStart)
-      window.removeEventListener('touchmove', onTouchMove)
-      window.removeEventListener('touchend', onTouchEnd)
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('keydown', onKeyDown)
-    }
-  }, [])
-
-  // Imperative skip for navbar links
-  const skipHijack = useCallback(() => {
-    if (expandedRef.current) return
-    progressRef.current = 1
-    setScrollProgress(1)
-    expandedRef.current = true
-    setMediaFullyExpanded(true)
-  }, [])
-
-  return { scrollProgress, mediaFullyExpanded, isMobile, skipHijack }
-}
-
-// ── Main Hero ───────────────────────────────────────────────────────────────
-
-export function HeroSection({ onSkipHijack }: { onSkipHijack?: (cb: () => void) => void }) {
-  const { scrollProgress, mediaFullyExpanded: _mediaFullyExpanded, isMobile, skipHijack } = useScrollHijack()
-
-  // Expose skipHijack to parent (LandingPage → Navbar)
-  useEffect(() => {
-    onSkipHijack?.(skipHijack)
-  }, [onSkipHijack, skipHijack])
-
-  // ── Derived values ──
-  const bgOpacity = 1 - scrollProgress
-  const headlineOpacity = Math.max(0, 1 - scrollProgress * 2.5)
-  const promptOpacity = Math.max(0, 1 - scrollProgress * 4)
-
-  // Media dimensions
-  const mediaW = isMobile
-    ? 280 + scrollProgress * 600
-    : 340 + scrollProgress * 1200
-  const mediaH = isMobile
-    ? 180 + scrollProgress * 250
-    : 220 + scrollProgress * 500
-  const mediaBR = 16 - scrollProgress * 10 // 16 → 6
-  const overlayOpacity = Math.max(0, 0.5 - scrollProgress * 0.3)
-  const glowScale = 1 + scrollProgress * 0.3
+  })
 
   return (
-    <section className="relative min-h-[100dvh] overflow-hidden">
-      {/* Skip link for keyboard accessibility */}
-      <a
-        href="#features"
-        onClick={(e) => { e.preventDefault(); skipHijack(); scrollToSection('features') }}
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#8B7AFF] focus:text-accent-text-on-accent focus:rounded-lg focus:text-sm"
-      >
-        Skip to content
-      </a>
-
-      {/* ── Layer 0: Spiral particle background ── */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{ opacity: Math.max(0.5, 1 - scrollProgress * 0.5) }}
-      >
-        <SpiralBackground />
-      </div>
-
-      {/* ── Layer 1: Subtle violet glow (reduced — topo lines provide atmosphere) ── */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{ opacity: bgOpacity }}
-      >
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `
-              radial-gradient(ellipse 35% 40% at 50% 50%, rgba(139,122,255,0.03), transparent),
-              radial-gradient(ellipse 60% 40% at 50% 0%, rgba(60,55,48,0.15), transparent)
-            `,
-          }}
-        />
-      </div>
-
-      {/* ── Layer 2: Headline text (slides apart) — ABOVE frame ── */}
-      <div
-        className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-none"
-        style={{ opacity: headlineOpacity }}
-      >
-        <h1 className="font-brand text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-light tracking-[-0.03em] text-text-primary leading-[1.1] text-center">
-          <span
-            className="block"
-            style={{ transform: `translateX(-${scrollProgress * 150}vw)` }}
-          >
-            Analyze Real Estate
-          </span>
-          <span
-            className="block"
-            style={{ transform: `translateX(${scrollProgress * 150}vw)` }}
-          >
-            Deals with Precision
-          </span>
-        </h1>
-
-        {/* Scroll prompt */}
-        <p
-          className="text-[11px] uppercase tracking-[0.08em] text-text-secondary/60 mt-8"
-          style={{ opacity: promptOpacity }}
+    <section
+      ref={sectionRef}
+      className={useStaticFallback ? 'relative h-[100vh]' : 'relative h-[200vh]'}
+    >
+      <div className="sticky top-0 h-[100vh] overflow-hidden bg-[#020202]">
+        {/* Skip link */}
+        <a
+          href="#features"
+          onClick={(e) => { e.preventDefault(); scrollToSection('features') }}
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#8B7AFF] focus:text-accent-text-on-accent focus:rounded-lg focus:text-sm"
         >
-          Scroll to explore
-        </p>
-      </div>
+          Skip to content
+        </a>
 
-      {/* ── Layer 3: Expanding media (browser frame) — BELOW text ── */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-        {/* Violet glow */}
-        <div
-          className="absolute rounded-full pointer-events-none"
-          style={{
-            width: mediaW + 80,
-            height: mediaH + 80,
-            filter: 'blur(48px)',
-            background: 'radial-gradient(ellipse at center, rgba(139,122,255,0.06), transparent 70%)',
-            transform: `scale(${glowScale})`,
-          }}
-        />
-
-        {/* Frame container */}
-        <div
-          style={{
-            width: mediaW,
-            height: mediaH,
-            maxWidth: '90vw',
-            maxHeight: '85vh',
-            borderRadius: mediaBR,
-            boxShadow: '0px 0px 50px rgba(0, 0, 0, 0.3)',
-            overflow: 'hidden',
-            position: 'relative',
-          }}
-          className="border border-border-default"
+        {/* Left: headline + subhead + CTA — positioned over the canvas */}
+        <motion.div
+          className="absolute inset-y-0 left-0 z-10 flex flex-col justify-center w-full md:w-[40%] px-6 md:pl-[max(1.5rem,calc((100vw-80rem)/2+1.5rem))] md:pr-12 pt-20 md:pt-0"
+          style={useStaticFallback ? undefined : { opacity: headlineOpacity }}
         >
-          {/* Browser chrome */}
-          <div className="bg-app-recessed h-8 md:h-10 flex items-center px-3 md:px-4 gap-1.5 md:gap-2 shrink-0">
-            <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-border-strong" />
-            <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-border-default" />
-            <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-border-default" />
-            <div className="bg-border-subtle rounded-md h-4 md:h-5 w-32 md:w-48 mx-auto" />
-          </div>
-
-          {/* Dashboard content area */}
-          <div
-            className="bg-gradient-to-br from-app-surface to-app-recessed relative"
-            style={{ height: 'calc(100% - 2rem)' }}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: ease.luxury }}
+            className="font-brand font-light tracking-[-0.03em] text-text-primary leading-[1.08]"
+            style={{ fontSize: 'clamp(2rem, 5vw + 0.5rem, 3.5rem)' }}
           >
-            {/* Subtle grid pattern */}
-            <div
-              className="absolute inset-0 opacity-[0.04]"
-              style={{
-                backgroundImage: 'linear-gradient(rgba(139,122,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(139,122,255,0.5) 1px, transparent 1px)',
-                backgroundSize: '40px 40px',
-              }}
+            Every deal. Every angle.<br /><span className="font-medium">60 seconds.</span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1, ease: ease.luxury }}
+            className="text-base md:text-lg text-text-secondary mt-6 max-w-md"
+          >
+            Analyze any US property across wholesale, BRRRR, buy &amp; hold, flip, and creative finance — with AI narrative.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2, ease: ease.luxury }}
+            className="mt-8"
+          >
+            <Link
+              to="/register"
+              className="inline-block rounded-full px-8 py-3 text-base font-medium text-accent-text-on-accent hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(139,122,255,0.3)] transition-all duration-200"
+              style={{ background: 'linear-gradient(to right, #8B7AFF, #6C5CE7)' }}
+            >
+              Analyze Your First Deal Free
+            </Link>
+            <p className="text-[11px] text-text-secondary/60 mt-3">No credit card required. Results in 60 seconds.</p>
+            <p className="text-xs text-text-muted mt-4">Built for real estate investors</p>
+          </motion.div>
+        </motion.div>
+
+        {/* Right: frame sequence canvas or static fallback — fills right 2/3, bleeds to edge */}
+        <div className="absolute right-0 top-0 h-full hidden md:flex md:w-[65%] items-center justify-end">
+          {useStaticFallback ? (
+            <img
+              src="/images/building-complete.jpg"
+              alt="Parcel platform — completed building analysis"
+              className="h-[75vh] w-auto max-w-none object-contain translate-x-[25%]"
             />
-          </div>
+          ) : (
+            <canvas
+              ref={canvasRef}
+              className="h-[80vh] w-auto max-w-none translate-x-[25%]"
+            />
+          )}
 
-          {/* Dark overlay that clears as frame expands */}
-          <div
-            className="absolute inset-0 bg-black/30 pointer-events-none"
-            style={{ opacity: overlayOpacity }}
-          />
+          {/* Gradient overlays — blends frame edges into hero bg */}
+          <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-[#020202] to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#020202] to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0C0B0A] to-transparent pointer-events-none" />
         </div>
       </div>
-
     </section>
   )
 }

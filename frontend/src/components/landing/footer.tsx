@@ -14,14 +14,6 @@ const COLUMNS = [
     ],
   },
   {
-    title: 'Company',
-    links: [
-      { label: 'About', href: '#' },
-      { label: 'Blog', href: '#' },
-      { label: 'Contact', href: '#' },
-    ],
-  },
-  {
     title: 'Legal',
     links: [
       { label: 'Terms', href: '/terms' },
@@ -32,13 +24,13 @@ const COLUMNS = [
 
 export function Footer() {
   return (
-    <footer className="bg-app-recessed border-t border-border-subtle py-10 md:py-16">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+    <footer className="py-16 md:py-24">
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
         {/* Logo column */}
         <div className="col-span-2 md:col-span-1">
           <Link
             to="/"
-            className="font-brand text-lg font-light text-text-primary tracking-[-0.02em]"
+            className="font-brand text-lg font-light text-text-primary tracking-[-0.02em] focus-ring rounded-sm"
           >
             Parcel
           </Link>
@@ -53,7 +45,7 @@ export function Footer() {
         {/* Link columns */}
         {COLUMNS.map((col) => (
           <div key={col.title}>
-            <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-text-secondary mb-4">
+            <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-text-muted mb-4">
               {col.title}
             </p>
             <ul className="space-y-3">
@@ -62,24 +54,17 @@ export function Footer() {
                   {'action' in link && link.action ? (
                     <button
                       onClick={link.action}
-                      className="text-sm text-text-secondary hover:text-text-primary transition-colors duration-200 cursor-pointer"
+                      className="text-sm text-text-secondary hover:text-text-primary transition-colors duration-200 cursor-pointer focus-ring rounded-sm"
                     >
                       {link.label}
                     </button>
-                  ) : 'href' in link && link.href?.startsWith('/') ? (
+                  ) : (
                     <Link
-                      to={link.href}
-                      className="text-sm text-text-secondary hover:text-text-primary transition-colors duration-200"
+                      to={'href' in link ? link.href : '/'}
+                      className="text-sm text-text-secondary hover:text-text-primary transition-colors duration-200 focus-ring rounded-sm"
                     >
                       {link.label}
                     </Link>
-                  ) : (
-                    <a
-                      href={'href' in link ? link.href : '#'}
-                      className="text-sm text-text-secondary hover:text-text-primary transition-colors duration-200"
-                    >
-                      {link.label}
-                    </a>
                   )}
                 </li>
               ))}

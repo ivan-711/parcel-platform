@@ -1,7 +1,11 @@
 /**
- * StatsStrip — social proof numbers bar with count-up animation on viewport entry.
+ * StatsStrip — social proof numbers floating on the void.
+ * No borders, no background blocks, no dividers — just type rhythm,
+ * tabular numerals, and generous whitespace.
  */
 
+import { motion } from 'framer-motion'
+import { ease } from '@/lib/motion'
 import { useFadeInOnScroll, useCountUp, formatWithCommas } from './landing-utils'
 
 interface StatDef {
@@ -15,35 +19,41 @@ interface StatDef {
 const STATS: StatDef[] = [
   { value: 5, suffix: '', label: 'Strategy Calculators' },
   { value: 10000, suffix: '+', label: 'Deals Analyzed', useCommas: true },
-  { value: 98, suffix: '%', label: 'Calculation Accuracy' },
+  { value: 16, suffix: '', label: 'Financial Metrics' },
   { value: 30, suffix: 'sec', label: 'Average Analysis Time' },
 ]
 
 function StatItem({
   stat,
   isVisible,
-  isLast,
+  index,
 }: {
   stat: StatDef
   isVisible: boolean
-  isLast: boolean
+  index: number
 }) {
   const count = useCountUp(stat.value, 800, isVisible, stat.decimals ?? 0)
   const display = stat.useCommas ? formatWithCommas(count) : count
 
   return (
-    <div className="flex items-center">
-      <div className="text-center px-4 md:px-8 py-2">
-        <p className="font-brand text-4xl md:text-5xl font-light tracking-[-0.02em] text-text-primary">
-          {display}
-          {stat.suffix}
-        </p>
-        <p className="text-sm text-text-secondary mt-2">{stat.label}</p>
-      </div>
-      {!isLast && (
-        <div className="hidden md:block border-r border-border-default h-16 self-center" />
-      )}
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={isVisible ? { opacity: 1, y: 0 } : undefined}
+      transition={{ duration: 0.8, delay: 0.1 + index * 0.12, ease: ease.luxury }}
+      className="text-center"
+    >
+      <p
+        className="font-brand font-light tracking-[-0.02em] text-text-primary"
+        style={{
+          fontSize: 'clamp(2.25rem, 4vw + 0.25rem, 3rem)',
+          fontVariantNumeric: 'tabular-nums',
+        }}
+      >
+        {display}
+        {stat.suffix}
+      </p>
+      <p className="text-sm text-text-secondary mt-3">{stat.label}</p>
+    </motion.div>
   )
 }
 
@@ -51,25 +61,11 @@ export function StatsStrip() {
   const { ref, isVisible } = useFadeInOnScroll({ threshold: 0.3 })
 
   return (
-    <section
-      ref={ref}
-      className="bg-app-recessed border-y border-border-subtle py-16"
-    >
-      {/* Desktop: row, Mobile: 2x2 grid */}
+    <section ref={ref} className="py-24 md:py-32">
       <div className="max-w-5xl mx-auto px-6">
-        <div className="hidden md:flex items-center justify-center">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-y-14 gap-x-8 md:gap-x-12 lg:gap-x-16">
           {STATS.map((stat, i) => (
-            <StatItem
-              key={stat.label}
-              stat={stat}
-              isVisible={isVisible}
-              isLast={i === STATS.length - 1}
-            />
-          ))}
-        </div>
-        <div className="grid grid-cols-2 gap-8 md:hidden">
-          {STATS.map((stat) => (
-            <StatItem key={stat.label} stat={stat} isVisible={isVisible} isLast />
+            <StatItem key={stat.label} stat={stat} isVisible={isVisible} index={i} />
           ))}
         </div>
       </div>

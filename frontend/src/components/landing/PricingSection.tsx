@@ -46,15 +46,18 @@ export function PricingSection() {
   const titaniumPeriod = interval === 'annual' ? '/mo, billed annually' : '/month'
 
   return (
-    <section id="pricing" className="py-16 md:py-32" ref={ref}>
+    <section id="pricing" className="py-32 md:py-48" ref={ref}>
       <div className="max-w-7xl mx-auto px-6">
         {/* Section header */}
-        <div className="text-center mb-12">
-          <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-text-secondary">
+        <div className="text-center mb-16">
+          <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-text-muted">
             PRICING
           </p>
-          <h2 className="font-brand text-3xl md:text-4xl font-light tracking-[-0.02em] text-text-primary mt-4">
-            Simple, Transparent Pricing
+          <h2
+            className="font-brand font-light tracking-[-0.02em] text-text-primary mt-4"
+            style={{ fontSize: 'clamp(1.5rem, 3vw + 0.5rem, 2.5rem)' }}
+          >
+            Plans that scale with your portfolio
           </h2>
           <p className="text-text-secondary mt-3">
             Start with a 7-day free trial. No credit card required.
@@ -73,8 +76,9 @@ export function PricingSection() {
               <button
                 key={opt}
                 onClick={() => setInterval(opt)}
+                aria-pressed={interval === opt}
                 className={`
-                  relative rounded-full px-5 py-2 min-h-[44px] md:min-h-0 text-sm transition-colors duration-200 cursor-pointer
+                  relative rounded-full px-5 py-2 min-h-[44px] md:min-h-0 text-sm transition-colors duration-200 cursor-pointer focus-ring
                   ${interval === opt
                     ? 'bg-border-strong text-text-primary'
                     : 'text-text-secondary hover:text-text-primary'
@@ -99,7 +103,8 @@ export function PricingSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={isVisible ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 0.6, ease: ease.vercel }}
-            className="bg-app-surface border border-border-default rounded-xl p-8"
+            whileHover={{ y: -4 }}
+            className="bg-app-surface border border-border-default rounded-xl p-8 transition-all duration-200 hover:shadow-xl hover:border-[rgba(255,255,255,0.12)]"
           >
             <h3 className="font-brand text-2xl font-light text-text-primary">Steel</h3>
             <div className="mt-4">
@@ -116,7 +121,7 @@ export function PricingSection() {
             </ul>
             <Link
               to="/register"
-              className="mt-8 block text-center border border-border-strong text-text-primary rounded-full py-3 text-sm font-medium hover:bg-border-subtle transition-colors duration-200"
+              className="mt-8 block text-center border border-border-strong text-text-secondary rounded-full py-3 text-sm font-medium hover:bg-border-subtle transition-colors duration-200 focus-ring"
             >
               Get Started
             </Link>
@@ -127,7 +132,8 @@ export function PricingSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={isVisible ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 0.6, delay: 0.1, ease: ease.vercel }}
-            className="bg-app-surface border border-[#8B7AFF]/25 rounded-xl p-8 relative shadow-[0_0_24px_rgba(139,122,255,0.06)]"
+            whileHover={{ y: -4 }}
+            className="bg-app-surface border border-[#8B7AFF]/25 rounded-xl p-8 relative shadow-[0_0_24px_rgba(139,122,255,0.06)] transition-all duration-200 hover:shadow-[0_0_40px_rgba(139,122,255,0.15)]"
           >
             <span className="absolute top-4 right-4 bg-[#8B7AFF]/[0.08] text-[#8B7AFF] text-[11px] uppercase tracking-[0.08em] font-medium rounded-full px-3 py-1">
               Popular
@@ -151,14 +157,14 @@ export function PricingSection() {
             <ul className="mt-8 space-y-3">
               {CARBON_FEATURES.map((f) => (
                 <li key={f} className="flex items-start gap-3">
-                  <Check className="w-4 h-4 text-[#8B7AFF] mt-0.5 shrink-0" />
+                  <Check className="w-4 h-4 text-[#A09D98] mt-0.5 shrink-0" />
                   <span className="text-sm text-text-primary/80">{f}</span>
                 </li>
               ))}
             </ul>
             <Link
-              to="/register"
-              className="mt-8 block text-center rounded-full py-3 text-sm font-medium text-accent-text-on-accent hover:opacity-90 transition-opacity duration-200"
+              to="/pricing"
+              className="mt-8 block text-center rounded-full py-3 text-sm font-medium text-accent-text-on-accent hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(139,122,255,0.3)] transition-all duration-200 focus-ring"
               style={{ background: 'linear-gradient(to right, #8B7AFF, #6C5CE7)' }}
             >
               Start 7-Day Free Trial
@@ -170,7 +176,8 @@ export function PricingSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={isVisible ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 0.6, delay: 0.2, ease: ease.vercel }}
-            className="bg-app-surface border border-border-default rounded-xl p-8"
+            whileHover={{ y: -4 }}
+            className="bg-app-surface border border-border-default rounded-xl p-8 transition-all duration-200 hover:shadow-xl hover:border-[rgba(255,255,255,0.12)]"
           >
             <h3 className="font-brand text-2xl font-light text-text-primary">Titanium</h3>
             <div className="mt-4 flex items-baseline">
@@ -197,8 +204,8 @@ export function PricingSection() {
               ))}
             </ul>
             <Link
-              to="/register"
-              className="mt-8 block text-center border border-border-strong text-text-primary rounded-full py-3 text-sm font-medium hover:bg-border-subtle transition-colors duration-200"
+              to="/pricing"
+              className="mt-8 block text-center border border-border-strong text-text-primary rounded-full py-3 text-sm font-medium hover:bg-border-subtle transition-colors duration-200 focus-ring"
             >
               Get Started
             </Link>

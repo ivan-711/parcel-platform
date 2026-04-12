@@ -147,8 +147,8 @@ const config: Config = {
     // ---- Font Families ----
     fontFamily: {
       brand: ['"Satoshi"', '"Satoshi Fallback"', 'system-ui', 'sans-serif'],
-      sans:  ['"Inter"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'system-ui', 'sans-serif'],
-      body:  ['"Inter"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'system-ui', 'sans-serif'],
+      sans:  ['"General Sans"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'system-ui', 'sans-serif'],
+      body:  ['"General Sans"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'system-ui', 'sans-serif'],
       mono:  ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
     },
 
