@@ -1,0 +1,127 @@
+web design is about to change forever. For businesses, for agencies, for anyone that's trying to build
+a premium, high-converting website for their business, the game is being completely reset.
+And the truth is, most designers and business owners have no idea what to come in.
+I know this because I'm in the trenches every single day with enterprise clients,
+and the conversations that we're having right now, they're completely different from what they
+were just 18 months ago. What we're seeing is this, the bottom 30% of the web design market
+is about to become completely eaten up by AI. Lovable, frame-er, web flow, all of their AI tools,
+they're getting really good. And for the low-budget projects, the pretty much already good enough,
+at the very same time, the all-business model where you lock a client into dependency,
+you charge them for every single change on a site and act as a gatekeeper.
+That model is dead, but forms like Squarespace and Wix completely killed it.
+Well, here's the good news, there are massive new opportunities for designers who
+understand what actually happened in. In this video, I'm going to walk you through the five
+fundamental shifts that are defining the next phase of web design. All right, so the first major shift
+is the complete collapse of the old, broken business model, the death of the gatekeeper.
+For a long time, the web design business was built on a simple premise. Control the platform,
+control the client. Designers and developers would build a site on some bespoke complicated
+platform. They'd lock the client out, and then they'd charge them a retainer or an hourly fee
+every single time they wanted to make a change. If you needed to update a line of text,
+well, that was a support ticket and a two week turnaround. If you wanted to add a new blog post,
+that was another invoice. If you want to make a change to a layout, well, that's going to cost
+you extra and it's going to take time. And what this did is a created dependency.
+You had clients that were locked into a relationship where they had to keep paying just to maintain
+their own website. And don't get me wrong, it was a lucrative model for designers who could lock
+clients in, but it was also deeply frustrating for clients who felt trapped. That model is dead.
+You've got platforms like Squarespace, Framework and Wix that fundamentally changed the game.
+They've given clients the keys to their own websites. So now, clients expect to have the
+autonomy to make changes themselves. Instantly, without having to go through that gatekeeper,
+they expect to be able to add a new page, update the copy, change colours and manage their own
+content without needing to hire someone to do it for them. And so the value is no longer in a
+developer's ability to hold a website hostage. It's in the ability to build a powerful flexible
+system that clients can actually use and manage on their own. This means that the future is empowering
+clients, not controlling them. And if you're a developer, still operating on that old gatekeeper
+model, you're going to find yourself increasingly irrelevant. Now, this move towards client autonomy
+is being supercharged by another more immediate shift. And that is the great commoditisation.
+Let's talk about AI. The hard truth is that the bottom 20-30% of the web design market
+is going to be completely gobbled up by AI. I'm talking about those clients who need a simple
+functional website for the lowest possible price. These are the small businesses, the solar
+planners and those sort of start-ups that don't have a huge budget but they need to get online quickly.
+For that segment of the market, an AI website builder that can spin up a good enough site in 30
+seconds for a few bucks a month is an unbeatable offer. Just think about it from their perspective.
+They need a website, they don't have much money, they don't have time, and they just need
+something that works now. An AI builder can deliver that. It's not going to be beautiful,
+it's certainly not going to be strategic, but it is going to be functional. A human designer
+simply cannot compete on price and speed at that level. If you're charging $3,000 to build a
+website and an AI tool can do it for $30 a month, then the client's going to pick the AI tool
+every single time. And if that's where you're playing, if you're competing for those low-budget
+projects, you're in a race to the bottom that nine times out of ten, you're likely going to lose.
+But the thing is, this isn't something really to be scared of, it's just something to be aware of.
+What it is is a filter. It's forced in the industry to split in two. You're either a commodity
+competing with AI for the scraps or you're a strategist operating on a level that AI can't even
+begin to touch. The designers who understand this and make that shift up market will be fine.
+The ones who don't are going to be squeezed out. So if the bottom of the market is an
+ocean of commoditization, how do you get out of it? How do you build a business that AI can't
+touch? Well, this brings us on to the third shift. Understanding that the mode is not the code.
+For a long time, the modem web design was technical skill. If you could code a complex website
+from scratch, if you understood, you know, advanced CSS, if you could build custom functionality,
+then you had a defensible business. Client needed you because they just could not do this
+themselves. But with AI, that mode is gone. Why? Because platforms have gotten so good
+that you don't even need to code anymore. And because AI is getting better at coding every
+single day. So if your only mode is your ability to code, you're basically living in a house built
+on a sinkhole. The new mode is your thinking. It's your strategy, it's your taste,
+it's your ability to understand the client business on a deep level and translate that into a
+digital experience that drives real measurable results. Let me give you an example. A client comes
+to you and says, I want a website that looks like my competitors website. A commodity designer
+is just going to go ahead and build it. But copy the layout, match the colors, deliver it and
+then move on. But then you've got a strategic designer who's going to sit there and ask deeper
+questions. Why do you want to look like a competitor? What are your business goals? Who is your
+target audience? What do you want them to do when they land on your website? And often, you'll
+discover that just copying your competitors website is actually the worst thing that you could do.
+Maybe your competitors site is optimized for a different audience. Maybe their design is
+actually hurting their conversion rate. Maybe there's a completely different approach that would
+work better for your specific business. And this is where strategy comes in. This is where your
+brain becomes the mode. AI can generate a layout, but it can't have a point of view. It can't
+understand the nuances of a brand's voice and it can't build a relationship with a client and
+earn their trust over time. And let me be clear, no enterprise level client is going to trust an AI
+to build a secure strategic site that's responsible for millions in revenue. They just never will.
+They hire you for your judgment, your experience and your ability to solve their business problems.
+And that is the mode. Now, just because AI can't replace strategic thinking doesn't mean we
+should completely ignore it. In fact, the smartest designers are doing the exact opposite. And that's
+the fourth shift, which is the workflow revolution. While AI isn't a like for like replacement for
+a designer, it's an absolutely incredible assistant. So the smartest designers are using AI to
+accelerate the workflow and get better outcomes faster. Let me break down how I'm using it.
+First, what I'll do is I'll use it as a sparring partner to generate, you know, initial ideas and
+test different hypotheses in seconds. Let's say, you know, I'm working on a layout for the client.
+I might ask AI to generate five different layout variations based on the brief that I've given it.
+Then what I can do is I can evaluate all of those variants, pick the best elements from each
+and iterate on them. This would have taken me hours, if not days to do manually. Whereas with AI,
+it takes minutes. Second, I'll use it to automate all the tedious stuff that doesn't require
+strategic thinking. You know, generating stock imagery, AI can do that, cleaning up code,
+AI can do that too. Right in place, hold a copy, AI can do a decent job of that. And then spotting
+gaps in layouts, or AI can do that too. All of these tasks are necessarily, but they don't
+necessarily require my brain. It's the kind of work that it takes time, yes, but it doesn't
+necessarily add much value to a project. So by automating these tasks, what I do is I
+feel my time to focus on the work that actually matters. The strategic thinking, the creative
+direction and those client relationships, tools like FigmaMake and AI built into platforms like
+Squarespace, they're not there to do your job. They're there to free you up to do the high level
+thinking that actually matters. And what this allows you to do is deliver a more solid,
+well thought out outcome for the client in a fraction of the time, which makes you even more
+valuable. You're not replacing yourself with AI. You're augmenting yourself with AI. You're
+becoming more efficient, more productive and ultimately more valuable to your clients.
+All of these shifts, the death of the gatekeeper, the commoditisation of the low end, the new
+mode being strategy, the AI powered workflow, they all point to one inevitable conclusion.
+The fifth and final shift, which is the rise of the designer as strategist.
+The future of web design is not about being a pixel pusher. It's about being a
+better thinker. It's about evolving from a service provider who just takes orders to a strategic
+partner who shapes outcomes. For years, the conversation with the client would go like,
+I need a website, here's my budget, here's what I want it to look like, can you build it?
+And then the designer would say, yeah sure, I'll build it. That is purely transactional.
+That's a service provider. The conversation now is changing. Now the best clients are asking,
+I have a problem in my business. I'm not getting enough leads. My conversion rate is too low.
+My customers are confused about what I offer. Can you help me solve this problem with a website?
+And then that's a completely different conversation. That's a strategic conversation.
+And so as a designer as strategist, you're not just building a website, you're solving a business
+problem. You're asking questions like, what is the customer journey? Where are they getting
+stock? What are the biggest objections? How can we address those objections? How can we do it
+with design? You're thinking about conversion events, funnels, messaging, you're thinking
+about user psychology, you're thinking about the business metrics that matter, leads revenue
+customer attention. This is the work that commands premium fees. This is the work that those larger
+clients at the top end are willing to pay for. Because when you frame it as I'm going to help you
+increase your revenue, suddenly the cost of your services isn't just a line item in a marketing
+budget. It's an investment that needs to pay for itself. The designers who make this shift
+will be in higher demand than ever before, commanding higher fees and working on more meaning for
+impactful projects. The ones who don't, they're going to be left competing with AI for scraps.
+And ultimately, the choice is yours. If you want to act on all of this and learn how to actually
+do the work of building a website now, click here to go to the next video where I break down,
+step by step how you must build your website if you want your customers to line up to buy from you.

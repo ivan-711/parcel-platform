@@ -1,0 +1,520 @@
+I just created an agent that auto builds
+cinematic responsive websites from
+scratch. You drop in your current
+website, it analyzes your brand's color
+palette, your company's details, and
+designs a new website for [music] you.
+Using this, I was able to build more
+than 10 different cinematic websites in
+a matter of minutes. So, whether you're
+using CloudCode, Open Claw, or another
+Agentyc platform entirely, by the end of
+this video, you'll learn exactly how it
+works and how you can replicate it for
+your own setup. And if you're new here,
+my name is Jay. I spent over a decade
+working with brands you probably know,
+have been in AI since my master's in
+data science, and now I run our AI
+solutions practice in one of the largest
+AI communities globally. Let's get
+started.
+>> [music]
+>> So, just to give you some examples of
+what this agent created for us, it
+transformed this website into this with
+a pizza looking delicious in the
+background. And if I scroll down, it
+even has an accordion piece in here to
+show the different menu options. It gave
+it this website for a flower shop,
+turned it into this website where as you
+scroll, it forms this image of a flower,
+and even this responsive page where your
+mouse just becomes photos of flowers
+that they have. It also created this
+landing page for Monos, which I think is
+really cool. This page for a shoe
+cleaning service here in Sydney, even
+making the section on how it works
+really interactive and responsive. You
+also have this landing page for a
+brewing company that also shows the
+brand story in their colors. This one is
+for a local cupcake shop here in Sydney,
+and you can see it just how good that
+animation is, especially for people who
+are scrolling through these websites.
+You have one here for a jewelry company,
+letting you just browse their different
+categories in here. Another one for a
+chocolate company, and this is an
+example for a watch company. So, that
+looks quite nice along with that
+responsiveness as you scroll down the
+page. This one turned out really well,
+where you can see it's for a perfume
+brand where if you scroll down, it just
+shows that perfume bottle exploding into
+flowers, which is looking really nice.
+And of course, it was able to get from
+their original website and the brand
+story as well, including a few keywords
+in here. This one is for a ramen shop,
+and then when you click explore the
+menu, we'll also navigate to the menu
+that they have. And this one is for a
+demo website for Room Craft, which is an
+IKEA service that basically gives you
+complete room designs delivered and
+assembled. So, this scrolling animation
+right here where it unpacks the boxes
+and brings out the whole bedroom, all
+the furniture, that encapsulates this
+service perfectly. So, there you go. All
+of this was made by this agent, and I'll
+be taking you through it today. Now,
+this agent kit, which we are calling
+Cinematic Sites, we originally built
+this for our community. So, if you're
+watching this and you're part of the
+community, then remember that you can
+just grab this whole agent kit in the
+classroom. But if you want to learn how
+this works yourself so that you can set
+it up from scratch, then don't worry
+because that is exactly what we'll be
+doing in this video. And just to give
+you an overview, this agent kit, the one
+that runs it, is this skill.md. And this
+agent skill is simply a markdown file,
+which is basically an instruction manual
+for your agent to follow through the
+four steps that it will do in order to
+make these cinematic sites
+automatically. And those four steps are
+as follows, where when you give your
+agent a website to copy, what it will
+basically do is analyze that brand to
+give you the brand colors, the brand
+palette. It will generate the scene,
+which it uses to make the website more
+cinematic. And when we talk about the
+cinematic scene, basically it's this
+hero video where it shows product in
+action as you scroll through the page.
+And then it builds out the website
+itself using all of the HTML knowledge
+that it had during the brand analysis
+part, and then it deploys it for you so
+that immediately you have a website that
+is accessible anywhere using this tool
+called Vercel. And like I mentioned
+earlier, you can do this on Open Claw,
+on CloudCode, or whatever Agentyc
+platform you're using. For what I'll
+demo now, I'll do it via this Telegram
+agent, which is actually connected to
+CloudCode, so it's not Open Claw. And if
+you're curious how I do this, it's
+basically a long-running session that I
+have over at my terminal, and I just
+connect CloudCode using the new Telegram
+Channels feature. So, I'll link that
+tutorial somewhere in this video. But
+you can see for this agent, we do have
+this Cinematic Sites skill and agent kit
+already installed, which means that if
+we give it a website to improve, then
+it'll be able to run through this
+process with us. Now, real quick, we
+just released the Agentyc AI Masterclass
+for our members at RoboNuggets, which
+takes you from zero to mastery when
+working with agents. There's a link to
+the community in the pinned comment
+below. We've got founders in there who
+landed their first client in weeks, live
+build sessions where we create this
+stuff together, and the actual templates
+behind what I showed in this video. The
+community is also the reason these
+lessons get made, so see that below if
+that's for you. And for this demo, what
+I'll do is improve the website of this
+restaurant called Ichiraku Canteen.
+They're basically a ramen restaurant
+here in Sydney, and you can see their
+current website doesn't really have
+anything in it. It's just a reservation
+page. So, they're a good candidate for
+this service. And so, what I will do is
+to just give the current website of
+Ichiraku and just say, "All right, can
+you use the Cinematic Sites skill in
+order to improve this website? Also, for
+this specific run, go through the steps
+one by one so that we can observe you
+running it for this demo." And I just
+sent that part of the prompt so that we
+can observe it, but obviously, if you
+are running this in the background, then
+you can just have it run through all of
+the steps automatically. And over here,
+you can see that it is now conducting
+that brand analysis, and it's extracting
+the brand colors, the brand palette, and
+just overall crafting a brand for us
+using the information that it has. And
+if you're curious how it does that,
+basically it's all just written in this
+skill.md, that just basically provides
+the instructions for the agent on what
+to extract, a couple of methodologies on
+how to do that, and by the end, it gives
+a pause point for the user because maybe
+you would want to approve the brand card
+first before you continue. So, when it's
+completed that, you can see it created
+this brand card for me, put it in this
+HTML page, and I just asked it to open
+it for me, and this is what it looks
+like. So, this is just a staging step so
+that you can approve if this is up to
+spec. So, what's good is it was able to
+capture the industry, the color palette,
+and even the typography. It made sure to
+include some Japanese characters in
+there, which I think is a nice touch.
+And if I go and scroll down, it even
+gave you a headline, gives you a
+tagline, a suggested hero line, and an
+overall theme direction. So, I think
+this is a nice visual way for you to
+just approve the branding of this
+website and gives you a proper pause
+point in order to make the output of
+this the best that it can be. And for
+this step one, you actually don't need
+any external tools. You do have the
+option to use Firecrawl, but since
+Agentyc platforms like CloudCode or
+Antigravity or even Open Claw can read
+HTML files, then if you provide the
+website that you want to extract these
+components for, they will be able to do
+a pretty good job with it. But when
+we're okay with that, we can just
+continue to step two. Where now what it
+will do is it just go ahead and create
+those scenes for us. Now, by default,
+this skill allows your agent to suggest
+three high-quality ideas, and of course,
+you can have more, or you can also just
+let it go do its thing and select for
+you. But you can see here that for step
+two, it gave me some options for the
+hero animation. So, this is pretty cool
+that it even gave us emojis to guide
+that. So, one is steam rising, a single
+bowl of tonkotsu ramen on a dark wooden
+counter. So, that sounds good. There's
+also this option of, I guess, the ramen
+pouring, an overhead angle, rich golden
+broth being poured slowly into a dark
+ceramic bowl. Or this third option, the
+wide shot of an empty ramen bar counter.
+I think we'll either do number one or
+number two. So, what we can actually do,
+"Hey, so I think number one and number
+two are looking really good. I do want
+to feature a ramen that is shrimp-based,
+though. So, let's try that. And can you
+generate those images for me before we
+animate them into videos?" And with that
+command, what it is now doing is it
+generate both images using Nano Banana.
+And similarly, if you're curious how to
+set that up, it's all just written in
+this skill file as well. So, if we go to
+step two, scene generation, here is
+where we instructed it to suggest three
+concepts, and then to generate an image,
+we gave it this code to call on Google's
+APIs, which is how it accesses Nano
+Banana. And then later on, when we get
+those images, we will be animating them
+via Kling 3.0. Now, the reason why we're
+using Google's APIs by default here is
+because for each Gmail account that you
+have, they actually give you a $300
+welcome credit, which lasts you a long
+time, especially if you're just using
+their Nano Banana or ViO models. So,
+when you set up this skill for the first
+time, that will also show you where to
+find your API keys that you can just
+provide your agent so that they're also
+able to tap into the Nano Banana models
+directly. Now, if you're curious how to
+develop this yourself and how to give
+your agent the skill to actually use
+Nano Banana, then what you can do is to
+just provide your agent with this link,
+which is just all the documentation that
+Google has regarding Nano Banana, and
+your agent will scour this page in order
+to find the right commands to use Nano
+Banana, Nano Banana 2, or Nano Banana
+Pro. So, if you want to replicate what I
+did, then this would be your master
+page. And you don't need to go through
+third-party resellers like Higgsfield or
+Freepik for the same models. And you can
+see here that both images generated and
+opened. So, I just asked our agent to
+put them on the generation tab, and that
+tab is just here in our command center.
+So, if you go to the generations tab,
+you can see here it's basically a Google
+Flow Studio or Higgsfield equivalent
+where I just connected my CloudCode to
+this so that whenever I need to generate
+images or videos, I'll be able to
+display them visually here. I can also
+download them or if I click on it, that
+copies the path so that it's much easier
+to provide to our agents. But all right,
+so for our ramen shop, basically you can
+see here that it created these two
+images, which is both looking quite
+good, but I think the one that we will
+go for would be this one because I can
+just imagine this in the website to be
+looking really good. So, what we'll do
+now is I'll just copy that,
+give that to our agent, and I'll say,
+"Hey, this one look really good. I think
+it's ready for animation. What I want
+you to do is animate it so that the um
+ingredients settle into the ramen bowl,
+and then the camera zooms in to the
+ramen to show the rich flavor of it."
+And for this one, let's actually try for
+it to do two videos just so that there's
+more optionality because with a lot of
+these models, the more volume that you
+do, the sort of higher chances of
+winning that you have, and it's just a
+probabilistic nature of these. So, you
+can see that what it is doing now is to
+use Kling to animate that shrimp ramen,
+and that will basically happen just in
+the background. So, you can see it's
+generating the scenes now. But if you're
+curious how that happens, going back to
+the skill once again, you can see that
+how the agent is accessing Kling is
+through this website called Wave Speed.
+And Wave Speed is basically an AI model
+aggregator, sort of like Higgsfield or
+Freepik, but the difference is you don't
+need to pay like a monthly subscription
+to access these models. And apart from
+that, they also have a lot more models
+in place in here. So, you can see if you
+just go and explore, you have the prime
+models here like Nano Banana, Sea Dream,
+etc., and also Kling. There's other
+websites like File.ai or Key.ai, but I
+think in terms of reliability, Wave
+Speed has been pretty good. So, we are
+using them as well. But, you have the
+optionality to use the others. In any
+case, so if you want to set this up by
+yourself, all you need to do is to find
+the model that you are after. At least
+for this build, what we are using is
+Kling V3 image-to-video. And for our
+agent, what it's basically doing is
+calling on this model, uploading the
+images that it just created using Nano
+Banana using Google's free credit. And
+also, it writes the prompt here. And
+then, it runs it to give us back that
+video. Now, if you want to equip your
+agent with the knowledge to understand
+how this works, all you need to do with
+a lot of these websites like Wave Speed,
+key.ai, is that you just need to copy
+the content here. And let's say you want
+to give that to your Cloud Code agent,
+if you copy that over, that will just
+provide all of the documentation around
+Kling 3.0 Pro. So, that is basically
+what I did in order to give it that
+capability. So that you don't need to
+type in your prompts and go to these
+websites like Google Flow Studio and
+other creative website equivalents. And
+so, you can see here in the skill, we
+just standardize that and also give a
+bit more control so that it knows
+exactly what it is that it needs to do.
+All right, so I think it's done with
+scene generation. And you can see it's
+saying here that those two videos are
+now in our generations tab. This one
+looked pretty cool.
+And this one,
+I think this one's better because
+there's a bit of a camera zoom effect in
+there. But for some reason, I think the
+camera is shaky on this one. So, I'll
+probably actually just use this because
+it's a bit more consistent. So, let's
+copy the path of that and I'll say,
+"Okay, this is the final video. Can you
+now go to step three and build out our
+website?" And once we send that, you can
+see that it is now building that website
+for us. And just to show you under the
+hood what specifically this skill is
+invoking so that you understand how the
+agent is doing this. You can see under
+this step, there's rules around the
+architecture of the websites that it's
+building. A lot of controls around the
+design system. And essentially, what
+this is doing is it's codifying that
+effect. Where let's say you have that
+video, it will extract the individual
+frames of this video and map it to this
+scrolling action. So that it gives that
+effect that as you scroll down, it runs
+through the frames for you. And so, that
+whole thing has been codified in this
+skill already. The other thing that is
+part of this skill is this cinematic
+modules integration. And so, if I scroll
+down here, you can see this particular
+site actually turned out well where it
+has this accordion elements in here,
+right? Which is really responsive,
+really professional. And the reason why
+it was able to do that is because of
+this cinematic modules pack that we
+created in Robo Labs as well. Now, this
+one because it is quite hard to
+recreate, we are giving it away for
+free. So, you can just grab that in the
+description below. But this just gives
+you a lot of modular elements to enrich
+any website build that you have for your
+agents. So, there's this one with a
+reveal text effect, modular components
+around future scrolling. This one has
+that kinetic text effect that you saw
+earlier, typewritten text effects,
+glitch effects like this one, image
+trails like the one that you saw here,
+flip cards that are pretty useful, I
+guess, for testimonials and such. That
+flower animation that you saw earlier is
+basically just an SVG draw animation.
+And several others in here that I think
+is going to help you a lot when you're
+coming up with website designs of your
+own. And there's 30 plus of these
+cinematic modules, by the way. So, feel
+free to grab that below if that helps.
+But here, you can see that the website
+is now done. So, it gave us this landing
+page. And you can see this is really
+good. So, you have the Japanese branding
+in there. And if we scroll down, that
+should animate the bowl nicely for us.
+So, that looked really well. And this
+scrolling animation that was coming from
+our cinematic modules as well. So, it
+even included some Japanese characters
+in here. Let's actually translate that
+just to make sure that it's not putting
+something weird. So, it says, "There is
+a story in every cup." So, I think that
+is pretty cool. And it even has the
+story, the menu, and so on. And it was
+even able to grab the address as well as
+the opening hours for us. So, that is
+really nice. And you can see this is
+probably interactive. Yep, there you go.
+So, if I scroll down to the menu, to the
+our story, and visit, then that is all
+part of the website now. Pretty much in
+one shot. And of course, you can improve
+this further, right? So, let's say,
+"Hey, so I actually want to add a
+section below or at least have the menu
+use the accordion module because I think
+that is a nice way to display the ramen
+bowls. Can you do that?" And when I send
+that to the agent, it will understand
+what I'm saying because remember, in
+that skill, it gives it access to these
+cinematic modules. And the one that I'm
+talking about is this accordion slider.
+Where if you look at this as a sample,
+that is the one where if I hover over
+each image, it expands. And there is
+even an option to have a vertical
+variant. And here, you can see that it
+is now doing that. And when it's done
+with that, we can check back on our
+site. And here, if we scroll down, you
+should now see the accordion fully built
+in in there. And this looks really good
+and definitely more professional than
+what we started with. So now, if we head
+to step four, this will be a simple
+matter for our agent because what it is
+going to do is to just deploy that to
+Vercel. And basically, Vercel is a
+service that hosts websites for you. And
+they actually do this for free, which is
+really good. And for you to equip your
+agent with this knowledge, all you need
+to do, once again, is to give your agent
+the documentation for Vercel and they'll
+be able to do exactly what it did here.
+And so, here you can see that it is now
+live at this website and you can send
+that to your client as a demo site that
+people can visit and also provide some
+feedback on.
+So, that's looking really good. And just
+to recap, we went from this, which is
+practically not even a website, it's
+just a booking form, into this, which
+has a cinematic background, a much more
+rich experience for the users of this
+website, and is definitely more premium
+versus how we started. And there you
+have it. That is the full agent pipeline
+where you give it a website, it analyzes
+the brand, generates the scenes, builds
+the website, and even deploys it online.
+Now, if you need the 31 module cinematic
+pack, that's available free for everyone
+just in our network. So, you can grab
+that. And for this full cinematic
+websites kit that runs the end-to-end
+pipeline, you can get that inside the
+Robo Nuggets community. I hope that was
+helpful. And if it is, then consider
+subscribing because that helps us a lot
+to put out more educational content like
+this. And if you want to understand
+further how I'm running Cloud Code as a
+24/7 AI assistant, then you can watch
+this video next. I'll see you guys next
+time. Thank you.

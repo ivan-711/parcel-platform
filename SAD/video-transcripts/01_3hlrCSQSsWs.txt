@@ -1,0 +1,100 @@
+Over the past few years, I've studied well over a thousand sites, sites that were actively
+pulling in millions, and from all my research, I realised that what actually makes a website
+convert is almost never what people think. You see, while everyone is obsessing over
+the wrong stuff, like the fancy animations, the gradient hero, the parallax scroll, the
+sites that are actually converting are winning by doing something completely different.
+I've been building websites for almost a decade now, I've worked with Fortune 500 companies
+and I've delivered projects for clients in over 40 countries. The five lessons that
+I'm about to share in this video came directly from that. First one, and honestly, the
+most important is clarity. I've seen genuinely gorgeous sites with zero conversions, like
+the kind of websites that win design awards, and I've seen objectively ugly sites that
+kind of look like 2009 never ended, that absolutely print money. The difference between
+these two kinds of sites, almost every single time, is the clarity of the site. If someone
+lands on your site and has to spend more than about two seconds figuring out what you
+do, or what you want them to do, it's already over. They're gone. They won't give you
+the benefit of the doubt, because nobody does. If there's anything like you or I, then
+they probably have a hundred of the tabs open, so clarity has to come before everything
+else, before aesthetics or branding or any of the stuff that people usually lead with.
+The question your homepage must answer in the very first scroll is, what is this? Who
+is it for? And what do I do next? And once you've answered those, once the user knows exactly
+where they are, and what the next step is, then you can do the interesting creative things
+around that core. But leading with creativity, before you've established any clarity, is
+like trying to build a house without laying any foundations, just doesn't work, or it
+may work for a tiny pocket of time, but you'll pay the price soon at rather than later,
+which leads directly into my next point, which is CTAs. And if you're not familiar, that
+just stands for calls to action. There's a famous line from Henry Ford, and he said something
+along the lines of, my customer can have any color card that they want, so long as it's
+black. And when I heard that the first time, I thought about website immediately, because
+that is exactly how the best converting website to work. One path repeated in different ways
+all down the page, because you're not really giving people options. You're actually guiding
+them somewhere, and every single element on the page needs to exist to either reinforce
+that journey, or get them out of that journey. And the problem is, most sites do the opposite.
+They've got a book core button in the header, a download our brochure button halfway down,
+a sign up for the newsletter at the bottom, and then they've got a live chat widget popping
+up on the side. They use it doesn't know what to do. So more often than not, they do nothing.
+Research actually backs this up pretty clearly. The few options that you give people the higher
+the conversion rate, and it's not even close. So pick your one thing, the thing that you want
+people to do most, and then make everything on the page point to that. You can absolutely repeat
+the CTA, in fact, you should, but it should always go to the same place. One caveat that I'll add
+is that sometimes you may want simple variants throughout your page. As an example, we give visitors
+on our own site the option to book a call or use our contact form. My reasoning for this was that
+I know that not everyone wants to hop on a call immediately. And we see quite an even split between
+net new bookings and net new contact form submissions. So there's a bit of nuance here, but generally,
+you want your page to be geared towards one really specific outcome. Now this one surprises people
+when I say it, but I've seen it too many times to ignore it. I've reviewed landing pages that look
+so bad. I'm almost embarrassed for whoever built them. We're talking about pages with misaligned text,
+stock photos, and then you've got fonts straight out of a 2003 PowerPoint. And yet still, some of
+these pages are generating more revenue than sites 10 times more complex and expensive to build.
+And you know why? Those ugly websites have testimonials. Video testimonials, screenshot
+testimonials, case studies, logos of companies they've worked with just stacked one after another
+all the way down the page. Think about ClickFunnels and their style of landing page. Nobody's winning
+any design awards there. They're all roughly from the same template, and yet those pages have
+made creators hundreds of millions, and not billions of dollars, because social proof done well
+does something that beautiful design can't do by itself. It answers the only question that visitors
+actually care about. Has this worked for other people like me? Ideally, you've got both great design
+and strong trust signals. Revive to choose one, it's trust signals every time. So before you spend
+money on a redesign, look at how much social proof is actually on your site. If the answer is not
+a lot or none, then social proof is a good place to start. Really quick, if you want to see exactly
+what all of this looks like in practice, we've put together a portfolio of all the sites that we've
+built from start-ups all the way to Fortune 500 companies, links in the description. You can browse
+through it, see the work, and if something catches your eye, or if you're looking at your own site
+and you're thinking, yeah mine doesn't look anything like that, then there's a link to Booker Call as well.
+So this next one is one I feel quite strongly about, and it goes against a lot of what people think
+makes a website impressive. See right now, everyone is going hard on motion. They've got
+scroll-triggered animations everywhere. Texted, flying in from six different directions,
+elements bouncing around the second you land on a page. But I've never really been a fan of
+heavy motion, and I say that as someone who builds premium sites for a living. Maybe it's just
+me, but I really do believe when everyone zigs, usag, if every site in your industry is throwing
+everything at the visitor, the second they arrive, every animation, every testimonial, every
+feature, every stat, then a site that does the opposite, it weirdly stands out. Think about literally
+any luxury brand. Emes, Rose Royce, Rolex, their websites don't scream at you and try and tell
+you what to think. They let the product breathe, there's a lot of negative space, there's silence,
+and that silence invites the visitor to lean in, filling in their own story, and actually
+placing themselves in that world. On the other hand, you've got over-designing, which is often a
+sign that the site doesn't really trust itself, like it's trying to prove its value by ramming
+sheer volume instead of actually just letting the work speak. And when you try and push, the actual
+idea you're really trying to communicate gets completely washed out. So less done with intention,
+almost always outperforms more, and then there's the micro details, and this is the stuff that I
+think separates sites that feel good from sites that feel genuine and exceptional. Most people
+think that premium comes from the obvious stuff, big photography, fancy font, a full-screen
+video background, and the thing is, those things can help, and more often than not, they do.
+But those sites that really stick, like the ones where people tell you, your website is incredible,
+those usually get that reputation because of the small stuff, and I mean things that people
+don't even consciously take note of. For example, on our site, we've got a contact form, but instead
+of just a standard square space form with a blank field, we added this teeny tiny custom
+element in the top corner that sets the context. It tells the user exactly what they're doing,
+and in a way that looks considered and deliberate. It's a super small tweak, but it makes a massive
+difference. Same with the hero section, we could have used square spaces standard badge,
+their icon set for their circle members, but instead, we created our own custom lotter badges,
+you know those little awards style icons that you see on a lot of film posters, and to one
+tense on purposes, that is exactly the same info, but now it has a completely different feel.
+And the best thing about these micro details is that they're not expensive, and they don't take
+that much time. Those laurels, for instance, that took our designers about 10 minutes to mock up,
+but they do communicate something to the visitor that the big flashy stuff can't. They communicate
+that someone actually thought about this, and that person behind the site, they care deeply about
+the details. So when people feel that, even without being able to name why, they trust you more,
+and they're far more likely to take action on one of your CTAs. So you know what works now,
+and if you want to see what all of this looks like put together in real life,
+I've linked our portfolio in the description, so check that out, and if you're thinking right,
+well, I probably need a new website now. Book a call with our team, and we'll walk through what
+you've actually got, and where it needs to go.

@@ -1,0 +1,287 @@
+In this video, I'm going to give you the
+10 web design trends that will define
+how you need to build your website in
+2026. [music] You see, as time goes on,
+more and more AI generated websites are
+flooding the internet. And the issue is
+they all have the same soulless plastic
+[music] look. I've built award-winning
+websites for Fortune 500 companies and
+for some of the biggest brands [music]
+in the world, and from experience, I can
+tell you that things are not moving in
+the way you'd expect. First trend up,
+and this is the big one, the rise of
+humanmade design. Let's just acknowledge
+the elephant in the room. AI is
+everywhere in web design now. And
+frankly, this is where a lot of dead
+internet theory speculation comes from.
+You might already know what I'm talking
+about. Sites that just feel like they
+were built [music] by a machine because
+they were they lack soul. They lack
+originality and they lack a point of
+view. Human-made design is a direct
+response to that. It's the celebration
+of the imperfect, the unique, and the
+authentic. Now, this isn't about being
+anti- AI. It's about using AI as [music]
+a tool and not a crutch. Because what
+I'm seeing more and more is that clients
+are looking for a designer's unique
+perspective. They want strategic input.
+They want a partner who can think, not
+just execute. The real value is in the
+human touch that AI simply can't
+replicate. It's about understanding that
+the future of web design isn't about
+letting a machine do all the work, but
+about leveraging our own creativity and
+strategic thinking to create websites
+that are not only effective, but also
+feel alive. Which leads me directly into
+the second trend I've noticed, which is
+less of a visual style and more of a
+fundamental mindset shift, and that is
+strategic design thinking. Now, for a
+long time, clients hire designers to
+just make things pretty. That era for
+the most part is over because today
+clients are hiring me for my brain, not
+just my design skills. Strategic design
+thinking means understanding a client's
+business goals, their target audience,
+and their market position before a
+single pixel is ever designed. It's
+about asking why before we get into the
+what. For example, a client might come
+to me and ask for a specific feature on
+the website. A designer who is just
+simply, you know, an executionist will
+build the feature, but a strategic
+designer as well as obviously building
+that feature will dig a bit deeper. So
+they'll ask, "What's the business
+problem that you're trying to solve with
+this feature?" And often what we'll
+discover is there's a much more
+effective solution that the client
+hasn't even considered. This is where I
+might use AI as a bit of a sparring
+partner just to quickly test different
+hypotheses and explore different
+strategic directions. But that core
+strategy, that critical thinking that
+comes from a human. And when you operate
+this way, you stop being just another
+designer. You become an essential
+strategic partner who solves real
+business problems. Now, let's get into
+some visual trends that are emerging
+from this human first approach. Starting
+with the move away from rigid
+structures. This trend is all about
+organic layouts and what I like to call
+the anti-grid. You see, for years, web
+design's been dominated by clean,
+predictable, boxy grids. And while grids
+are important obviously for structure,
+this organic layout trend is a bit of a
+a rebellion against that rigidity. It's
+about creating more fluid, natural, and
+sometimes asymmetrical compositions that
+feel more like a page in a high-end
+magazine as opposed to a spreadsheet. So
+this trend, it allows for so much more
+creative expression, and it can make a
+website feel far more dynamic and
+engaging to visitors. When you break the
+grid, you can guide the user's eye in a
+more natural flowing way, creating a
+journey rather than just, you know, a
+static page. It's a visual
+representation of that human imperfect
+touch that we were just talking about
+before. Now, Gen 4 takes the idea of a
+more dynamic web to a whole new level.
+That's motion narrative. For a long
+time, motion on the web was just about
+flashy animations and, you know,
+decorative hover effects. This motion
+narrative trend is about using
+intentional thoughtful movement to guide
+the user through a story. Now, this
+could be a subtle scroll triggered
+animation that reveals content as you
+move down the page or it could be
+elegant page transitions that create a
+seamless flow or even, you know, some
+small interactive elements that respond
+to the user's curiosity. Whatever it may
+be, the goal here is to create a more
+immersive and cinematic experience. And
+when this is done well, motion isn't
+just used as simple flashy decoration.
+It becomes integral to the design itself
+and it allows you to tell a compelling
+brand story or explain a complex product
+in a way that static images and text
+could never. Using motion properly is
+all about making the user feel like
+they're an active participant in the
+experience, not just a passive observer.
+Now, while some trends are about
+breaking the mold, others are about
+refining and perfecting existing ideas.
+Which brings us to trend number five,
+which is glass morphism 2.0.
+Blasmorphism has been around for ages
+now, but the new iteration was seen in
+2026 is more subtle and more tactile.
+It's about creating a sense of depth
+through those translucent frosted
+layers. You know, those soft shadows,
+diffused blares. This trend can make a
+website feel incredibly modern, but
+without feeling cold or sterile. What it
+does is add a layer of sophistication
+that can be used in everything from
+buttons and cards to entire background
+elements, creating a visual hierarchy
+that's beautiful and intuitive. It's the
+evolution of a popular aesthetic into
+something more mature and purposeful.
+From the sleek and futuristic, we now
+move into a trend that finds beauty in
+structure and documentation, the
+archival index. This trend is turning
+the act of organizing and presenting
+information into a design aesthetic in
+and of itself. It's inspired by the
+clean, methodical look of library
+archives, museum cataloges, and
+technical manuals. Think of clean grids,
+clear labeling, and a strong focus on
+typography and structure. This trend is
+perfect for websites that are content
+heavy and you know those that want to
+present a lot of information in a way
+that feels clear, elegant, and
+authoritative. We're seeing this used
+beautifully on portfolio sites, online
+publications, and even e-commerce stores
+that have a large catalog of products.
+It proves that even the most structured
+and information dense websites can be
+beautifully designed when you embrace
+the aesthetic of the archive itself.
+This next trend is all about the little
+details that make a big difference.
+Micro interactions with purpose. If
+you're unfamiliar, the term micro
+interactions refers to the small, often
+quite subtle animations and bits of
+feedback that happen when a user
+interacts to the website. Think of a
+button that changes color when you hover
+over it, or a satisfying little
+animation when you add an item to your
+cart. The thing is, in 2026, the focus
+is on micro interactions that have a
+clear purpose. They should provide
+feedback, guide the user, and make the
+experience feel more intuitive and
+responsive. They shouldn't just be there
+for decoration. They should enhance
+usability. A good micro interaction is
+one you might not even consciously
+notice, but it makes the website feel
+just a little bit better, a little bit
+more responsive, a little bit more
+human. It's a small detail, but it's the
+sign of a well-crafted, thoughtful user
+experience. As we focus more and more on
+human- centered design, it's impossible
+to ignore the most important aspect of
+that, which is designing for everyone.
+Which brings us to trend number eight,
+accessibility first design.
+Accessibility is no longer a nice to
+have or a box to check at the end of a
+project. It's a legal and ethical
+requirement. But even beyond that,
+designing for accessibility simply makes
+the web better for everyone. An
+accessibility first approach means
+thinking about accessibility from the
+very beginning of the design process.
+This includes things like ensuring
+proper color contrast so text is
+readable, providing descriptive alt text
+for images for screen readers, making
+sure the entire site is navigable with a
+keyboard, and using clear and simple
+language. This is another area where
+strategic thinking is absolutely
+crucial. It's about empathy and ensuring
+that the digital experiences we create
+are available to everyone. It's not a
+constraint on creativity. Think of it
+more as a core principle of good design
+itself. Now, I know we started this
+video talking about the dangers of over
+reliance on AI, but that doesn't mean
+that we should completely ignore it. And
+number nine is about finding the right
+balance using AI as a creative partner.
+This is where we bring the conversation
+about AI full circle. While AI is a
+terrible replacement for a designer, it
+can be an incredible assistant. The
+smartest designers are using AI to
+accelerate the design process, not to
+automate it. So, I use it as a sparring
+partner, you know, to generate those
+initial ideas or test different layout
+options quickly. I'll use it to automate
+the tedious stuff like finding and
+fixing bugs in code or optimizing a
+batch of images for performance. The key
+is that the designer is always in
+control using AI to augment their skills
+and streamline their workflow. This
+leads to what I mentioned earlier, which
+is cleaner workflow and even more solid,
+well-thoughtout outcome for the client
+because I can spend more of my time on
+the highle strategy and that creative
+work that truly matters. Finally, let's
+talk about a trend that's not how a
+website looks, but how it performs is
+performance first creativity. Beautiful
+website is completely useless if it's
+slow, clunky, and frustrating to use.
+Performance first creativity means that
+website performance is not an
+afterthought. It's a core part of the
+design process from the very start. This
+includes things like meticulously
+optimizing images, writing clean and
+efficient code, and choosing the right
+hosting environment. A fast loading
+website not only provides a better
+experience for the user, which is
+critical, but also ranks better in
+search engines. This is the ultimate
+expression of strategic design, creating
+a website that not only looks beautiful
+and engaging, but is also technically
+sound and effective at [music] achieving
+business goals. So, those are the 10 web
+design trends that actually matter in
+2026. And if you want to see how I apply
+these principles in my own work, click
+on this video here where I break down my
+entire process for designing a high
+converting website from scratch.

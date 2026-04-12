@@ -1,0 +1,34 @@
+Something that's been around for quite a while now on Squarespace, but still not everyone knows
+how to do is the ability to link a button on either your header or somewhere on the page to
+a section on a page and it can be the same page or it can be another page on the side and basically
+what it is is an anchor link that takes the user to a specific section within a page. So what I'm
+going to do in this video is show you two ways where the anchor link takes you down on the same page
+and then the anchor link takes you down to another page or it will take you to another page
+and then down that page. So let's get into it. On our site here you can see we've got a nice home
+page set up and we've got a button here. Let's say we want to link this button down to the creative
+tracks to explore so you can see here programs. If I go into the editor I'm going to find that
+about button and I'm going to double click on there and I'm going to click edit.
+In the URL all I need to do is a hashtag and then I'm going to say programs.
+Now if I say this and I click on the button you'll see that nothing will happen so if I click this
+it doesn't go anywhere. What it does is it just puts the programs extension in there.
+What we need to do is we need to go back into the editor. We need to identify the programs
+section. Click on edit section and then we're going to change this to program.
+So now if I hit save and we exit there and now we scroll down. So now when we click on about us
+that takes us down to two programs. So that's how you set it up on one page. Now
+let's go to another page and let's say we go to our story
+and we'll find say do we have any buttons in here. No but what we can do is we can just create one
+so add a block, pop a button in. Let's make it look nice for the purposes of this video
+and then all we need to do is first of all we're going to do forward slash and then the page you
+want to link to and then we're going to follow that with the same link in here. So if I put program
+in there. What happened now is so you can see we're on the about page. We click on learn more.
+It's going to flick us back to the home page and straight down to programs. So all you need to do
+is set up the link or the section name. So we'll just recap that now. If I go back into edit
+you go down into the anchor link name. I actually had to swap this to program because for some
+reason programs wasn't working. Don't know why maybe it was called something else somewhere
+somewhere along the page. But anyway you add your anchor link and then if you're on a link on
+the same page you just go in here and you add just the anchor link itself. If you're on a separate
+page so I think that was our story. You first off want to go in here and you'll add the page name
+and then the anchor link straight away and also you don't need to put like a forward slash in
+like this. You can just follow the page with that anchor link and that is that. So hopefully you
+found that useful. If you did please make sure to leave a like and hit subscribe. And if you want
+me to build your Squarespace website you can get in touch using the links in the description.

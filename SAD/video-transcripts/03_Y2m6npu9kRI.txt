@@ -1,0 +1,87 @@
+Have you ever landed on a website and just thought, wow, that looks incredible?
+You're not sure exactly why, and you can't point to one specific thing,
+but it just feels right. Now compare that to the thousands of sites that you land on,
+and you just immediately click away from. The difference between those two experiences
+almost never comes down to budget, because I've seen $50,000 websites that feel forgettable,
+and then I've seen sites built for a fraction of that, which genuinely feel well-class.
+And after almost a decade building websites, including for Fortune 500 companies,
+I've started to understand exactly why there is. It comes down to three principles of design
+psychology that the best website in the world all get right. So in this video, I want to break
+those three principles down, what they are, why they work, and what most sites get completely wrong.
+So let's dive in. Have you ever heard someone describe a website as clean or polished?
+That's almost always what they mean, even if they don't know it. When a site feels clean,
+it's really because there's nothing on it. It's usually because someone has made all the hard
+decisions for you. They've told you where to go first, what's secondary, and what you can safely
+skip past. What this is is hierarchy and action. And when it's done well, your visitors don't even
+have to think. They just flow through the page. But when it's done badly, like when five things are
+screaming at them, all at the same volume, the brain has to work harder to actually pass that
+information. And the second that their brain has to work hard, they leave. Take linear the project
+management tool. Every section on their site has one dominant focal point. One thing that you
+write lands on first, nothing competes with it. Then the secondary information sits underneath,
+a bit more quietly, so it's there when you want it. Well, look at Stripe. Stripe's interesting
+because they're dealing with genuinely complex products. They deal with payment infrastructure
+and developer APIs, which is the stuff that most people, you know, they just glaze over.
+Their site makes it feel completely simple. Big ideas first, detail later. But once again,
+only when you're ready for it. And that is what aggressive hierarchy looks like when it's done
+right. And by far, the most common mistake I see is this. Everything having the same visual weight,
+every heading the same size, every section equally as loud. And if everything is loud,
+you end up hearing nothing. That will destroy your hierarchy. Then white space is another one.
+Actually find that clients can be actively scared of white space. And this is a huge mistake.
+They feel like empty space is wasted space. But white space is what lets the important stuff breathe.
+It's an extremely important tool. And the sites that feel expensive almost always have more white
+space than you'd expect. When your website shows restraint and it actually has more visual breathing
+room than it instills confidence in your visitor, it says we're not trying to fill every
+inch of the website because we don't need to. See, AI can generate a website layout. It can spit
+out a colour palette, write the copy, pick the fonts. And as a result, increasingly, a lot of
+website look exactly the same. They have the same gradients, the same structure and really the same
+everything, which means the differentiator now isn't whether you can create a website in the
+first place. It's whether you have taste and taste is a hard thing to define. But the simplest way
+that I can put it is this. Taste is essentially intentional restraint. It's knowing what to leave
+out as opposed to what to add in. Then it's having that confidence to actually leave it out.
+Look at Apple. Yeah, I know it's the obvious example, but it's obvious for the reason.
+Their homepage is almost aggressively minimal. You've got a product, a headline, and then usually
+not much else. And the effect of that restraint is that the product feels really important,
+like it deserves to be the only thing in the room. ASAP does the same thing, but in a completely
+different way. Their site is almost confrontationally sparse. There's very little explaining. They
+have a little bit of body copy sat under a minimal header, and then they prompt the visitor to discover
+more. And somehow that makes the brand immediately feel more premium, which to most people, it looks
+like a juxtaposition, but it's really not. Because luxury, real luxury design doesn't chase you,
+so to speak. Luxury design trusts that you will actually come to it instead. The mistake most
+sites make is that opposite of that, they add things to make the site feel interesting. They
+add more icons, more movement, more feature lists, and then what ends up happening is the core
+message gets buried underneath everything. It all comes back to this core idea. What you leave
+out is often louder than what you put in. There's also a trend problem. So right now, there are very
+specific things that are everywhere. Certain gradient styles, certain animation patterns,
+certain layout structures that AI just keeps spitting out. And if your site looks like it was built
+from a trend, rather than from a, you know, a considered point of view, then it's going to feel
+cheap, and it's going to feel off to a potential customer, even if it's really technically well-executed.
+Now, really quickly, if you want to see these principles actually applied, we've got a full portfolio
+of sites that we've built over at bichrofe.com, and the link is in the description. And if you
+watch in this, and you know, you're looking at your own site and thinking, yeah, my site probably
+needs a redo. And there's a link to book core right there too, right? Last one. So I just spend a
+few minutes telling you to do less. So when I say that micro details matter enormously,
+that might sound like a bit of a contradiction. I caught her a bit of flak in some of the comments
+on the last video, so let me just clear this one up. Here's the distinction. Restrained is about what
+you include versus what you exclude. Micro detailing is about the care that you put into those things
+that you do keep. A restrained site with sloppy details will still feel really cheap. As an example,
+you can have a sparse amount of icons, but if they're all clip art, then the site's going to feel
+completely off. And the idea of restrained it just falls flat on its face. But a restrained
+side where every remaining element has been obsessed over, that's when you get something that feels
+genuine exceptional. People subconsciously judge the quality of something by how much care is
+put into said thing. They can't always tell you why a site feels expensive, but at a subconscious
+level, they're reading 100 small signals simultaneously, things like whether or not spacing is
+consistent, or if the other state feels like considerations actually pour into them. When those
+things are right, they're visited, they won't even notice them, but it's those details that get
+them to feel it, even if they don't know why. That said, when they're wrong, when buttons are
+slightly off-center, when they're spacing between sections is inconsistent, when elements look like
+they were placed approximately, then people do notice. Your site's design steps out of the shadows
+and it makes your potential customer question your business. A real-life example of this is a site
+that we built for Prova Health to help them raise funding. All of those little horror effects
+across their home page, highlighting key info, are designed to engage the visitor. We even added
+like a little effect on the logo colour sum, so it stops when a user hovers over it and they can
+clearly see which companies that Prova were affiliated with. It's such tiny details, but this
+is just what works. Now, if you're thinking this is great, but what does it actually look like in
+real life? Head over to bichrawfer.com and take a look at our portfolio, and if you'd rather just
+have someone handle it, that's what we do. Book a call and let's talk about what your site actually
+needs, and if you want to keep watching, then I've got you covered. Click here when I break down
+the new rules of web design in 2026 that are defining what you must do this year to keep up.

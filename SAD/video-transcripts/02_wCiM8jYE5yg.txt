@@ -1,0 +1,185 @@
+The way most websites are built is completely backwards, and I don't mean that as a specific
+criticism of any specific person or any agency, it's just how the industry has worked for
+such a long time.
+Traditionally, you get a brief, you open a template, you start making decisions about
+how it's going to look, and then somewhere along the way you figure out what it's actually
+supposed to do and who it's meant to speak to.
+That process I just described produces sites that look fine, but perform terribly.
+So in this video, I want to walk you through what the new way of web design actually looks
+like.
+Step by step, from the very beginning of a project through to the launch and beyond, whether
+you're building something yourself working with a designer or trying to figure out why
+your coincide is in doing what you need to do.
+This is the process that actually works in 2026.
+Step one, and this is where almost every bad website goes wrong, is strategy.
+Before you touch design, before you think about colours or fonts or layout, you need to
+answer some basic questions about who the site is actually for, who's landing on it,
+and what do they already know when they arrive?
+What do you want them to do when they get there?
+And what do they need to understand before they'll actually be willing to do it?
+Those three things determine the entire site structure.
+They tell you what pages you need, what all the information should go in, and what the
+hierarchy of every single page should look like.
+If you skip this, then you're making design decisions based on pure guesswork which
+never ends well.
+And unfortunately, that's what most sites are.
+Expensive, sometimes really expensive, guesswork.
+So when we start a project, this is the first conversation that we have with every client.
+Not what you want us to look like.
+It what does success look like?
+Who are we trying to reach, and what do they need to know before they pick up the phone
+or fill in a form?
+If you're doing this yourself, then sit down and write it out before you do any design
+work.
+And in one sentence, answer this question.
+What is the one thing that you want to visit to do when they land on the site?
+Everything else needs to be built around that one central thing.
+So once you know the strategy, the next step is to map out the structure before you start
+going, you know, crazy with design.
+Start with a site map.
+A site map is basically just a map of every page on your site and then how they interconnect.
+And I know it sounds simple, but most people skip this entirely.
+They just start building and then they add pages as they think of them.
+So as a result, they get a site that doesn't have a clear journey through it and it becomes
+a tangled piecemeal mess that they struggle to maintain all the time.
+Visitors do land somewhere, click around a bit, and then they just leave without doing
+anything.
+And it's really frustrating because it's not that they went interested in what you sell,
+you know, or what you do, but it's because they were never actually guided down any specific
+path.
+Your site map should reflect the decisions you made in step one.
+If it's the goal is to get people to book a call, then every page should have a path
+that leads there.
+If you've got multiple audiences, say residential clients and commercial clients, then your
+structure needs to account for that and root people towards actually relevant to them.
+And after the site map, we've got wireframes.
+A wireframe is just a rough layout of each page.
+There's no colors yet, you know, no real copy.
+A wireframe is literally just boxes showing where things should go and in what order.
+But it's important because drawing wireframing is where you're going to figure out your website
+hierarchy.
+What does the island on first?
+What's the primary message?
+What secondary?
+What comes after that?
+And so on.
+Getting this right before you add any visual design is genuinely the most valuable thing
+that you can do when you build in your website.
+Even the design yourself, it's also where client feedback is easiest to incorporate.
+It's much less painful to move boxes around in a wireframe than to redesign a full page,
+meaning that that's already being built and styled.
+We use Figma for this stage and we share wireframes with clients before we touch the build at
+all.
+Now once the structure's locked in, that's when the design part actually starts, but this
+is also where it's really, really easy to go wrong in a different way.
+See, design is where a lot of websites get derailed by the wrong priorities.
+Design isn't client alike, want the site to look impressive, which is completely understandable,
+obviously so do we when we build our client sites.
+And the question you have to ask is, who do you want the site to look impressive to?
+See, the goal of design is to save the visitor.
+You want to make information easy to find, easy to understand and then easy to act on.
+Visual impact matters, but it should come from a place of clarity first and foremost.
+Not for throwing everything at the page and just hoping something will stick, so that
+begs the question, what is the new way of design?
+Here are a few things that actually move the needle, for one, typography.
+Humans have more impact on how a site feels than almost anything else, and it's an area
+that most sites make no real effort.
+I've had clients come to us and they have no actual idea what their font family is, and
+we kind of need to flip this thing on its head.
+Because font choices can make or break a design.
+Not only can the right font choice make copy way more legible, but it makes the entire
+site feel like a whole lot more consideration went into it.
+Secondly, colour.
+The tight intentional palette usually two or three main colours used with discipline,
+with little splash or two for highlights, puttin and stuff like that.
+It does far more than a huge palette that's used inconsistently.
+Every colour should have a job, third we've got white space.
+A natural instinct is to fill every single gap, and what's worse is that your own design
+usually looks great to you, but it doesn't to others, and that's who design is actually
+four.
+So the instinct that you must follow is to let things breathe.
+White space isn't wasted space, it's what makes everything else feel intentional, and
+then fourth we've got the CTA, which is your call to action, have one primary CTA repeated
+throughout the page, always going to the same place.
+Not three different buttons, sending people in three different directions.
+For example, when we did a rebuild for our client, Renew Energy, the old version had
+a genuinely strong offer, but it was buried under a ton of visual noise.
+It had like auto playing slideshow, with parallax effects, and a colour palette that wasn't
+doing anything for them.
+The new design that we settled on stripped everything back.
+We led to a strong photography, clean hierarchy, and then the value proposition was visible
+within the first scroll.
+Same company, same offer, but a completely different feeling.
+By the way, if you want to see what all of this looks like when it comes together, I've
+put together a full portfolio of sites that we've built over by Crawford.com, the links
+in the description.
+Everything from start-ups to fortune 500 clients, and if you're thinking that you'd rather
+have someone handle this for you, there's a link to book a call there too.
+Right, back to it.
+Step four is something that almost nobody talks about at the design stage, but it massively
+affects what happens to the site after it launches.
+So at some point, whoever owns the website is going to need to update it.
+You'll eventually want to add a new service, or add a new case study, or maybe you want
+to tweak some copy.
+And the problem is, if the site hasn't been fully built with that in mind, then every
+single one of those updates becomes a problem.
+A form called to an agency, a support ticket, a wait, and then probably a painful invoice
+to get things done.
+So the better approach and the new way of doing web design this year is to build the site
+so that the person who owns it can actually manage it themselves.
+That means choosing a platform that they can get comfortable with.
+And it also means building in a way that's logical and editable.
+Not in a way that's clever and totally gate-kept from the site owner, and it means handing
+it over with proper training, not just a link to a help article, but actually walking
+through the site with the client and showing them how everything works.
+For example, we actually do a full handle recession on every single project that we do.
+And then for the first 30 days after launch, we're available for free email support, because
+the questions always come after launch, not before.
+For anyone building their own site, think about this really early.
+Pick a platform that you're going to be able to use long-term without needing to hire
+someone every single time something needs changing.
+A site that you can manage yourself will always outperform the one that you can't, because
+it stays current.
+And if you look into hire, make sure that the agency you go with is going to be there to
+help.
+Now last step, and this is the mindset shift that I think makes the biggest difference
+to whether a website actually does anything for the business.
+The most website project, the launch day of the site is the end of the project.
+The site goes live, everyone's happy, and then it basically gets left alone until someone
+decides, you know, it needs a redesign in three years.
+That approach produces sites that look fun on day one obviously, but these websites
+they gradually stop working all the time.
+So the better way to think about it is that the launch is only the beginning of the site
+doing its job, which means a few things need to be in place before you go live.
+SEO has to be built in from the start, not added in later.
+The way pages are structured, the way copy is written, the way the site map is organised.
+All of this affects whether search engines can make sense of the site and whether it
+starts appearing for the right terms.
+Trying to retrofit SEO onto a site that wasn't built with an in mind is painful and usually
+only partially effective.
+Analytics need to be set up so you actually know what's happening.
+Where does this come from?
+What are the pages of the spending time on where they dropping off before they get to
+your contact form?
+Without that data, you're flying blind, so sort that on day one, and then the contact
+flow, it needs to actually work and work for different types of people.
+Some visitors want to fill in a form.
+Some want to call, some just want an email address, give people options because the ones
+that won't fill in a form will just leave if that's the only option that you've given
+them.
+When we handed over the finished site that we created for a new energy, this was all in
+place before the site went live.
+The site was SEO ready, the analytics were all set up and connected, and the contact
+page was ready to go with multiple ways to contact them.
+That's what it looks like when a website is set up to actually perform, and that is
+a new way of web design.
+If you follow those five steps or if you're working with someone who does, you'll end
+up with a site that works as hard as it possibly can.
+And if you want to see this in practice, head over to bikerofer.com and take a look at
+our portfolio.
+Or if you want to talk through your site specifically and apply these steps to build
+your own company's page and book a call, the links in the description.
+If you want to see how this new way actually plays out, click here to watch the full
+before and after of the website rebuild.
+We did the decline that I've mentioned in this video, Renew Energy.
+So you can see exactly how all of this plays out in a real project.

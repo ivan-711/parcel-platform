@@ -1,0 +1,290 @@
+Everyone says you can build $10,000
+websites with AI. Nobody shows you a
+single client who actually paid $10,000
+for one. I'm going to build a website
+and show you the exact outreach messages
+that got me first three clients. Takes
+20 minutes to build, takes 20 messages
+to sell. The website is the easy part.
+Finding someone to pay you $3,000 to
+$10,000 for it is the part that actually
+matters. Two tools, that's it. The
+first, Claude Code. You need a Claude
+Pro subscription, $20 a month. Open VS
+Code, install the Claude Code extension,
+and you're done. If you already had
+Claude Pro, your setup time is about 30
+seconds. Second, [music] Nano Banana 2.
+This is Google's image generation model.
+You can use it for free in the Google AI
+Studio. The free tier gives you roughly
+600 to 750 image generations per month,
+zero cost. Your total startup cost is
+$20 a month. That's the Claude Pro
+subscription. Everything else is free. I
+want to remember that number because it
+comes important later when we talk about
+margins. The 3D screw because you just
+saw in the hook is built from the two
+images. That's the secret, two images.
+Image one, the assembled the product,
+clean white background, 2K resolution.
+Here's a [music] trick that most people
+miss. When you prompt Nano Banana 2,
+specify the resolution. Generate a
+product photo by 2048 resolution. The
+sharpness different between default
+[music] and 2K is night and day. Image
+two, the exploded version, same product,
+same angle, same lighting, but with all
+the parts separated and floating. Like
+those product teardown photos you see on
+Apple's website. The key here is
+consistency between the two images. Feed
+Nano Banana 2 and reference photo of
+your first image when generating the
+second one. The model can maintain
+fidelity of the 14 objects in a single
+workflow. So, your exploded view stays
+visually coherent with the assembled
+version. Cost per both images, $0 on the
+free tier. If you use the API, you're
+looking at 0.045
+to 0.067 per image. We're talking about
+pennies. Now, you have two images,
+assembled product, exploded product.
+Here's where it gets interesting. You
+take both images and upload them to an
+AI video tool. I used Killing 3.0. You
+set the first image as the start of
+frame and the second image as the end
+frame. The AI generates a smooth
+transition between them.
+3 to 5 seconds video of production
+rotating from assembled to exploded.
+That single video is entirely foundation
+of the 3D scroll effect. When a user
+scrolls down your website, the video
+plays forward. When they scroll up, it
+reverses. That's what makes it look like
+a $50,000 interactive 3D experience.
+It's a video playing in sync with the
+scroll position. If Killing 3.0 isn't
+available or is too slow, Runway ML and
+Pika can reproduce the same results. The
+concept is the same regardless of which
+tool you use. Start frame plus end frame
+equals transition video.
+This is the part that changed my mind
+about what's possible with AI coding.
+Drop the video file into Claude Code.
+Here's the prompt I used. Build a
+scroll-driven frame animation website
+using 3.js. The video plays forward as
+the user scrolls down and reverses when
+they scroll up. Add a hero headline and
+a clean gradient background. Claude Code
+writes the HTML, CSS, and 3.js code. You
+watch it happen in real time. And I want
+to be honest here, the first version was
+not perfect. The scroll speed was off.
+The headline positioning was wrong. The
+background color looked like a hospital
+waiting room. That's normal. Don't
+expect a perfect first try. I have never
+gotten a perfect first try from any AI
+coding tool. And anyone who tells you
+they did it is lying or editing out the
+iteration. [music]
+Second prompt, slow down the scroll
+speed by 40%. Move the headline to
+center left and change the background to
+a dark gradient. Better. Third prompt,
+add a subtle parallax effect to the
+headline on scroll. Done. Three prompts,
+maybe 8 minutes total.
+>> [music]
+>> The result is a fully responsive website
+with a 3D scroll animation that looks
+like something an agency spent 6 weeks
+building. I'm not saying this replaces
+professional developers. I'm saying this
+replaces the $5,000 to $15,000 [music]
+that local businesses can't afford to
+spend on a premium landing page.
+Vercel, one-click deploy from VS Code.
+Your site is live in about 60 seconds.
+Free tier works for personal projects.
+For client work, you need the Pro plan
+at $20 a month. Custom domain setup
+takes another minute if the client
+already has one. Here's your monthly
+operating cost. Claude Pro, $20. Vercel
+Pro, $20. Nano Banana 2, free. Total $40
+a month to run a web design service. $40
+a month in and $3,000 to $10,000 per
+project out. That math should make you
+uncomfortable if you're still charging
+hourly. Write that number down. $40 a
+month. We'll need it in a minute.
+Before I show you how to sell this, let
+me show you why there are buyers. One in
+four local businesses still has no
+website at all. Among those [music] that
+do have websites, nearly half have
+mobile loading time over 3 seconds. That
+kills roughly 40% of their
+conversations. The demand is sitting
+right in front of [music] you. On the
+supply side, 3.js freelancers charge $45
+to $150
+>> [music]
+>> an hour. Agency projects for this type
+of work takes 3 to 8 weeks. You just
+watched me do it in 20 minutes for $40 a
+month. The margin gap is enormous. Your
+target clients, restaurants, barber
+shops, dental offices, real estate
+agents, fitness studios, any local
+service business that needs a premium
+landing [music] page. Not a SaaS
+company, not an e-commerce store. A
+service business that want to look like
+a million dollars online. And here's the
+exact process I used to find clients for
+this. Open Instagram. Search for local
+businesses in your area. Look for
+accounts with 500 to 5,000 followers
+>> [music]
+>> that link to a website in their bio.
+Click that link. If the website looks
+like it was built in 2015, that's your
+prospect. Now, here's what most people
+get wrong. They DM the business owner
+and say, "I can build you a website."
+>> [music]
+>> That message gets ignored 99 times out
+of 100. Nobody asked you for a website.
+Instead, [music] do the work first. Take
+20 minutes, build their homepage using
+the exact process I just showed you.
+Their logo, their color, their product
+photos. Then record a 30-second Loom
+video showing their current site and
+your version on the right, side by side.
+Now, send the DM. "Hey, I saw your
+website and rebuilt a version of your
+homepage using 3D animation.
+>> [music]
+>> Took me 20 minutes. Here's what it looks
+like." Drop the Loom link. Then add, "If
+you want it, it's yours. No charge for
+the homepage. I just want a
+testimonial." That's the play. You give
+away the homepage for free. You build
+the proof. Then you charge for the full
+site. The additional pages, the custom
+animations, the ongoing maintenance. The
+free homepage is your foot in the door.
+Warm outreach works, but it's slow.
+You're limited by who follows you back
+and who checks their DMs. Cold outreach
+scales.
+Here's the cold version. Go to Google
+Maps, search for the businesses in your
+city, filter by category, restaurant,
+salons, fitness studio. Open their
+website. If the site looks dated, add
+them to your list. Build a 50 in an
+afternoon. For each one, take a
+screenshot of their current homepage.
+Build a quick mock-up of what the 3D
+version would look like. You don't need
+to build a full site. A before and after
+screenshot is enough for the first
+email. The email is a short three
+sentences. "I rebuilt your homepage with
+3D animation. Here's a side-by-side
+comparison. If you're interested, I will
+send over the full version for free. I
+just need a testimonial." Personalized
+cold emails get 10.5% response rate.
+Generic ones get 1%.
+>> [music]
+>> At 50 emails, 10.5% means five
+responses. You need one yes to have your
+first client. Pricing, $5,000 for a
+single-page landing site, $5,000 to
+$10,000 for a multiple-page site with
+multiple 3D sections. Don't make up
+these numbers. Anchor them to what
+agencies charge. A 3.js agency project
+costs $5,000 to $15,000 and takes weeks.
+You're offering the same visual quality
+at a fraction of price and delivering it
+in days. That's a value proposition.
+I need to be straight with you about
+what these sites can't do. No CMS, no
+blog, no e-commerce checkout, no user
+login. These are static sites with
+animations. Beautiful static sites, but
+static. Don't pitch this to a SaaS
+company. Don't pitch it to an online
+store. Pitch it to service business that
+need a beautiful front door.
+A restaurant that wants to look premium.
+A dental office that wants to look
+modern. A real estate agent who wants
+their listings to pop. Being honest
+about the boundaries is how you build
+trust with clients. The ones who hear,
+"This isn't the right fit for your
+needs," will respect you more than the
+ones you over-promised to. And they will
+refer you to the people it is right for.
+Let's close the loop on the numbers.
+Monthly cost, $40. Revenue per site,
+$3,000
+to time per site, 20 to 30 minutes. One
+client per month at $3,000. That's
+$36,000 a year from a side project you
+run after work. Three clients a month at
+$5,000 each and you're making more than
+a junior developer salary. Five clients
+a month and you're at $300,000 a year,
+which sounds absurd until you realize
+each project takes you 30 minutes to
+build and the rest of your time goes to
+outreach and client calls. This is not a
+get-rich-quick pitch. It's just a skill
+that takes 20 minutes to learn and 20
+outreach messages to validate. The
+question is not, can I build this? You
+just watched me build it. The question
+[music] is, "Will I send the 20
+messages?" You just watched me build a
+$10,000 website in 20 minutes, but
+building it is the easy part. Selling it
+is where most people get stuck. They
+learn the tool, build something cool,
+post it on social media, and then
+nothing. No clients, no revenue, just
+another [music] project in a portfolio
+nobody sees. That's the gap I help
+people close. I run a program called the
+Execution Squad. It's a four-week live
+system where I walk you through
+over-positioning, outreach sequences,
+closing frameworks, and scaling past
+your first [music] client. No fluff, no
+10-hour recorded course, live calls,
+real accountability, and a target of
+your first paying client in 28 days. I'm
+running a free live training where I
+walk you through the full system. It's
+[music] called from zero clients to
+first paying client in 28 days. The
+system nobody teaches. This Friday 11:00
+a.m. PDT. Link is
+ai.chrislee.com/training.
+It's free. I will see you there.
