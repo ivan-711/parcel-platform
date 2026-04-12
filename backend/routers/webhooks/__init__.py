@@ -40,7 +40,7 @@ _HANDLERS = {
 def _advisory_lock(db: Session, user_id) -> None:
     """Acquire a PostgreSQL advisory lock scoped to the current transaction."""
     lock_key = int(hashlib.sha256(str(user_id).encode()).hexdigest(), 16) % (2**31 - 1)
-    db.execute(text(f"SELECT pg_advisory_xact_lock({lock_key})"))
+    db.execute(text("SELECT pg_advisory_xact_lock(:lock_key)"), {"lock_key": lock_key})
 
 
 # ---------------------------------------------------------------------------

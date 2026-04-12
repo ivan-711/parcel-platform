@@ -1,5 +1,6 @@
 """Sequences router — CRUD, enrollment, and internal cron processing."""
 
+import hmac
 import logging
 import os
 from datetime import datetime
@@ -718,7 +719,7 @@ async def process_sequences(request: Request, db: Session = Depends(get_db)) -> 
     internal_key = os.getenv("INTERNAL_API_KEY", "")
     provided_key = request.headers.get("X-Internal-Key", "")
 
-    if not internal_key or provided_key != internal_key:
+    if not internal_key or not hmac.compare_digest(provided_key, internal_key):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={"error": "Invalid or missing internal API key", "code": "UNAUTHORIZED"},

@@ -21,7 +21,7 @@ from limiter import limiter
 logger = logging.getLogger(__name__)
 
 # IP hash salt — read once at import time
-_IP_HASH_SALT = os.getenv("IP_HASH_SALT", "parcel-default-salt-change-me")
+_IP_HASH_SALT = os.environ["IP_HASH_SALT"]  # Required — no fallback
 
 # Bot and headless browser User-Agent patterns
 _BOT_UA_RE = re.compile(
