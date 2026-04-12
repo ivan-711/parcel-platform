@@ -1,0 +1,6 @@
+frontend/public/images/*.png filter=lfs diff=lfs merge=lfs -text
+frontend/public/images/*.jpg filter=lfs diff=lfs merge=lfs -text
+frontend/public/images/**/*.webp filter=lfs diff=lfs merge=lfs -text
+frontend/public/videos/*.mp4 filter=lfs diff=lfs merge=lfs -text
+frontend/public/videos/*.webm filter=lfs diff=lfs merge=lfs -text
+frontend/public/fonts/*.woff2 filter=lfs diff=lfs merge=lfs -text
