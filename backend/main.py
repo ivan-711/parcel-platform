@@ -4,7 +4,10 @@ from fastapi.responses import JSONResponse
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from dotenv import load_dotenv
+import logging
 import os
+
+logging.basicConfig(level=logging.INFO, format="%(name)s %(levelname)s: %(message)s")
 
 from core.billing.exceptions import BillingError
 from core.tasks import WorkerUnavailableError
