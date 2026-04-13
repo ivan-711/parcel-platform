@@ -110,22 +110,33 @@ def parse_address(raw: str) -> ParsedAddress:
 
     result = ParsedAddress(raw_input=raw)
 
-    # Extract zip code (5 or 5+4 digit pattern at the end)
-    zip_match = re.search(r'\b(\d{5}(?:-\d{4})?)\s*$', raw)
+    # Strip trailing country name (Google Places appends ", USA" or ", United States")
+    cleaned = re.sub(r',\s*(?:USA|United States)\s*$', '', raw, flags=re.IGNORECASE)
+
+    # Extract zip code (5 or 5+4 digit pattern at or near the end)
+    zip_match = re.search(r'\b(\d{5}(?:-\d{4})?)\s*$', cleaned)
     if zip_match:
         result.zip_code = zip_match.group(1)
-        raw_no_zip = raw[:zip_match.start()].strip().rstrip(",").strip()
+        raw_no_zip = cleaned[:zip_match.start()].strip().rstrip(",").strip()
     else:
-        raw_no_zip = raw
+        raw_no_zip = cleaned
 
     # Split by commas
     parts = [p.strip() for p in raw_no_zip.split(",") if p.strip()]
 
     if len(parts) >= 3:
-        # "613 N 14th St, Sheboygan, WI"
+        # "613 N 14th St, Sheboygan, WI" or "613 N 14th St, Sheboygan, WI 53081"
         result.address_line1 = _normalize_street(parts[0])
         result.city = parts[1].strip()
-        result.state = _resolve_state(parts[2].strip())
+        # State part may contain a zip that was already extracted: "WI 53081" → "WI"
+        state_part = parts[2].strip()
+        state_tokens = state_part.split()
+        result.state = _resolve_state(state_tokens[0])
+        # If zip wasn't found earlier but is embedded in state part, grab it
+        if not result.zip_code and len(state_tokens) > 1:
+            maybe_zip = state_tokens[-1]
+            if re.fullmatch(r'\d{5}(?:-\d{4})?', maybe_zip):
+                result.zip_code = maybe_zip
         result.parse_confidence = "high"
 
     elif len(parts) == 2:
