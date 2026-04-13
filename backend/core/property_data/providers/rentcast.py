@@ -40,10 +40,12 @@ def _make_request(endpoint: str, params: dict) -> RentCastResult:
     Returns a RentCastResult with status and data/error.
     """
     if not RENTCAST_API_KEY:
+        logger.error("RentCast: RENTCAST_API_KEY is empty — skipping call to %s", endpoint)
         return RentCastResult(status="failed", error="RENTCAST_API_KEY not configured")
 
     query = "&".join(f"{k}={v}" for k, v in params.items() if v)
     url = f"{RENTCAST_BASE_URL}/{endpoint}?{query}"
+    logger.info("RentCast: calling %s (key_len=%d, base=%s)", endpoint, len(RENTCAST_API_KEY), RENTCAST_BASE_URL)
 
     headers = {
         "Accept": "application/json",
@@ -63,6 +65,10 @@ def _make_request(endpoint: str, params: dict) -> RentCastResult:
                 if isinstance(data, list):
                     data = data[0] if data else {}
 
+                logger.info(
+                    "RentCast: %s → 200 OK (%dms, %d bytes, keys=%s)",
+                    endpoint, latency_ms, len(raw), list(data.keys())[:8],
+                )
                 return RentCastResult(
                     status="success",
                     data=data,
@@ -72,10 +78,15 @@ def _make_request(endpoint: str, params: dict) -> RentCastResult:
         except HTTPError as e:
             latency_ms = int((time.time() - start) * 1000)
             status_code = e.code
+            logger.warning(
+                "RentCast: %s → HTTP %d (%dms, attempt=%d)",
+                endpoint, status_code, latency_ms, attempt + 1,
+            )
 
             if status_code == 404:
                 return RentCastResult(status="not_found", error="Property not found", latency_ms=latency_ms)
             elif status_code == 401:
+                logger.error("RentCast: auth error — key_len=%d, key_prefix=%s", len(RENTCAST_API_KEY), RENTCAST_API_KEY[:4])
                 return RentCastResult(status="auth_error", error="Invalid API key", latency_ms=latency_ms)
             elif status_code == 429:
                 return RentCastResult(status="rate_limited", error="Rate limit exceeded", latency_ms=latency_ms)
@@ -86,18 +97,19 @@ def _make_request(endpoint: str, params: dict) -> RentCastResult:
             else:
                 return RentCastResult(status="failed", error=f"HTTP {status_code}", latency_ms=latency_ms)
 
-        except (URLError, TimeoutError, OSError):
+        except (URLError, TimeoutError, OSError) as e:
             latency_ms = int((time.time() - start) * 1000)
+            logger.warning("RentCast: %s → connection error (%dms, attempt=%d): %s", endpoint, latency_ms, attempt + 1, e)
             if latency_ms >= TIMEOUT_SECONDS * 1000 - 100:
                 return RentCastResult(status="timeout", error="Request timed out", latency_ms=latency_ms)
             if attempt == 0:
-                logger.warning("RentCast connection error, retrying: %s", endpoint)
                 time.sleep(1)
                 continue
             return RentCastResult(status="failed", error="Connection error", latency_ms=latency_ms)
 
         except Exception as e:
             latency_ms = int((time.time() - start) * 1000)
+            logger.exception("RentCast: %s → unexpected error (%dms)", endpoint, latency_ms)
             return RentCastResult(status="failed", error=str(e), latency_ms=latency_ms)
 
     return RentCastResult(status="failed", error="Max retries exceeded")

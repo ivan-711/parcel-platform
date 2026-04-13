@@ -175,16 +175,21 @@ def enrich_property(
         providers = ["rentcast", "bricked"]
 
     result = EnrichmentResult()
+    logger.info("enrich_property: address=%r, providers=%s, strategy=%s", address, providers, default_strategy)
 
     # 1. Parse address
     parsed = parse_and_geocode(address)
+    logger.info("enrich_property: parsed → line1=%r, city=%r, state=%r, zip=%r, confidence=%s",
+                parsed.address_line1, parsed.city, parsed.state, parsed.zip_code, parsed.parse_confidence)
     if not parsed.address_line1:
+        logger.warning("enrich_property: address parse failed, returning status=failed")
         result.status = "failed"
         return result
 
     # 2. Check for existing property (dedup)
     existing = _find_existing_property(db, user_id, parsed.address_line1, parsed.zip_code)
     if existing:
+        logger.info("enrich_property: found existing property %s, skipping provider calls", existing.id)
         result.property = existing
         result.is_existing = True
         result.status = "existing"
@@ -241,6 +246,7 @@ def enrich_property(
     result.property = prop
 
     # 4. Fetch from each provider
+    logger.info("enrich_property: created property %s, calling providers: %s", prop.id, providers)
     all_populated: dict[str, Any] = {}
     any_success = False
 
@@ -349,6 +355,11 @@ def enrich_property(
     db.flush()
     result.scenario = scenario
 
+    logger.info(
+        "enrich_property: done → status=%s, purchase_price=%s, monthly_rent=%s, arv=%s, repair=%s, fields_missing=%s",
+        result.status, scenario.purchase_price, scenario.monthly_rent,
+        scenario.after_repair_value, scenario.repair_cost, result.fields_missing,
+    )
     return result
 
 
@@ -365,6 +376,7 @@ def _fetch_rentcast(
         extract_value_fields,
     )
 
+    logger.info("_fetch_rentcast: starting 3 API calls for address=%r", address)
     pstatus = ProviderStatus(provider="rentcast", status="success")
     total_latency = 0
     populated_fields: list[str] = []
@@ -384,8 +396,13 @@ def _fetch_rentcast(
         all_populated.update(fields)
         populated_fields.extend(k for k, v in fields.items() if v is not None)
         any_success = True
+        logger.info("_fetch_rentcast: property_details → %s (%dms), fields=%s",
+                     details_result.status, details_result.latency_ms,
+                     [k for k, v in fields.items() if v is not None])
     else:
         any_failure = True
+        logger.warning("_fetch_rentcast: property_details → %s (%dms), error=%s",
+                       details_result.status, details_result.latency_ms, details_result.error)
 
     # --- Rent estimate ---
     rent_result = fetch_rent_estimate(address)
@@ -400,8 +417,12 @@ def _fetch_rentcast(
         all_populated.update(fields)
         populated_fields.extend(k for k, v in fields.items() if v is not None)
         any_success = True
+        logger.info("_fetch_rentcast: rent_estimate → %s (%dms), rent=%s",
+                     rent_result.status, rent_result.latency_ms, fields.get("monthly_rent"))
     else:
         any_failure = True
+        logger.warning("_fetch_rentcast: rent_estimate → %s (%dms), error=%s",
+                       rent_result.status, rent_result.latency_ms, rent_result.error)
 
     # --- Value estimate ---
     value_result = fetch_value_estimate(address)
@@ -416,8 +437,12 @@ def _fetch_rentcast(
         all_populated.update(fields)
         populated_fields.extend(k for k, v in fields.items() if v is not None)
         any_success = True
+        logger.info("_fetch_rentcast: value_estimate → %s (%dms), value=%s",
+                     value_result.status, value_result.latency_ms, fields.get("estimated_value"))
     else:
         any_failure = True
+        logger.warning("_fetch_rentcast: value_estimate → %s (%dms), error=%s",
+                       value_result.status, value_result.latency_ms, value_result.error)
 
     # --- Aggregate status ---
     pstatus.latency_ms = total_latency
@@ -434,6 +459,8 @@ def _fetch_rentcast(
     elif any_failure:
         pstatus.status = "partial"
 
+    logger.info("_fetch_rentcast: done → status=%s, total_latency=%dms, fields_populated=%s",
+                pstatus.status, total_latency, populated_fields)
     return pstatus
 
 

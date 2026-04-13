@@ -557,10 +557,15 @@ async def quick_analysis_stream(
                             )
                         db.commit()
 
-                        # Reload scenario from DB to pick up bricked data
-                        # (the dict update bypasses SQLAlchemy instrumentation)
+                        # Re-query scenario from main session to pick up bricked data.
+                        # The thread session's __dict__.update() bypasses SQLAlchemy
+                        # instrumentation, and refresh() fails on objects that were
+                        # merged from a different session.
                         if _use_thread and enrichment.scenario:
-                            db.refresh(enrichment.scenario)
+                            from models.analysis_scenarios import AnalysisScenario as _AS
+                            refreshed = db.get(_AS, enrichment.scenario.id)
+                            if refreshed:
+                                enrichment.scenario = refreshed
 
                         yield _sse("enrichment_update", {
                             "bricked_status": bricked_status.status,
