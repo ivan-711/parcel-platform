@@ -29,8 +29,10 @@ class ProviderStatus:
 @dataclass
 class EnrichmentResult:
     """Result of enriching a property from external data sources."""
-    property: Any = None  # Property model instance
-    scenario: Any = None  # AnalysisScenario model instance
+    property: Any = None  # Property model instance (only valid within creating session)
+    scenario: Any = None  # AnalysisScenario model instance (only valid within creating session)
+    property_id: Optional[Any] = None  # Plain UUID — safe to pass across thread boundaries
+    scenario_id: Optional[Any] = None  # Plain UUID — safe to pass across thread boundaries
     fields_populated: dict[str, Any] = field(default_factory=dict)
     fields_missing: list[str] = field(default_factory=list)
     confidence: dict[str, str] = field(default_factory=dict)
@@ -191,6 +193,7 @@ def enrich_property(
     if existing:
         logger.info("enrich_property: found existing property %s, skipping provider calls", existing.id)
         result.property = existing
+        result.property_id = existing.id
         result.is_existing = True
         result.status = "existing"
 
@@ -225,6 +228,7 @@ def enrich_property(
         db.add(scenario)
         db.flush()
         result.scenario = scenario
+        result.scenario_id = scenario.id
         return result
 
     # 3. Create Property record immediately (always created, even if providers fail)
@@ -244,6 +248,7 @@ def enrich_property(
     db.add(prop)
     db.flush()  # get prop.id for DataSourceEvent FK
     result.property = prop
+    result.property_id = prop.id
 
     # 4. Fetch from each provider
     logger.info("enrich_property: created property %s, calling providers: %s", prop.id, providers)
@@ -354,6 +359,7 @@ def enrich_property(
     db.add(scenario)
     db.flush()
     result.scenario = scenario
+    result.scenario_id = scenario.id
 
     logger.info(
         "enrich_property: done → status=%s, purchase_price=%s, monthly_rent=%s, arv=%s, repair=%s, fields_missing=%s",

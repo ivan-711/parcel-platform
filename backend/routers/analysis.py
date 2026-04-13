@@ -454,10 +454,10 @@ async def quick_analysis_stream(
                             providers=["rentcast"],
                         )
                         thread_db.commit()
-                        if result.property:
-                            thread_db.expunge(result.property)
-                        if result.scenario:
-                            thread_db.expunge(result.scenario)
+                        # Don't pass ORM objects across threads — just IDs.
+                        # property_id and scenario_id are set by enrich_property().
+                        result.property = None
+                        result.scenario = None
                         return result
                     finally:
                         thread_db.close()
@@ -470,23 +470,22 @@ async def quick_analysis_stream(
 
             enrichment = await asyncio.to_thread(_enrich_sync) if _use_thread else _enrich_sync()
 
-            # The enrichment call takes 5-30s (RentCast + Bricked). During
-            # this time the main db session sits idle. Railway's PgBouncer
-            # or PostgreSQL may drop idle connections. expire_all() marks
-            # all cached objects as stale so the next attribute access or
-            # flush triggers a fresh query on a live connection, without
-            # detaching objects from the session (unlike rollback()).
+            # After the thread completes, the main db session may have a
+            # stale connection (Railway PgBouncer drops idle connections).
+            # expire_all() forces fresh queries on next access.
             if _use_thread:
                 db.expire_all()
 
-            # Re-attach detached ORM objects to the main session.
-            # The thread session expunged them; merge() copies their state
-            # into the main session so lazy loads and flushes work.
+            # Load fresh ORM objects in the main session using plain IDs
+            # that were safely passed across the thread boundary.
+            from models.properties import Property as _Prop
+            from models.analysis_scenarios import AnalysisScenario as _AS
+
             if _use_thread:
-                if enrichment.property:
-                    enrichment.property = db.merge(enrichment.property)
-                if enrichment.scenario:
-                    enrichment.scenario = db.merge(enrichment.scenario)
+                if enrichment.property_id:
+                    enrichment.property = db.get(_Prop, enrichment.property_id)
+                if enrichment.scenario_id:
+                    enrichment.scenario = db.get(_AS, enrichment.scenario_id)
 
             # Persist client-side geocoding data if provided
             if enrichment.property and (lat is not None and lng is not None):
@@ -527,25 +526,24 @@ async def quick_analysis_stream(
                     yield _sse("status", {"stage": "fetching_advanced_data"})
                     try:
                         if _use_thread:
-                            prop_id = enrichment.property.id
-                            scenario_id = enrichment.scenario.id
+                            prop_id = enrichment.property_id
+                            scenario_id = enrichment.scenario_id
 
                             def _bricked_sync():
                                 bdb = SessionLocal()
                                 try:
-                                    bprop = bdb.get(type(enrichment.property), prop_id)
-                                    bscen = bdb.get(type(enrichment.scenario), scenario_id)
+                                    bprop = bdb.get(_Prop, prop_id)
+                                    bscen = bdb.get(_AS, scenario_id)
                                     result = enrich_with_bricked(bprop, bscen, address, bdb)
                                     bdb.commit()
-                                    bdb.expunge(bscen)
-                                    enrichment.scenario.__dict__.update(bscen.__dict__)
                                     return result
                                 finally:
                                     bdb.close()
 
                             bricked_status = await asyncio.to_thread(_bricked_sync)
-                            # Bricked takes 15-30s — expire cached objects
                             db.expire_all()
+                            # Re-query scenario in main session to pick up bricked data
+                            enrichment.scenario = db.get(_AS, scenario_id)
                         else:
                             bricked_status = enrich_with_bricked(
                                 enrichment.property, enrichment.scenario, address, db,
@@ -557,21 +555,11 @@ async def quick_analysis_stream(
                             )
                         db.commit()
 
-                        # Re-query scenario from main session to pick up bricked data.
-                        # The thread session's __dict__.update() bypasses SQLAlchemy
-                        # instrumentation, and refresh() fails on objects that were
-                        # merged from a different session.
-                        if _use_thread and enrichment.scenario:
-                            from models.analysis_scenarios import AnalysisScenario as _AS
-                            refreshed = db.get(_AS, enrichment.scenario.id)
-                            if refreshed:
-                                enrichment.scenario = refreshed
-
                         yield _sse("enrichment_update", {
                             "bricked_status": bricked_status.status,
                             "bricked_latency_ms": bricked_status.latency_ms,
-                            "has_arv": enrichment.scenario.after_repair_value is not None,
-                            "has_repair": enrichment.scenario.repair_cost is not None,
+                            "has_arv": enrichment.scenario.after_repair_value is not None if enrichment.scenario else False,
+                            "has_repair": enrichment.scenario.repair_cost is not None if enrichment.scenario else False,
                         })
                     except Exception:
                         logger.warning(
@@ -593,8 +581,11 @@ async def quick_analysis_stream(
 
             # Stage 4: AI Narrative — generate for new properties OR existing
             # ones that never got a narrative (e.g. first attempt crashed)
-            needs_narrative = not enrichment.is_existing or not enrichment.scenario.ai_narrative
-            if enrichment.scenario and needs_narrative:
+            needs_narrative = (
+                enrichment.scenario
+                and (not enrichment.is_existing or not enrichment.scenario.ai_narrative)
+            )
+            if needs_narrative:
                 yield _sse("status", {"stage": "generating_narrative"})
 
                 narrative_resp = await _generate_narrative(
