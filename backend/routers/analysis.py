@@ -409,6 +409,7 @@ async def quick_analysis_stream(
     lat: float | None = None,
     lng: float | None = None,
     place_id: str | None = None,
+    force_refresh: bool = False,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
     _quota: None = Depends(require_quota("analyses_per_month")),
@@ -452,6 +453,7 @@ async def quick_analysis_stream(
                             address=address, user_id=current_user.id,
                             db=thread_db, default_strategy=strategy,
                             providers=["rentcast"],
+                            force_refresh=force_refresh,
                         )
                         thread_db.commit()
                         # Don't pass ORM objects across threads — just IDs.
@@ -466,6 +468,7 @@ async def quick_analysis_stream(
                         address=address, user_id=current_user.id,
                         db=db, default_strategy=strategy,
                         providers=["rentcast"],
+                        force_refresh=force_refresh,
                     )
 
             enrichment = await asyncio.to_thread(_enrich_sync) if _use_thread else _enrich_sync()
@@ -952,3 +955,84 @@ async def compare_strategies(
         recommendation=recommendation,
         recommendation_reason=reason,
     )
+
+
+# ---------------------------------------------------------------------------
+# POST /api/analysis/admin/cleanup-poisoned — one-time DB cleanup
+# ---------------------------------------------------------------------------
+
+@router.post("/admin/cleanup-poisoned")
+async def cleanup_poisoned_properties(
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """Delete properties created during the RENTCAST_API_KEY outage.
+
+    Requires X-Internal-Key header. These properties have no enrichment data
+    and their dedup records prevent re-analysis of those addresses.
+    """
+    import hmac
+    import os
+    from sqlalchemy import text
+
+    internal_key = os.getenv("INTERNAL_API_KEY", "")
+    provided_key = request.headers.get("X-Internal-Key", "")
+    if not internal_key or not hmac.compare_digest(provided_key, internal_key):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    # Find poisoned properties
+    poisoned = db.execute(text("""
+        SELECT id, address_line1, city, state, zip_code
+        FROM properties
+        WHERE bedrooms IS NULL
+          AND sqft IS NULL
+          AND property_type IS NULL
+          AND is_sample = false
+          AND is_deleted = false
+    """)).fetchall()
+
+    if not poisoned:
+        return {"deleted": 0, "message": "No poisoned properties found"}
+
+    ids = [row.id for row in poisoned]
+
+    # Delete FK-dependent rows
+    deleted_counts = {}
+    for table in [
+        "data_source_events", "analysis_scenarios", "transactions",
+        "payments", "obligations", "financing_instruments", "rehab_projects",
+        "buyer_packets", "documents", "tasks", "communications",
+        "skip_traces", "mail_campaigns", "reports",
+    ]:
+        result = db.execute(
+            text(f"DELETE FROM {table} WHERE property_id = ANY(:ids)"),
+            {"ids": ids},
+        )
+        if result.rowcount > 0:
+            deleted_counts[table] = result.rowcount
+
+    # Unlink deals (nullable FK)
+    result = db.execute(
+        text("UPDATE deals SET property_id = NULL WHERE property_id = ANY(:ids)"),
+        {"ids": ids},
+    )
+    if result.rowcount > 0:
+        deleted_counts["deals_unlinked"] = result.rowcount
+
+    # Delete the properties
+    result = db.execute(
+        text("DELETE FROM properties WHERE id = ANY(:ids)"),
+        {"ids": ids},
+    )
+    deleted_counts["properties"] = result.rowcount
+
+    db.commit()
+
+    addresses = [f"{r.address_line1}, {r.city} {r.state} {r.zip_code}" for r in poisoned]
+    logger.info("Cleaned up %d poisoned properties: %s", len(ids), addresses)
+
+    return {
+        "deleted": len(ids),
+        "addresses": addresses,
+        "details": deleted_counts,
+    }

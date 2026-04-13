@@ -150,6 +150,7 @@ def enrich_property(
     db: Session,
     providers: list[str] | None = None,
     default_strategy: str = "buy_and_hold",
+    force_refresh: bool = False,
 ) -> EnrichmentResult:
     """Enrich a property from address string using configured providers.
 
@@ -188,8 +189,8 @@ def enrich_property(
         result.status = "failed"
         return result
 
-    # 2. Check for existing property (dedup)
-    existing = _find_existing_property(db, user_id, parsed.address_line1, parsed.zip_code)
+    # 2. Check for existing property (dedup) — skip if force_refresh
+    existing = None if force_refresh else _find_existing_property(db, user_id, parsed.address_line1, parsed.zip_code)
     if existing:
         logger.info("enrich_property: found existing property %s, skipping provider calls", existing.id)
         result.property = existing
