@@ -998,28 +998,35 @@ async def cleanup_poisoned_properties(
 
     ids = [row.id for row in poisoned]
 
-    # Delete FK-dependent rows
+    # Delete FK-dependent rows (skip tables where column doesn't exist yet)
     deleted_counts = {}
     for table in [
         "data_source_events", "analysis_scenarios", "transactions",
         "payments", "obligations", "financing_instruments", "rehab_projects",
         "buyer_packets", "documents", "tasks", "communications",
-        "skip_traces", "mail_campaigns", "reports",
+        "skip_traces", "reports",
     ]:
+        try:
+            result = db.execute(
+                text(f"DELETE FROM {table} WHERE property_id = ANY(:ids)"),
+                {"ids": ids},
+            )
+            if result.rowcount > 0:
+                deleted_counts[table] = result.rowcount
+        except Exception:
+            db.rollback()
+            logger.info("cleanup: skipping table %s (column may not exist)", table)
+
+    # Unlink deals (nullable FK)
+    try:
         result = db.execute(
-            text(f"DELETE FROM {table} WHERE property_id = ANY(:ids)"),
+            text("UPDATE deals SET property_id = NULL WHERE property_id = ANY(:ids)"),
             {"ids": ids},
         )
         if result.rowcount > 0:
-            deleted_counts[table] = result.rowcount
-
-    # Unlink deals (nullable FK)
-    result = db.execute(
-        text("UPDATE deals SET property_id = NULL WHERE property_id = ANY(:ids)"),
-        {"ids": ids},
-    )
-    if result.rowcount > 0:
-        deleted_counts["deals_unlinked"] = result.rowcount
+            deleted_counts["deals_unlinked"] = result.rowcount
+    except Exception:
+        db.rollback()
 
     # Delete the properties
     result = db.execute(
