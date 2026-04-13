@@ -977,6 +977,8 @@ async def cleanup_poisoned_properties(
 
     internal_key = os.getenv("INTERNAL_API_KEY", "")
     provided_key = request.headers.get("X-Internal-Key", "")
+    logger.info("cleanup auth: internal_key_len=%d, provided_key_len=%d, internal_key_set=%s",
+                len(internal_key), len(provided_key), bool(internal_key))
     if not internal_key or not hmac.compare_digest(provided_key, internal_key):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
