@@ -266,7 +266,7 @@ export default function PricingPage() {
             variants={staggerItem}
             role="listitem"
             aria-label="Steel plan — Free"
-            className="bg-white/[0.03] rounded-lg border border-border-default p-6 flex flex-col order-2 md:order-1"
+            className="bg-app-surface rounded-lg border border-border-default p-6 flex flex-col order-2 md:order-1"
           >
             <div className="space-y-4 flex-1">
               <div>
@@ -312,7 +312,7 @@ export default function PricingPage() {
             variants={staggerItem}
             role="listitem"
             aria-label={`Carbon plan — ${carbonPrice} per month`}
-            className="bg-white/[0.05] rounded-lg border border-violet-400/20 shadow-[0_0_24px_rgba(139,122,255,0.08)] p-6 flex flex-col relative order-1 md:order-2 lg:py-8"
+            className="bg-app-elevated rounded-lg border border-violet-400/20 shadow-[0_0_24px_rgba(139,122,255,0.08)] p-6 flex flex-col relative order-1 md:order-2 lg:py-8"
           >
             {/* Crown gradient line at top */}
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-400 to-transparent" />
@@ -405,7 +405,7 @@ export default function PricingPage() {
             variants={staggerItem}
             role="listitem"
             aria-label={`Titanium plan — ${titaniumPrice} per month`}
-            className="bg-white/[0.03] rounded-lg border border-border-default p-6 flex flex-col order-3"
+            className="bg-app-surface rounded-lg border border-border-default p-6 flex flex-col order-3"
           >
             <div className="space-y-4 flex-1">
               <div>
@@ -448,7 +448,7 @@ export default function PricingPage() {
                   whileTap={{ scale: 0.99 }}
                   onClick={handleTitaniumCta}
                   disabled={isCheckoutLoading}
-                  className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-border-emphasis text-text-primary hover:bg-white/[0.04] transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-border-emphasis text-text-primary hover:bg-layer-2 transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                 >
                   Manage Subscription
                 </motion.button>
@@ -458,7 +458,7 @@ export default function PricingPage() {
                   whileTap={{ scale: 0.99 }}
                   onClick={handleTitaniumCta}
                   disabled={isCheckoutLoading}
-                  className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-border-emphasis text-text-primary hover:bg-white/[0.04] transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                  className="w-full h-11 rounded-lg text-sm font-medium bg-transparent border border-border-emphasis text-text-primary hover:bg-layer-2 transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                 >
                   {checkout.isPending ? (
                     <>
@@ -479,7 +479,7 @@ export default function PricingPage() {
           <h2 className="text-lg font-brand font-light text-text-primary mb-4">
             Frequently Asked Questions
           </h2>
-          <div className="bg-white/[0.03] rounded-lg border border-border-default divide-y-0 px-6">
+          <div className="bg-app-surface rounded-lg border border-border-default divide-y-0 px-6">
             {FAQ_ITEMS.map((item) => (
               <FaqItem key={item.q} q={item.q} a={item.a} />
             ))}

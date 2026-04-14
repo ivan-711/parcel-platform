@@ -130,7 +130,7 @@ export function CashFlowChart({ scenario }: Props) {
             onClick={() => setShowCumulative(!showCumulative)}
             className={`w-8 h-4 rounded-full transition-colors flex items-center ${showCumulative ? 'bg-[var(--chart-accent)]' : 'bg-[var(--chart-border)]'}`}
           >
-            <div className={`w-3 h-3 rounded-full bg-white transition-transform mx-0.5 ${showCumulative ? 'translate-x-4' : ''}`} />
+            <div className={`w-3 h-3 rounded-full bg-app-bg transition-transform mx-0.5 ${showCumulative ? 'translate-x-4' : ''}`} />
           </button>
         </label>
       </div>
