@@ -94,7 +94,7 @@ function StatusDot({ color }: { color: 'green' | 'yellow' | 'red' | 'neutral' })
     green: 'bg-profit',
     yellow: 'bg-warning',
     red: 'bg-loss',
-    neutral: 'bg-gray-9',
+    neutral: 'bg-text-muted',
   }[color]
   return <span className={cn('inline-block w-2 h-2 rounded-full mr-2', fill)} />
 }

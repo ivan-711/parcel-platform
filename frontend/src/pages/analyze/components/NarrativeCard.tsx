@@ -27,7 +27,7 @@ function confidenceTooltipText(confidence: string): string {
 
 function confidenceDots(confidence: string) {
   const filled = confidence === 'high' ? 4 : confidence === 'medium' ? 3 : 2
-  const color = confidence === 'high' ? '#7CCBA5' : confidence === 'medium' ? '#D4A867' : '#D4766A'
+  const color = confidence === 'high' ? 'var(--color-profit)' : confidence === 'medium' ? 'var(--accent-warning)' : 'var(--color-loss)'
   return (
     <div className="flex items-center gap-1">
       {[0, 1, 2, 3].map(i => (

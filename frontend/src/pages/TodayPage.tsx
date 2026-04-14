@@ -25,7 +25,7 @@ const ACTIVITY_DOTS: Record<string, string> = {
   analysis_completed: '#8B7AFF',
   deal_created: '#7B9FCC',
   deal_moved: '#7B9FCC',
-  document_uploaded: '#7A7872',
+  document_uploaded: 'var(--text-secondary)',
   contact_added: '#7CCBA5',
   pipeline_moved: '#D4A867',
 }

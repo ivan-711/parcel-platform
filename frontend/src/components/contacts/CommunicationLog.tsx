@@ -15,7 +15,7 @@ const CHANNEL_COLORS: Record<string, string> = {
   sms: 'text-info bg-info-bg',
   email: 'text-violet-400 bg-violet-400/10',
   meeting: 'text-warning bg-warning-bg',
-  note: 'text-text-muted bg-gray-9/10', // TODO: verify token mapping — #8A8580 mapped to text-muted/gray-9
+  note: 'text-text-muted bg-border-default/50',
 }
 
 interface Props {

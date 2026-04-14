@@ -149,7 +149,7 @@ export function SensitivityMatrix({ scenario }: Props) {
                     <td
                       key={ci}
                       className={`p-2 text-sm font-light ${isCenter ? 'ring-1 ring-violet-400 rounded' : ''}`}
-                      style={{ backgroundColor: bg, color: positive ? 'var(--text-primary)' : '#D4766A' }}
+                      style={{ backgroundColor: bg, color: positive ? 'var(--text-primary)' : 'var(--color-loss)' }}
                     >
                       {formatCell(cell.value, activeMetric)}
                     </td>

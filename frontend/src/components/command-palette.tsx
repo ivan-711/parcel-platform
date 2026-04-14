@@ -259,7 +259,7 @@ function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               </div>
 
               {/* Results list */}
-              <CommandPrimitive.List className="max-h-[320px] overflow-y-auto p-2 scroll-smooth [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/10">
+              <CommandPrimitive.List className="max-h-[320px] overflow-y-auto p-2 scroll-smooth [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-text-muted/10">
                 <CommandPrimitive.Empty className="py-8 text-center text-sm text-text-secondary">
                   No results found.
                 </CommandPrimitive.Empty>

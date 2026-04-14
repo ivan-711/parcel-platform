@@ -35,13 +35,13 @@ const CATEGORY_COLORS: Record<string, string> = {
   windows_doors: 'bg-violet-400/15 text-violet-300 border-violet-400/30',
   painting: 'bg-warning-bg text-warning border-warning/30',
   landscaping: 'bg-profit-bg text-profit border-profit/30',
-  general: 'bg-gray-9/15 text-text-secondary border-gray-9/30',
-  permits: 'bg-gray-9/15 text-text-secondary border-gray-9/30',
-  other: 'bg-gray-9/15 text-text-secondary border-gray-9/30',
+  general: 'bg-text-muted/15 text-text-secondary border-text-muted/30',
+  permits: 'bg-text-muted/15 text-text-secondary border-text-muted/30',
+  other: 'bg-text-muted/15 text-text-secondary border-text-muted/30',
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  planned: 'bg-gray-9/15 text-text-secondary border-gray-9/30',
+  planned: 'bg-text-muted/15 text-text-secondary border-text-muted/30',
   in_progress: 'bg-info-bg text-info border-info/30',
   completed: 'bg-profit-bg text-profit border-profit/30',
   skipped: 'bg-warning-bg text-warning border-warning/30',
