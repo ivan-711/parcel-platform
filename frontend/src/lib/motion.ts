@@ -9,7 +9,7 @@
  */
 
 import { useState, useCallback } from 'react'
-import type { Variants, Transition } from 'framer-motion'
+import type { Variants } from 'framer-motion'
 
 // ── Reduced Motion Detection (BLOCK-06 resolution) ────────────────────────────
 
@@ -64,13 +64,6 @@ export const spring = {
   gentle: { type: 'spring' as const, stiffness: 400, damping: 28, mass: 0.5 },
 } as const
 
-// Legacy aliases — kept for backward compatibility, prefer motion.duration.*, motion.easing.*, motion.spring.*
-export const SPRING = {
-  default: { type: 'spring' as const, damping: 25, stiffness: 300 },
-  stiff: spring.snappy,
-  gentle: { type: 'spring' as const, damping: 20, stiffness: 200 },
-} as const
-
 // ── Transition Presets ────────────────────────────────────────────────────────
 
 export const transition = {
@@ -79,75 +72,9 @@ export const transition = {
   spring:  spring.snappy,
 } as const
 
-// ── Page Transition Variants ──────────────────────────────────────────────────
-
-export const pageVariants = {
-  initial: { opacity: 0, y: 6 },
-  animate: { opacity: 1, y: 0 },
-  exit:    { opacity: 0, y: -4 },
-} as const
-
-export const pageTransitionConfig = {
-  enter: { duration: duration.normal, ease: ease.luxury },
-  exit:  { duration: 0.12, ease: [0.4, 0, 1, 1] as [number, number, number, number] },
-} as const
-
-// Backward compat alias — now uses canonical spec values
-export const pageTransition: Variants = {
-  initial: { opacity: 0, y: 6 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: duration.normal, ease: ease.luxury },
-  },
-  exit: {
-    opacity: 0,
-    y: -4,
-    transition: { duration: 0.12, ease: [0.4, 0, 1, 1] },
-  },
-}
-
-// ── Card Entrance Stagger ─────────────────────────────────────────────────────
-
-export const cardContainerVariants: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.05, delayChildren: 0.04 } },
-}
-
-export const cardVariants: Variants = {
-  hidden:  { opacity: 0, y: 8 },
-  visible: { opacity: 1, y: 0, transition: spring.snappy },
-}
-
-// ── Safe Variants (reduced motion) ────────────────────────────────────────────
-
-export const safePageVariants = prefersReducedMotion
-  ? { initial: {}, animate: {}, exit: {} }
-  : pageVariants
-
-export const safeCardContainerVariants = prefersReducedMotion
-  ? { hidden: {}, visible: {} }
-  : cardContainerVariants
-
-export const safeCardVariants = prefersReducedMotion
-  ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
-  : cardVariants
-
-export const safeTransition = prefersReducedMotion
-  ? { duration: 0 }
-  : transition.default
-
 // ── Shared Variants (preserved from v1) ───────────────────────────────────────
 
-export const fadeIn: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { duration: duration.normal, ease: ease.luxury },
-  },
-}
-
-export const slideUp: Variants = {
+const slideUp: Variants = {
   hidden: { opacity: 0, y: 6 },
   visible: {
     opacity: 1,
@@ -177,10 +104,6 @@ export const staggerItem: Variants = {
 
 // ── Safe Shared Variants (reduced motion) ────────────────────────────────────
 
-export const safeFadeIn = prefersReducedMotion
-  ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
-  : fadeIn
-
 export const safeSlideUp = prefersReducedMotion
   ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
   : slideUp
@@ -196,27 +119,6 @@ export function safeStaggerContainer(delayMs = 50): Variants {
 }
 
 // ── Utility Variants ──────────────────────────────────────────────────────────
-
-export function tableRowDelay(index: number): {
-  initial: { opacity: number; y: number }
-  animate: { opacity: number; y: number; transition: Transition }
-} {
-  return {
-    initial: { opacity: 0, y: 4 },
-    animate: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.18, delay: index * 0.04 },
-    },
-  }
-}
-
-/** Hover lift — for interactive cards. No scale on hover per design system. */
-export const hoverLift = {
-  whileHover: { y: -2 },
-  whileTap: { scale: 0.98 },
-  transition: { duration: duration.fast },
-} as const
 
 /** Validation shake — single-cycle horizontal shake for form errors. */
 export const shake: Variants = {
@@ -237,20 +139,4 @@ export function useShake() {
     onAnimationComplete: () => setShouldShake(false),
   } as const
   return { triggerShake, shakeProps }
-}
-
-// ── Landing Page Scroll Animations ────────────────────────────────────────────
-
-export const fadeInUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: duration.dramatic, ease: ease.vercel },
-  },
-}
-
-export const scrollStagger: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.08 } },
 }
