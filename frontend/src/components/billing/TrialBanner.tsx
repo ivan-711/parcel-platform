@@ -92,7 +92,7 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
             <button
               onClick={() => checkout.mutate({ plan: 'pro', interval: 'annual' })}
               disabled={checkout.isPending}
-              className="mt-2 w-full h-8 rounded-md bg-warning hover:brightness-110 text-gray-0 text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer"
+              className="mt-2 w-full h-8 rounded-md bg-warning hover:brightness-110 text-app-bg text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer"
             >
               Upgrade now
             </button>

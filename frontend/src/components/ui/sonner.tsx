@@ -41,7 +41,7 @@ function Toaster() {
           actionButton:
             'group-[.toast]:bg-violet-400 group-[.toast]:text-accent-text-on-accent group-[.toast]:rounded-md group-[.toast]:text-xs group-[.toast]:font-medium',
           cancelButton:
-            'group-[.toast]:bg-black/[0.04] dark:group-[.toast]:bg-layer-3 group-[.toast]:text-text-secondary group-[.toast]:rounded-md group-[.toast]:text-xs',
+            'group-[.toast]:bg-black/[0.04] group-[.toast]:text-text-secondary group-[.toast]:rounded-md group-[.toast]:text-xs',
           success: 'group-[.toaster]:bg-[rgba(109,190,163,0.06)]',
           error: 'group-[.toaster]:bg-[rgba(212,118,106,0.06)]',
           warning: 'group-[.toaster]:bg-[rgba(212,168,103,0.06)]',

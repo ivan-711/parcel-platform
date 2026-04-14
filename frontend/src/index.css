@@ -636,3 +636,33 @@ html.lenis {
 .parcel-autocomplete-secondary {
   color: #8A8580;
 }
+
+/* ---- Google Places Autocomplete — Light mode overrides ---- */
+.light .parcel-autocomplete-input,
+.light .parcel-autocomplete-fallback {
+  background: var(--app-surface);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+.light .parcel-autocomplete-input::placeholder,
+.light .parcel-autocomplete-fallback::placeholder {
+  color: var(--text-muted);
+}
+.light .parcel-autocomplete-dropdown {
+  background: var(--app-elevated);
+  border-color: var(--border-default);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+.light .parcel-autocomplete-item {
+  border-top-color: var(--border-subtle);
+}
+.light .parcel-autocomplete-item:hover,
+.light .parcel-autocomplete-item.highlighted {
+  background: var(--app-overlay);
+}
+.light .parcel-autocomplete-main {
+  color: var(--text-primary);
+}
+.light .parcel-autocomplete-secondary {
+  color: var(--text-secondary);
+}
