@@ -8,6 +8,7 @@ import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
 import { AddBuyerModal } from '@/components/buyers/AddBuyerModal'
 import { cn } from '@/lib/utils'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useBuyers } from '@/hooks/useBuyers'
 import type { BuyerFilters, BuyerListItem, BuyBox } from '@/types'
 
@@ -17,6 +18,13 @@ const FUNDING_COLORS: Record<string, string> = {
   hard_money: 'bg-warning-bg text-warning border-warning/30',
   conventional: 'bg-info-bg text-info border-info/30',
   creative: 'bg-violet-400/15 text-violet-400 border-violet-400/30',
+}
+
+const FUNDING_TOOLTIPS: Record<string, string> = {
+  cash: 'All-cash purchase. No financing contingency, fastest closing.',
+  hard_money: 'Short-term private lending. Fast to close, asset-based. Typical for flips and BRRRR.',
+  conventional: 'Traditional bank mortgage. 15-30 year terms, lowest rates, strictest qualification.',
+  creative: 'Non-traditional: seller finance, subject-to, lease option, wrap mortgage.',
 }
 
 const FUNDING_PILLS = [
@@ -250,9 +258,24 @@ function BuyerCard({ buyer }: { buyer: BuyerListItem }) {
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
           {ft && (
-            <span className={cn('text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border', fundingCls)}>
-              {fundingLabel(buyer.funding_type)}
-            </span>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className={cn('text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border cursor-help', fundingCls)}>
+                    {fundingLabel(buyer.funding_type)}
+                  </span>
+                </TooltipTrigger>
+                {FUNDING_TOOLTIPS[ft] && (
+                  <TooltipContent
+                    side="bottom"
+                    className="max-w-[240px] bg-app-overlay border border-border-strong p-3 rounded-lg shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)]"
+                    sideOffset={4}
+                  >
+                    <p className="text-xs text-text-secondary leading-relaxed">{FUNDING_TOOLTIPS[ft]}</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
           )}
           {buyer.has_pof && (
             <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border bg-profit-bg text-profit border-profit/30">

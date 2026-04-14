@@ -195,10 +195,10 @@ export default function ReportsListPage() {
               <FileText size={28} className="text-violet-400" />
             </div>
             <h2 className="text-lg font-semibold text-text-primary mb-2">
-              Your analysis shelf is empty
+              No reports yet
             </h2>
             <p className="text-sm text-text-secondary max-w-sm mb-6">
-              Generate professional investment reports to share with clients, partners, or lenders.
+              Analyze a property, then export a report to share with partners or lenders.
             </p>
             <Button
               className="bg-violet-400 hover:bg-violet-600 text-white gap-1.5"

@@ -11,6 +11,7 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  HelpCircle,
 } from 'lucide-react'
 import { prefersReducedMotion } from '@/lib/motion'
 import { toast } from 'sonner'
@@ -19,6 +20,7 @@ import { EmptyState } from '@/components/EmptyState'
 import { SampleBadge } from '@/components/SampleBadge'
 import { useProperties, useDeleteProperty } from '@/hooks/useProperties'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import type { PropertyFilters, PropertyListItem } from '@/types'
 
@@ -272,7 +274,27 @@ export default function PropertiesListPage() {
                     <th className="text-left text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Type</th>
                     <th className="text-left text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Status</th>
                     <th className="text-left text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Strategy</th>
-                    <th className="text-right text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Key Metric</th>
+                    <th className="text-right text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">
+                      <TooltipProvider delayDuration={200}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="inline-flex items-center gap-1 cursor-help">
+                              Key Metric
+                              <HelpCircle size={12} className="text-text-muted hover:text-text-secondary transition-colors" />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="bottom"
+                            className="max-w-[280px] bg-app-overlay border border-border-strong p-3 rounded-lg shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)]"
+                            sideOffset={4}
+                          >
+                            <p className="text-xs text-text-secondary leading-relaxed">
+                              Shows the primary financial output for each property's strategy — Cash Flow for Buy &amp; Hold, MAO for Wholesale, Profit for Flip, Money Left In for BRRRR.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </th>
                     <th className="text-right text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3">Updated</th>
                     <th className="text-right text-[10px] uppercase tracking-wider text-text-muted font-medium px-4 py-3 w-10"></th>
                   </tr>

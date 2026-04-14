@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom'
 import { Landmark, ArrowUpDown } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
+import { MetricLabel } from '@/components/ui/MetricLabel'
+import { ThresholdBadge, LTV_THRESHOLDS, CAP_RATE_THRESHOLDS } from '@/components/ui/ThresholdBadge'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { cn } from '@/lib/utils'
 import { usePortfolioOverview } from '@/hooks/usePortfolio'
@@ -158,7 +160,7 @@ export default function PortfolioPage() {
         <EmptyState
           icon={Landmark}
           heading="No owned properties yet"
-          description="Properties with status 'owned' will appear here."
+          description="Properties you've marked as 'Owned' will appear here. Analyze a property and close a deal to get started."
         />
       </AppShell>
     )
@@ -189,7 +191,7 @@ export default function PortfolioPage() {
   )
 
   /* Column header */
-  function ColHeader({ label, field, align }: { label: string; field: SortKey; align?: 'right' }) {
+  function ColHeader({ label, field, align, metricKey }: { label: string; field: SortKey; align?: 'right'; metricKey?: string }) {
     const active = sortBy === field
     return (
       <th
@@ -201,7 +203,7 @@ export default function PortfolioPage() {
         onClick={() => toggleSort(field)}
       >
         <span className="inline-flex items-center gap-1">
-          {label}
+          {metricKey ? <MetricLabel metric={metricKey}>{label}</MetricLabel> : label}
           <ArrowUpDown size={12} className={active ? 'text-violet-400' : 'opacity-30'} />
         </span>
       </th>
@@ -280,27 +282,29 @@ export default function PortfolioPage() {
           {/* LTV */}
           <div className="bg-app-recessed border border-border-default rounded-xl p-5 shadow-xs">
             <p className="text-xs font-medium uppercase tracking-wider text-text-muted mb-2">
-              LTV Ratio
+              <MetricLabel metric="ltv">LTV Ratio</MetricLabel>
             </p>
-            <p className="text-xl text-text-primary tabular-nums flex items-center">
+            <p className="text-xl text-text-primary tabular-nums flex items-center gap-2">
               <StatusDot color={ltvColor} />
               {fmtPct(summary.ltv_ratio)}
+              <ThresholdBadge value={summary.ltv_ratio} thresholds={LTV_THRESHOLDS} showHint />
             </p>
           </div>
           {/* Avg Cap Rate */}
           <div className="bg-app-recessed border border-border-default rounded-xl p-5 shadow-xs">
             <p className="text-xs font-medium uppercase tracking-wider text-text-muted mb-2">
-              Avg Cap Rate
+              <MetricLabel metric="cap_rate">Avg Cap Rate</MetricLabel>
             </p>
-            <p className="text-xl text-text-primary tabular-nums flex items-center">
+            <p className="text-xl text-text-primary tabular-nums flex items-center gap-2">
               <StatusDot color={capColor} />
               {fmtPct(summary.avg_cap_rate)}
+              <ThresholdBadge value={summary.avg_cap_rate} thresholds={CAP_RATE_THRESHOLDS} showHint />
             </p>
           </div>
           {/* Monthly CF */}
           <div className="bg-app-recessed border border-border-default rounded-xl p-5 shadow-xs">
             <p className="text-xs font-medium uppercase tracking-wider text-text-muted mb-2">
-              Monthly Cash Flow
+              <MetricLabel metric="monthly_cash_flow">Monthly Cash Flow</MetricLabel>
             </p>
             <p className={cn('text-xl tabular-nums flex items-center', cfColor === 'green' ? 'text-profit' : 'text-loss')}>
               <StatusDot color={cfColor} />
@@ -310,7 +314,7 @@ export default function PortfolioPage() {
           {/* Annual CF */}
           <div className="bg-app-recessed border border-border-default rounded-xl p-5 shadow-xs">
             <p className="text-xs font-medium uppercase tracking-wider text-text-muted mb-2">
-              Annual Cash Flow
+              <MetricLabel metric="annual_cash_flow">Annual Cash Flow</MetricLabel>
             </p>
             <p className="text-xl text-text-primary tabular-nums">
               {fmt$(summary.total_annual_cash_flow)}
@@ -334,9 +338,9 @@ export default function PortfolioPage() {
                     <ColHeader label="Property" field="address" />
                     <ColHeader label="Value" field="estimated_value" align="right" />
                     <ColHeader label="Equity" field="equity" align="right" />
-                    <ColHeader label="Monthly CF" field="monthly_cash_flow" align="right" />
-                    <ColHeader label="Cap Rate" field="cap_rate" align="right" />
-                    <ColHeader label="CoC Return" field="coc_return" align="right" />
+                    <ColHeader label="Monthly CF" field="monthly_cash_flow" align="right" metricKey="monthly_cash_flow" />
+                    <ColHeader label="Cap Rate" field="cap_rate" align="right" metricKey="cap_rate" />
+                    <ColHeader label="CoC Return" field="coc_return" align="right" metricKey="coc_return" />
                     <ColHeader label="Strategy" field="strategy" />
                     <ColHeader label="Instruments" field="instruments_count" align="right" />
                   </tr>

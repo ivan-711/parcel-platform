@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react'
+import { HelpCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { ScenarioDetail } from '@/types'
 
 type SensitivityMetric = 'cash_flow' | 'cap_rate' | 'coc_return' | 'roi'
@@ -86,8 +88,18 @@ export function SensitivityMatrix({ scenario }: Props) {
   return (
     <div className="bg-[var(--chart-bg)] border border-[var(--chart-border)] rounded-xl p-5">
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <h3 className="text-[11px] text-[var(--chart-axis-text)] uppercase tracking-wider font-medium">
+        <h3 className="text-[11px] text-[var(--chart-axis-text)] uppercase tracking-wider font-medium inline-flex items-center gap-1.5">
           Sensitivity Analysis
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="cursor-help"><HelpCircle size={12} className="text-text-muted hover:text-text-secondary transition-colors" /></span>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[280px]">
+                <p className="text-xs text-text-secondary leading-relaxed">Shows estimated monthly cash flow at different rent and purchase price combinations. Green cells are cash-flow positive.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </h3>
         <div className="flex items-center gap-1 p-0.5 bg-app-bg rounded-lg border border-[var(--chart-border)]">
           {METRIC_OPTIONS.map(opt => (
@@ -148,6 +160,7 @@ export function SensitivityMatrix({ scenario }: Props) {
           </tbody>
         </table>
       </div>
+      <p className="text-[10px] text-text-muted mt-2">Assumes 35% operating expense ratio</p>
     </div>
   )
 }

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
+import { MetricLabel } from '@/components/ui/MetricLabel'
 import { cn } from '@/lib/utils'
 import { useFinancingDashboard } from '@/hooks/useFinancing'
 import type { BalloonAlert, DueOnSaleRiskItem } from '@/types/financing'
@@ -47,7 +48,7 @@ export default function FinancingDashboardPage() {
         <EmptyState
           icon={Landmark}
           heading="No financing instruments yet"
-          description="Add instruments to your properties to see your financing overview here."
+          description="Add a loan, mortgage, or line of credit to your properties to track your financing portfolio."
           ctaLabel="View Properties"
           ctaHref="/properties"
         />
@@ -99,12 +100,13 @@ export default function FinancingDashboardPage() {
             icon={AlertTriangle}
             variant={urgentBalloons.length > 0 ? 'danger' : 'default'}
             subtitle={urgentBalloons.length > 0 ? `${urgentBalloons.length} within 90 days` : undefined}
+            metricKey="balloon_payment"
           />
         </div>
 
         {/* Wrap Spreads */}
         {data.wrap_spreads.length > 0 && (
-          <Section title="Active Wrap Spreads">
+          <Section title={<MetricLabel metric="wrap_spread">Active Wrap Spreads</MetricLabel>}>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -145,7 +147,7 @@ export default function FinancingDashboardPage() {
 
         {/* Due-on-Sale Risk Monitor */}
         {data.due_on_sale_risks.length > 0 && (
-          <Section title="Due-on-Sale Risk">
+          <Section title={<MetricLabel metric="due_on_sale">Due-on-Sale Risk</MetricLabel>}>
             <div className="space-y-2">
               {data.due_on_sale_risks.map((risk, i) => (
                 <DueOnSaleRiskCard key={i} risk={risk} />
@@ -156,7 +158,7 @@ export default function FinancingDashboardPage() {
 
         {/* Upcoming Balloons Timeline */}
         {data.upcoming_balloons.length > 0 && (
-          <Section title="Upcoming Balloons">
+          <Section title={<MetricLabel metric="balloon_payment">Upcoming Balloons</MetricLabel>}>
             <div className="flex gap-3 overflow-x-auto scrollbar-luxury pb-1">
               {data.upcoming_balloons.map((balloon, i) => (
                 <BalloonCard key={i} balloon={balloon} />
@@ -177,12 +179,14 @@ function KpiCard({
   icon: Icon,
   variant = 'default',
   subtitle,
+  metricKey,
 }: {
   label: string
   value: string
   icon: React.ElementType
   variant?: 'default' | 'success' | 'danger'
   subtitle?: string
+  metricKey?: string
 }) {
   const valueColor =
     variant === 'success' ? 'text-profit' :
@@ -193,7 +197,9 @@ function KpiCard({
     <div className="bg-app-recessed border border-border-default rounded-xl p-4">
       <div className="flex items-center gap-2 mb-2">
         <Icon size={14} className="text-text-muted" />
-        <span className="text-[10px] uppercase tracking-wider text-text-muted">{label}</span>
+        <span className="text-[10px] uppercase tracking-wider text-text-muted">
+          {metricKey ? <MetricLabel metric={metricKey}>{label}</MetricLabel> : label}
+        </span>
       </div>
       <p className={cn('text-xl font-medium tabular-nums', valueColor)}>{value}</p>
       {subtitle && <p className="text-xs text-loss mt-1">{subtitle}</p>}
@@ -203,7 +209,7 @@ function KpiCard({
 
 /* ─── Section ─── */
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children }: { title: React.ReactNode; children: React.ReactNode }) {
   return (
     <div className="bg-app-recessed border border-border-default rounded-xl p-5">
       <h3 className="text-[11px] uppercase tracking-wider text-text-muted font-medium mb-4">

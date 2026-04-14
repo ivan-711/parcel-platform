@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { prefersReducedMotion } from '@/lib/motion'
 import { ChevronDown, RefreshCw, Loader2 } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { ScenarioDetail } from '@/types'
 
 interface Props {
@@ -10,6 +11,18 @@ interface Props {
   onRefreshNarrative?: () => void
   refreshing?: boolean
   inputsChanged?: boolean
+}
+
+function confidenceTooltipText(confidence: string): string {
+  switch (confidence) {
+    case 'high':
+      return 'Based on verified property data and complete financial inputs.'
+    case 'medium':
+      return 'Some data is estimated. Verify key assumptions for best accuracy.'
+    case 'low':
+    default:
+      return 'Limited data available. Use as a starting point \u2014 add your own research.'
+  }
 }
 
 function confidenceDots(confidence: string) {
@@ -24,9 +37,18 @@ function confidenceDots(confidence: string) {
           style={{ backgroundColor: i < filled ? color : 'var(--border-default)' }}
         />
       ))}
-      <span className="ml-1 text-[10px] uppercase tracking-wider" style={{ color }}>
-        {confidence}
-      </span>
+      <TooltipProvider delayDuration={200}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="ml-1 text-[10px] uppercase tracking-wider cursor-help" style={{ color }}>
+              {confidence}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="max-w-[240px]">
+            <p className="text-xs text-text-secondary leading-relaxed">{confidenceTooltipText(confidence)}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
   )
 }

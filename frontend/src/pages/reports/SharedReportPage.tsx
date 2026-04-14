@@ -8,10 +8,12 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { ArrowRight, Link2, ChevronDown, ChevronUp } from 'lucide-react'
+import { ArrowRight, Link2, ChevronDown, ChevronUp, HelpCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
+import { MetricLabel } from '@/components/ui/MetricLabel'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { Button } from '@/components/ui/button'
 import { CashFlowProjection } from '@/components/charts/CashFlowProjection'
@@ -87,6 +89,14 @@ const STRATEGY_KPIS: Record<string, { key: string; label: string }[]> = {
     { key: 'dscr', label: 'DSCR' },
     { key: 'equity_day_one', label: 'Day-One Equity' },
   ],
+}
+
+const STRATEGY_TOOLTIPS: Record<string, string> = {
+  wholesale: 'Lock a property under contract, then assign the contract to an end buyer for a fee. No rehab, no ownership.',
+  buy_and_hold: 'Purchase and rent long-term for monthly cash flow, appreciation, and tax benefits.',
+  flip: 'Buy, renovate, and sell for a one-time profit. Execution speed and rehab accuracy are key.',
+  brrrr: 'Buy, Rehab, Rent, Refinance, Repeat. Pull your capital out via refinance to recycle into the next deal.',
+  creative_finance: 'Non-traditional deal structures — seller finance, subject-to, lease options, or wrap mortgages.',
 }
 
 // ---------------------------------------------------------------------------
@@ -307,6 +317,32 @@ export default function SharedReportPage() {
                 </span>
               </>
             )}
+            {scenario.strategy && (
+              <>
+                <span className="text-border-default">&middot;</span>
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="px-2 py-0.5 rounded bg-app-surface border border-border-subtle cursor-help inline-flex items-center gap-1">
+                        {scenario.strategy.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}
+                        <HelpCircle size={10} className="text-text-muted" />
+                      </span>
+                    </TooltipTrigger>
+                    {STRATEGY_TOOLTIPS[scenario.strategy] && (
+                      <TooltipContent
+                        side="bottom"
+                        className="max-w-[260px] bg-app-overlay border border-border-strong p-3 rounded-lg shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)]"
+                        sideOffset={4}
+                      >
+                        <p className="text-xs text-text-secondary leading-relaxed">
+                          {STRATEGY_TOOLTIPS[scenario.strategy]}
+                        </p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
+              </>
+            )}
             <span className="text-border-default">&middot;</span>
             <span>Prepared by {brandKit?.company_name || 'Parcel AI'}</span>
           </div>
@@ -320,9 +356,9 @@ export default function SharedReportPage() {
               className="rounded-xl bg-app-surface border border-border-subtle p-5 space-y-1"
               style={{ borderTopColor: accentColor, borderTopWidth: '2px' }}
             >
-              <p className="text-[11px] uppercase tracking-[0.08em] text-text-secondary">
+              <MetricLabel metric={key} className="text-[11px] uppercase tracking-[0.08em] text-text-secondary">
                 {label}
-              </p>
+              </MetricLabel>
               <p className="text-[24px] font-semibold text-text-primary leading-tight tabular-nums">
                 {formatValue(key, outputs[key] as number | string | null)}
               </p>
@@ -437,7 +473,9 @@ export default function SharedReportPage() {
                       i % 2 === 0 ? 'bg-layer-1' : 'bg-transparent'
                     )}
                   >
-                    <span className="text-[13px] text-text-secondary">{formatLabel(key)}</span>
+                    <MetricLabel metric={key} className="text-[13px] text-text-secondary">
+                      {formatLabel(key)}
+                    </MetricLabel>
                     <span className="text-[13px] text-text-primary tabular-nums">
                       {formatValue(key, value as number | string | null)}
                     </span>

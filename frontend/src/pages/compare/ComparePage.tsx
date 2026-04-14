@@ -7,6 +7,7 @@ import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { AlertTriangle, Scale, X } from 'lucide-react'
+import { MetricLabel } from '@/components/ui/MetricLabel'
 import { AppShell } from '@/components/layout/AppShell'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
@@ -132,9 +133,9 @@ function KPICompareCard({
 
   return (
     <div className="bg-app-surface border border-border-strong rounded-xl p-5 shadow-xs edge-highlight">
-      <p className="text-[11px] uppercase tracking-[0.08em] font-medium text-text-secondary mb-4">
+      <MetricLabel metric={metricKey} className="text-[11px] uppercase tracking-[0.08em] font-medium text-text-secondary mb-4">
         {label}
-      </p>
+      </MetricLabel>
       <div className="flex gap-6">
         {deals.map((deal, i) => {
           const raw = metricKey === 'risk_score' ? deal.risk_score : deal.outputs?.[metricKey]

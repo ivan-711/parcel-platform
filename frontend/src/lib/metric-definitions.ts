@@ -268,6 +268,18 @@ export const METRIC_DEFINITIONS: Record<string, MetricDefinition> = {
     label: 'Due Diligence',
     description: 'The verification phase: inspections, title search, appraisal, and final number checks before closing. Issues found here can be negotiated or used to exit the contract.',
   },
+  pipeline_closed: {
+    label: 'Closed',
+    description: 'Deal is complete. The property has been acquired or assigned.',
+  },
+  pipeline_dead: {
+    label: 'Dead',
+    description: 'Deal is no longer viable. Could be revived if conditions change.',
+  },
+  pipeline_offer_sent: {
+    label: 'Offer Sent',
+    description: 'You\'ve submitted an offer. Waiting for the seller\'s response or a counter-offer.',
+  },
 }
 
 const ALIASES: Record<string, string> = {

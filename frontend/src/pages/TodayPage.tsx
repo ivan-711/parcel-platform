@@ -9,6 +9,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
+import { MetricLabel } from '@/components/ui/MetricLabel'
 import { BriefingCards } from '@/components/today/BriefingCards'
 import { PipelineSummaryBar } from '@/components/today/PipelineSummary'
 import { TodayCashFlowChart } from '@/components/today/TodayCashFlowChart'
@@ -280,7 +281,7 @@ function PortfolioCard({
 
       <div className="grid grid-cols-2 gap-3 mt-4">
         <div className="bg-app-bg rounded-lg p-3">
-          <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">Monthly Cash Flow</p>
+          <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1"><MetricLabel metric="monthly_cash_flow">Monthly Cash Flow</MetricLabel></p>
           <p className="text-sm text-text-primary font-medium tabular-nums">
             ${portfolio.total_cash_flow.toLocaleString()}/mo
           </p>

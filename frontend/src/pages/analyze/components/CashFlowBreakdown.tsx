@@ -5,6 +5,7 @@
  */
 
 import { useMemo } from 'react'
+import { MetricLabel } from '@/components/ui/MetricLabel'
 import type { ScenarioDetail } from '@/types'
 
 interface Deduction {
@@ -102,7 +103,9 @@ export function CashFlowBreakdown({ scenario }: Props) {
           const pct = (d.amount / grossRent) * 100
           return (
             <div key={d.key} className="flex items-center gap-3">
-              <span className="w-[88px] sm:w-[104px] shrink-0 text-xs text-[var(--chart-axis-text)]">{d.label}</span>
+              <span className="w-[88px] sm:w-[104px] shrink-0 text-xs text-[var(--chart-axis-text)]">
+                {d.key === 'monthly_piti' ? <MetricLabel metric="piti">{d.label}</MetricLabel> : d.label}
+              </span>
               <div className="flex-1 h-[6px] rounded-full bg-[var(--chart-grid)] overflow-hidden">
                 <div
                   className="h-full rounded-full"

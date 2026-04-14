@@ -47,9 +47,12 @@ export function BreakEvenChart({ scenario }: Props) {
         <h3 className="text-[11px] text-[var(--chart-axis-text)] uppercase tracking-wider font-medium mb-4">
           Break-Even Timeline
         </h3>
-        <div className="flex items-center justify-center py-8">
+        <div className="flex flex-col items-center justify-center py-8 gap-2">
           <p className="text-sm text-[var(--chart-negative)]">
             This deal never breaks even at current terms
+          </p>
+          <p className="text-xs text-[var(--chart-axis-text)]">
+            Consider: lower purchase price, higher rent, or lower interest rate.
           </p>
         </div>
       </div>

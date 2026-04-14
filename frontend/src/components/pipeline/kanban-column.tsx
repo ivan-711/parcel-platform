@@ -4,7 +4,9 @@ import { useCallback, useRef, useState, useEffect, useMemo } from 'react'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { motion, AnimatePresence } from 'framer-motion'
 import { prefersReducedMotion } from '@/lib/motion'
-import { Inbox } from 'lucide-react'
+import { Inbox, HelpCircle } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { getMetricDef } from '@/lib/metric-definitions'
 import { ColumnSkeleton } from './column-skeleton'
 import { SortableDealCard } from './deal-card'
 import { formatCompactValue } from './constants'
@@ -89,6 +91,26 @@ export function KanbanColumn({
         <span className="text-[13px] font-semibold text-text-primary tracking-[-0.01em]">
           {stage.label}
         </span>
+        {(() => {
+          const def = getMetricDef(`pipeline_${stage.key}`)
+          if (!def) return null
+          return (
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle size={12} className="text-text-muted hover:text-text-secondary transition-colors shrink-0 cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="bottom"
+                  className="max-w-[240px] bg-app-overlay border border-border-strong p-3 rounded-lg shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)]"
+                  sideOffset={4}
+                >
+                  <p className="text-xs text-text-secondary leading-relaxed">{def.description}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )
+        })()}
         <span className="text-[12px] tabular-nums text-text-secondary bg-layer-3 rounded-full px-1.5 py-0.5">
           {cards.length}
         </span>

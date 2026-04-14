@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { prefersReducedMotion } from '@/lib/motion'
 import { ChevronDown, HelpCircle } from 'lucide-react'
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover'
+import { StrategyExplainer } from '@/components/ui/StrategyExplainer'
 import { METRIC_TOOLTIPS } from './MetricTooltips'
 import type { ScenarioDetail } from '@/types'
 
@@ -170,6 +171,7 @@ export function KeyMetrics({ scenario }: Props) {
 
   return (
     <div>
+      <StrategyExplainer strategy={strategy} className="mb-4" />
       {/* Primary metric */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-1">

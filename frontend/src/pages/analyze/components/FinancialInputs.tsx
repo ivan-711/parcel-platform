@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { ChevronDown } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { ScenarioDetail } from '@/types'
 
 interface InputField {
@@ -55,6 +56,19 @@ function badgeForField(fieldKey: string, sourceConfidence: ScenarioDetail['sourc
   if (info.confidence === 'single_source' || info.confidence === 'high') return { text: 'VERIFIED', color: '#7CCBA5' }
   if (info.confidence === 'estimated') return { text: 'ESTIMATED', color: '#D4A867' }
   return { text: 'NEEDED', color: '#D4766A' }
+}
+
+function badgeTooltipText(badgeText: string): string {
+  switch (badgeText) {
+    case 'VERIFIED':
+    case 'YOUR INPUT':
+      return 'Confirmed from county records or RentCast property data.'
+    case 'ESTIMATED':
+      return 'Estimated using comparable properties. Verify for best accuracy.'
+    case 'NEEDED':
+    default:
+      return 'Required for accurate analysis. Enter your best estimate.'
+  }
 }
 
 interface Props {
@@ -127,12 +141,21 @@ export function FinancialInputs({ scenario, onInputsChange }: Props) {
             <div key={f.key}>
               <div className="flex items-center gap-2 mb-1">
                 <label className="text-xs text-text-muted uppercase tracking-wider">{f.label}</label>
-                <span
-                  className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-sm border font-medium"
-                  style={{ color: badge.color, borderColor: badge.color + '40' }}
-                >
-                  {badge.text}
-                </span>
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span
+                        className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-sm border font-medium cursor-help"
+                        style={{ color: badge.color, borderColor: badge.color + '40' }}
+                      >
+                        {badge.text}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-[240px]">
+                      <p className="text-xs text-text-secondary leading-relaxed">{badgeTooltipText(badge.text)}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
               <div className="relative">
                 {f.prefix && (
@@ -173,12 +196,21 @@ export function FinancialInputs({ scenario, onInputsChange }: Props) {
                   <div key={f.key}>
                     <div className="flex items-center gap-2 mb-1">
                       <label className="text-[10px] text-text-muted uppercase tracking-wider">{f.label}</label>
-                      <span
-                        className="text-[8px] uppercase tracking-wider px-1 py-0.5 rounded-sm border"
-                        style={{ color: badge.color, borderColor: badge.color + '40' }}
-                      >
-                        {badge.text}
-                      </span>
+                      <TooltipProvider delayDuration={200}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span
+                              className="text-[8px] uppercase tracking-wider px-1 py-0.5 rounded-sm border cursor-help"
+                              style={{ color: badge.color, borderColor: badge.color + '40' }}
+                            >
+                              {badge.text}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-[240px]">
+                            <p className="text-xs text-text-secondary leading-relaxed">{badgeTooltipText(badge.text)}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                     <div className="relative">
                       {f.prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-text-muted">{f.prefix}</span>}

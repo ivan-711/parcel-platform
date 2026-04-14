@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { EmptyState } from '@/components/EmptyState'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { duration, ease, prefersReducedMotion } from '@/lib/motion'
 import { useObligations, useCompleteObligation, useUpdateObligation } from '@/hooks/useFinancing'
@@ -44,6 +45,13 @@ const SEVERITY_COLORS: Record<string, { border: string; header: string; text: st
   critical: { border: 'border-l-warning', header: 'bg-warning-bg text-warning', text: 'text-warning' },
   high: { border: 'border-l-warning', header: 'bg-warning-bg text-warning', text: 'text-warning' },
   normal: { border: 'border-l-gray-9', header: 'bg-border-default text-text-secondary', text: 'text-text-secondary' },
+}
+
+const SEVERITY_HINTS: Record<string, string> = {
+  overdue: 'Payment is past due. Take immediate action.',
+  critical: 'Due within 30 days. Plan your next step now.',
+  high: 'Due within 90 days. Start preparing.',
+  normal: 'No immediate action needed.',
 }
 
 function getDateFilter(filter: TimeFilter): string | undefined {
@@ -210,19 +218,36 @@ function ObligationGroup({
   const [collapsed, setCollapsed] = useState(false)
   const colors = SEVERITY_COLORS[severity] || SEVERITY_COLORS.normal
 
+  const hint = SEVERITY_HINTS[severity]
+
   return (
     <div>
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className={cn(
-          'flex items-center gap-2 w-full px-3 py-2 rounded-lg text-xs font-medium uppercase tracking-wider mb-2 cursor-pointer',
-          colors.header
-        )}
-      >
-        {collapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
-        {label}
-        <span className="ml-auto opacity-70">{obligations.length}</span>
-      </button>
+      <TooltipProvider delayDuration={200}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className={cn(
+                'flex items-center gap-2 w-full px-3 py-2 rounded-lg text-xs font-medium uppercase tracking-wider mb-2 cursor-pointer',
+                colors.header
+              )}
+            >
+              {collapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
+              {label}
+              <span className="ml-auto opacity-70">{obligations.length}</span>
+            </button>
+          </TooltipTrigger>
+          {hint && (
+            <TooltipContent
+              side="top"
+              className="max-w-[220px] bg-app-overlay border border-border-strong p-2.5 rounded-lg shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)]"
+              sideOffset={4}
+            >
+              <p className="text-xs text-text-secondary">{hint}</p>
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
       <AnimatePresence>
         {!collapsed && (
           <motion.div

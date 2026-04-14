@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Loader2, ArrowUpDown, ChevronDown, ChevronRight } from 'lucide-react'
+import { Loader2, ArrowUpDown, ChevronDown, ChevronRight, HelpCircle } from 'lucide-react'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
+import { MetricLabel } from '@/components/ui/MetricLabel'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { ScenarioDetail, CompareResponse } from '@/types'
 
 const STRATEGY_LABELS: Record<string, string> = {
@@ -85,21 +87,61 @@ export function StrategyComparison({ propertyId: _propertyId, activeStrategy, sc
           <thead>
             <tr className="text-[10px] text-text-muted uppercase tracking-wider border-b border-border-default">
               <th className="text-left py-2 pr-3">Strategy</th>
-              <th className="text-right py-2 px-3">Key Metric</th>
+              <th className="text-right py-2 px-3">
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex items-center gap-1">Key Metric <HelpCircle size={10} className="text-text-muted" /></span>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-[240px]">
+                      <p className="text-xs text-text-secondary leading-relaxed">The primary financial output for this strategy. Changes per strategy type.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </th>
               <th className="text-right py-2 px-3 cursor-pointer hover:text-text-secondary" onClick={() => handleSort('roi')}>
-                ROI <ArrowUpDown size={10} className="inline ml-0.5" />
+                <MetricLabel metric="roi" side="bottom">ROI</MetricLabel> <ArrowUpDown size={10} className="inline ml-0.5" />
               </th>
               <th className="text-right py-2 px-3 cursor-pointer hover:text-text-secondary" onClick={() => handleSort('risk_score')}>
-                Risk <ArrowUpDown size={10} className="inline ml-0.5" />
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex items-center gap-1">Risk <HelpCircle size={10} className="text-text-muted" /></span>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-[240px]">
+                      <p className="text-xs text-text-secondary leading-relaxed">Score from 0 to 100 based on leverage, volatility, and data confidence.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider> <ArrowUpDown size={10} className="inline ml-0.5" />
               </th>
               <th className="text-center py-2 px-3">Horizon</th>
               <th className="text-right py-2 px-3 cursor-pointer hover:text-text-secondary" onClick={() => handleSort('break_even_months')}>
-                Break-Even <ArrowUpDown size={10} className="inline ml-0.5" />
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex items-center gap-1">Break-Even <HelpCircle size={10} className="text-text-muted" /></span>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-[240px]">
+                      <p className="text-xs text-text-secondary leading-relaxed">How long until your investment pays for itself.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider> <ArrowUpDown size={10} className="inline ml-0.5" />
               </th>
               <th className="text-right py-2 px-3 cursor-pointer hover:text-text-secondary" onClick={() => handleSort('five_year_total_return')}>
-                5yr Return <ArrowUpDown size={10} className="inline ml-0.5" />
+                <MetricLabel metric="five_year_total_return" side="bottom">5yr Return</MetricLabel> <ArrowUpDown size={10} className="inline ml-0.5" />
               </th>
-              <th className="text-left py-2 pl-3">Verdict</th>
+              <th className="text-left py-2 pl-3">
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex items-center gap-1">Verdict <HelpCircle size={10} className="text-text-muted" /></span>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-[240px]">
+                      <p className="text-xs text-text-secondary leading-relaxed">AI assessment of how well this strategy fits this property.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </th>
             </tr>
           </thead>
           <tbody>

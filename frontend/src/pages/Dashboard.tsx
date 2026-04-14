@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { KPICard } from '@/components/ui/KPICard'
+import { MetricLabel } from '@/components/ui/MetricLabel'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -62,8 +63,19 @@ function generateTrendData(current: number, points: number = 7): number[] {
 }
 
 const STAGE_LABELS: Record<string, string> = {
-  lead: 'Lead', analyzing: 'Analyzing', offer_sent: 'Offer Sent',
-  under_contract: 'Under Contract', due_diligence: 'Due Diligence', closed: 'Closed',
+  lead: 'Lead', prospect: 'Prospect', analyzing: 'Analyzing', offer_sent: 'Offer Sent',
+  under_contract: 'Under Contract', due_diligence: 'Due Diligence', closed: 'Closed', dead: 'Dead',
+}
+
+const STAGE_METRIC_KEYS: Record<string, string> = {
+  lead: 'pipeline_lead',
+  prospect: 'pipeline_prospect',
+  analyzing: 'pipeline_analyzing',
+  offer_sent: 'pipeline_offer_sent',
+  under_contract: 'pipeline_under_contract',
+  due_diligence: 'pipeline_due_diligence',
+  closed: 'pipeline_closed',
+  dead: 'pipeline_dead',
 }
 
 function statusLabel(status: string): string {
@@ -303,13 +315,13 @@ export default function Dashboard() {
                 </p>
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-wider text-text-muted mb-0.5">Monthly CF</p>
+                <p className="text-[10px] uppercase tracking-wider text-text-muted mb-0.5"><MetricLabel metric="monthly_cash_flow">Monthly CF</MetricLabel></p>
                 <p className={`text-lg font-medium tabular-nums ${portfolioData.summary.total_monthly_cash_flow >= 0 ? 'text-profit' : 'text-loss'}`}>
                   {portfolioData.summary.total_monthly_cash_flow < 0 ? '-' : ''}${Math.abs(Math.round(portfolioData.summary.total_monthly_cash_flow)).toLocaleString()}
                 </p>
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-wider text-text-muted mb-0.5">LTV</p>
+                <p className="text-[10px] uppercase tracking-wider text-text-muted mb-0.5"><MetricLabel metric="ltv">LTV</MetricLabel></p>
                 <p className="text-lg text-text-primary font-medium tabular-nums">{portfolioData.summary.ltv_ratio}%</p>
               </div>
               <div>
@@ -331,7 +343,12 @@ export default function Dashboard() {
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {pipelineEntries.map(([stage, count]) => (
                       <div key={stage} className="flex items-center justify-between p-3 rounded-lg bg-app-bg">
-                        <span className="text-sm text-text-secondary">{STAGE_LABELS[stage] ?? statusLabel(stage)}</span>
+                        <span className="text-sm text-text-secondary">
+                          {STAGE_METRIC_KEYS[stage]
+                            ? <MetricLabel metric={STAGE_METRIC_KEYS[stage]}>{STAGE_LABELS[stage] ?? statusLabel(stage)}</MetricLabel>
+                            : (STAGE_LABELS[stage] ?? statusLabel(stage))
+                          }
+                        </span>
                         <span className="text-lg font-semibold text-text-primary tabular-nums">{count}</span>
                       </div>
                     ))}
