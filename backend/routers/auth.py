@@ -5,7 +5,6 @@ endpoints have been removed. Authentication is handled entirely by Clerk.
 """
 
 import logging
-from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel

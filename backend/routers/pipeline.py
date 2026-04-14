@@ -5,7 +5,6 @@ from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
-from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from core.billing.tier_gate import require_feature

@@ -1,7 +1,6 @@
 """Common projection calculations shared by all strategy calculators."""
 
 import math
-from .utils import pmt
 
 
 def compute_common_projections(

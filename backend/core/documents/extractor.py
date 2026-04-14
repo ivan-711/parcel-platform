@@ -2,7 +2,6 @@
 
 import io
 from dataclasses import dataclass
-from typing import Optional
 
 MAX_TEXT_LENGTH = 100_000  # Increased from 50k; Dramatiq processes async
 

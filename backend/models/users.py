@@ -1,8 +1,5 @@
 """User model — represents a registered Parcel user."""
 
-import uuid
-from datetime import datetime
-
 from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship

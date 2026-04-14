@@ -1,6 +1,6 @@
 """ImportJob model — tracks bulk data imports and migrations."""
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 
 from database import Base

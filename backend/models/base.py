@@ -6,8 +6,6 @@ from datetime import datetime
 from sqlalchemy import Column, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 
-from database import Base
-
 
 class TimestampMixin:
     """Adds id (UUID PK), created_at, and updated_at to any model."""

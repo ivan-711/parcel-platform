@@ -8,7 +8,6 @@ import math
 import os
 import re
 from base64 import b64encode
-from urllib.parse import urlencode
 
 import httpx
 

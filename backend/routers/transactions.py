@@ -1,12 +1,11 @@
 """Transaction router — CRUD, summary, and bulk operations."""
 
 import math
-from datetime import date, datetime
+from datetime import date
 from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from core.security.jwt import get_current_user

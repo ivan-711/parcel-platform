@@ -3,12 +3,11 @@ address verification, and mail dispatch via LobProvider.
 """
 
 import re
-from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from core.direct_mail.lob_provider import LobProvider, COST_CENTS
+from core.direct_mail.lob_provider import LobProvider
 from models.mail_campaigns import MailCampaign, MailRecipient
 from models.contacts import Contact
 from models.properties import Property

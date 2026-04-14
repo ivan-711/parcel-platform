@@ -1,7 +1,7 @@
 """Pydantic schemas for portfolio entries and summary analytics."""
 
 import uuid
-from datetime import date, datetime
+from datetime import date
 from decimal import Decimal
 from typing import Optional
 

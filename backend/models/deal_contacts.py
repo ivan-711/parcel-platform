@@ -1,6 +1,6 @@
 """DealContact junction — many-to-many between deals and contacts."""
 
-from sqlalchemy import Column, DateTime, ForeignKey, String, UniqueConstraint
+from sqlalchemy import Column, ForeignKey, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 
 from database import Base

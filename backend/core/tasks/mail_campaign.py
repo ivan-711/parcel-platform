@@ -192,7 +192,6 @@ if dramatiq:
                 MailRecipient.status.in_(["sent", "in_transit"]),
             ).count()
             if still_pending > 0 and campaign.sent_at:
-                from datetime import timezone
                 now = datetime.utcnow()
                 days_since_sent = (now - campaign.sent_at.replace(tzinfo=None)).days
                 if days_since_sent < 5:

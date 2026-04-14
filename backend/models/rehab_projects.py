@@ -1,7 +1,7 @@
 # backend/models/rehab_projects.py
 """Rehab project and item models — renovation cost tracking tied to properties."""
 
-from sqlalchemy import Boolean, Column, Date, DateTime, ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy import Column, Date, DateTime, ForeignKey, Numeric, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 

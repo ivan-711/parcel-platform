@@ -8,7 +8,6 @@ from models.pipeline_entries import PipelineEntry
 from models.documents import Document
 from models.chat_messages import ChatMessage
 from models.portfolio_entries import PortfolioEntry
-from models.password_reset_tokens import PasswordResetToken
 from models.subscriptions import Subscription
 from models.usage_records import UsageRecord
 from models.webhook_events import WebhookEvent
@@ -55,7 +54,6 @@ __all__ = [
     "Document",
     "ChatMessage",
     "PortfolioEntry",
-    "PasswordResetToken",
     "Subscription",
     "UsageRecord",
     "WebhookEvent",

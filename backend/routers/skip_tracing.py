@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from core.billing.tier_config import TIER_LIMITS, Tier
+from core.billing.tier_config import TIER_LIMITS
 from limiter import limiter
 from core.billing.tier_gate import require_quota, record_usage, get_effective_tier, get_tier_limits, _get_usage_count
 from core.security.jwt import get_current_user

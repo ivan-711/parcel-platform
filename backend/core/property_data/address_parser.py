@@ -4,9 +4,9 @@ import logging
 import os
 import re
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional
-from urllib.parse import quote_plus, urlencode
+from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 import json
 

@@ -1,7 +1,7 @@
 # backend/routers/portfolio_v2.py
 """Portfolio V2 router — automated property-centric portfolio overview."""
 
-from datetime import date, timedelta
+from datetime import date
 
 from core.financing.obligation_engine import _add_months
 from typing import Optional

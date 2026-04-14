@@ -1,6 +1,6 @@
 """Property model — the durable root record for a physical real estate asset."""
 
-from sqlalchemy import Boolean, Column, Float, Integer, Numeric, String
+from sqlalchemy import Boolean, Column, Integer, Numeric, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
 

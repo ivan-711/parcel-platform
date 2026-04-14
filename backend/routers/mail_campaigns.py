@@ -1,7 +1,6 @@
 """Mail campaigns router — 13 endpoints for direct mail campaign management."""
 
 import logging
-from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Request

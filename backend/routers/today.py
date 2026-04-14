@@ -514,7 +514,6 @@ def _build_briefing_items(
     # Financing obligation briefing items
     try:
         from models.obligations import Obligation
-        from models.financing_instruments import FinancingInstrument as FI
 
         today_date = now.date() if hasattr(now, "date") else now
         ninety_days = today_date + timedelta(days=90)

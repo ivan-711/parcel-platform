@@ -1,8 +1,6 @@
 """Subscription model — tracks Stripe subscription state for billing."""
 
-from datetime import datetime
-
-from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 

@@ -57,8 +57,6 @@ def _get_jwks_client():
     if not CLERK_JWKS_URL:
         return None
     try:
-        from jose import jwk
-        from jose.backends import RSAKey
         import urllib.request
         import json
 

@@ -12,7 +12,6 @@ from sqlalchemy.orm import Session
 
 from core.security.jwt import get_current_user
 from database import get_db
-from limiter import limiter
 from models.communications import Communication
 from models.contacts import Contact
 from models.deal_contacts import DealContact

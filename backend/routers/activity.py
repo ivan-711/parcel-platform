@@ -1,12 +1,10 @@
 """Activity router — recent user actions across all entities."""
 
 import logging
-from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
-from sqlalchemy import union_all, literal, cast, String
 from sqlalchemy.orm import Session
 
 from core.security.jwt import get_current_user

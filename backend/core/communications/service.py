@@ -9,7 +9,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from core.communications.base import BaseEmailProvider, BaseSMSProvider
-from core.communications.twilio_sms import normalize_phone, phone_digits
+from core.communications.twilio_sms import phone_digits
 from models.communications import Communication
 from models.contacts import Contact
 from models.tasks import Task

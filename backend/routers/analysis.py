@@ -179,7 +179,7 @@ def _build_enrichment_details(enrichment, latency_ms: int) -> EnrichmentDetails:
 async def _generate_narrative(scenario, prop, experience_level: str = "intermediate") -> NarrativeResponse:
     """Generate AI narrative, store on scenario. Returns NarrativeResponse (never raises)."""
     try:
-        from core.ai.deal_narrator import narrate, get_inputs_hash
+        from core.ai.deal_narrator import narrate
 
         result = await narrate(scenario, prop, experience_level)
 
