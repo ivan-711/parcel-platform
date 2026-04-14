@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { AreaChart, Area, ResponsiveContainer } from 'recharts'
 import { useCountUp } from '@/hooks/useCountUp'
 import { SkeletonCard } from './SkeletonCard'
+import { MetricLabel } from './MetricLabel'
 import { cn } from '@/lib/utils'
 
 type Format = 'percent' | 'currency' | 'number'
@@ -13,6 +14,8 @@ interface KPICardProps {
   delta?: number
   loading?: boolean
   className?: string
+  /** Optional metric key from metric-definitions to show an info tooltip on the label. */
+  metricKey?: string
   /** Optional array of numbers to render a sparkline mini-chart at the bottom of the card. */
   sparklineData?: number[]
 }
@@ -33,7 +36,7 @@ function formatValue(value: number, format: Format): string {
  * Use for all financial metrics on dashboards and deal results.
  * Pass `sparklineData` (array of numbers) to render a mini area chart at the bottom.
  */
-export function KPICard({ label, value, format, delta, loading, className, sparklineData }: KPICardProps) {
+export function KPICard({ label, value, format, delta, loading, className, metricKey, sparklineData }: KPICardProps) {
   const animated = useCountUp(value)
 
   const chartData = useMemo(() => {
@@ -61,7 +64,13 @@ export function KPICard({ label, value, format, delta, loading, className, spark
         className
       )}
     >
-      <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-text-secondary">{label}</p>
+      {metricKey ? (
+        <MetricLabel metric={metricKey} className="text-[11px] font-medium uppercase tracking-[0.08em] text-text-secondary">
+          {label}
+        </MetricLabel>
+      ) : (
+        <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-text-secondary">{label}</p>
+      )}
       <p className="text-kpi-display text-3xl text-text-primary tabular-nums">
         {formatValue(animated, format)}
       </p>

@@ -1,7 +1,11 @@
 /**
  * Metric tooltip definitions — descriptions, formulas, and live "This Property" calculations.
  * Formulas match backend/core/calculators/ exactly.
+ *
+ * Descriptions & formulas are sourced from the shared metric-definitions module.
  */
+
+import { METRIC_DEFINITIONS } from '@/lib/metric-definitions'
 
 type Outputs = Record<string, number | string | boolean | null | undefined>
 
@@ -29,8 +33,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   // BUY & HOLD
   // ========================
   cap_rate: {
-    description: 'Capitalization rate measures property income relative to its price, independent of financing.',
-    formula: 'Annual NOI / Purchase Price × 100',
+    description: METRIC_DEFINITIONS.cap_rate.description,
+    formula: METRIC_DEFINITIONS.cap_rate.formula!,
     compute: (o) => {
       const noi = num(o, 'annual_noi')
       const price = num(o, 'purchase_price')
@@ -41,8 +45,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   coc_return: {
-    description: 'Cash-on-cash return measures your annual cash flow relative to the total cash you invested (down payment).',
-    formula: 'Annual Cash Flow / Down Payment × 100',
+    description: METRIC_DEFINITIONS.coc_return.description,
+    formula: METRIC_DEFINITIONS.coc_return.formula!,
     compute: (o) => {
       const cf = num(o, 'annual_cash_flow')
       const dp = num(o, 'down_payment')
@@ -53,8 +57,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   dscr: {
-    description: 'Debt service coverage ratio compares your net operating income to your mortgage payment. Lenders typically require 1.25+.',
-    formula: 'Monthly NOI / Monthly Mortgage Payment',
+    description: METRIC_DEFINITIONS.dscr.description,
+    formula: METRIC_DEFINITIONS.dscr.formula!,
     compute: (o) => {
       const noi = num(o, 'monthly_noi')
       const pi = num(o, 'monthly_pi')
@@ -70,8 +74,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   rent_to_price_ratio: {
-    description: 'The 1% rule — a quick screening filter. If monthly rent is at least 1% of purchase price, the deal is worth deeper analysis.',
-    formula: '(Monthly Rent / Purchase Price) × 100',
+    description: METRIC_DEFINITIONS.rent_to_price_ratio.description,
+    formula: METRIC_DEFINITIONS.rent_to_price_ratio.formula!,
     compute: (o) => {
       const rent = num(o, 'monthly_rent')
       const price = num(o, 'purchase_price')
@@ -82,8 +86,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   debt_yield: {
-    description: 'Annual NOI divided by total debt. Above 10% is typically safe for lenders. Higher = less risk for the lender.',
-    formula: 'Annual NOI / Total Loan Amount × 100',
+    description: METRIC_DEFINITIONS.debt_yield.description,
+    formula: METRIC_DEFINITIONS.debt_yield.formula!,
     compute: (o) => {
       const result = num(o, 'debt_yield')
       if (result == null) return null
@@ -92,8 +96,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   annual_cash_flow: {
-    description: 'Total net cash flow over a full year after all expenses and debt service.',
-    formula: 'Monthly Cash Flow × 12',
+    description: METRIC_DEFINITIONS.annual_cash_flow.description,
+    formula: METRIC_DEFINITIONS.annual_cash_flow.formula!,
     compute: (o) => {
       const mcf = num(o, 'monthly_cash_flow')
       const result = num(o, 'annual_cash_flow')
@@ -103,8 +107,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   monthly_cash_flow: {
-    description: 'Net monthly income after all expenses and debt service. Calculation varies by strategy.',
-    formula: 'Income − Expenses − Debt Service',
+    description: METRIC_DEFINITIONS.monthly_cash_flow.description,
+    formula: METRIC_DEFINITIONS.monthly_cash_flow.formula!,
     compute: (o) => {
       const result = num(o, 'monthly_cash_flow')
       if (result == null) return null
@@ -122,8 +126,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   five_year_total_return: {
-    description: 'Projected total return over 5 years including cumulative cash flow, equity from appreciation, and principal paydown.',
-    formula: '5yr Cash Flow + 5yr Appreciation + 5yr Principal Paid',
+    description: METRIC_DEFINITIONS.five_year_total_return.description,
+    formula: METRIC_DEFINITIONS.five_year_total_return.formula!,
     compute: (o) => {
       const result = num(o, 'five_year_total_return')
       const equity = num(o, 'five_year_equity')
@@ -134,8 +138,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   monthly_pi: {
-    description: 'Monthly principal and interest payment on your mortgage loan.',
-    formula: 'PMT(rate/12, term×12, loan_amount)',
+    description: METRIC_DEFINITIONS.monthly_pi.description,
+    formula: METRIC_DEFINITIONS.monthly_pi.formula!,
     compute: (o) => {
       const result = num(o, 'monthly_pi')
       const loan = num(o, 'loan_amount')
@@ -146,8 +150,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   break_even_rent: {
-    description: 'The minimum monthly rent needed to cover all expenses. Anything above this is profit.',
-    formula: 'Total Monthly Expenses / Number of Units',
+    description: METRIC_DEFINITIONS.break_even_rent.description,
+    formula: METRIC_DEFINITIONS.break_even_rent.formula!,
     compute: (o) => {
       const exp = num(o, 'total_monthly_expenses')
       const result = num(o, 'break_even_rent')
@@ -158,8 +162,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   expense_ratio: {
-    description: 'What percentage of your effective income goes to expenses. Lower is better.',
-    formula: '(Total Monthly Expenses / Effective Gross Income) × 100',
+    description: METRIC_DEFINITIONS.expense_ratio.description,
+    formula: METRIC_DEFINITIONS.expense_ratio.formula!,
     compute: (o) => {
       const exp = num(o, 'total_monthly_expenses')
       const egi = num(o, 'effective_gross_income')
@@ -173,8 +177,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   // WHOLESALE
   // ========================
   mao: {
-    description: 'Maximum Allowable Offer — the highest price you should pay to maintain your desired profit margin using the 70% rule.',
-    formula: '(ARV × 70%) − Repair Costs − Desired Profit',
+    description: METRIC_DEFINITIONS.mao.description,
+    formula: METRIC_DEFINITIONS.mao.formula!,
     compute: (o) => {
       const result = num(o, 'mao')
       if (result == null) return null
@@ -183,8 +187,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   profit_at_ask: {
-    description: 'Your expected profit if you buy at the current asking price. Positive means the deal works at asking.',
-    formula: 'MAO − Asking Price',
+    description: METRIC_DEFINITIONS.profit_at_ask.description,
+    formula: METRIC_DEFINITIONS.profit_at_ask.formula!,
     compute: (o) => {
       const mao = num(o, 'mao')
       const result = num(o, 'profit_at_ask')
@@ -194,8 +198,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   break_even_price: {
-    description: 'The price where you neither profit nor lose — your absolute ceiling.',
-    formula: '(ARV × 70%) − Repair Costs',
+    description: METRIC_DEFINITIONS.break_even_price.description,
+    formula: METRIC_DEFINITIONS.break_even_price.formula!,
     compute: (o) => {
       const result = num(o, 'break_even_price')
       if (result == null) return null
@@ -204,14 +208,14 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   recommendation: {
-    description: 'Deal verdict based on asking price vs. your MAO. Strong = below MAO, Marginal = between MAO and break-even, Pass = above break-even.',
-    formula: 'If asking ≤ MAO → Strong; If asking ≤ break-even → Marginal; Else → Pass',
+    description: METRIC_DEFINITIONS.recommendation.description,
+    formula: METRIC_DEFINITIONS.recommendation.formula!,
     compute: () => null,
   },
 
   mao_65: {
-    description: 'Conservative MAO using the 65% rule instead of 70% — builds in more margin.',
-    formula: '(ARV × 65%) − Repair Costs − Desired Profit',
+    description: METRIC_DEFINITIONS.mao_65.description,
+    formula: METRIC_DEFINITIONS.mao_65.formula!,
     compute: (o) => {
       const result = num(o, 'mao_65')
       if (result == null) return null
@@ -220,8 +224,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   mao_75: {
-    description: 'Aggressive MAO using the 75% rule — tighter margin but more deals.',
-    formula: '(ARV × 75%) − Repair Costs − Desired Profit',
+    description: METRIC_DEFINITIONS.mao_75.description,
+    formula: METRIC_DEFINITIONS.mao_75.formula!,
     compute: (o) => {
       const result = num(o, 'mao_75')
       if (result == null) return null
@@ -230,8 +234,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   closing_costs: {
-    description: 'Estimated closing costs as a percentage of ARV.',
-    formula: 'ARV × Closing Cost %',
+    description: METRIC_DEFINITIONS.closing_costs.description,
+    formula: METRIC_DEFINITIONS.closing_costs.formula!,
     compute: (o) => {
       const result = num(o, 'closing_costs')
       if (result == null) return null
@@ -240,8 +244,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   assignment_fee_pct_arv: {
-    description: 'Your assignment fee as a percentage of the property ARV.',
-    formula: '(Desired Profit / ARV) × 100',
+    description: METRIC_DEFINITIONS.assignment_fee_pct_arv.description,
+    formula: METRIC_DEFINITIONS.assignment_fee_pct_arv.formula!,
     compute: (o) => {
       const result = num(o, 'assignment_fee_pct_arv')
       if (result == null) return null
@@ -253,8 +257,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   // FLIP
   // ========================
   roi: {
-    description: 'Total return on your invested capital over the entire flip.',
-    formula: '(Gross Profit / Total Invested) × 100',
+    description: METRIC_DEFINITIONS.roi.description,
+    formula: METRIC_DEFINITIONS.roi.formula!,
     compute: (o) => {
       const profit = num(o, 'gross_profit')
       const invested = num(o, 'total_invested')
@@ -265,8 +269,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   annualized_roi: {
-    description: 'ROI adjusted for time — a 3-month flip at 15% ROI is far better than a 12-month flip at 15%.',
-    formula: '(ROI / Holding Months) × 12',
+    description: METRIC_DEFINITIONS.annualized_roi.description,
+    formula: METRIC_DEFINITIONS.annualized_roi.formula!,
     compute: (o) => {
       const roi = num(o, 'roi')
       const result = num(o, 'annualized_roi')
@@ -276,8 +280,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   total_cost: {
-    description: 'Everything you spend — purchase price, rehab, financing, and selling costs.',
-    formula: 'Purchase + Rehab + Financing + Selling Costs',
+    description: METRIC_DEFINITIONS.total_cost.description,
+    formula: METRIC_DEFINITIONS.total_cost.formula!,
     compute: (o) => {
       const result = num(o, 'total_cost')
       if (result == null) return null
@@ -286,8 +290,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   profit_margin_pct: {
-    description: 'What percentage of the sale price is profit.',
-    formula: '(Gross Profit / ARV) × 100',
+    description: METRIC_DEFINITIONS.profit_margin_pct.description,
+    formula: METRIC_DEFINITIONS.profit_margin_pct.formula!,
     compute: (o) => {
       const profit = num(o, 'gross_profit')
       const result = num(o, 'profit_margin_pct')
@@ -297,8 +301,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   selling_costs: {
-    description: 'Agent commissions, title fees, and closing costs when you sell.',
-    formula: 'ARV × Selling Cost %',
+    description: METRIC_DEFINITIONS.selling_costs.description,
+    formula: METRIC_DEFINITIONS.selling_costs.formula!,
     compute: (o) => {
       const result = num(o, 'selling_costs')
       if (result == null) return null
@@ -307,8 +311,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   cost_per_sqft_rehab: {
-    description: 'Rehab budget divided by square footage — useful for comparing to local contractor benchmarks.',
-    formula: 'Rehab Budget / Square Footage',
+    description: METRIC_DEFINITIONS.cost_per_sqft_rehab.description,
+    formula: METRIC_DEFINITIONS.cost_per_sqft_rehab.formula!,
     compute: (o) => {
       const result = num(o, 'cost_per_sqft_rehab')
       if (result == null) return null
@@ -320,8 +324,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   // BRRRR
   // ========================
   refi_proceeds: {
-    description: 'Cash you get back from the refinance — ideally covers your entire initial investment.',
-    formula: 'ARV Post-Rehab × Refinance LTV %',
+    description: METRIC_DEFINITIONS.refi_proceeds.description,
+    formula: METRIC_DEFINITIONS.refi_proceeds.formula!,
     compute: (o) => {
       const result = num(o, 'refi_proceeds')
       if (result == null) return null
@@ -330,8 +334,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   equity_captured: {
-    description: 'The equity you own after the refinance — the difference between property value and new loan.',
-    formula: 'ARV Post-Rehab − Refinance Proceeds',
+    description: METRIC_DEFINITIONS.equity_captured.description,
+    formula: METRIC_DEFINITIONS.equity_captured.formula!,
     compute: (o) => {
       const arv = num(o, 'arv_post_rehab')
       const refi = num(o, 'refi_proceeds')
@@ -343,8 +347,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   capital_recycled_pct: {
-    description: 'What percentage of your initial investment was returned by the refinance. 100%+ means infinite return.',
-    formula: '(Refi Proceeds / All-In Cost) × 100',
+    description: METRIC_DEFINITIONS.capital_recycled_pct.description,
+    formula: METRIC_DEFINITIONS.capital_recycled_pct.formula!,
     compute: (o) => {
       const refi = num(o, 'refi_proceeds')
       const allIn = num(o, 'all_in')
@@ -355,8 +359,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   infinite_return: {
-    description: 'True when refinance proceeds exceed your all-in cost — you have $0 left in the deal and still own the property.',
-    formula: 'Money Left In Deal ≤ $0',
+    description: METRIC_DEFINITIONS.infinite_return.description,
+    formula: METRIC_DEFINITIONS.infinite_return.formula!,
     compute: (o) => {
       const mli = num(o, 'money_left_in')
       const v = o.infinite_return
@@ -366,8 +370,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   forced_appreciation: {
-    description: 'Value created through rehab — the difference between post-rehab value and your total purchase + rehab cost.',
-    formula: 'ARV Post-Rehab − Purchase Price − Rehab Costs',
+    description: METRIC_DEFINITIONS.forced_appreciation.description,
+    formula: METRIC_DEFINITIONS.forced_appreciation.formula!,
     compute: (o) => {
       const result = num(o, 'forced_appreciation')
       if (result == null) return null
@@ -376,8 +380,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   money_left_in: {
-    description: 'Cash that remains invested in the deal after the refinance. Lower is better — $0 means infinite return.',
-    formula: 'max(0, All-In Cost − Refi Proceeds)',
+    description: METRIC_DEFINITIONS.money_left_in.description,
+    formula: METRIC_DEFINITIONS.money_left_in.formula!,
     compute: (o) => {
       const allIn = num(o, 'all_in')
       const refi = num(o, 'refi_proceeds')
@@ -391,8 +395,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   // CREATIVE FINANCE
   // ========================
   equity_day_one: {
-    description: 'Instant equity at closing — the gap between property value and the loan you are assuming or creating.',
-    formula: 'ARV − Existing Loan Balance',
+    description: METRIC_DEFINITIONS.equity_day_one.description,
+    formula: METRIC_DEFINITIONS.equity_day_one.formula!,
     compute: (o) => {
       const result = num(o, 'equity_day_one')
       if (result == null) return null
@@ -401,8 +405,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   effective_yield: {
-    description: 'Annual cash flow as a percentage of your day-one equity position.',
-    formula: '(Annual Cash Flow / Day-1 Equity) × 100',
+    description: METRIC_DEFINITIONS.effective_yield.description,
+    formula: METRIC_DEFINITIONS.effective_yield.formula!,
     compute: (o) => {
       const cf = num(o, 'annual_cash_flow')
       const equity = num(o, 'equity_day_one')
@@ -413,8 +417,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   wrap_spread_monthly: {
-    description: 'Monthly profit from a wraparound mortgage — the difference between what your buyer pays you and what you pay the original lender.',
-    formula: 'Wrap Payment − Your Monthly Payment',
+    description: METRIC_DEFINITIONS.wrap_spread_monthly.description,
+    formula: METRIC_DEFINITIONS.wrap_spread_monthly.formula!,
     compute: (o) => {
       const result = num(o, 'wrap_spread_monthly')
       if (result == null) return null
@@ -423,8 +427,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   },
 
   sub_to_risk_score: {
-    description: 'Risk assessment for subject-to deals based on loan type and payment history. Lower is safer. FHA/VA loans carry less risk than conventional.',
-    formula: 'Base 50 adjusted by loan type and payment history',
+    description: METRIC_DEFINITIONS.sub_to_risk_score.description,
+    formula: METRIC_DEFINITIONS.sub_to_risk_score.formula!,
     compute: (o) => {
       const result = num(o, 'sub_to_risk_score')
       if (result == null) return null
@@ -436,8 +440,8 @@ export const METRIC_TOOLTIPS: Record<string, MetricTooltipDef> = {
   // HERO METRICS (used by the primary display)
   // ========================
   gross_profit: {
-    description: 'Total profit from the flip after all costs — purchase, rehab, financing, and selling.',
-    formula: 'ARV − (Purchase + Rehab + Financing + Selling Costs)',
+    description: METRIC_DEFINITIONS.gross_profit.description,
+    formula: METRIC_DEFINITIONS.gross_profit.formula!,
     compute: (o) => {
       const arv = num(o, 'arv') ?? num(o, 'after_repair_value')
       const tc = num(o, 'total_cost')
