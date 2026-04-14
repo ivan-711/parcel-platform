@@ -42,7 +42,7 @@ export function CTASection() {
       >
         {/* Layer 1a — Atmospheric backdrop image (building fragments, warm amber) */}
         <img
-          src="/images/building-complete.jpg"
+          src="/images/building-complete.webp"
           alt=""
           aria-hidden="true"
           loading="lazy"

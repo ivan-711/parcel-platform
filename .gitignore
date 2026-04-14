@@ -14,3 +14,9 @@ dist/
 .claude/
 .cursor/
 .aider*
+.agents/
+.planning/
+
+# Build & deploy artifacts
+.vercel/
+.pytest_cache/
