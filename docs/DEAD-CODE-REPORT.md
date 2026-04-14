@@ -1,3 +1,5 @@
+> **Status:** Cleanup executed April 13, 2026. Most items in this report have been resolved. See `git log` for details.
+
 # Dead Code Report
 
 Generated: 2026-04-12 (read-only scan, no files modified)

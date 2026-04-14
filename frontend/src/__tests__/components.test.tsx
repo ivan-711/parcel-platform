@@ -47,7 +47,7 @@ describe('KPICard', () => {
     const deltaEl = screen.getByText((content) => content.includes('1.3'))
     expect(deltaEl).toBeInTheDocument()
     expect(deltaEl.textContent).toContain('\u2193')
-    expect(deltaEl.className).toContain('text-[#D4766A]')
+    expect(deltaEl.className).toContain('text-loss')
   })
 
   it('renders SkeletonCard when loading is true', () => {
