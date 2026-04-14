@@ -271,7 +271,7 @@ export const api = {
       if (filters?.page) params.set('page', String(filters.page))
       if (filters?.per_page) params.set('per_page', String(filters.per_page))
       const qs = params.toString()
-      return request<import('@/types').PropertyListResponse>(`/api/properties${qs ? '?' + qs : ''}`)
+      return request<import('@/types').PropertyListResponse>(`/api/properties/${qs ? '?' + qs : ''}`)
     },
     get: (id: string) =>
       request<import('@/types').PropertyDetail>(`/api/properties/${id}`),
@@ -293,7 +293,7 @@ export const api = {
       request<import('@/types').PropertyActivityEvent[]>(`/api/properties/${id}/activity?limit=${limit}`),
   },
   today: {
-    get: () => request<import('@/types').TodayResponse>('/api/today'),
+    get: () => request<import('@/types').TodayResponse>('/api/today/'),
   },
   tasks: {
     list: (filters?: import('@/types').TaskFilters) => {
@@ -306,12 +306,12 @@ export const api = {
       if (filters?.page) params.set('page', String(filters.page))
       if (filters?.per_page) params.set('per_page', String(filters.per_page))
       const qs = params.toString()
-      return request<import('@/types').TaskListResponse>(`/api/tasks${qs ? '?' + qs : ''}`)
+      return request<import('@/types').TaskListResponse>(`/api/tasks/${qs ? '?' + qs : ''}`)
     },
     get: (id: string) => request<import('@/types').TaskItem>(`/api/tasks/${id}`),
     today: () => request<import('@/types').TasksTodayResponse>('/api/tasks/today'),
     create: (data: import('@/types').CreateTaskRequest) =>
-      request<import('@/types').TaskItem>('/api/tasks', { method: 'POST', body: JSON.stringify(data) }),
+      request<import('@/types').TaskItem>('/api/tasks/', { method: 'POST', body: JSON.stringify(data) }),
     update: (id: string, data: import('@/types').UpdateTaskRequest) =>
       request<import('@/types').TaskItem>(`/api/tasks/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
     delete: (id: string) => request<void>(`/api/tasks/${id}`, { method: 'DELETE' }),
@@ -328,12 +328,12 @@ export const api = {
       if (filters?.page) params.set('page', String(filters.page))
       if (filters?.per_page) params.set('per_page', String(filters.per_page))
       const qs = params.toString()
-      return request<import('@/types').ContactListResponse>(`/api/contacts${qs ? '?' + qs : ''}`)
+      return request<import('@/types').ContactListResponse>(`/api/contacts/${qs ? '?' + qs : ''}`)
     },
     get: (id: string) =>
       request<import('@/types').ContactDetail>(`/api/contacts/${id}`),
     create: (data: import('@/types').CreateContactRequest) =>
-      request<import('@/types').ContactDetail>('/api/contacts', {
+      request<import('@/types').ContactDetail>('/api/contacts/', {
         method: 'POST',
         body: JSON.stringify(data),
       }),
@@ -726,10 +726,10 @@ export const api = {
       request<import('@/types').ThreadResponse>(`/api/communications/thread/${contactId}`),
   },
   sequences: {
-    list: () => request<import('@/types').SequenceListItem[]>('/api/sequences'),
+    list: () => request<import('@/types').SequenceListItem[]>('/api/sequences/'),
     get: (id: string) => request<import('@/types').SequenceDetail>(`/api/sequences/${id}`),
     create: (data: import('@/types').CreateSequenceRequest) =>
-      request<import('@/types').SequenceDetail>('/api/sequences', { method: 'POST', body: JSON.stringify(data) }),
+      request<import('@/types').SequenceDetail>('/api/sequences/', { method: 'POST', body: JSON.stringify(data) }),
     update: (id: string, data: import('@/types').UpdateSequenceRequest) =>
       request<import('@/types').SequenceDetail>(`/api/sequences/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
     delete: (id: string) => request<void>(`/api/sequences/${id}`, { method: 'DELETE' }),
@@ -787,10 +787,10 @@ export const api = {
       request<import('@/types').SkipTraceUsage>('/api/skip-tracing/usage'),
   },
   mailCampaigns: {
-    list: () => request<import('@/types').MailCampaignListItem[]>('/api/mail-campaigns'),
+    list: () => request<import('@/types').MailCampaignListItem[]>('/api/mail-campaigns/'),
     get: (id: string) => request<import('@/types').MailCampaignDetail>(`/api/mail-campaigns/${id}`),
     create: (data: import('@/types').CreateMailCampaignRequest) =>
-      request<import('@/types').MailCampaignDetail>('/api/mail-campaigns', { method: 'POST', body: JSON.stringify(data) }),
+      request<import('@/types').MailCampaignDetail>('/api/mail-campaigns/', { method: 'POST', body: JSON.stringify(data) }),
     update: (id: string, data: import('@/types').UpdateMailCampaignRequest) =>
       request<import('@/types').MailCampaignDetail>(`/api/mail-campaigns/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
     delete: (id: string) => request<void>(`/api/mail-campaigns/${id}`, { method: 'DELETE' }),

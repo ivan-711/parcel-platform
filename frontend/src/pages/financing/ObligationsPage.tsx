@@ -68,7 +68,7 @@ export default function ObligationsPage() {
   const { data, isLoading } = useObligations({
     status: 'active',
     due_before: dueBefore,
-    per_page: 200,
+    per_page: 100,
   })
 
   const obligations = data?.items ?? []
