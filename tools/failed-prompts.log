@@ -1,0 +1,168 @@
+
+--- nano-banana-pro 2026-04-15 08:56:19 ---
+ERROR: createTask rejected: Credits insufficient : Your current balance isn’t enough to run this request. Please top up to continue. | {'code': 402, 'msg': 'Credits insufficient : Your current balance isn’t enough to run this request. Please top up to continue.', 'data': None}
+PAYLOAD: {
+  "model": "nano-banana-pro",
+  "input": {
+    "prompt": "Minimalist logo icon on a pure white background. A stylized abstract lens or viewfinder shape suggesting precision analysis and insight \u2014 geometric but with one elegant curve. Conveys seeing what others miss. Clean vector design, luxury tech aesthetic similar to Robinhood's feather in complexity level. Flat 2D, no text, no gradients. Monochrome black version. Premium SaaS product for real estate investors.",
+    "aspect_ratio": "1:1",
+    "resolution": "4K",
+    "output_format": "png"
+  }
+}
+
+--- nano-banana-pro 2026-04-15 08:56:23 ---
+ERROR: createTask rejected: Credits insufficient : Your current balance isn’t enough to run this request. Please top up to continue. | {'code': 402, 'msg': 'Credits insufficient : Your current balance isn’t enough to run this request. Please top up to continue.', 'data': None}
+PAYLOAD: {
+  "model": "nano-banana-pro",
+  "input": {
+    "prompt": "Minimalist geometric logo icon on a pure white background. Abstract mark that subtly suggests both a building structure and a data visualization \u2014 stacked geometric layers with precise alignment, creating a sense of architectural intelligence. NOT a literal house or rooftop. Think deconstructed modernist architecture. Flat 2D vector, clean lines, no text. Dark charcoal (#1a1918) on white. Premium technology brand.",
+    "aspect_ratio": "1:1",
+    "resolution": "4K",
+    "output_format": "png"
+  }
+}
+
+--- poll-failure 2026-04-15 12:21:35 ---
+ERROR: 500: Internal Error
+PAYLOAD: {
+  "taskId": "133e2b0c673301992c9bcba154644750",
+  "data": {
+    "taskId": "133e2b0c673301992c9bcba154644750",
+    "model": "nano-banana-pro",
+    "state": "fail",
+    "param": "{\"input\":\"{\\\"aspect_ratio\\\":\\\"1:1\\\",\\\"output_format\\\":\\\"png\\\",\\\"prompt\\\":\\\"Minimalist logo mark on pure white background. The letter P constructed from exactly three overlapping flat planes or strips. Each plane is a simple geometric shape \u2014 rectangle or tapered bar. They overlap at precise angles to form a recognizable P, with thin white hairlines between layers showing depth. Three tones of the same color: light violet (#A599FF), medium violet (#8B7AFF), dark violet (#6B5CD4). Flat 2D, no text, no outlines, no extra decoration. Clean enough to work at 16px favicon size.\\\",\\\"resolution\\\":\\\"4K\\\"}\",\"model\":\"nano-banana-pro\"}",
+    "resultJson": "",
+    "failCode": "500",
+    "failMsg": "Internal Error",
+    "costTime": 0,
+    "completeTime": 1776273690864,
+    "createTime": 1776273690269
+  }
+}
+
+--- poll-failure 2026-04-15 12:21:49 ---
+ERROR: 500: Internal Error
+PAYLOAD: {
+  "taskId": "f75097c53506fbddd11d65c3581f230a",
+  "data": {
+    "taskId": "f75097c53506fbddd11d65c3581f230a",
+    "model": "nano-banana-pro",
+    "state": "fail",
+    "param": "{\"input\":\"{\\\"aspect_ratio\\\":\\\"1:1\\\",\\\"output_format\\\":\\\"png\\\",\\\"prompt\\\":\\\"Minimalist logo mark on pure white background. Two simple geometric forms \u2014 one vertical bar and one circle or arc \u2014 that overlap to create the letter P. Where they overlap, the color is slightly different, showing the intersection. That's it. Two shapes, one overlap, one letter. Inspired by the extreme simplicity of the Mastercard overlap concept but forming a P. Violet (#8B7AFF) bar and darker violet (#6B5CD4) arc, with the overlap zone a blend. Flat 2D vector, no text, no outlines. Radically simple, instantly recognizable.\\\",\\\"resolution\\\":\\\"4K\\\"}\",\"model\":\"nano-banana-pro\"}",
+    "resultJson": "",
+    "failCode": "500",
+    "failMsg": "Internal Error",
+    "costTime": 1,
+    "completeTime": 1776273705153,
+    "createTime": 1776273704056
+  }
+}
+
+--- poll-failure 2026-04-15 12:23:32 ---
+ERROR: 500: Internal Error
+PAYLOAD: {
+  "taskId": "d3fd677ae67e502fbea4439633b00bf4",
+  "data": {
+    "taskId": "d3fd677ae67e502fbea4439633b00bf4",
+    "model": "nano-banana-pro",
+    "state": "fail",
+    "param": "{\"input\":\"{\\\"aspect_ratio\\\":\\\"1:1\\\",\\\"output_format\\\":\\\"png\\\",\\\"prompt\\\":\\\"Minimalist logo mark on pure white background. Two simple geometric forms \u2014 one vertical bar and one circle or arc \u2014 that overlap to create the letter P. Where they overlap, the color is slightly different, showing the intersection. That's it. Two shapes, one overlap, one letter. Inspired by the extreme simplicity of the Mastercard overlap concept but forming a P. Violet (#8B7AFF) bar and darker violet (#6B5CD4) arc, with the overlap zone a blend. Flat 2D vector, no text, no outlines. Radically simple, instantly recognizable.\\\",\\\"resolution\\\":\\\"4K\\\"}\",\"model\":\"nano-banana-pro\"}",
+    "resultJson": "",
+    "failCode": "500",
+    "failMsg": "Internal Error",
+    "costTime": 0,
+    "completeTime": 1776273807663,
+    "createTime": 1776273806804
+  }
+}
+
+--- poll-failure 2026-04-15 12:24:40 ---
+ERROR: 500: Internal Error
+PAYLOAD: {
+  "taskId": "aacaba20c8d8c8d5b79bcbfd86cf4cb0",
+  "data": {
+    "taskId": "aacaba20c8d8c8d5b79bcbfd86cf4cb0",
+    "model": "nano-banana-pro",
+    "state": "fail",
+    "param": "{\"input\":\"{\\\"aspect_ratio\\\":\\\"1:1\\\",\\\"output_format\\\":\\\"png\\\",\\\"prompt\\\":\\\"Minimalist logo mark on pure white background. The letter P constructed from exactly three overlapping flat planes or strips. Each plane is a simple geometric shape \u2014 rectangle or tapered bar. They overlap at precise angles to form a recognizable P, with thin white hairlines between layers showing depth. Three tones of the same color: light violet (#A599FF), medium violet (#8B7AFF), dark violet (#6B5CD4). Flat 2D, no text, no outlines, no extra decoration. Clean enough to work at 16px favicon size.\\\",\\\"resolution\\\":\\\"4K\\\"}\",\"model\":\"nano-banana-pro\"}",
+    "resultJson": "",
+    "failCode": "500",
+    "failMsg": "Internal Error",
+    "costTime": 73,
+    "completeTime": 1776273875999,
+    "createTime": 1776273802289
+  }
+}
+
+--- poll-failure 2026-04-15 12:25:43 ---
+ERROR: 500: Internal Error
+PAYLOAD: {
+  "taskId": "611029a2fa5de89bd5c1acd74867c2a3",
+  "data": {
+    "taskId": "611029a2fa5de89bd5c1acd74867c2a3",
+    "model": "nano-banana-pro",
+    "state": "fail",
+    "param": "{\"input\":\"{\\\"aspect_ratio\\\":\\\"1:1\\\",\\\"output_format\\\":\\\"png\\\",\\\"prompt\\\":\\\"Minimalist logo mark on pure white background. The letter P constructed from three overlapping geometric strips at precise angles, with thin white gaps between layers showing depth. Three tones of violet: light (#A599FF), medium (#8B7AFF), dark (#6B5CD4). Flat 2D vector, no text, no outlines. Clean enough to work at favicon size.\\\",\\\"resolution\\\":\\\"4K\\\"}\",\"model\":\"nano-banana-pro\"}",
+    "resultJson": "",
+    "failCode": "500",
+    "failMsg": "Internal Error",
+    "costTime": 0,
+    "completeTime": 1776273940228,
+    "createTime": 1776273938304
+  }
+}
+
+--- poll-failure 2026-04-15 12:58:38 ---
+ERROR: 500: Internal Error
+PAYLOAD: {
+  "taskId": "04676b2850acf277a6d2cd664cc3a4df",
+  "data": {
+    "taskId": "04676b2850acf277a6d2cd664cc3a4df",
+    "model": "nano-banana-pro",
+    "state": "fail",
+    "param": "{\"input\":\"{\\\"aspect_ratio\\\":\\\"1:1\\\",\\\"output_format\\\":\\\"png\\\",\\\"prompt\\\":\\\"Minimalist logo mark on pure white background. The letter P formed by a continuous folded surface with a white diagonal gap at the fold point. Two interweaving planes \u2014 where the front surface is violet (#8B7AFF) and the back surface visible through the fold is darker violet (#5B4DC7). The two-tone effect shows which layer is on top vs behind. Medium weight, refined proportions, generous negative space. Flat 2D vector, no text. Premium fintech aesthetic.\\\",\\\"resolution\\\":\\\"4K\\\"}\",\"model\":\"nano-banana-pro\"}",
+    "resultJson": "",
+    "failCode": "500",
+    "failMsg": "Internal Error",
+    "costTime": 125,
+    "completeTime": 1776275914627,
+    "createTime": 1776275788611
+  }
+}
+
+--- poll-failure 2026-04-15 12:58:49 ---
+ERROR: 500: Internal Error
+PAYLOAD: {
+  "taskId": "e9e74fe713db99c0afb0d79b46e6967d",
+  "data": {
+    "taskId": "e9e74fe713db99c0afb0d79b46e6967d",
+    "model": "nano-banana-pro",
+    "state": "fail",
+    "param": "{\"input\":\"{\\\"aspect_ratio\\\":\\\"1:1\\\",\\\"output_format\\\":\\\"png\\\",\\\"prompt\\\":\\\"Minimalist logo mark on pure white background. The MOST reduced version of the folded P concept. Strip away everything that isn't essential. The P is formed by just two overlapping shapes \u2014 a vertical bar and a curved form \u2014 with a single white gap showing the overlap. Maximum simplicity while keeping the fold concept. Should work perfectly at 16px favicon size. Dark charcoal (#1a1918) on white. Flat 2D vector, no text. The simplest possible version that still has the interweaving quality.\\\",\\\"resolution\\\":\\\"4K\\\"}\",\"model\":\"nano-banana-pro\"}",
+    "resultJson": "",
+    "failCode": "500",
+    "failMsg": "Internal Error",
+    "costTime": 131,
+    "completeTime": 1776275926266,
+    "createTime": 1776275794468
+  }
+}
+
+--- poll-failure 2026-04-15 13:01:49 ---
+ERROR: 500: Internal Error
+PAYLOAD: {
+  "taskId": "c972073946ce42ae34f9a2d6cd3e7e76",
+  "data": {
+    "taskId": "c972073946ce42ae34f9a2d6cd3e7e76",
+    "model": "nano-banana-pro",
+    "state": "fail",
+    "param": "{\"input\":\"{\\\"aspect_ratio\\\":\\\"1:1\\\",\\\"output_format\\\":\\\"png\\\",\\\"prompt\\\":\\\"Minimalist logo mark on pure white background. The MOST reduced version of the folded P concept. Strip away everything that isn't essential. The P is formed by just two overlapping shapes \u2014 a vertical bar and a curved form \u2014 with a single white gap showing the overlap. Maximum simplicity while keeping the fold concept. Should work perfectly at 16px favicon size. Dark charcoal (#1a1918) on white. Flat 2D vector, no text. The simplest possible version that still has the interweaving quality.\\\",\\\"resolution\\\":\\\"4K\\\"}\",\"model\":\"nano-banana-pro\"}",
+    "resultJson": "",
+    "failCode": "500",
+    "failMsg": "Internal Error",
+    "costTime": 36,
+    "completeTime": 1776276103963,
+    "createTime": 1776276067369
+  }
+}
