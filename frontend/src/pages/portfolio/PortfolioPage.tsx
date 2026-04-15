@@ -8,6 +8,7 @@ import { EmptyState } from '@/components/EmptyState'
 import { MetricLabel } from '@/components/ui/MetricLabel'
 import { ThresholdBadge, LTV_THRESHOLDS, CAP_RATE_THRESHOLDS } from '@/components/ui/ThresholdBadge'
 import { SkeletonCard } from '@/components/ui/SkeletonCard'
+import { FeatureGate } from '@/components/billing/FeatureGate'
 import { cn } from '@/lib/utils'
 import { usePortfolioOverview } from '@/hooks/usePortfolio'
 import EquityGrowthChart from '@/components/portfolio/EquityGrowthChart'
@@ -212,6 +213,7 @@ export default function PortfolioPage() {
 
   return (
     <AppShell title="Portfolio">
+      <FeatureGate feature="portfolio">
       <div className="space-y-8">
         {/* Header */}
         <div>
@@ -391,6 +393,7 @@ export default function PortfolioPage() {
           </div>
         </div>
       </div>
+      </FeatureGate>
     </AppShell>
   )
 }

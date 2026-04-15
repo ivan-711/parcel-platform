@@ -8,6 +8,7 @@ import { Search, Upload } from 'lucide-react'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { AppShell } from '@/components/layout/AppShell'
 import { ComingSoonGate } from '@/components/ComingSoonGate'
+import { FeatureGate } from '@/components/billing/FeatureGate'
 import { EmptyState } from '@/components/EmptyState'
 import { SkipTraceResultCard } from '@/components/skip-tracing/SkipTraceResultCard'
 import { useSkipTrace, useSkipTraceHistory, useSkipTraceUsage, useCreateContactFromTrace } from '@/hooks/useSkipTracing'
@@ -138,6 +139,7 @@ export default function SkipTracingPage() {
   return (
     <AppShell title="Skip Tracing">
       <ComingSoonGate service="skip_tracing" featureName="Skip Tracing">
+      <FeatureGate feature="skip_tracing">
       <motion.div
         variants={safeStaggerContainer(100)}
         initial="hidden"
@@ -309,6 +311,7 @@ export default function SkipTracingPage() {
           )}
         </motion.div>
       </motion.div>
+      </FeatureGate>
       </ComingSoonGate>
     </AppShell>
   )

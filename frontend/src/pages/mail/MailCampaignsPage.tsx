@@ -3,12 +3,11 @@
 import { Link } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { Mail, Plus, Trash2, BarChart2, Edit2, Lock } from 'lucide-react'
+import { Mail, Plus, Trash2, BarChart2, Edit2 } from 'lucide-react'
 import { ErrorState } from '@/components/ui/ErrorState'
-import { useBillingStatus } from '@/hooks/useBilling'
-import { useAuthStore } from '@/stores/authStore'
 import { AppShell } from '@/components/layout/AppShell'
 import { ComingSoonGate } from '@/components/ComingSoonGate'
+import { FeatureGate } from '@/components/billing/FeatureGate'
 import { EmptyState } from '@/components/EmptyState'
 import { useMailCampaigns, useDeleteMailCampaign } from '@/hooks/useMailCampaigns'
 import { cn } from '@/lib/utils'
@@ -177,47 +176,12 @@ function CampaignCard({ campaign }: { campaign: MailCampaignListItem }) {
 export default function MailCampaignsPage() {
   const queryClient = useQueryClient()
   const { data: campaigns, isLoading, isError, error } = useMailCampaigns()
-  const { data: billing } = useBillingStatus()
-  const user = useAuthStore((s) => s.user)
   const count = campaigns?.length ?? 0
-
-  // Service gate: Direct mail requires Lob API key (checked before tier gate)
-  // ComingSoonGate wraps all content — if service unavailable, shows "Coming Soon"
-  // regardless of tier. If service IS available, tier gate below takes effect.
-
-  // Tier gate: Direct mail requires Titanium (business)
-  const userPlan = billing?.plan ?? user?.plan_tier ?? 'free'
-  if (userPlan !== 'business') {
-    return (
-      <AppShell title="Mail Campaigns">
-        <ComingSoonGate service="direct_mail" featureName="Direct Mail">
-        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] px-4 text-center">
-          <div className="max-w-sm">
-            <div className="w-14 h-14 rounded-2xl bg-violet-400/10 flex items-center justify-center mx-auto mb-6">
-              <Lock size={24} className="text-violet-400" />
-            </div>
-            <h1 className="text-2xl text-text-primary mb-3 font-brand font-light">
-              Available on Titanium
-            </h1>
-            <p className="text-sm text-text-secondary mb-6">
-              Direct mail campaigns are available on the Titanium plan. Send postcards and letters to property owners at scale.
-            </p>
-            <Link
-              to="/pricing"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium bg-violet-400 text-white hover:bg-violet-500 transition-colors"
-            >
-              View Plans
-            </Link>
-          </div>
-        </div>
-        </ComingSoonGate>
-      </AppShell>
-    )
-  }
 
   return (
     <AppShell title="Mail Campaigns">
       <ComingSoonGate service="direct_mail" featureName="Direct Mail">
+      <FeatureGate feature="mail_campaigns">
       <motion.div
         variants={safeStaggerContainer(100)}
         initial="hidden"
@@ -276,6 +240,7 @@ export default function MailCampaignsPage() {
         )}
         </motion.div>
       </motion.div>
+      </FeatureGate>
       </ComingSoonGate>
     </AppShell>
   )

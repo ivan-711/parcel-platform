@@ -104,16 +104,18 @@ export interface CancelResponse {
 
 export type GatedFeature =
   | 'ai_chat' | 'pdf_export' | 'pipeline' | 'portfolio'
-  | 'offer_letter' | 'compare_deals' | 'document_upload'
+  | 'offer_letter' | 'document_upload'
+  | 'skip_tracing' | 'mail_campaigns'
 
 export const FEATURE_LABELS: Record<GatedFeature, { label: string; tier: PlanTier; description: string }> = {
-  ai_chat:         { label: 'AI Deal Chat',           tier: 'pro', description: 'Ask AI questions about your deals' },
+  ai_chat:         { label: 'AI Deal Chat',           tier: 'free', description: 'Ask AI questions about your deals' },
   pdf_export:      { label: 'PDF Reports',            tier: 'pro', description: 'Download branded PDF deal reports' },
   pipeline:        { label: 'Deal Pipeline',          tier: 'pro', description: 'Organize deals across pipeline stages' },
   portfolio:       { label: 'Portfolio Tracking',      tier: 'pro', description: 'Track closed deals and cash flow' },
   offer_letter:    { label: 'Offer Letter Generator',  tier: 'pro', description: 'Generate professional offer letters' },
-  compare_deals:   { label: 'Deal Comparison',         tier: 'pro', description: 'Compare deals side-by-side' },
   document_upload: { label: 'Document AI',             tier: 'pro', description: 'Upload and analyze deal documents' },
+  skip_tracing:    { label: 'Skip Tracing',            tier: 'pro', description: 'Find property owner contact information' },
+  mail_campaigns:  { label: 'Direct Mail Campaigns',   tier: 'business', description: 'Send postcards and letters at scale' },
 }
 
 export interface AuthResponse {

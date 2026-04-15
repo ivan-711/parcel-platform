@@ -15,6 +15,7 @@ import {
   Plus,
   Eye,
   Loader2,
+  Lock,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
@@ -22,7 +23,10 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
+import { hasAccess } from '@/types'
 import type { ReportResponse } from '@/types'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 function trackEvent(event: string, props?: Record<string, unknown>) {
   try { (window as any).posthog?.capture?.(event, props) } catch { /* ignore */ }
@@ -59,6 +63,9 @@ function ReportActions({
   onDelete: (id: string) => void
 }) {
   const [pdfLoading, setPdfLoading] = useState(false)
+  const user = useAuthStore((s) => s.user)
+  const effectiveTier = user?.trial_active && user.plan_tier === 'free' ? 'pro' : (user?.plan_tier ?? 'free')
+  const canExportPdf = user?.email === 'demo@parcel.app' || hasAccess(effectiveTier, 'pro')
 
   const handleCopyLink = () => {
     if (report.share_url) {
@@ -99,9 +106,24 @@ function ReportActions({
       <button onClick={handleCopyLink} className="p-1.5 rounded-md hover:bg-layer-2 text-text-secondary hover:text-text-primary transition-colors" title="Copy share link" aria-label="Copy share link">
         <Link2 size={14} />
       </button>
-      <button onClick={() => void handleDownloadPdf()} disabled={pdfLoading} className="p-1.5 rounded-md hover:bg-layer-2 text-text-secondary hover:text-text-primary transition-colors disabled:opacity-40" title="Download PDF" aria-label="Download PDF">
-        {pdfLoading ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
-      </button>
+      {canExportPdf ? (
+        <button onClick={() => void handleDownloadPdf()} disabled={pdfLoading} className="p-1.5 rounded-md hover:bg-layer-2 text-text-secondary hover:text-text-primary transition-colors disabled:opacity-40" title="Download PDF" aria-label="Download PDF">
+          {pdfLoading ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+        </button>
+      ) : (
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button className="p-1.5 rounded-md text-text-disabled cursor-not-allowed" aria-label="PDF Export (upgrade required)">
+                <Lock size={14} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="bg-app-overlay border border-border-strong rounded-lg px-3 py-2 shadow-lg">
+              <p className="text-xs text-text-secondary">Upgrade to Carbon for PDF export</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
       <button onClick={() => onDelete(report.id)} className="p-1.5 rounded-md hover:bg-error-bg text-text-secondary hover:text-error transition-colors" title="Delete" aria-label="Delete report">
         <Trash2 size={14} />
       </button>
