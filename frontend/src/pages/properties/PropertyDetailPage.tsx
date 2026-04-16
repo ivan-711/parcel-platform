@@ -312,7 +312,7 @@ function PropertyHeader({
       {/* Actions */}
       <div className="flex items-center gap-2 shrink-0">
         <Link
-          to="/analyze"
+          to={`/analyze?address=${encodeURIComponent(`${property.address_line1}, ${property.city}, ${property.state} ${property.zip_code}`)}`}
           className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium bg-violet-400 text-white hover:bg-violet-500 transition-colors"
         >
           <Search size={14} />

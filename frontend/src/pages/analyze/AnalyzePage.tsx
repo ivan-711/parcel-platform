@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect, lazy, Suspense } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { MapPin, Sparkles, ArrowRight, AlertCircle } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
@@ -27,6 +27,8 @@ export default function AnalyzePage() {
   const partialResultRef = useRef<Record<string, unknown> | null>(null)
   const abortRef = useRef<AbortController | null>(null)
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const autoDispatchedRef = useRef(false)
 
   const handlePlaceSelect = useCallback((place: PlaceSelection) => {
     setAddress(place.formattedAddress)
@@ -249,6 +251,23 @@ export default function AnalyzePage() {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleSubmit()
   }
+
+  // Auto-dispatch when navigated with ?address= (e.g. from PropertyDetailPage)
+  useEffect(() => {
+    const addressParam = searchParams.get('address')
+    if (addressParam && state === 'input' && !autoDispatchedRef.current) {
+      autoDispatchedRef.current = true
+      setAddress(addressParam)
+      const trimmed = addressParam.trim()
+      const err = validate(trimmed)
+      if (!err) {
+        setState('loading')
+        setSteps(initialSteps())
+        setPartialResult(null)
+        startStream(trimmed)
+      }
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // --- RENDER ---
 
