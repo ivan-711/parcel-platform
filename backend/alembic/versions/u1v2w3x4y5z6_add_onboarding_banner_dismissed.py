@@ -16,7 +16,13 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column("users", sa.Column("onboarding_banner_dismissed_at", sa.DateTime(), nullable=True))
+    conn = op.get_bind()
+    result = conn.execute(sa.text(
+        "SELECT 1 FROM information_schema.columns "
+        "WHERE table_name = 'users' AND column_name = 'onboarding_banner_dismissed_at'"
+    ))
+    if result.fetchone() is None:
+        op.add_column("users", sa.Column("onboarding_banner_dismissed_at", sa.DateTime(), nullable=True))
 
 
 def downgrade() -> None:
