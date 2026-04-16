@@ -145,7 +145,13 @@ def _get_primary_email(data: dict) -> str | None:
 
 
 def _handle_user_created(db: Session, data: dict) -> None:
-    """Create a local user row when a new user signs up via Clerk."""
+    """Create a local user row when a new user signs up via Clerk.
+
+    SECURITY: Identity is keyed on clerk_user_id only. If a legacy row
+    (clerk_user_id IS NULL) exists with the same email, we rename the legacy
+    email to break the collision and create a fresh row. This prevents any
+    legacy data from transferring to the new Clerk user.
+    """
     clerk_id = data.get("id")
     email = _get_primary_email(data)
     first_name = data.get("first_name", "")
@@ -156,16 +162,40 @@ def _handle_user_created(db: Session, data: dict) -> None:
         logger.warning("user.created missing id or email: %s", data)
         return
 
-    # Check if user already exists (e.g., migrated from legacy auth)
-    existing = db.query(User).filter(User.email == email).first()
+    # Idempotent: if this Clerk ID already has a row, update it
+    existing = db.query(User).filter(User.clerk_user_id == clerk_id).first()
     if existing:
-        existing.clerk_user_id = clerk_id
-        if not existing.name or existing.name == email:
+        if not existing.name or existing.name == existing.email:
             existing.name = name
+        if email != existing.email:
+            existing.email = email
         db.commit()
-        logger.info("Linked existing user %s to Clerk %s", existing.id, clerk_id)
+        logger.info("Updated existing user %s for Clerk %s (idempotent)", existing.id, clerk_id)
         return
 
+    # Check for email collision with a legacy (NULL clerk_user_id) row.
+    # If found, rename the legacy email so the new signup gets a clean row.
+    # This preserves legacy data on its own row without transferring it.
+    collision = db.query(User).filter(User.email == email).first()
+    if collision:
+        if collision.clerk_user_id is None:
+            old_email = collision.email
+            collision.email = f"orphan+{collision.id}@parcel.local"
+            db.flush()
+            logger.warning(
+                "Renamed legacy user %s email from %s to %s to avoid collision with Clerk %s",
+                collision.id, old_email, collision.email, clerk_id,
+            )
+        else:
+            # Email already belongs to a different Clerk user — should not
+            # happen (Clerk enforces email uniqueness), but handle gracefully.
+            logger.error(
+                "Email %s already belongs to Clerk user %s, cannot create for %s",
+                email, collision.clerk_user_id, clerk_id,
+            )
+            return
+
+    # New signup — always create a fresh row.
     user = User(
         name=name,
         email=email,
