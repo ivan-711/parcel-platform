@@ -18,6 +18,7 @@ import { CompsCard } from '@/components/analysis/CompsCard'
 import { ReverseCalculatorModal } from './components/ReverseCalculatorModal'
 import { api } from '@/lib/api'
 import { useOnboardingStore } from '@/stores/onboardingStore'
+import { SampleBadge } from '@/components/SampleBadge'
 import type { PropertyDetail, ScenarioDetail, Strategy } from '@/types'
 
 const STRATEGY_LABELS: Record<string, string> = {
@@ -238,9 +239,12 @@ export default function AnalysisResultsPage() {
           className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6"
         >
           <div>
-            <h1 className="text-2xl sm:text-3xl text-text-primary font-brand font-light">
-              {property.address_line1}
-            </h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl text-text-primary font-brand font-light">
+                {property.address_line1}
+              </h1>
+              {property.is_sample && <SampleBadge />}
+            </div>
             <p className="text-sm text-text-secondary mt-1">
               {property.city}, {property.state} {property.zip_code}
             </p>
