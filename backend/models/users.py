@@ -32,6 +32,7 @@ class User(TimestampMixin, Base):
     # Onboarding
     onboarding_persona = Column(String, nullable=True)
     onboarding_completed_at = Column(DateTime, nullable=True)
+    onboarding_banner_dismissed_at = Column(DateTime, nullable=True)
 
     # Brand kit for reports
     brand_kit = Column(JSONB, nullable=True)

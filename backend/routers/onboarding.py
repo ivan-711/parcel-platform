@@ -159,7 +159,23 @@ async def onboarding_status(
         has_sample_data=has_sample,
         has_real_data=real_count > 0,
         real_property_count=real_count,
+        banner_dismissed=current_user.onboarding_banner_dismissed_at is not None,
     )
+
+
+# ---------------------------------------------------------------------------
+# POST /api/onboarding/dismiss-banner
+# ---------------------------------------------------------------------------
+
+@router.post("/dismiss-banner", status_code=status.HTTP_200_OK)
+async def dismiss_banner(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    """Dismiss the onboarding sample-data banner for the current user."""
+    current_user.onboarding_banner_dismissed_at = datetime.utcnow()
+    db.commit()
+    return {"dismissed": True}
 
 
 # ---------------------------------------------------------------------------
@@ -182,10 +198,28 @@ async def clear_sample_data(
 
 
 def _clear_sample_data(db: Session, user_id) -> int:
-    """Soft-delete all sample records for a user. Returns count of records affected."""
+    """Soft-delete active sample records and hard-delete previously soft-deleted ones.
+
+    This prevents unbounded accumulation of soft-deleted sample rows from
+    repeated persona re-selections.
+    """
     from models.properties import Property
     from models.analysis_scenarios import AnalysisScenario
 
+    # Hard-delete previously soft-deleted samples to prevent accumulation
+    db.query(AnalysisScenario).filter(
+        AnalysisScenario.created_by == user_id,
+        AnalysisScenario.is_sample == True,
+        AnalysisScenario.is_deleted == True,
+    ).delete()
+
+    db.query(Property).filter(
+        Property.created_by == user_id,
+        Property.is_sample == True,
+        Property.is_deleted == True,
+    ).delete()
+
+    # Soft-delete current active samples
     scenario_count = db.query(AnalysisScenario).filter(
         AnalysisScenario.created_by == user_id,
         AnalysisScenario.is_sample == True,

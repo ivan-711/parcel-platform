@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   HelpCircle,
+  Info,
 } from 'lucide-react'
 import { prefersReducedMotion } from '@/lib/motion'
 import { toast } from 'sonner'
@@ -22,7 +23,8 @@ import { useProperties, useDeleteProperty } from '@/hooks/useProperties'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-import type { PropertyFilters, PropertyListItem } from '@/types'
+import { api } from '@/lib/api'
+import type { PropertyFilters, PropertyListItem, OnboardingStatus } from '@/types'
 
 const PER_PAGE = 20
 
@@ -100,6 +102,9 @@ export default function PropertiesListPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [page, setPage] = useState(1)
+  const [hideSamples, setHideSamples] = useState(false)
+  const [onboarding, setOnboarding] = useState<OnboardingStatus | null>(null)
+  const [bannerDismissed, setBannerDismissed] = useState(false)
   const debouncedSearch = useDebouncedValue(search, 300)
 
   const filters: PropertyFilters = {
@@ -112,10 +117,26 @@ export default function PropertiesListPage() {
   const { data, isLoading, isError } = useProperties(filters)
   const deleteMutation = useDeleteProperty()
 
-  const properties = data?.properties ?? []
-  const total = data?.total ?? 0
+  const allProperties = data?.properties ?? []
+  const properties = hideSamples ? allProperties.filter(p => !p.is_sample) : allProperties
+  const total = hideSamples ? properties.length : (data?.total ?? 0)
   const totalPages = Math.ceil(total / PER_PAGE)
   const hasFilters = !!statusFilter || !!debouncedSearch
+
+  useEffect(() => {
+    api.onboarding.status().then(s => {
+      setOnboarding(s)
+      setBannerDismissed(s.banner_dismissed)
+    }).catch(() => {})
+  }, [])
+
+  const hasSamples = allProperties.some(p => p.is_sample)
+  const showBanner = hasSamples && onboarding?.has_sample_data && !bannerDismissed
+
+  const handleDismissBanner = () => {
+    setBannerDismissed(true)
+    api.onboarding.dismissBanner().catch(() => {})
+  }
 
   useEffect(() => {
     try {
@@ -210,7 +231,41 @@ export default function PropertiesListPage() {
               </button>
             ))}
           </div>
+
+          {/* Hide samples toggle */}
+          {hasSamples && (
+            <button
+              onClick={() => setHideSamples(h => !h)}
+              className={cn(
+                'text-xs px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors cursor-pointer',
+                hideSamples
+                  ? 'bg-violet-400/15 text-violet-300 border border-violet-400/30'
+                  : 'bg-app-recessed text-text-muted border border-border-default hover:text-text-secondary'
+              )}
+            >
+              {hideSamples ? 'Show Samples' : 'Hide Samples'}
+            </button>
+          )}
         </div>
+
+        {/* Sample data banner */}
+        {showBanner && (
+          <div className="flex items-start gap-3 bg-violet-400/5 border border-violet-400/20 rounded-lg p-4">
+            <Info size={16} className="text-violet-400 shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-text-secondary">
+                We added sample deals to show you around. Delete them anytime — they'll auto-clear once you analyze 3 properties of your own.
+              </p>
+            </div>
+            <button
+              onClick={handleDismissBanner}
+              className="text-text-muted hover:text-text-secondary transition-colors cursor-pointer shrink-0"
+              aria-label="Dismiss banner"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        )}
 
         {/* Error */}
         {isError && (

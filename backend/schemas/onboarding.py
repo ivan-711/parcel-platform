@@ -58,3 +58,4 @@ class OnboardingStatusResponse(BaseModel):
     has_sample_data: bool = False
     has_real_data: bool = False
     real_property_count: int = 0
+    banner_dismissed: bool = False

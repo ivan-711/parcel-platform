@@ -136,6 +136,7 @@ export interface OnboardingStatus {
   has_sample_data: boolean
   has_real_data: boolean
   real_property_count: number
+  banner_dismissed: boolean
 }
 
 export interface OnboardingProperty {

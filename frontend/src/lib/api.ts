@@ -423,6 +423,10 @@ export const api = {
       request<{ message: string; count: number }>('/api/onboarding/sample-data', {
         method: 'DELETE',
       }),
+    dismissBanner: () =>
+      request<{ dismissed: boolean }>('/api/onboarding/dismiss-banner', {
+        method: 'POST',
+      }),
   },
   reports: {
     list: (page = 1, perPage = 20) =>
