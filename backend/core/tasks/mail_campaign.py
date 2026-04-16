@@ -29,6 +29,10 @@ if dramatiq:
 
         db = SessionLocal()
         try:
+            from core.security.rls import set_rls_context
+            from uuid import UUID as _UUID
+            set_rls_context(db, _UUID(user_id))
+
             provider = LobProvider()
             service = DirectMailService(db, provider)
 
@@ -145,10 +149,14 @@ if dramatiq:
 
         db = SessionLocal()
         try:
+            from core.security.rls import set_rls_context
+
             provider = LobProvider()
             campaign = db.query(MailCampaign).filter(MailCampaign.id == campaign_id).first()
             if not campaign:
                 return
+
+            set_rls_context(db, campaign.created_by)
 
             recipients = (
                 db.query(MailRecipient)

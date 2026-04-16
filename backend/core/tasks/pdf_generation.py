@@ -39,6 +39,7 @@ if dramatiq:
         from database import SessionLocal
         from models.reports import Report
         from core.storage.s3_service import upload_file
+        from core.security.rls import set_rls_context
 
         db = SessionLocal()
         try:
@@ -46,6 +47,8 @@ if dramatiq:
             if not report:
                 logger.error("Report %s not found", report_id)
                 return
+
+            set_rls_context(db, report.created_by)
 
             if not report.share_token:
                 logger.error("Report %s has no share_token", report_id)

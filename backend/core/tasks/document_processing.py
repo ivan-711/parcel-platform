@@ -34,10 +34,13 @@ if dramatiq:
         # Check if metadata extraction succeeded before dispatching embeddings
         from database import SessionLocal
         from models.documents import Document
+        from core.security.rls import set_rls_context
 
         db = SessionLocal()
         try:
             doc = db.query(Document).filter(Document.id == document_id).first()
+            if doc:
+                set_rls_context(db, doc.user_id)
             if doc and doc.status == "complete":
                 logger.info("Metadata complete, dispatching embedding pipeline for %s", document_id)
                 process_document_embeddings.send(document_id)
@@ -60,6 +63,7 @@ if dramatiq:
         from core.documents.chunker import chunk_text
         from core.documents.contextualizer import contextualize_chunks
         from core.ai.embeddings import embed_texts
+        from core.security.rls import set_rls_context
 
         db = SessionLocal()
         try:
@@ -67,6 +71,8 @@ if dramatiq:
             if not doc:
                 logger.error("Document %s not found", document_id)
                 return
+
+            set_rls_context(db, doc.user_id)
 
             doc.embedding_status = "processing"
             doc.embedding_meta = {"total_chunks": None, "processed_chunks": 0}

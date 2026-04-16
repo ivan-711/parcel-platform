@@ -28,6 +28,10 @@ if dramatiq:
 
         db = SessionLocal()
         try:
+            from core.security.rls import set_rls_context
+            from uuid import UUID as _UUID
+            set_rls_context(db, _UUID(user_id))
+
             provider = BatchDataProvider()
             service = SkipTraceService(db, provider)
 

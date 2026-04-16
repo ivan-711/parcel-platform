@@ -449,6 +449,8 @@ async def quick_analysis_stream(
                 if _use_thread:
                     thread_db = SessionLocal()
                     try:
+                        from core.security.rls import set_rls_context
+                        set_rls_context(thread_db, current_user.id)
                         result = enrich_property(
                             address=address, user_id=current_user.id,
                             db=thread_db, default_strategy=strategy,
@@ -535,6 +537,8 @@ async def quick_analysis_stream(
                             def _bricked_sync():
                                 bdb = SessionLocal()
                                 try:
+                                    from core.security.rls import set_rls_context as _set_rls
+                                    _set_rls(bdb, current_user.id)
                                     bprop = bdb.get(_Prop, prop_id)
                                     bscen = bdb.get(_AS, scenario_id)
                                     result = enrich_with_bricked(bprop, bscen, address, bdb)
