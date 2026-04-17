@@ -374,6 +374,8 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ address, strategy }),
       }),
+    getScenario: (scenarioId: string) =>
+      request<import('@/types').ScenarioDetail>(`/api/analysis/scenarios/${scenarioId}`),
     regenerateNarrative: (scenarioId: string, experienceLevel?: string) =>
       request<import('@/types').ScenarioDetail>(`/api/analysis/scenarios/${scenarioId}/regenerate-narrative`, {
         method: 'POST',

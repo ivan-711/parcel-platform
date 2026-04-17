@@ -79,6 +79,7 @@ export default function AnalysisResultsPage() {
     if (!propertyId) return
     setLoading(true)
     try {
+      // Primary path: param is a property ID (links from dashboard, deal cards, etc.)
       const [prop, scens] = await Promise.all([
         api.properties.get(propertyId),
         api.properties.scenarios(propertyId),
@@ -91,7 +92,19 @@ export default function AnalysisResultsPage() {
       const match = scens.find(s => s.strategy === defaultStrategy)
       setActiveStrategy(match?.strategy || scens[0]?.strategy || 'buy_and_hold')
     } catch {
-      setError('Could not load property data')
+      // Fallback: param might be a scenario ID (direct URL with scenario UUID)
+      try {
+        const scenario = await api.analysis.getScenario(propertyId)
+        const [prop, scens] = await Promise.all([
+          api.properties.get(scenario.property_id),
+          api.properties.scenarios(scenario.property_id),
+        ])
+        setProperty(prop)
+        setScenarios(scens)
+        setActiveStrategy(scenario.strategy)
+      } catch {
+        setError('Could not load property data')
+      }
     } finally {
       setLoading(false)
     }

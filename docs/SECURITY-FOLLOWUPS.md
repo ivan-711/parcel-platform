@@ -51,3 +51,7 @@ CSP blocks Google Maps gen_204 tracking beacon. Likely cosmetic (ad blocker arti
 **Effort:** 1 hour
 **File:** `frontend/src/stores/authStore.ts`
 User profile stored in localStorage as plaintext JSON. Only contains non-sensitive data (name, email, tier) and JWT is NOT stored there. Consider using sessionStorage instead.
+
+### 10. Safari Stream→Results Cache Hydration
+**Effort:** Investigation
+Safari private mode doesn't populate router state from the SSE stream the same way Chrome does. Currently masked by the scenario-ID fallback in loadFromAPI(). Post-launch: investigate and unify cache behavior.

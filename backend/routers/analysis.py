@@ -397,6 +397,34 @@ async def regenerate_narrative(
 
 
 # ---------------------------------------------------------------------------
+# GET /api/analysis/scenarios/{id} — single scenario detail
+# ---------------------------------------------------------------------------
+
+@router.get("/scenarios/{scenario_id}", response_model=ScenarioResponse)
+async def get_scenario(
+    scenario_id: UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> ScenarioResponse:
+    """Get a single scenario by ID."""
+    scenario = (
+        db.query(AnalysisScenario)
+        .filter(
+            AnalysisScenario.id == scenario_id,
+            AnalysisScenario.created_by == current_user.id,
+            AnalysisScenario.is_deleted == False,
+        )
+        .first()
+    )
+    if not scenario:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "Scenario not found", "code": "SCENARIO_NOT_FOUND"},
+        )
+    return ScenarioResponse.model_validate(scenario)
+
+
+# ---------------------------------------------------------------------------
 # GET /api/analysis/quick/stream — SSE streaming endpoint
 # ---------------------------------------------------------------------------
 
