@@ -41,9 +41,16 @@ if CLERK_SECRET_KEY and CLERK_JWKS_URL and not CLERK_ISSUER_URL:
     )
 
 if CLERK_SECRET_KEY and not os.getenv("CLERK_JWT_AUDIENCE", ""):
-    logger.warning(
-        "CLERK_JWT_AUDIENCE is not set — Clerk tokens will be rejected. "
-        "Set CLERK_JWT_AUDIENCE to your frontend application's audience value."
+    logger.info(
+        "CLERK_JWT_AUDIENCE is not set — audience validation disabled. "
+        "Issuer and signature checks remain enforced."
+    )
+
+if CLERK_SECRET_KEY:
+    logger.info(
+        "Clerk auth configured: issuer=%s, audience_check=%s",
+        CLERK_ISSUER_URL,
+        "enabled" if os.getenv("CLERK_JWT_AUDIENCE", "").strip() else "disabled",
     )
 
 _jwks_client = None
@@ -99,25 +106,28 @@ def verify_clerk_token(token: str) -> Optional[dict]:
             logger.warning("No matching key found for kid=%s", kid)
             return None
 
-        # Verify the token with issuer check (always enforced) and audience check
-        audience = os.getenv("CLERK_JWT_AUDIENCE", "")
-        if not audience and CLERK_SECRET_KEY:
-            # Fail closed: reject tokens when audience is not configured
-            logger.warning("Clerk token rejected — CLERK_JWT_AUDIENCE is not configured")
+        # Verify the token — issuer and signature always enforced,
+        # audience only when CLERK_JWT_AUDIENCE is set.
+        audience = os.getenv("CLERK_JWT_AUDIENCE", "").strip() or None
+
+        decode_kwargs = {
+            "algorithms": ["RS256"],
+            "issuer": CLERK_ISSUER_URL,
+        }
+        if audience:
+            decode_kwargs["audience"] = audience
+            decode_kwargs["options"] = {"verify_aud": True}
+        else:
+            decode_kwargs["options"] = {"verify_aud": False}
+
+        payload = jose_jwt.decode(token, rsa_key, **decode_kwargs)
+
+        # python-jose doesn't reject tokens missing 'aud' even when
+        # audience is specified, so enforce it manually.
+        if audience and payload.get("aud") != audience:
+            logger.warning("Clerk token audience mismatch: expected=%s, got=%s", audience, payload.get("aud"))
             return None
 
-        payload = jose_jwt.decode(
-            token,
-            rsa_key,
-            algorithms=["RS256"],
-            issuer=CLERK_ISSUER_URL,
-            audience=audience,
-            options={
-                "verify_aud": True,
-            },
-        )
-
-        # Validate token has not expired (jose checks this by default)
         # Validate sub claim exists
         sub = payload.get("sub")
         if not sub:
