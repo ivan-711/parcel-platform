@@ -202,24 +202,37 @@ def _clear_sample_data(db: Session, user_id) -> int:
 
     This prevents unbounded accumulation of soft-deleted sample rows from
     repeated persona re-selections.
+
+    Child rows (AnalysisScenario) must be deleted before parent rows
+    (Property) to satisfy the property_id FK constraint.
     """
     from models.properties import Property
     from models.analysis_scenarios import AnalysisScenario
 
-    # Hard-delete previously soft-deleted samples to prevent accumulation
-    db.query(AnalysisScenario).filter(
-        AnalysisScenario.created_by == user_id,
-        AnalysisScenario.is_sample == True,
-        AnalysisScenario.is_deleted == True,
-    ).delete()
+    # Collect IDs of sample properties about to be hard-deleted
+    stale_property_ids = [
+        row[0]
+        for row in db.query(Property.id).filter(
+            Property.created_by == user_id,
+            Property.is_sample == True,
+            Property.is_deleted == True,
+        ).all()
+    ]
 
-    db.query(Property).filter(
-        Property.created_by == user_id,
-        Property.is_sample == True,
-        Property.is_deleted == True,
-    ).delete()
+    if stale_property_ids:
+        # Hard-delete ALL scenarios referencing those properties (not just
+        # is_sample — covers any orphans created by analysis re-runs)
+        db.query(AnalysisScenario).filter(
+            AnalysisScenario.property_id.in_(stale_property_ids),
+            AnalysisScenario.created_by == user_id,
+        ).delete(synchronize_session=False)
 
-    # Soft-delete current active samples
+        # Now safe to hard-delete the parent properties
+        db.query(Property).filter(
+            Property.id.in_(stale_property_ids),
+        ).delete(synchronize_session=False)
+
+    # Soft-delete current active samples (scenarios first, then properties)
     scenario_count = db.query(AnalysisScenario).filter(
         AnalysisScenario.created_by == user_id,
         AnalysisScenario.is_sample == True,

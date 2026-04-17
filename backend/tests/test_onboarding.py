@@ -111,6 +111,40 @@ class TestSetPersona:
             assert data["persona"] == persona
             assert len(data["sample_scenarios"]) >= 1
 
+    def test_triple_reselect_no_fk_violation(self, auth_client, db):
+        """Regression: third persona selection hard-deletes soft-deleted
+        samples from the first selection. Child scenarios must be deleted
+        before parent properties to avoid FK violation."""
+        # 1st selection → creates sample Property + Scenario
+        resp1 = auth_client.post("/api/onboarding/persona", json={"persona": "wholesale"})
+        assert resp1.status_code == 200
+
+        # 2nd selection → soft-deletes 1st set, creates new set
+        resp2 = auth_client.post("/api/onboarding/persona", json={"persona": "flip"})
+        assert resp2.status_code == 200
+
+        # 3rd selection → hard-deletes 1st set (now soft-deleted),
+        # soft-deletes 2nd set, creates new set.
+        # This is where the FK violation occurred before the fix.
+        resp3 = auth_client.post("/api/onboarding/persona", json={"persona": "buy_and_hold"})
+        assert resp3.status_code == 200
+
+        # Verify only the latest sample data exists (active)
+        from models.properties import Property
+        from models.analysis_scenarios import AnalysisScenario
+
+        active_props = db.query(Property).filter(
+            Property.is_sample == True,
+            Property.is_deleted == False,
+        ).count()
+        assert active_props == 1
+
+        active_scenarios = db.query(AnalysisScenario).filter(
+            AnalysisScenario.is_sample == True,
+            AnalysisScenario.is_deleted == False,
+        ).count()
+        assert active_scenarios >= 1
+
 
 # ---------------------------------------------------------------------------
 # GET /api/onboarding/status
