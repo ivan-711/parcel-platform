@@ -57,9 +57,8 @@ export function getAuthHeaders(): Record<string, string> {
   return {}
 }
 
-/** Ensure auth headers are available — fetches token on-demand if cache is empty. */
+/** Ensure auth headers are available — always fetches a fresh token via Clerk's getToken(). */
 export async function ensureAuthHeaders(): Promise<Record<string, string>> {
-  if (_clerkTokenCache) return { Authorization: `Bearer ${_clerkTokenCache}` }
   if (_clerkTokenGetter) {
     try {
       const token = await _clerkTokenGetter()
@@ -67,20 +66,18 @@ export async function ensureAuthHeaders(): Promise<Record<string, string>> {
         _clerkTokenCache = token
         return { Authorization: `Bearer ${token}` }
       }
-    } catch { /* token fetch failed — proceed unauthenticated */ }
+    } catch { /* token fetch failed — fall through to cache */ }
   }
+  if (_clerkTokenCache) return { Authorization: `Bearer ${_clerkTokenCache}` }
   return {}
 }
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  const authHeaders = await ensureAuthHeaders()
   const headers: Record<string, string> = {
     ...(options?.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
+    ...authHeaders,
     ...(options?.headers as Record<string, string>),
-  }
-
-  // Add Clerk Bearer token if available
-  if (_clerkTokenCache) {
-    headers['Authorization'] = `Bearer ${_clerkTokenCache}`
   }
 
   let res: Response

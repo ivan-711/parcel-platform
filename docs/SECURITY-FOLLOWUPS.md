@@ -32,6 +32,16 @@ No explicit timeout on SSE streams. Add a 5-minute max and session validity chec
 
 ## LOW
 
+### 8. A11y: Missing Description for DialogContent
+**Effort:** 30 min
+**File:** MetricTooltip or similar Radix Dialog usages
+Console warning: "Missing Description or aria-describedby={undefined} for DialogContent". Add a Description child or aria-describedby to relevant Radix dialog usages.
+
+### 9. CSP: Google Maps gen_204 Beacon
+**Effort:** 30 min
+**File:** `backend/main.py` (if CSP middleware exists)
+CSP blocks Google Maps gen_204 tracking beacon. Likely cosmetic (ad blocker artifact) but verify CSP allows `https://maps.googleapis.com` if a CSP policy is configured.
+
 ### 6. Module-level Token Cache
 **Effort:** 1 hour
 **File:** `frontend/src/lib/api.ts:38-73`
