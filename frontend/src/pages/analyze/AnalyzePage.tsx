@@ -176,7 +176,13 @@ export default function AnalyzePage() {
           break
 
         case 'narrative':
-          setPartialResult(prev => ({ ...prev, narrative: data }))
+          setPartialResult(prev => ({
+            ...prev,
+            narrative: data,
+            scenario: prev?.scenario
+              ? { ...prev.scenario, ai_narrative: data.narrative, ai_narrative_generated_at: new Date().toISOString() }
+              : prev?.scenario,
+          }))
           updateStep(3, 'success')
           break
 
