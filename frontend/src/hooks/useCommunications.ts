@@ -3,11 +3,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
 import type { SendSMSRequest, SendEmailRequest } from '@/types'
 
 export function useThread(contactId: string | undefined) {
+  const userId = useAuthStore((s) => s.user?.id)
   return useQuery({
-    queryKey: ['communications', 'thread', contactId],
+    queryKey: ['u', userId, 'communications', 'thread', contactId],
     queryFn: () => api.communications.thread(contactId!),
     enabled: !!contactId,
     staleTime: 10_000,
@@ -16,12 +18,13 @@ export function useThread(contactId: string | undefined) {
 }
 
 export function useSendSMS() {
+  const userId = useAuthStore((s) => s.user?.id)
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (data: SendSMSRequest) => api.communications.sendSMS(data),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['communications', 'thread', variables.contact_id] })
-      queryClient.invalidateQueries({ queryKey: ['contact-communications', variables.contact_id] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'communications', 'thread', variables.contact_id] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'contact-communications', variables.contact_id] })
       toast.success('SMS sent')
     },
     onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed to send SMS'),
@@ -29,12 +32,13 @@ export function useSendSMS() {
 }
 
 export function useSendEmail() {
+  const userId = useAuthStore((s) => s.user?.id)
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (data: SendEmailRequest) => api.communications.sendEmail(data),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['communications', 'thread', variables.contact_id] })
-      queryClient.invalidateQueries({ queryKey: ['contact-communications', variables.contact_id] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'communications', 'thread', variables.contact_id] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'contact-communications', variables.contact_id] })
       toast.success('Email sent')
     },
     onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed to send email'),

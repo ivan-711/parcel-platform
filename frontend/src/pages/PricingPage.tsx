@@ -188,6 +188,7 @@ export default function PricingPage() {
 
   const { data: billing } = useBillingStatus()
   const user = useAuthStore((s) => s.user)
+  const userId = user?.id
   const checkout = useCheckout()
   const portal = usePortal()
 
@@ -201,7 +202,7 @@ export default function PricingPage() {
     const billingParam = searchParams.get('billing')
     if (billingParam === 'success') {
       toast.success('Welcome! Your subscription is active.')
-      queryClient.invalidateQueries({ queryKey: ['billing'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'billing'] })
       queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
       queryClient.invalidateQueries({ queryKey: ['session-check'] })
       setSearchParams({}, { replace: true })

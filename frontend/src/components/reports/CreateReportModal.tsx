@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
 
 function trackEvent(event: string, props?: Record<string, unknown>) {
   try { (window as any).posthog?.capture?.(event, props) } catch { /* ignore */ }
@@ -36,6 +37,7 @@ export function CreateReportModal({
   defaultTitle,
 }: CreateReportModalProps) {
   const queryClient = useQueryClient()
+  const userId = useAuthStore((s) => s.user?.id)
 
   const [title, setTitle] = useState(defaultTitle || 'Analysis Report')
   const [reportType] = useState('analysis')
@@ -57,7 +59,7 @@ export function CreateReportModal({
         audience,
       }),
     onSuccess: (report) => {
-      queryClient.invalidateQueries({ queryKey: ['reports'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'reports'] })
       onOpenChange(false)
 
       // Copy share link

@@ -23,6 +23,7 @@ import {
 import { useBuyerMatches } from '@/hooks/useDispositions'
 import { useSequences } from '@/hooks/useSequences'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
 import type {
   BuyerDetail,
   BuyBox,
@@ -92,6 +93,7 @@ export default function BuyerDetailPage() {
   const { data: sequences } = useSequences()
   const activeSequences = (sequences ?? []).filter(s => s.status === 'active')
   const queryClient = useQueryClient()
+  const userId = useAuthStore((s) => s.user?.id)
 
   const buyer = data as BuyerDetail | undefined
   const matches = matchesData?.matches ?? []
@@ -207,7 +209,7 @@ export default function BuyerDetailPage() {
                         try {
                           await api.sequences.enroll(seq.id, { contact_id: contactId! })
                           toast.success(`Enrolled in "${seq.name}"`)
-                          queryClient.invalidateQueries({ queryKey: ['sequences'] })
+                          queryClient.invalidateQueries({ queryKey: ['u', userId, 'sequences'] })
                           setSeqDropdownOpen(false)
                         } catch (err) {
                           toast.error(err instanceof Error ? err.message : 'Failed to enroll')

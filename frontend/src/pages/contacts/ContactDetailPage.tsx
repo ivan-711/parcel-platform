@@ -33,6 +33,7 @@ import {
 import { useSequences } from '@/hooks/useSequences'
 import { safeStaggerContainer, safeStaggerItem } from '@/lib/motion'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
 
 export default function ContactDetailPage() {
   const { contactId } = useParams<{ contactId: string }>()
@@ -43,6 +44,7 @@ export default function ContactDetailPage() {
   const { data: sequences } = useSequences()
   const activeSequences = (sequences ?? []).filter(s => s.status === 'active')
   const queryClient = useQueryClient()
+  const userId = useAuthStore((s) => s.user?.id)
 
   const { data: contact, isLoading, isError } = useContact(contactId)
   const { data: communications, isLoading: commsLoading } = useContactCommunications(contactId)
@@ -158,7 +160,7 @@ export default function ContactDetailPage() {
                         try {
                           await api.sequences.enroll(seq.id, { contact_id: contactId! })
                           toast.success(`Enrolled in "${seq.name}"`)
-                          queryClient.invalidateQueries({ queryKey: ['sequences'] })
+                          queryClient.invalidateQueries({ queryKey: ['u', userId, 'sequences'] })
                           setSeqDropdownOpen(false)
                         } catch (err) {
                           toast.error(err instanceof Error ? err.message : 'Failed to enroll')

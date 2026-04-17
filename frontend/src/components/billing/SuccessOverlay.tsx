@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
 import { prefersReducedMotion } from '@/lib/motion'
 import { Check, Sparkles, BarChart3, MessageSquare, FileText, GitBranch } from 'lucide-react'
+import { useAuthStore } from '@/stores/authStore'
 
 const FEATURES = [
   { icon: Sparkles, label: 'Unlimited deal analyses' },
@@ -17,13 +18,14 @@ export function SuccessOverlay() {
   const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const userId = useAuthStore((s) => s.user?.id)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const show = searchParams.get('billing') === 'success'
 
   // Invalidate billing + user queries on mount
   useEffect(() => {
     if (!show) return
-    queryClient.invalidateQueries({ queryKey: ['billing'] })
+    queryClient.invalidateQueries({ queryKey: ['u', userId, 'billing'] })
     queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
   }, [show, queryClient])
 

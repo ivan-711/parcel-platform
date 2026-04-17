@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { useCreatePacket } from '@/hooks/useDispositions'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/stores/authStore'
 
 interface Props {
   open: boolean
@@ -47,6 +48,7 @@ export function CreatePacketModal({
   onSuccess,
 }: Props) {
   const queryClient = useQueryClient()
+  const userId = useAuthStore((s) => s.user?.id)
   const createPacket = useCreatePacket()
 
   const defaultTitle = `${propertyAddress} — ${strategyLabel(strategy)} Analysis`
@@ -98,8 +100,8 @@ export function CreatePacketModal({
           buyer_contact_ids: selectedBuyerIds,
           message: notes.trim() || undefined,
         })
-        queryClient.invalidateQueries({ queryKey: ['dispositions', 'packets'] })
-        queryClient.invalidateQueries({ queryKey: ['buyers'] })
+        queryClient.invalidateQueries({ queryKey: ['u', userId, 'dispositions', 'packets'] })
+        queryClient.invalidateQueries({ queryKey: ['u', userId, 'buyers'] })
         toast.success(`Packet sent to ${result.sent_count} buyer${result.sent_count !== 1 ? 's' : ''}`)
       }
 

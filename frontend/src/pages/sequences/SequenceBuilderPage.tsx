@@ -8,6 +8,7 @@ import { AppShell } from '@/components/layout/AppShell'
 import { useSequence, useCreateSequence, useUpdateSequence } from '@/hooks/useSequences'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/stores/authStore'
 import type { SequenceDetail } from '@/types'
 
 // ---------------------------------------------------------------------------
@@ -375,6 +376,7 @@ export default function SequenceBuilderPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const userId = useAuthStore((s) => s.user?.id)
   const isEdit = Boolean(id)
 
   // Load existing sequence when editing
@@ -471,8 +473,8 @@ export default function SequenceBuilderPage() {
         }
 
         // Invalidate so list/detail pages show fresh data
-        queryClient.invalidateQueries({ queryKey: ['sequences'] })
-        queryClient.invalidateQueries({ queryKey: ['sequences', id] })
+        queryClient.invalidateQueries({ queryKey: ['u', userId, 'sequences'] })
+        queryClient.invalidateQueries({ queryKey: ['u', userId, 'sequences', id] })
       }
 
       navigate('/sequences')

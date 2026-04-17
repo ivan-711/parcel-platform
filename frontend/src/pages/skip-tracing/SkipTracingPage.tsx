@@ -14,6 +14,7 @@ import { SkipTraceResultCard } from '@/components/skip-tracing/SkipTraceResultCa
 import { useSkipTrace, useSkipTraceHistory, useSkipTraceUsage, useCreateContactFromTrace } from '@/hooks/useSkipTracing'
 import { cn } from '@/lib/utils'
 import { safeStaggerContainer, safeStaggerItem } from '@/lib/motion'
+import { useAuthStore } from '@/stores/authStore'
 import type { SkipTraceResult, SkipTraceListItem } from '@/types'
 
 // ---------------------------------------------------------------------------
@@ -114,6 +115,7 @@ export default function SkipTracingPage() {
   const [inlineResult, setInlineResult] = useState<SkipTraceResult | null>(null)
 
   const queryClient = useQueryClient()
+  const userId = useAuthStore((s) => s.user?.id)
   const skipTrace = useSkipTrace()
   const { data: historyData, isLoading: historyLoading, isError: historyError, error: historyErr } = useSkipTraceHistory()
   const history = historyData?.items
@@ -246,7 +248,7 @@ export default function SkipTracingPage() {
           ) : historyError ? (
             <ErrorState
               message={historyErr instanceof Error ? historyErr.message : 'Failed to load history'}
-              onRetry={() => queryClient.invalidateQueries({ queryKey: ['skip-tracing', 'history'] })}
+              onRetry={() => queryClient.invalidateQueries({ queryKey: ['u', userId, 'skip-tracing', 'history'] })}
             />
           ) : rows.length === 0 ? (
             <EmptyState

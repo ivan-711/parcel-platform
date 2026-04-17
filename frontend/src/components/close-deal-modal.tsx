@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog'
 import { StrategyBadge } from '@/components/ui/StrategyBadge'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
 import type { Strategy } from '@/types'
 
 interface CloseDealModalProps {
@@ -37,6 +38,7 @@ export function CloseDealModal({
   pipelineId,
 }: CloseDealModalProps) {
   const queryClient = useQueryClient()
+  const userId = useAuthStore((s) => s.user?.id)
   const navigate = useNavigate()
   const { triggerShake, shakeProps } = useShake()
 
@@ -78,8 +80,8 @@ export function CloseDealModal({
           onClick: () => navigate('/portfolio'),
         },
       })
-      queryClient.invalidateQueries({ queryKey: ['portfolio'] })
-      queryClient.invalidateQueries({ queryKey: ['pipeline'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'portfolio'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'pipeline'] })
       onClose()
     },
     onError: (err) => {

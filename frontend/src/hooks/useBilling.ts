@@ -3,11 +3,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
 import type { BillingStatus, CheckoutRequest, CheckoutResponse, PortalResponse, CancelRequest, CancelResponse } from '@/types'
 
 export function useBillingStatus() {
+  const userId = useAuthStore((s) => s.user?.id)
   return useQuery<BillingStatus>({
-    queryKey: ['billing', 'status'],
+    queryKey: ['u', userId, 'billing', 'status'],
     queryFn: () => api.billing.status(),
     staleTime: 60_000,
     refetchOnWindowFocus: true,
@@ -39,12 +41,13 @@ export function usePortal() {
 }
 
 export function useCancelSubscription() {
+  const userId = useAuthStore((s) => s.user?.id)
   const queryClient = useQueryClient()
   return useMutation<CancelResponse, Error, CancelRequest>({
     mutationFn: (data) => api.billing.cancel(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['billing'] })
-      queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'billing'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'auth', 'me'] })
       toast.success('Subscription canceled')
     },
     onError: (err) => {

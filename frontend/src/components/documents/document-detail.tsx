@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
 import {
   formatFileSize,
   formatDocumentType,
@@ -301,6 +302,7 @@ export function RightPanelContent({
   isMobileDetail,
 }: RightPanelContentProps) {
   const queryClient = useQueryClient()
+  const userId = useAuthStore((s) => s.user?.id)
 
   const { data: doc, isLoading, isError } = useQuery({
     queryKey: ['document', selectedId],
@@ -318,7 +320,7 @@ export function RightPanelContent({
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.documents.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['documents'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'documents'] })
       onClearSelection()
       toast.success('Document deleted')
     },
@@ -356,7 +358,7 @@ export function RightPanelContent({
         <AlertCircle size={32} className="text-error" />
         <p className="text-sm text-text-secondary">Failed to load document</p>
         <button
-          onClick={() => queryClient.invalidateQueries({ queryKey: ['document', selectedId] })}
+          onClick={() => queryClient.invalidateQueries({ queryKey: ['u', userId, 'document', selectedId] })}
           className="text-xs font-medium text-violet-400 hover:text-violet-600 transition-colors"
         >
           Try again

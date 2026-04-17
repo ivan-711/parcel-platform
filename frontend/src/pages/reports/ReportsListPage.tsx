@@ -133,6 +133,7 @@ function ReportActions({
 
 export default function ReportsListPage() {
   const queryClient = useQueryClient()
+  const userId = useAuthStore((s) => s.user?.id)
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['reports'],
@@ -142,7 +143,7 @@ export default function ReportsListPage() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.reports.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reports'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'reports'] })
       toast.success('Report deleted')
       trackEvent('report_deleted')
     },
@@ -202,7 +203,7 @@ export default function ReportsListPage() {
         {isError && (
           <ErrorState
             message={error instanceof Error ? error.message : 'Failed to load reports'}
-            onRetry={() => queryClient.invalidateQueries({ queryKey: ['reports'] })}
+            onRetry={() => queryClient.invalidateQueries({ queryKey: ['u', userId, 'reports'] })}
           />
         )}
 

@@ -95,6 +95,7 @@ export default function Dashboard() {
   const [searchParams, setSearchParams] = useSearchParams()
   const { data: stats, isLoading, isError, error } = useDashboard()
   const user = useAuthStore((s) => s.user)
+  const userId = user?.id
   const isDemoUser = user?.email === 'demo@parcel.app'
   const [bannerDismissed, setBannerDismissed] = useState(false)
   const { realPropertyCount, hasSampleData, fetchStatus, fetched: onboardingFetched } = useOnboardingStore()
@@ -113,7 +114,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (searchParams.get('checkout') === 'success') {
       toast.success('Welcome! Your subscription is active.')
-      queryClient.invalidateQueries({ queryKey: ['billing'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'billing'] })
       queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
       setSearchParams({}, { replace: true })
     }
@@ -183,7 +184,7 @@ export default function Dashboard() {
           <div className="space-y-2">
             <p className="text-sm font-medium text-text-primary">Failed to load dashboard</p>
             <p className="text-xs text-text-secondary">{error instanceof Error ? error.message : 'Something went wrong.'}</p>
-            <button onClick={() => queryClient.invalidateQueries({ queryKey: ['dashboard'] })} className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors">
+            <button onClick={() => queryClient.invalidateQueries({ queryKey: ['u', userId, 'dashboard'] })} className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors">
               Try again
             </button>
           </div>

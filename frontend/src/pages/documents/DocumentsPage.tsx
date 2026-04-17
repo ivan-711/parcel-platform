@@ -11,6 +11,7 @@ import { FeatureGate } from '@/components/billing/FeatureGate'
 import { cn } from '@/lib/utils'
 import { safeStaggerContainer, safeStaggerItem } from '@/lib/motion'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
 import { UploadZone } from '@/components/documents/upload-zone'
 import { DocumentList } from '@/components/documents/document-list'
 import { RightPanelContent } from '@/components/documents/document-detail'
@@ -71,6 +72,7 @@ export default function DocumentsPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [page, setPage] = useState(1)
   const queryClient = useQueryClient()
+  const userId = useAuthStore((s) => s.user?.id)
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['documents', page],
@@ -85,7 +87,7 @@ export default function DocumentsPage() {
       return api.documents.upload(formData)
     },
     onSuccess: (resp) => {
-      queryClient.invalidateQueries({ queryKey: ['documents'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'documents'] })
       setPage(1)
       setSelectedId(resp.id)
       toast.success('Document uploaded')

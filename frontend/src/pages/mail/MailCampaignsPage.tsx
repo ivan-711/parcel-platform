@@ -12,6 +12,7 @@ import { EmptyState } from '@/components/EmptyState'
 import { useMailCampaigns, useDeleteMailCampaign } from '@/hooks/useMailCampaigns'
 import { cn } from '@/lib/utils'
 import { safeStaggerContainer, safeStaggerItem } from '@/lib/motion'
+import { useAuthStore } from '@/stores/authStore'
 import type { MailCampaignListItem } from '@/types'
 
 // ---------------------------------------------------------------------------
@@ -175,6 +176,7 @@ function CampaignCard({ campaign }: { campaign: MailCampaignListItem }) {
 
 export default function MailCampaignsPage() {
   const queryClient = useQueryClient()
+  const userId = useAuthStore((s) => s.user?.id)
   const { data: campaigns, isLoading, isError, error } = useMailCampaigns()
   const count = campaigns?.length ?? 0
 
@@ -221,7 +223,7 @@ export default function MailCampaignsPage() {
         ) : isError ? (
           <ErrorState
             message={error instanceof Error ? error.message : 'Failed to load campaigns'}
-            onRetry={() => queryClient.invalidateQueries({ queryKey: ['mail-campaigns'] })}
+            onRetry={() => queryClient.invalidateQueries({ queryKey: ['u', userId, 'mail-campaigns'] })}
           />
         ) : count === 0 ? (
           <EmptyState

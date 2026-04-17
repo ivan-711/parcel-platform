@@ -20,6 +20,7 @@ import {
 import { useDeals } from '@/hooks/useDeals'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
 import { PER_PAGE } from '@/components/deals/constants'
 import { FilterBar } from '@/components/deals/filter-bar'
 import { PresetChips } from '@/components/deals/preset-chips'
@@ -42,11 +43,12 @@ export default function MyDeals() {
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const queryClient = useQueryClient()
+  const userId = useAuthStore((s) => s.user?.id)
 
   const deleteDeal = useMutation({
     mutationFn: (id: string) => api.deals.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['deals'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'deals'] })
       toast.success('Deal deleted')
       setDeletingId(null)
     },
@@ -110,7 +112,7 @@ export default function MyDeals() {
     setIsDeleting(true)
     try {
       await Promise.all(Array.from(selectedIds).map(id => api.deals.delete(id)))
-      queryClient.invalidateQueries({ queryKey: ['deals'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'deals'] })
       toast.success(`${selectedIds.size} deal${selectedIds.size > 1 ? 's' : ''} deleted`)
     } catch {
       toast.error('Some deals could not be deleted')
@@ -288,7 +290,7 @@ export default function MyDeals() {
                 {error instanceof Error ? error.message : 'Something went wrong. Please try again.'}
               </p>
               <button
-                onClick={() => queryClient.invalidateQueries({ queryKey: ['deals'] })}
+                onClick={() => queryClient.invalidateQueries({ queryKey: ['u', userId, 'deals'] })}
                 className="text-xs font-medium text-violet-400 hover:text-violet-300 transition-colors"
               >
                 Try again

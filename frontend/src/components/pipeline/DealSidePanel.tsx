@@ -14,6 +14,7 @@ import { TaskList } from '@/components/tasks/TaskList'
 import { AddTaskForm } from '@/components/tasks/AddTaskForm'
 import { useTasksList } from '@/hooks/useTasks'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
 import { STAGES, STRATEGY_COLORS, STRATEGY_LABELS } from './constants'
 import type { PipelineCard, Stage } from './constants'
 import { cn } from '@/lib/utils'
@@ -26,6 +27,7 @@ interface Props {
 
 export function DealSidePanel({ card, isOpen, onClose }: Props) {
   const qc = useQueryClient()
+  const userId = useAuthStore((s) => s.user?.id)
   const { data: tasksData } = useTasksList(
     card ? { deal_id: card.deal_id, per_page: 10 } : {},
     { enabled: isOpen && !!card }
@@ -35,8 +37,8 @@ export function DealSidePanel({ card, isOpen, onClose }: Props) {
     mutationFn: ({ pipelineId, stage }: { pipelineId: string; stage: string }) =>
       api.pipeline.updateStage(pipelineId, { stage }),
     onSuccess: (_data, variables) => {
-      qc.invalidateQueries({ queryKey: ['pipeline'] })
-      qc.invalidateQueries({ queryKey: ['today'] })
+      qc.invalidateQueries({ queryKey: ['u', userId, 'pipeline'] })
+      qc.invalidateQueries({ queryKey: ['u', userId, 'today'] })
       // Update the card prop via parent callback would be ideal,
       // but we can at least reflect the new stage locally
       if (card) {

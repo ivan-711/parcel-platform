@@ -400,6 +400,8 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<TabId>(
     tabs.some((t) => t.id === initialTab) ? initialTab : 'profile'
   )
+  const userId = useAuthStore((s) => s.user?.id)
+
   const { data: user, isLoading, isError: profileError } = useQuery({
     queryKey: ['me'],
     queryFn: api.auth.me,
@@ -446,7 +448,7 @@ export default function SettingsPage() {
     const billingParam = searchParams.get('billing')
     if (billingParam === 'success') {
       toast.success('Welcome! Your subscription is active.')
-      queryClient.invalidateQueries({ queryKey: ['billing'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'billing'] })
       queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
       queryClient.invalidateQueries({ queryKey: ['session-check'] })
       setSearchParams({}, { replace: true })

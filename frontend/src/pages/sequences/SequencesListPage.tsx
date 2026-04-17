@@ -64,13 +64,14 @@ function SkeletonCard() {
 
 function SequenceCard({ seq }: { seq: SequenceListItem }) {
   const queryClient = useQueryClient()
+  const userId = useAuthStore((s) => s.user?.id)
   const updateSeq = useUpdateSequence()
 
   async function handleTogglePause() {
     const nextStatus = seq.status === 'active' ? 'paused' : 'active'
     try {
       await api.sequences.update(seq.id, { status: nextStatus })
-      queryClient.invalidateQueries({ queryKey: ['sequences'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'sequences'] })
       toast.success(nextStatus === 'paused' ? 'Sequence paused' : 'Sequence resumed')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to update sequence')
@@ -80,7 +81,7 @@ function SequenceCard({ seq }: { seq: SequenceListItem }) {
   async function handleArchive() {
     try {
       await api.sequences.update(seq.id, { status: 'archived' })
-      queryClient.invalidateQueries({ queryKey: ['sequences'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'sequences'] })
       toast.success('Sequence archived')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to archive sequence')
@@ -175,6 +176,7 @@ export default function SequencesListPage() {
   const { data: sequences, isLoading, isError, error } = useSequences()
   const { data: billing } = useBillingStatus()
   const user = useAuthStore((s) => s.user)
+  const userId = user?.id
 
   const count = sequences?.length ?? 0
 
@@ -251,7 +253,7 @@ export default function SequencesListPage() {
         ) : isError ? (
           <ErrorState
             message={error instanceof Error ? error.message : 'Failed to load sequences'}
-            onRetry={() => queryClient.invalidateQueries({ queryKey: ['sequences'] })}
+            onRetry={() => queryClient.invalidateQueries({ queryKey: ['u', userId, 'sequences'] })}
           />
         ) : count === 0 ? (
           <EmptyState

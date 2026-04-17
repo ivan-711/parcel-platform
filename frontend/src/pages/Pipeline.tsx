@@ -48,6 +48,7 @@ import { PipelineError } from '@/components/pipeline/pipeline-error'
 import { useKanbanKeyboard } from '@/hooks/useKanbanKeyboard'
 import { FeatureGate } from '@/components/billing/FeatureGate'
 import { DealSidePanel } from '@/components/pipeline/DealSidePanel'
+import { useAuthStore } from '@/stores/authStore'
 
 /** Strategy badge used inside the drag overlay. */
 function OverlayStrategyBadge({ strategy }: { strategy: string }) {
@@ -72,6 +73,7 @@ const STRATEGY_FILTERS = [
 ]
 
 export default function PipelinePage() {
+  const userId = useAuthStore((s) => s.user?.id)
   const queryClient = useQueryClient()
   const [activeCard, setActiveCard] = useState<PipelineCard | null>(null)
   const [overColumnKey, setOverColumnKey] = useState<Stage | null>(null)
@@ -106,7 +108,7 @@ export default function PipelinePage() {
 
   // ── Data fetching ──────────────────────────────────────────────────────
   const { data: pipelineData, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ['pipeline', strategyFilter],
+    queryKey: ['u', userId, 'pipeline', strategyFilter],
     queryFn: () => api.pipeline.list(strategyFilter || undefined),
   })
 
@@ -155,10 +157,10 @@ export default function PipelinePage() {
       api.pipeline.updateStage(pipelineId, { stage }),
     onError: () => {
       setLocalBoard(null)
-      queryClient.invalidateQueries({ queryKey: ['pipeline'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'pipeline'] })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pipeline'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'pipeline'] })
       setLocalBoard(null)
     },
   })
@@ -168,10 +170,10 @@ export default function PipelinePage() {
     mutationFn: (pipelineId: string) => api.pipeline.remove(pipelineId),
     onError: () => {
       setLocalBoard(null)
-      queryClient.invalidateQueries({ queryKey: ['pipeline'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'pipeline'] })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pipeline'] })
+      queryClient.invalidateQueries({ queryKey: ['u', userId, 'pipeline'] })
       setLocalBoard(null)
     },
   })
