@@ -649,6 +649,8 @@ async def quick_analysis_stream(
             yield _sse("complete", {
                 "latency_ms": total_latency,
                 "deal_id": str(deal_id) if deal_id else None,
+                "property_id": str(enrichment.property.id) if enrichment.property else None,
+                "scenario_id": str(enrichment.scenario.id) if enrichment.scenario else None,
             })
 
         except Exception as e:
