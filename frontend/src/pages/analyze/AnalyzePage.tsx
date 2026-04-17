@@ -25,6 +25,7 @@ export default function AnalyzePage() {
   const [steps, setSteps] = useState<LoadingStep[]>(initialSteps())
   const [partialResult, setPartialResult] = useState<Record<string, unknown> | null>(null)
   const partialResultRef = useRef<Record<string, unknown> | null>(null)
+  const propertyIdRef = useRef<string | null>(null)
   const abortRef = useRef<AbortController | null>(null)
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -65,6 +66,7 @@ export default function AnalyzePage() {
     setState('loading')
     setSteps(initialSteps())
     setPartialResult(null)
+    propertyIdRef.current = null
 
     try {
       (window as any).posthog?.capture?.('analysis_address_submitted', { address_length: trimmed.length })
@@ -100,14 +102,12 @@ export default function AnalyzePage() {
       if (placeId) {
         streamUrl += `&place_id=${encodeURIComponent(placeId)}`
       }
-      console.log('[SAFARI-DIAG] stream fetch starting:', streamUrl.slice(0, 80))
       const res = await fetch(streamUrl, {
         credentials: 'include',
         signal: controller.signal,
         headers: authHeaders,
       })
 
-      console.log('[SAFARI-DIAG] stream response:', res.status, res.ok, 'body:', !!res.body)
       if (!res.ok || !res.body) {
         throw new Error(`Stream failed: ${res.status}`)
       }
@@ -118,14 +118,9 @@ export default function AnalyzePage() {
 
       while (true) {
         const { done, value } = await reader.read()
-        if (done) {
-          console.log('[SAFARI-DIAG] reader done=true, buffer remaining:', buffer.length, 'chars')
-          break
-        }
+        if (done) break
 
-        const chunk = decoder.decode(value, { stream: true })
-        console.log('[SAFARI-DIAG] chunk received:', chunk.length, 'chars, first 100:', chunk.slice(0, 100))
-        buffer += chunk
+        buffer += decoder.decode(value, { stream: true })
         const lines = buffer.split('\n')
         buffer = lines.pop() || ''
 
@@ -135,31 +130,28 @@ export default function AnalyzePage() {
             currentEvent = line.slice(7).trim()
           } else if (line.startsWith('data: ') && currentEvent) {
             const data = line.slice(6)
-            console.log('[SAFARI-DIAG] event parsed:', currentEvent, 'payload:', data.slice(0, 80))
             handleSSEEvent(currentEvent, data, addr)
             currentEvent = ''
           }
         }
       }
-      console.log('[SAFARI-DIAG] stream loop exited normally (done=true). partialResultRef:', !!partialResultRef.current, 'property:', !!(partialResultRef.current as any)?.property)
     } catch (e: any) {
-      console.log('[SAFARI-DIAG] stream catch fired:', e?.name, e?.message?.slice(0, 100))
       if (e?.name === 'AbortError') return
 
       // Fallback to non-streaming POST
-      console.log('[SAFARI-DIAG] falling back to non-streaming POST')
       try {
         updateStep(1, 'active')
         const result = await api.analysis.quick(addr)
-        console.log('[SAFARI-DIAG] fallback POST succeeded, property:', !!(result as any)?.property)
         setPartialResult(result)
+        if ((result as any)?.property?.id) {
+          propertyIdRef.current = (result as any).property.id
+        }
         updateStep(0, 'success')
         updateStep(1, 'success')
         updateStep(2, 'success')
         updateStep(3, 'success')
         navigateToResults(result)
       } catch (fallbackErr: any) {
-        console.log('[SAFARI-DIAG] fallback POST also failed:', (fallbackErr as Error)?.message?.slice(0, 100))
         setSteps(prev => prev.map((s, i) =>
           i === 0 ? { ...s, status: 'success' as StepStatus } :
           i === 1 ? { ...s, status: 'failed' as StepStatus, label: 'Connection error', detail: 'FAILED' } :
@@ -183,6 +175,10 @@ export default function AnalyzePage() {
           break
 
         case 'enrichment':
+          // Capture property ID into ref immediately — survives React state batching
+          if (data.property?.id) {
+            propertyIdRef.current = data.property.id
+          }
           setPartialResult(prev => ({ ...prev, ...data }))
           updateStep(1, 'success')
           updateStep(2, 'active')
@@ -209,31 +205,27 @@ export default function AnalyzePage() {
           updateStep(3, 'success')
           break
 
-        case 'complete':
-          console.log('[SAFARI-DIAG] complete event received, deal_id:', data.deal_id)
-          console.log('[SAFARI-DIAG] partialResultRef at complete time:', !!partialResultRef.current, 'keys:', partialResultRef.current ? Object.keys(partialResultRef.current) : 'null')
+        case 'complete': {
           updateStep(3, 'success')
-          // Store deal_id from the complete event
+          // Capture IDs from the complete event (defense-in-depth)
+          const completePropertyId = data.property_id as string | undefined
+          const completeScenarioId = data.scenario_id as string | undefined
+          if (completePropertyId && !propertyIdRef.current) {
+            propertyIdRef.current = completePropertyId
+          }
           if (data.deal_id) {
             setPartialResult(prev => ({ ...prev, deal_id: data.deal_id }))
           }
-          // Navigate to results after a beat — read from ref to avoid stale closure
+          // Navigate after a beat — use ref for property ID (immune to state race)
           setTimeout(() => {
             const result = partialResultRef.current
-            console.log('[SAFARI-DIAG] setTimeout fired (600ms). result:', !!result, 'keys:', result ? Object.keys(result) : 'null', 'property?.id:', (result as any)?.property?.id)
-            // Include deal_id from complete event
             if (data.deal_id && result) {
               result.deal_id = data.deal_id
             }
-            if (result) {
-              console.log('[SAFARI-DIAG] calling navigateToResults')
-              navigateToResults(result)
-            } else {
-              console.log('[SAFARI-DIAG] navigate NOT called — result is null, resetting to input')
-              setState('input')
-            }
+            navigateToResults(result, completePropertyId, completeScenarioId)
           }, 600)
           break
+        }
 
         case 'error': {
           // Mark the current active step as failed, then exit loading state
@@ -249,7 +241,7 @@ export default function AnalyzePage() {
           break
         }
       }
-    } catch (parseErr) { console.log('[SAFARI-DIAG] handleSSEEvent parse error:', event, (parseErr as Error)?.message) }
+    } catch { /* parse error, ignore */ }
   }
 
   const updateStep = (index: number, status: StepStatus, detail?: string) => {
@@ -258,16 +250,24 @@ export default function AnalyzePage() {
     ))
   }
 
-  const navigateToResults = (result: Record<string, unknown>) => {
-    const property = result.property as any
-    console.log('[SAFARI-DIAG] navigateToResults called. property?.id:', property?.id, 'result keys:', Object.keys(result))
-    if (property?.id) {
-      const url = `/analyze/results/${property.id}`
-      console.log('[SAFARI-DIAG] navigate() called with:', url)
-      navigate(url, { state: { analysisResult: result } })
+  const navigateToResults = (
+    result: Record<string, unknown> | null,
+    fallbackPropertyId?: string,
+    fallbackScenarioId?: string,
+  ) => {
+    // Resolve property ID: ref (most reliable) → result state → complete event → scenario fallback
+    const propertyId =
+      propertyIdRef.current ||
+      (result?.property as any)?.id ||
+      fallbackPropertyId ||
+      null
+    const scenarioId = fallbackScenarioId || null
+
+    const navTarget = propertyId || scenarioId
+    if (navTarget) {
+      navigate(`/analyze/results/${navTarget}`, { state: result ? { analysisResult: result } : undefined })
     } else {
-      console.log('[SAFARI-DIAG] navigate NOT called — property.id missing, resetting to input')
-      setState('input')
+      setError('Analysis completed but navigation failed. Check your Properties page for the result.')
     }
   }
 
