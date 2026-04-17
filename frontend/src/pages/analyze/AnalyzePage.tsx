@@ -82,7 +82,17 @@ export default function AnalyzePage() {
     } catch { /* ignore */ }
 
     try {
-      const authHeaders = await ensureAuthHeaders()
+      let authHeaders = await ensureAuthHeaders()
+
+      // Guard: if auth isn't ready yet (token getter not hydrated), retry once
+      if (!authHeaders.Authorization) {
+        await new Promise(r => setTimeout(r, 500))
+        authHeaders = await ensureAuthHeaders()
+      }
+      if (!authHeaders.Authorization) {
+        throw new Error('Authentication not ready — please try again.')
+      }
+
       let streamUrl = `${API_URL}/api/analysis/quick/stream?address=${encodeURIComponent(addr)}`
       if (geoLocation) {
         streamUrl += `&lat=${geoLocation.lat}&lng=${geoLocation.lng}`
