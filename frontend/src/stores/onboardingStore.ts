@@ -42,9 +42,10 @@ export const useOnboardingStore = create<OnboardingState>()((set, get) => ({
         fetched: true,
       })
     } catch {
-      // Don't assume completed on error — let the user see onboarding.
-      // Setting fetched: true prevents infinite retry loops.
-      set({ completed: false, fetched: true })
+      // On 401 (session expired), clearAuth() sets isAuthenticated=false,
+      // which stops the useOnboardingStatus retry loop in App.tsx.
+      // Leave fetched=false so ProtectedRoute doesn't redirect to
+      // /onboarding before the auth redirect to /login can fire.
     } finally {
       set({ loading: false })
     }
