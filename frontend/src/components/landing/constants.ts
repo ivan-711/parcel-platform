@@ -102,9 +102,9 @@ export const PRICING: PricingTier[] = [
   },
   {
     name: 'Carbon', price: '$79', period: 'per month',
-    description: 'For active investors and agents. 7-day free trial.',
+    description: 'For active investors and agents.',
     features: ['Unlimited deal analyses', 'Full deal pipeline', 'Document AI (25 uploads / mo)', 'Offer letter generator', 'Deal comparison', 'Portfolio tracking', 'Comp analysis (50 / mo)', 'Skip tracing (25 / mo)'],
-    highlighted: true, cta: 'Start 7-day free trial',
+    highlighted: true, cta: 'Get started',
   },
   {
     name: 'Titanium', price: '$149', period: 'per month',

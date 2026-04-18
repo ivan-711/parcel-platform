@@ -60,7 +60,7 @@ export function PricingSection() {
             Plans that scale with your portfolio
           </h2>
           <p className="text-text-secondary mt-3">
-            Start with a 7-day free trial. No credit card required.
+            Start free. Upgrade when you're ready.
           </p>
         </div>
 

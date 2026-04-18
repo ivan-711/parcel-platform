@@ -35,7 +35,7 @@ export default function Register() {
     <div className="min-h-screen bg-app-bg flex items-center justify-center px-4 py-12">
       <Helmet>
         <title>Sign Up — Parcel</title>
-        <meta name="description" content="Create your Parcel account and start your 7-day free Carbon trial." />
+        <meta name="description" content="Create your Parcel account." />
       </Helmet>
       {/* Ambient glow */}
       <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
@@ -58,7 +58,6 @@ export default function Register() {
               </div>
               <p className="text-2xl font-brand font-light text-text-primary tracking-tight">Parcel</p>
               <p className="text-sm text-text-secondary">Create your account</p>
-              <p className="text-xs text-violet-400 font-medium">Start your 7-day free Carbon trial</p>
             </div>
 
             <div className="space-y-4">
@@ -123,9 +122,6 @@ export default function Register() {
                 },
               }}
             />
-            <p className="text-xs text-violet-400 font-medium text-center mt-4">
-              Start your 7-day free Carbon trial
-            </p>
           </>
         )}
       </motion.div>
