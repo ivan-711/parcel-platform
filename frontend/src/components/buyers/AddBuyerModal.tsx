@@ -83,7 +83,7 @@ export function AddBuyerModal({ open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-app-recessed border-border-default max-h-[90vh] flex flex-col">
+      <DialogContent className="sm:max-w-[500px] bg-app-recessed border-border-default max-h-[90vh] flex flex-col" aria-describedby={undefined}>
         <DialogHeader className="shrink-0">
           <DialogTitle
             className="text-text-primary font-brand font-light"

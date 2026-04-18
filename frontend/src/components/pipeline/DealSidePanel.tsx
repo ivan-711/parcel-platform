@@ -72,6 +72,7 @@ export function DealSidePanel({ card, isOpen, onClose }: Props) {
       <SheetContent
         side="right"
         className="w-full sm:w-[480px] p-0 bg-app-bg border-l border-border-default overflow-y-auto"
+        aria-describedby={undefined}
       >
         <SheetTitle className="sr-only">Deal Details</SheetTitle>
 

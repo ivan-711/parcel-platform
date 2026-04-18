@@ -53,6 +53,7 @@ export function LandingNavbar() {
         <SheetContent
           side="left"
           className="bg-app-bg border-border-default flex flex-col gap-0 p-0"
+          aria-describedby={undefined}
         >
           <SheetTitle className="sr-only">Navigation</SheetTitle>
 

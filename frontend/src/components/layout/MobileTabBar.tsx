@@ -78,7 +78,7 @@ export function MobileTabBar() {
 
       {/* More bottom sheet — grouped by section */}
       <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
-        <SheetContent side="bottom" className="rounded-t-2xl bg-app-recessed max-h-[70vh] p-0 overflow-y-auto">
+        <SheetContent side="bottom" className="rounded-t-2xl bg-app-recessed max-h-[70vh] p-0 overflow-y-auto" aria-describedby={undefined}>
           <SheetTitle className="sr-only">More navigation</SheetTitle>
           {/* Drag handle */}
           <div className="w-10 h-1 rounded-full bg-border-default mx-auto mt-3 mb-2 sticky top-0" />

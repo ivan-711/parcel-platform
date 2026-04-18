@@ -87,7 +87,7 @@ export function CreateReportModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[440px] bg-app-elevated border-border-default">
+      <DialogContent className="sm:max-w-[440px] bg-app-elevated border-border-default" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-text-primary">
             <FileText size={16} className="text-violet-400" />

@@ -160,7 +160,7 @@ export function AddInstrumentModal({ open, onOpenChange, propertyId, propertyAdd
 
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose() }}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-app-recessed p-0 scrollbar-luxury">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-app-recessed p-0 scrollbar-luxury" aria-describedby={undefined}>
         {/* Header */}
         <DialogHeader className="sticky top-0 z-10 bg-app-recessed border-b border-border-default px-6 py-4 space-y-0">
           <DialogTitle className="text-lg text-text-primary font-brand font-light">

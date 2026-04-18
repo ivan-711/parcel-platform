@@ -102,7 +102,7 @@ export function AddTransactionModal({ open, onOpenChange, properties, defaultPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px] bg-app-recessed border-border-default">
+      <DialogContent className="sm:max-w-[480px] bg-app-recessed border-border-default" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="text-text-primary font-brand font-light">
             Add Transaction

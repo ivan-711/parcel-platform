@@ -527,6 +527,7 @@ function MobileSidebar({
       <SheetContent
         side="left"
         className="w-[280px] p-0 bg-app-bg border-r border-border-default"
+        aria-describedby={undefined}
       >
         <SheetTitle className="sr-only">Navigation</SheetTitle>
 

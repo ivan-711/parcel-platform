@@ -1,6 +1,7 @@
 /** ChatSlideOver — right-side sheet panel containing a ChatPanel instance. */
 
-import { Sheet, SheetContent } from '@/components/ui/sheet'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { ChatPanel } from './ChatPanel'
 
 interface ChatSlideOverProps {
@@ -14,7 +15,11 @@ export function ChatSlideOver({ open, onOpenChange }: ChatSlideOverProps) {
       <SheetContent
         side="right"
         className="w-full sm:w-[480px] sm:max-w-[480px] p-0 border-l border-border-default bg-app-bg [&>button]:hidden"
+        aria-describedby={undefined}
       >
+        <VisuallyHidden asChild>
+          <SheetTitle>AI Chat</SheetTitle>
+        </VisuallyHidden>
         <div className="h-full flex flex-col">
           {/* Close bar */}
           <div className="shrink-0 flex items-center justify-end px-3 py-2 border-b border-border-subtle">
