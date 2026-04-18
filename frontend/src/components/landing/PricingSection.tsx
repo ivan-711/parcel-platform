@@ -167,7 +167,7 @@ export function PricingSection() {
               className="mt-8 block text-center rounded-full py-3 text-sm font-medium text-accent-text-on-accent hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(139,122,255,0.3)] transition-all duration-200 focus-ring"
               style={{ background: 'linear-gradient(to right, #8B7AFF, #6C5CE7)' }}
             >
-              Start 7-Day Free Trial
+              Get started
             </Link>
           </motion.div>
 

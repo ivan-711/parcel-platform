@@ -60,8 +60,8 @@ const TITANIUM_FEATURES = [
 
 const FAQ_ITEMS = [
   {
-    q: 'What happens after my trial ends?',
-    a: "You'll be downgraded to Steel (free). Your data stays, but Carbon features will be locked.",
+    q: 'What happens when I reach my monthly analysis limit on Steel?',
+    a: "You'll see an upgrade prompt and can continue using saved deals until your quota resets next month, or upgrade to Carbon for unlimited analyses.",
   },
   {
     q: 'Can I cancel anytime?',
@@ -239,7 +239,7 @@ export default function PricingPage() {
       <div className="max-w-5xl mx-auto space-y-12 pb-12">
         <Helmet>
           <title>Pricing — Parcel</title>
-          <meta name="description" content="Choose your Parcel plan. Start with a 7-day free Carbon trial — no credit card required." />
+          <meta name="description" content="Choose your Parcel plan. Start free. Upgrade when you're ready." />
         </Helmet>
 
         {/* ── Header ── */}
@@ -248,7 +248,7 @@ export default function PricingPage() {
             Choose Your Plan
           </h1>
           <p className="text-base text-text-secondary">
-            Start with a 7-day Carbon trial. No credit card required.
+            Start free. Upgrade when you're ready.
           </p>
           <BillingToggle interval={interval} onChange={setInterval} />
         </div>
@@ -394,7 +394,7 @@ export default function PricingPage() {
                       Redirecting to checkout...
                     </>
                   ) : (
-                    'Start 7-Day Free Trial'
+                    'Upgrade to Carbon'
                   )}
                 </motion.button>
               )}
@@ -511,7 +511,7 @@ export default function PricingPage() {
                   Redirecting...
                 </>
               ) : (
-                'Start 7-Day Free Trial'
+                'Upgrade to Carbon'
               )}
             </motion.button>
           )}
