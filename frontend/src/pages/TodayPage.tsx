@@ -231,9 +231,9 @@ function NewUserView({
 
         {hasSampleData && (
           <p className="text-xs text-text-muted mt-6">
-            Explore your sample deals in{' '}
-            <Link to="/pipeline" className="text-accent-primary hover:text-accent-secondary transition-colors">
-              Pipeline
+            Explore your sample deal in{' '}
+            <Link to="/properties" className="text-accent-primary hover:text-accent-secondary transition-colors">
+              Properties
             </Link>{' '}
             to see what Parcel can do.
           </p>
