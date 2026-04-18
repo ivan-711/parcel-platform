@@ -7,16 +7,23 @@ import { motion } from 'framer-motion'
 import { prefersReducedMotion } from '@/lib/motion'
 import type { LucideIcon } from 'lucide-react'
 
+const CTA_CLASSES = 'inline-flex items-center px-5 py-2.5 rounded-lg text-sm font-medium bg-violet-400 text-white hover:bg-violet-500 transition-colors'
+
 interface Props {
   icon?: LucideIcon
   heading: string
   description: string
   ctaLabel?: string
   ctaHref?: string
+  onCtaClick?: () => void
   secondaryCta?: { label: string; href: string }
 }
 
-export function EmptyState({ icon: Icon, heading, description, ctaLabel, ctaHref, secondaryCta }: Props) {
+export function EmptyState({ icon: Icon, heading, description, ctaLabel, ctaHref, onCtaClick, secondaryCta }: Props) {
+  if (process.env.NODE_ENV !== 'production' && ctaHref && onCtaClick) {
+    console.warn('[EmptyState] Both ctaHref and onCtaClick provided; onCtaClick wins. Pass only one.')
+  }
+
   return (
     <motion.div
       initial={prefersReducedMotion ? {} : { opacity: 0, y: 12 }}
@@ -40,11 +47,13 @@ export function EmptyState({ icon: Icon, heading, description, ctaLabel, ctaHref
         {description}
       </p>
 
-      {ctaLabel && ctaHref && (
-        <Link
-          to={ctaHref}
-          className="inline-flex items-center px-5 py-2.5 rounded-lg text-sm font-medium bg-violet-400 text-white hover:bg-violet-500 transition-colors"
-        >
+      {ctaLabel && onCtaClick && (
+        <button type="button" onClick={onCtaClick} className={CTA_CLASSES}>
+          {ctaLabel}
+        </button>
+      )}
+      {ctaLabel && ctaHref && !onCtaClick && (
+        <Link to={ctaHref} className={CTA_CLASSES}>
           {ctaLabel}
         </Link>
       )}

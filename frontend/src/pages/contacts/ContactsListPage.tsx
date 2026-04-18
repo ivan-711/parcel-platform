@@ -189,7 +189,7 @@ export default function ContactsListPage() {
             heading="No contacts yet"
             description="Add sellers, buyers, agents, and other contacts you work with."
             ctaLabel="Add Contact"
-            ctaHref="#"
+            onCtaClick={() => setModalOpen(true)}
           />
         )}
 

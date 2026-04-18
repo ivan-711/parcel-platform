@@ -300,16 +300,8 @@ export default function PropertiesListPage() {
             heading="No properties match"
             description="Try a different search or clear your filters."
             ctaLabel="Clear Filters"
-            ctaHref="#"
-            secondaryCta={{ label: '', href: '' }}
+            onCtaClick={clearFilters}
           />
-        )}
-        {!isLoading && !isError && properties.length === 0 && hasFilters && (
-          <div className="flex justify-center -mt-4">
-            <button onClick={clearFilters} className="text-sm text-accent-primary hover:text-accent-hover transition-colors cursor-pointer">
-              Clear all filters
-            </button>
-          </div>
         )}
 
         {/* Table */}
