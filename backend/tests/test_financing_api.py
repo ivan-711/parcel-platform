@@ -494,7 +494,7 @@ class TestTodayIntegration:
             json=_instrument_payload(prop.id),
         )
 
-        resp = auth_client.get("/api/today")
+        resp = auth_client.get("/api/today/")
         assert resp.status_code == 200
         data = resp.json()
         ps = data["portfolio_summary"]
@@ -519,7 +519,7 @@ class TestTodayIntegration:
             obl.next_due = date.today() - timedelta(days=5)
             db.commit()
 
-            resp = auth_client.get("/api/today")
+            resp = auth_client.get("/api/today/")
             assert resp.status_code == 200
             briefing = resp.json()["briefing_items"]
             overdue_items = [
