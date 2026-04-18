@@ -2,6 +2,7 @@
 
 import type { ChatRequest, Citation } from '@/types'
 import { useAuthStore } from '@/stores/authStore'
+import { useBillingStore } from '@/stores/billingStore'
 import { ensureAuthHeaders } from '@/lib/api'
 
 const API_URL = (import.meta.env.VITE_API_URL ?? 'https://api.parceldesk.io').replace('http://', 'https://')
@@ -37,6 +38,21 @@ export async function* streamChatWithCitations(
   if (res.status === 401) {
     useAuthStore.getState().clearAuth()
     throw new Error('Session expired')
+  }
+
+  if (res.status === 402) {
+    const body = await res.json().catch(() => ({}))
+    const detail = (body as Record<string, unknown>).detail ?? body
+    const d = detail as Record<string, unknown>
+    useBillingStore.getState().setPaywallError({
+      code: d.code as string | undefined,
+      metric: d.metric as string | undefined,
+      current: d.current as number | undefined,
+      limit: d.limit as number | undefined,
+      current_tier: d.current_tier as string | undefined,
+      upgrade_url: d.upgrade_url as string | undefined,
+    })
+    throw new Error((d.error as string) ?? 'Upgrade required')
   }
 
   if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`)
@@ -108,6 +124,21 @@ export async function* streamChat(
   if (res.status === 401) {
     useAuthStore.getState().clearAuth()
     throw new Error('Session expired')
+  }
+
+  if (res.status === 402) {
+    const body = await res.json().catch(() => ({}))
+    const detail = (body as Record<string, unknown>).detail ?? body
+    const d = detail as Record<string, unknown>
+    useBillingStore.getState().setPaywallError({
+      code: d.code as string | undefined,
+      metric: d.metric as string | undefined,
+      current: d.current as number | undefined,
+      limit: d.limit as number | undefined,
+      current_tier: d.current_tier as string | undefined,
+      upgrade_url: d.upgrade_url as string | undefined,
+    })
+    throw new Error((d.error as string) ?? 'Upgrade required')
   }
 
   if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`)

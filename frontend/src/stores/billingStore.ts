@@ -6,6 +6,10 @@ interface PaywallError {
   feature?: string
   code?: string
   upgrade_url?: string
+  metric?: string
+  current?: number
+  limit?: number
+  current_tier?: string
 }
 
 interface BillingState {

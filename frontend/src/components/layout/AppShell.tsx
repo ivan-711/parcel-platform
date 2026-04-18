@@ -24,6 +24,7 @@ import { CommandPalette } from '@/components/command-palette'
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
 import { PlanBadge } from '@/components/billing/PlanBadge'
 import { TrialBanner } from '@/components/billing/TrialBanner'
+import { QuotaExceededModal } from '@/components/billing/QuotaExceededModal'
 import { duration, ease, prefersReducedMotion } from '@/lib/motion'
 
 /* ─── Types ─── */
@@ -897,6 +898,9 @@ export function AppShell({
 
       {/* AI floating button */}
       <AIFloatingButton />
+
+      {/* Global quota-exceeded upgrade modal */}
+      <QuotaExceededModal />
     </div>
   )
 }

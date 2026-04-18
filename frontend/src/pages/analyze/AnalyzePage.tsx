@@ -6,6 +6,7 @@ import { AppShell } from '@/components/layout/AppShell'
 import { AnalysisLoadingState, type LoadingStep, type StepStatus } from './components/AnalysisLoadingState'
 import { ManualCalculator } from './components/ManualCalculator'
 import { api, ensureAuthHeaders } from '@/lib/api'
+import { useBillingStore } from '@/stores/billingStore'
 import { isMapsEnabled } from '@/components/maps/MapsProvider'
 import { PlaceAutocompleteInput } from '@/components/maps/PlaceAutocompleteInput'
 import type { PlaceSelection, GeoPoint } from '@/types/maps'
@@ -107,6 +108,22 @@ export default function AnalyzePage() {
         signal: controller.signal,
         headers: authHeaders,
       })
+
+      if (res.status === 402) {
+        const body = await res.json().catch(() => ({}))
+        const detail = (body as Record<string, unknown>).detail ?? body
+        const d = detail as Record<string, unknown>
+        useBillingStore.getState().setPaywallError({
+          code: d.code as string | undefined,
+          metric: d.metric as string | undefined,
+          current: d.current as number | undefined,
+          limit: d.limit as number | undefined,
+          current_tier: d.current_tier as string | undefined,
+          upgrade_url: d.upgrade_url as string | undefined,
+        })
+        setState('input')
+        return
+      }
 
       if (!res.ok || !res.body) {
         throw new Error(`Stream failed: ${res.status}`)

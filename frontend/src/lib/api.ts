@@ -99,11 +99,16 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
   if (res.status === 402) {
     const error = await res.json().catch(() => ({ error: 'Upgrade required' }))
-    const parsed = error as { error?: string; code?: string; feature?: string; upgrade_url?: string }
+    const detail = (error as Record<string, unknown>).detail ?? error
+    const parsed = detail as { error?: string; code?: string; feature?: string; upgrade_url?: string; metric?: string; current?: number; limit?: number; current_tier?: string }
     useBillingStore.getState().setPaywallError({
       feature: parsed.feature,
       code: parsed.code,
       upgrade_url: parsed.upgrade_url,
+      metric: parsed.metric,
+      current: parsed.current,
+      limit: parsed.limit,
+      current_tier: parsed.current_tier,
     })
     throw new Error(parsed.error ?? 'Upgrade required')
   }
