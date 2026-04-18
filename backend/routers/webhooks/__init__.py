@@ -87,7 +87,7 @@ async def stripe_webhook(
 
     event_id = event["id"]
     event_type = event["type"]
-    event_data = event["data"]["object"]
+    event_data = event["data"]["object"].to_dict()
 
     # 2. Idempotency check
     existing = (
@@ -103,7 +103,7 @@ async def stripe_webhook(
         event_row = WebhookEvent(
             stripe_event_id=event_id,
             event_type=event_type,
-            payload=event["data"],
+            payload=event["data"].to_dict(),
             processed=False,
         )
         db.add(event_row)
