@@ -163,22 +163,29 @@ def _handle_checkout_session_completed(db: Session, data: dict) -> None:
 
     get_or_create_customer(db, user)
 
-    stripe_sub = _stripe_call(stripe.Subscription.retrieve, stripe_sub_id)
+    stripe_sub = _stripe_call(stripe.Subscription.retrieve, stripe_sub_id).to_dict()
 
-    # Create subscription row
+    # Create subscription row — stripe_sub is now a plain dict
     sub = Subscription(
         user_id=user.id,
-        stripe_subscription_id=stripe_sub.id,
-        stripe_customer_id=stripe_sub.customer,
-        status=stripe_sub.status,
+        stripe_subscription_id=stripe_sub["id"],
+        stripe_customer_id=stripe_sub["customer"],
+        status=stripe_sub["status"],
         plan_tier=_resolve_plan_from_subscription(stripe_sub),
-        current_period_start=datetime.utcfromtimestamp(stripe_sub.current_period_start),
-        current_period_end=datetime.utcfromtimestamp(stripe_sub.current_period_end),
     )
-    if stripe_sub.trial_start:
-        sub.trial_start = datetime.utcfromtimestamp(stripe_sub.trial_start)
-    if stripe_sub.trial_end:
-        sub.trial_end = datetime.utcfromtimestamp(stripe_sub.trial_end)
+
+    period_start = stripe_sub.get("current_period_start")
+    if period_start:
+        sub.current_period_start = datetime.utcfromtimestamp(period_start)
+
+    period_end = stripe_sub.get("current_period_end")
+    if period_end:
+        sub.current_period_end = datetime.utcfromtimestamp(period_end)
+
+    if stripe_sub.get("trial_start"):
+        sub.trial_start = datetime.utcfromtimestamp(stripe_sub["trial_start"])
+    if stripe_sub.get("trial_end"):
+        sub.trial_end = datetime.utcfromtimestamp(stripe_sub["trial_end"])
 
     db.add(sub)
     user.plan_tier = _resolve_plan_from_subscription(stripe_sub)

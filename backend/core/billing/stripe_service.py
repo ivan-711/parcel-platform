@@ -1,7 +1,7 @@
 import logging
 import time
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 
 import stripe
 from sqlalchemy.orm import Session
@@ -71,15 +71,15 @@ def get_or_create_customer(db: Session, user) -> str:
         email=user.email,
         name=user.name,
         metadata={"parcel_user_id": str(user.id)},
-    )
+    ).to_dict()
 
-    user.stripe_customer_id = customer.id
+    user.stripe_customer_id = customer["id"]
     db.add(user)
     db.commit()
     db.refresh(user)
 
-    logger.info("Created Stripe customer %s for user %s", customer.id, user.id)
-    return customer.id
+    logger.info("Created Stripe customer %s for user %s", customer["id"], user.id)
+    return customer["id"]
 
 
 def create_checkout_session(db: Session, user, plan: str, interval: str) -> str:
@@ -106,16 +106,16 @@ def create_checkout_session(db: Session, user, plan: str, interval: str) -> str:
         allow_promotion_codes=True,
         success_url=f"{settings.FRONTEND_URL}/dashboard?checkout=success&session_id={{CHECKOUT_SESSION_ID}}",
         cancel_url=f"{settings.FRONTEND_URL}/pricing",
-    )
+    ).to_dict()
 
     logger.info(
         "Created checkout session %s for user %s, plan=%s/%s",
-        session.id,
+        session["id"],
         user.id,
         plan,
         interval,
     )
-    return session.url
+    return session["url"]
 
 
 def create_portal_session(user) -> str:
@@ -128,9 +128,9 @@ def create_portal_session(user) -> str:
         stripe.billing_portal.Session.create,
         customer=user.stripe_customer_id,
         return_url=f"{settings.FRONTEND_URL}/settings",
-    )
+    ).to_dict()
 
-    return session.url
+    return session["url"]
 
 
 def cancel_subscription(
@@ -231,7 +231,9 @@ def sync_subscription_from_stripe(db: Session, stripe_subscription_id: str) -> N
     """
     from models.subscriptions import Subscription
 
-    stripe_sub = _stripe_call(stripe.Subscription.retrieve, stripe_subscription_id)
+    stripe_sub = _stripe_call(
+        stripe.Subscription.retrieve, stripe_subscription_id
+    ).to_dict()
 
     sub = (
         db.query(Subscription)
@@ -240,31 +242,41 @@ def sync_subscription_from_stripe(db: Session, stripe_subscription_id: str) -> N
     )
 
     if sub:
-        sub.status = stripe_sub.status
+        sub.status = stripe_sub["status"]
         sub.plan_tier = _resolve_plan_from_subscription(stripe_sub)
-        sub.current_period_start = datetime.utcfromtimestamp(
-            stripe_sub.current_period_start
-        )
-        sub.current_period_end = datetime.utcfromtimestamp(
-            stripe_sub.current_period_end
-        )
-        sub.cancel_at_period_end = stripe_sub.cancel_at_period_end
-        if stripe_sub.canceled_at:
-            sub.canceled_at = datetime.utcfromtimestamp(stripe_sub.canceled_at)
-        if stripe_sub.ended_at:
-            sub.ended_at = datetime.utcfromtimestamp(stripe_sub.ended_at)
+
+        period_start = stripe_sub.get("current_period_start")
+        if period_start:
+            sub.current_period_start = datetime.utcfromtimestamp(period_start)
+
+        period_end = stripe_sub.get("current_period_end")
+        if period_end:
+            sub.current_period_end = datetime.utcfromtimestamp(period_end)
+
+        sub.cancel_at_period_end = stripe_sub.get("cancel_at_period_end", False)
+
+        canceled_at = stripe_sub.get("canceled_at")
+        if canceled_at:
+            sub.canceled_at = datetime.utcfromtimestamp(canceled_at)
+
+        ended_at = stripe_sub.get("ended_at")
+        if ended_at:
+            sub.ended_at = datetime.utcfromtimestamp(ended_at)
+
         db.commit()
 
 
-def _resolve_plan_from_subscription(stripe_sub) -> str:
-    """Determine the Parcel plan from a Stripe subscription object."""
+def _resolve_plan_from_subscription(stripe_sub: dict[str, Any]) -> str:
+    """Determine the Parcel plan from a Stripe subscription dict.
+
+    Callers MUST pass a plain dict (via .to_dict() at the API boundary),
+    never a raw StripeObject.
+    """
     settings = get_stripe_settings()
     price_map = settings.price_to_plan_map
 
     # Check subscription metadata first
-    # stripe_sub.metadata is a StripeObject (SDK v15) which doesn't support
-    # dict .get() — convert to plain dict before access.
-    metadata = stripe_sub.metadata.to_dict() if stripe_sub.metadata else {}
+    metadata = stripe_sub.get("metadata") or {}
     plan = metadata.get("parcel_plan")
     if plan:
         # Legacy mapping for subscriptions created before tier renames
@@ -273,14 +285,17 @@ def _resolve_plan_from_subscription(stripe_sub) -> str:
         return _legacy.get(plan, plan)
 
     # Fall back to price ID lookup
-    if stripe_sub.items and stripe_sub.items.data:
-        price_id = stripe_sub.items.data[0].price.id
-        plan = price_map.get(price_id)
-        if plan:
-            return plan
+    items = stripe_sub.get("items") or {}
+    items_data = items.get("data") or []
+    if items_data:
+        price_id = items_data[0].get("price", {}).get("id")
+        if price_id:
+            plan = price_map.get(price_id)
+            if plan:
+                return plan
 
     logger.warning(
         "Could not resolve plan for subscription %s, defaulting to 'free'",
-        stripe_sub.id,
+        stripe_sub.get("id", "unknown"),
     )
     return "free"
