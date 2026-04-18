@@ -45,23 +45,38 @@ def _make_stripe_event(user_id: str, event_id: str = "evt_test_001"):
 
 
 def _make_stripe_subscription():
-    """Build a mock Subscription object for retrieve mock.
+    """Build a real StripeObject for retrieve mock.
 
-    Uses MagicMock instead of construct_from because StripeObject in SDK v15
-    doesn't support .get() on nested attributes like metadata.
+    Uses construct_from to produce a real StripeObject (not a plain dict
+    or MagicMock).  This catches bugs where code calls .get() on nested
+    StripeObject attributes like .metadata — SDK v15 doesn't support .get().
     """
-    sub = MagicMock()
-    sub.id = "sub_test_001"
-    sub.customer = "cus_test_001"
-    sub.status = "active"
-    sub.metadata = {"parcel_plan": "pro"}
-    sub.current_period_start = 1713456000
-    sub.current_period_end = 1716048000
-    sub.trial_start = None
-    sub.trial_end = None
-    sub.items = MagicMock()
-    sub.items.data = [MagicMock(price=MagicMock(id="price_test_carbon_monthly"))]
-    return sub
+    return stripe.Subscription.construct_from(
+        {
+            "id": "sub_test_001",
+            "object": "subscription",
+            "customer": "cus_test_001",
+            "status": "active",
+            "metadata": {"parcel_plan": "pro"},
+            "current_period_start": 1713456000,
+            "current_period_end": 1716048000,
+            "trial_start": None,
+            "trial_end": None,
+            "cancel_at_period_end": False,
+            "canceled_at": None,
+            "ended_at": None,
+            "items": {
+                "data": [
+                    {
+                        "price": {
+                            "id": "price_test_carbon_monthly",
+                        },
+                    },
+                ],
+            },
+        },
+        "sk_test_fake",
+    )
 
 
 # ---------------------------------------------------------------------------

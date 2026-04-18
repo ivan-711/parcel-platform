@@ -262,7 +262,10 @@ def _resolve_plan_from_subscription(stripe_sub) -> str:
     price_map = settings.price_to_plan_map
 
     # Check subscription metadata first
-    plan = stripe_sub.metadata.get("parcel_plan")
+    # stripe_sub.metadata is a StripeObject (SDK v15) which doesn't support
+    # dict .get() — convert to plain dict before access.
+    metadata = stripe_sub.metadata.to_dict() if stripe_sub.metadata else {}
+    plan = metadata.get("parcel_plan")
     if plan:
         # Legacy mapping for subscriptions created before tier renames
         _legacy = {"starter": "pro", "plus": "pro", "team": "business",
