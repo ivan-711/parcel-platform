@@ -16,6 +16,8 @@ from limiter import limiter
 
 load_dotenv()
 
+_IS_PROD = os.getenv("ENVIRONMENT", "development") == "production"
+
 # --- Sentry error tracking ---
 _sentry_dsn = os.getenv("SENTRY_DSN")
 if _sentry_dsn:
@@ -31,6 +33,9 @@ app = FastAPI(
     description="Backend API for Parcel — the all-in-one platform for real estate professionals.",
     version="0.1.0",
     redirect_slashes=False,
+    docs_url=None if _IS_PROD else "/docs",
+    redoc_url=None if _IS_PROD else "/redoc",
+    openapi_url=None if _IS_PROD else "/openapi.json",
 )
 
 app.state.limiter = limiter
