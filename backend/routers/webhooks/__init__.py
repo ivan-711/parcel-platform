@@ -1,8 +1,10 @@
 """Stripe webhook receiver — validates signatures, processes events idempotently."""
 
 import hashlib
+import json
 import logging
 from datetime import datetime
+from decimal import Decimal
 from uuid import UUID
 
 import stripe
@@ -27,6 +29,20 @@ from models.webhook_events import WebhookEvent
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/webhooks", tags=["webhooks"])
+
+
+def _jsonb_default(o):
+    """json.dumps fallback for types that Stripe SDK v15 introduces."""
+    if isinstance(o, Decimal):
+        return float(o)
+    if isinstance(o, (set, frozenset)):
+        return list(o)
+    raise TypeError(f"Cannot JSONB-serialize {type(o).__name__}: {o!r}")
+
+
+def _sanitize_for_jsonb(obj):
+    """Round-trip through JSON to flush non-native types (Decimal, etc.)."""
+    return json.loads(json.dumps(obj, default=_jsonb_default))
 
 # Event types we handle
 _HANDLERS = {
@@ -103,7 +119,7 @@ async def stripe_webhook(
         event_row = WebhookEvent(
             stripe_event_id=event_id,
             event_type=event_type,
-            payload=event["data"].to_dict(),
+            payload=_sanitize_for_jsonb(event["data"].to_dict()),
             processed=False,
         )
         db.add(event_row)

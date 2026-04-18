@@ -6,11 +6,18 @@ Covers all four dispatch handlers:
   - customer.subscription.deleted
   - invoice.payment_failed
 
-Uses real StripeObjects (via construct_from) to catch SDK v15 attribute-
-access bugs: missing-field access raises AttributeError, .get() is not
-available on StripeObject.
+Uses real StripeObjects (via construct_from) to catch SDK v15 bugs:
+  - Missing-field attribute access raises AttributeError
+  - .get() not available on StripeObject
+  - Typed Plan/Price classes coerce *_decimal fields to Decimal
+    (which json.dumps can't serialize for JSONB storage)
+
+Fixtures include "object": "plan" and "object": "price" markers so
+construct_from instantiates typed classes with Decimal coercion — this
+exercises the real serialization path that production events use.
 """
 
+import decimal
 import uuid
 from datetime import datetime
 from unittest.mock import patch, MagicMock
@@ -20,6 +27,59 @@ import pytest
 
 from models.webhook_events import WebhookEvent
 from models.subscriptions import Subscription
+
+
+# ---------------------------------------------------------------------------
+# Canonical Stripe object shapes
+# ---------------------------------------------------------------------------
+
+def _canonical_subscription_data(**overrides):
+    """Return a dict matching the canonical Stripe Subscription shape.
+
+    Includes "object" markers on plan/price so construct_from instantiates
+    typed Plan/Price classes that coerce *_decimal → Decimal.  This
+    ensures tests exercise the same serialization path as production.
+    """
+    base = {
+        "id": "sub_test_001",
+        "object": "subscription",
+        "customer": "cus_test_001",
+        "status": "active",
+        "metadata": {"parcel_plan": "pro"},
+        "current_period_start": 1713456000,
+        "current_period_end": 1716048000,
+        "trial_start": None,
+        "trial_end": None,
+        "cancel_at_period_end": False,
+        "canceled_at": None,
+        "ended_at": None,
+        "items": {
+            "object": "list",
+            "data": [{
+                "id": "si_test_001",
+                "object": "subscription_item",
+                "price": {
+                    "id": "price_test_carbon_monthly",
+                    "object": "price",
+                    "unit_amount": 7900,
+                    "unit_amount_decimal": "7900",
+                    "currency": "usd",
+                    "recurring": {"interval": "month"},
+                },
+                "quantity": 1,
+            }],
+        },
+        "plan": {
+            "id": "price_test_carbon_monthly",
+            "object": "plan",
+            "amount": 7900,
+            "amount_decimal": "7900",
+            "currency": "usd",
+            "interval": "month",
+        },
+    }
+    base.update(overrides)
+    return base
 
 
 # ---------------------------------------------------------------------------
@@ -72,35 +132,12 @@ def _make_checkout_event(user_id: str, event_id: str = "evt_test_001"):
 def _make_stripe_subscription(**overrides):
     """Build a real StripeObject for Subscription.retrieve mock.
 
-    Uses construct_from to produce a real StripeObject (not a plain dict
-    or MagicMock).  The handler calls .to_dict() on this at the boundary,
-    then operates on plain dicts downstream.
+    Uses canonical shape with "object" markers on plan/price so SDK v15
+    instantiates typed classes with Decimal coercion on *_decimal fields.
     """
-    data = {
-        "id": "sub_test_001",
-        "object": "subscription",
-        "customer": "cus_test_001",
-        "status": "active",
-        "metadata": {"parcel_plan": "pro"},
-        "current_period_start": 1713456000,
-        "current_period_end": 1716048000,
-        "trial_start": None,
-        "trial_end": None,
-        "cancel_at_period_end": False,
-        "canceled_at": None,
-        "ended_at": None,
-        "items": {
-            "data": [
-                {
-                    "price": {
-                        "id": "price_test_carbon_monthly",
-                    },
-                },
-            ],
-        },
-    }
-    data.update(overrides)
-    return stripe.Subscription.construct_from(data, "sk_test_fake")
+    return stripe.Subscription.construct_from(
+        _canonical_subscription_data(**overrides), "sk_test_fake"
+    )
 
 
 def _post_webhook(client):
@@ -129,6 +166,18 @@ def _create_subscription(db, user, **overrides):
     db.commit()
     db.refresh(sub)
     return sub
+
+
+def _assert_no_decimals(obj, path="root"):
+    """Recursively verify no Decimal values in a dict (JSONB safety)."""
+    if isinstance(obj, decimal.Decimal):
+        raise AssertionError(f"Decimal found at {path}: {obj!r}")
+    elif isinstance(obj, dict):
+        for k, v in obj.items():
+            _assert_no_decimals(v, f"{path}.{k}")
+    elif isinstance(obj, list):
+        for i, v in enumerate(obj):
+            _assert_no_decimals(v, f"{path}[{i}]")
 
 
 # ---------------------------------------------------------------------------
@@ -207,22 +256,7 @@ class TestCheckoutSessionCompleted:
         event_id = f"evt_missing_{missing_field}"
         mock_construct.return_value = _make_checkout_event(test_user.id, event_id=event_id)
 
-        # Build subscription with the field removed entirely (not just None)
-        sub_data = {
-            "id": "sub_test_001",
-            "object": "subscription",
-            "customer": "cus_test_001",
-            "status": "active",
-            "metadata": {"parcel_plan": "pro"},
-            "current_period_start": 1713456000,
-            "current_period_end": 1716048000,
-            "trial_start": None,
-            "trial_end": None,
-            "cancel_at_period_end": False,
-            "canceled_at": None,
-            "ended_at": None,
-            "items": {"data": [{"price": {"id": "price_test_carbon_monthly"}}]},
-        }
+        sub_data = _canonical_subscription_data()
         del sub_data[missing_field]
         mock_sub_retrieve.return_value = stripe.Subscription.construct_from(
             sub_data, "sk_test_fake"
@@ -267,16 +301,13 @@ class TestSubscriptionUpdated:
         mock_settings.return_value = _make_settings_mock()
         mock_svc_settings.return_value = _make_settings_mock()
 
-        # Event data is the subscription object (already a dict via .to_dict()
-        # at the webhook endpoint boundary)
         event = _make_stripe_event(
             "customer.subscription.updated",
-            {"id": "sub_test_001", "object": "subscription", "status": "active"},
+            _canonical_subscription_data(status="active"),
             event_id="evt_sub_updated_001",
         )
         mock_construct.return_value = event
 
-        # sync_subscription_from_stripe will call Subscription.retrieve
         mock_sub_retrieve.return_value = _make_stripe_subscription(
             status="active",
             current_period_start=1716048000,
@@ -294,7 +325,6 @@ class TestSubscriptionUpdated:
         assert row.processed is True
         assert row.error is None
 
-        # Subscription row updated
         sub = db.query(Subscription).filter(
             Subscription.stripe_subscription_id == "sub_test_001"
         ).first()
@@ -302,7 +332,6 @@ class TestSubscriptionUpdated:
         assert sub.status == "active"
         assert sub.plan_tier == "pro"
 
-        # User tier stays pro
         db.refresh(test_user)
         assert test_user.plan_tier == "pro"
 
@@ -328,7 +357,7 @@ class TestSubscriptionUpdated:
 
         event = _make_stripe_event(
             "customer.subscription.updated",
-            {"id": "sub_test_001", "object": "subscription", "status": "canceled"},
+            _canonical_subscription_data(status="canceled", canceled_at=1716048000),
             event_id="evt_sub_canceled_001",
         )
         mock_construct.return_value = event
@@ -350,6 +379,51 @@ class TestSubscriptionUpdated:
 
         db.refresh(test_user)
         assert test_user.plan_tier == "free"
+
+    @patch("routers.webhooks._advisory_lock")
+    @patch("core.billing.stripe_service.stripe.Subscription.retrieve")
+    @patch("routers.webhooks.stripe.Webhook.construct_event")
+    @patch("routers.webhooks.get_stripe_settings")
+    @patch("core.billing.stripe_service.get_stripe_settings")
+    def test_decimal_fields_serialized_for_jsonb(
+        self, mock_svc_settings, mock_settings, mock_construct,
+        mock_sub_retrieve, mock_lock,
+        client, test_user, db,
+    ):
+        """Regression for bug #5 — plan.amount_decimal and price.unit_amount_decimal
+        come back as Decimal from SDK v15 typed classes, must be sanitized before
+        JSONB insert."""
+        test_user.plan_tier = "pro"
+        test_user.stripe_customer_id = "cus_test_001"
+        db.commit()
+
+        _create_subscription(db, test_user)
+
+        mock_settings.return_value = _make_settings_mock()
+        mock_svc_settings.return_value = _make_settings_mock()
+
+        event = _make_stripe_event(
+            "customer.subscription.updated",
+            _canonical_subscription_data(),
+            event_id="evt_decimal_updated_001",
+        )
+        mock_construct.return_value = event
+
+        mock_sub_retrieve.return_value = _make_stripe_subscription()
+
+        resp = _post_webhook(client)
+
+        assert resp.status_code == 200
+
+        row = db.query(WebhookEvent).filter(
+            WebhookEvent.stripe_event_id == "evt_decimal_updated_001"
+        ).first()
+        assert row is not None
+        assert row.processed is True
+        assert row.error is None
+
+        # Verify payload contains no Decimal values
+        _assert_no_decimals(row.payload)
 
 
 # ---------------------------------------------------------------------------
@@ -377,7 +451,9 @@ class TestSubscriptionDeleted:
 
         event = _make_stripe_event(
             "customer.subscription.deleted",
-            {"id": "sub_test_001", "object": "subscription"},
+            _canonical_subscription_data(
+                status="canceled", canceled_at=1716048000, ended_at=1716048000,
+            ),
             event_id="evt_sub_deleted_001",
         )
         mock_construct.return_value = event
@@ -393,16 +469,52 @@ class TestSubscriptionDeleted:
         assert row.processed is True
         assert row.error is None
 
-        # Subscription marked canceled with ended_at
         sub = db.query(Subscription).filter(
             Subscription.stripe_subscription_id == "sub_test_001"
         ).first()
         assert sub.status == "canceled"
         assert sub.ended_at is not None
 
-        # User downgraded to free
         db.refresh(test_user)
         assert test_user.plan_tier == "free"
+
+    @patch("routers.webhooks._advisory_lock")
+    @patch("routers.webhooks.stripe.Webhook.construct_event")
+    @patch("routers.webhooks.get_stripe_settings")
+    def test_decimal_fields_serialized_for_jsonb(
+        self, mock_settings, mock_construct, mock_lock,
+        client, test_user, db,
+    ):
+        """Regression for bug #5 — subscription.deleted payload with
+        plan/price *_decimal fields must serialize cleanly to JSONB."""
+        test_user.plan_tier = "pro"
+        test_user.stripe_customer_id = "cus_test_001"
+        db.commit()
+
+        _create_subscription(db, test_user)
+
+        mock_settings.return_value = _make_settings_mock()
+
+        event = _make_stripe_event(
+            "customer.subscription.deleted",
+            _canonical_subscription_data(
+                status="canceled", canceled_at=1716048000, ended_at=1716048000,
+            ),
+            event_id="evt_decimal_deleted_001",
+        )
+        mock_construct.return_value = event
+
+        resp = _post_webhook(client)
+
+        assert resp.status_code == 200
+
+        row = db.query(WebhookEvent).filter(
+            WebhookEvent.stripe_event_id == "evt_decimal_deleted_001"
+        ).first()
+        assert row is not None
+        assert row.processed is True
+        assert row.error is None
+        _assert_no_decimals(row.payload)
 
 
 # ---------------------------------------------------------------------------
@@ -436,6 +548,16 @@ class TestInvoicePaymentFailed:
                 "customer": "cus_test_001",
                 "amount_due": 7900,
                 "status": "open",
+                "lines": {
+                    "data": [{
+                        "price": {
+                            "id": "price_test_carbon_monthly",
+                            "object": "price",
+                            "unit_amount": 7900,
+                            "unit_amount_decimal": "7900",
+                        },
+                    }],
+                },
             },
             event_id="evt_inv_failed_001",
         )
@@ -451,14 +573,13 @@ class TestInvoicePaymentFailed:
         assert row is not None
         assert row.processed is True
         assert row.error is None
+        _assert_no_decimals(row.payload)
 
-        # Subscription marked past_due
         sub = db.query(Subscription).filter(
             Subscription.stripe_subscription_id == "sub_test_001"
         ).first()
         assert sub.status == "past_due"
 
-        # User plan_tier NOT downgraded
         db.refresh(test_user)
         assert test_user.plan_tier == "pro"
 
