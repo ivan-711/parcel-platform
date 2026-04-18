@@ -20,8 +20,10 @@ from limiter import limiter
 
 logger = logging.getLogger(__name__)
 
-# IP hash salt — read once at import time
-_IP_HASH_SALT = os.environ["IP_HASH_SALT"]  # Required — no fallback
+# IP hash salt — read once at import time; fail-closed with clear message
+_IP_HASH_SALT = os.getenv("IP_HASH_SALT")
+if not _IP_HASH_SALT:
+    raise RuntimeError("IP_HASH_SALT environment variable is required")
 
 # Bot and headless browser User-Agent patterns
 _BOT_UA_RE = re.compile(
