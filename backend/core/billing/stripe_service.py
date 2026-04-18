@@ -94,9 +94,6 @@ def create_checkout_session(db: Session, user, plan: str, interval: str) -> str:
             "parcel_plan": plan,
         },
     }
-    # 7-day free trial for Carbon (pro) tier only
-    if plan in ("pro", "carbon"):
-        subscription_data["trial_period_days"] = settings.TRIAL_PERIOD_DAYS
 
     session = _stripe_call(
         stripe.checkout.Session.create,

@@ -91,8 +91,6 @@ async def get_current_user(
 
             # Create if still not found
             if not user:
-                from datetime import datetime as _dt, timedelta as _td
-
                 user = User(
                     email=clerk_user.get(
                         "email", f'{claims["sub"]}@clerk.local'
@@ -105,7 +103,6 @@ async def get_current_user(
                     role="investor",
                     clerk_user_id=claims["sub"],
                     plan_tier="free",
-                    trial_ends_at=_dt.utcnow() + _td(days=7),
                 )
                 db.add(user)
                 db.commit()

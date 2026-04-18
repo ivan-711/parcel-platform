@@ -23,6 +23,8 @@ class StripeSettings(BaseSettings):
 
     ENVIRONMENT: str = "development"
     FRONTEND_URL: str = "http://localhost:5173"
+    # Not currently used — reserved for card-required trial experiment.
+    # See docs/SECURITY-FOLLOWUPS.md "Post-launch growth experiments" for context.
     TRIAL_PERIOD_DAYS: int = 7
 
     model_config = {"env_file": ".env", "extra": "ignore"}
