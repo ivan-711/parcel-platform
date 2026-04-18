@@ -153,6 +153,7 @@ export function PlaceAutocompleteInput({
         onChange={(e) => onChangeRef.current?.(e.target.value)}
         placeholder={placeholder}
         autoFocus={autoFocus}
+        aria-label="Property address"
         className={`parcel-autocomplete-fallback ${className}`}
       />
     )
@@ -170,16 +171,24 @@ export function PlaceAutocompleteInput({
         placeholder={placeholder}
         autoFocus={autoFocus}
         autoComplete="off"
+        aria-label="Property address"
+        role="combobox"
+        aria-expanded={isOpen && suggestions.length > 0}
+        aria-controls="address-suggestions"
+        aria-activedescendant={highlightIdx >= 0 ? `address-option-${highlightIdx}` : undefined}
         className="parcel-autocomplete-input"
       />
       {isOpen && suggestions.length > 0 && (
-        <ul className="parcel-autocomplete-dropdown">
+        <ul id="address-suggestions" role="listbox" className="parcel-autocomplete-dropdown">
           {suggestions.map((s, i) => {
             const prediction = s.placePrediction
             if (!prediction) return null
             return (
               <li
                 key={i}
+                id={`address-option-${i}`}
+                role="option"
+                aria-selected={i === highlightIdx}
                 onMouseDown={() => handleSelect(s)}
                 onMouseEnter={() => setHighlightIdx(i)}
                 className={`parcel-autocomplete-item${i === highlightIdx ? ' highlighted' : ''}`}

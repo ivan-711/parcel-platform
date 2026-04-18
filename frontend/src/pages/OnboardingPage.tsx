@@ -188,10 +188,12 @@ export default function OnboardingPage() {
         </button>
       </motion.div>
 
-      {/* Helper text */}
-      <p className="text-text-muted text-xs mt-3 text-center">
-        Please select an option to continue
-      </p>
+      {/* Helper text — hides once a persona is selected */}
+      {!selected && (
+        <p className="text-text-muted text-xs mt-3 text-center">
+          Please select an option to continue
+        </p>
+      )}
 
       {/* Skip link */}
       <button

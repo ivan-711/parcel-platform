@@ -369,7 +369,7 @@ export default function AnalyzePage() {
             Analyze a Property
           </h1>
           <p className="text-text-secondary text-sm sm:text-base mb-8">
-            Enter any US address to get an AI-powered analysis in seconds
+            Enter any US address to get a full AI-powered analysis
           </p>
 
           {/* Address input + Analyze button — flex siblings, no overlap */}
@@ -458,6 +458,7 @@ function AddressFallbackInput({ address, onChange, onKeyDown, hasError }: {
       onChange={e => onChange(e.target.value)}
       onKeyDown={onKeyDown}
       placeholder="Enter an address — e.g. 613 N 14th St, Sheboygan, WI"
+      aria-label="Property address"
       className={`w-full h-12 pl-11 pr-4 rounded-xl bg-app-recessed text-text-primary text-sm placeholder-text-muted/60 focus:outline-none focus:ring-2 transition-all ${
         hasError ? 'border border-loss focus:ring-loss/30' : 'border border-border-default focus:ring-accent-primary/30'
       }`}
