@@ -230,13 +230,14 @@ function NewUserView({
         </Link>
 
         {hasSampleData && (
-          <p className="text-xs text-text-muted mt-6">
-            Explore your sample deal in{' '}
-            <Link to="/properties" className="text-accent-primary hover:text-accent-secondary transition-colors">
-              Properties
-            </Link>{' '}
-            to see what Parcel can do.
-          </p>
+          <div className="mt-6 rounded-lg border border-border-default bg-app-surface px-4 py-3 text-center">
+            <p className="text-sm text-text-secondary">
+              Or explore a sample deal to see what Parcel can do{' '}
+              <Link to="/properties" className="text-accent-primary hover:text-accent-secondary font-medium transition-colors">
+                &rarr;
+              </Link>
+            </p>
+          </div>
         )}
 
         {/* Placeholder briefing card */}

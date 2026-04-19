@@ -172,7 +172,7 @@ export default function OnboardingPage() {
             w-full sm:w-auto sm:min-w-[200px] sm:mx-auto sm:block
             h-11 rounded-lg text-sm font-medium transition-all duration-200
             ${selected && !loading
-              ? 'bg-violet-400 text-white hover:bg-violet-500'
+              ? 'bg-violet-400 text-white hover:bg-violet-500 cursor-pointer'
               : 'bg-border-default text-text-muted cursor-not-allowed'
             }
           `}
