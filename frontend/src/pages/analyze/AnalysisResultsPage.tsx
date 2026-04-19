@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Save, GitBranch, FileText, Loader2, Check, Users, ChevronDown, Calculator } from 'lucide-react'
+import { Save, GitBranch, FileText, Loader2, Check, Users, ChevronDown, Calculator, Info, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
 import { CreateReportModal } from '@/components/reports/CreateReportModal'
@@ -18,6 +18,7 @@ import { CompsCard } from '@/components/analysis/CompsCard'
 import { ReverseCalculatorModal } from './components/ReverseCalculatorModal'
 import { api } from '@/lib/api'
 import { useOnboardingStore } from '@/stores/onboardingStore'
+import { useAuthStore } from '@/stores/authStore'
 import { SampleBadge } from '@/components/SampleBadge'
 import type { PropertyDetail, ScenarioDetail, Strategy } from '@/types'
 
@@ -31,6 +32,8 @@ const PERSONA_DEFAULT_STRATEGY: Record<string, Strategy> = {
   creative_finance: 'creative_finance', brrrr: 'brrrr',
   hybrid: 'buy_and_hold', agent: 'buy_and_hold', beginner: 'buy_and_hold',
 }
+
+const GUIDANCE_DISMISSED_KEY = 'parcel_beginner_strategy_hint_dismissed'
 
 export default function AnalysisResultsPage() {
   const { propertyId } = useParams<{ propertyId: string }>()
@@ -51,6 +54,38 @@ export default function AnalysisResultsPage() {
   const [reportModalOpen, setReportModalOpen] = useState(false)
   const [sensitivityOpen, setSensitivityOpen] = useState(false)
   const [reverseModalOpen, setReverseModalOpen] = useState(false)
+
+  const user = useAuthStore((s) => s.user)
+  const [guidanceDismissed, setGuidanceDismissed] = useState(
+    () => localStorage.getItem(GUIDANCE_DISMISSED_KEY) === 'true'
+  )
+  const showGuidance = persona === 'beginner' && !guidanceDismissed
+  const guidanceShownAt = useRef<number>(0)
+
+  useEffect(() => {
+    if (!showGuidance) return
+    guidanceShownAt.current = Date.now()
+    try {
+      (window as any).posthog?.capture?.('beginner_guidance_shown', {
+        persona: 'beginner',
+        deal_id: dealId,
+        user_id: user?.id ?? null,
+      })
+    } catch { /* ignore */ }
+  }, [showGuidance])
+
+  const handleDismissGuidance = () => {
+    localStorage.setItem(GUIDANCE_DISMISSED_KEY, 'true')
+    setGuidanceDismissed(true)
+    try {
+      (window as any).posthog?.capture?.('beginner_guidance_dismissed', {
+        persona: 'beginner',
+        deal_id: dealId,
+        user_id: user?.id ?? null,
+        dismissed_at_ms_since_shown: Date.now() - guidanceShownAt.current,
+      })
+    } catch { /* ignore */ }
+  }
 
   const activeScenario = scenarios.find(s => s.strategy === activeStrategy) || null
 
@@ -331,6 +366,23 @@ export default function AnalysisResultsPage() {
           refreshing={refreshingNarrative}
           inputsChanged={inputsChanged}
         />
+
+        {/* Beginner strategy guidance */}
+        {showGuidance && (
+          <div className="flex items-start gap-3 rounded-lg border border-violet-400/10 bg-violet-400/[0.04] px-4 py-3 mb-6">
+            <Info size={16} className="text-violet-400 mt-0.5 shrink-0" />
+            <p className="text-sm text-text-secondary flex-1">
+              We started with Buy &amp; Hold — the most common strategy for your first rental. Tap any strategy to compare.
+            </p>
+            <button
+              onClick={handleDismissGuidance}
+              aria-label="Dismiss guidance"
+              className="text-text-muted hover:text-text-secondary transition-colors cursor-pointer shrink-0"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        )}
 
         {/* Strategy + Metrics + Inputs layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 mb-6">
