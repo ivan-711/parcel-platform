@@ -16,15 +16,15 @@ import {
 import { useOnboardingStore } from '@/stores/onboardingStore'
 import type { OnboardingPersona } from '@/types'
 
-const PERSONAS: { value: OnboardingPersona; label: string; icon: typeof Home }[] = [
-  { value: 'wholesale', label: 'I wholesale deals', icon: Repeat },
-  { value: 'flip', label: 'I flip houses', icon: Hammer },
-  { value: 'buy_and_hold', label: 'I buy and hold rentals', icon: Home },
-  { value: 'creative_finance', label: 'I use creative financing', icon: FileText },
-  { value: 'brrrr', label: 'I use BRRRR strategy', icon: RefreshCw },
-  { value: 'hybrid', label: 'I use multiple strategies', icon: Layers },
-  { value: 'agent', label: "I'm an agent serving investors", icon: Briefcase },
-  { value: 'beginner', label: "I'm just getting started", icon: Compass },
+const PERSONAS: { value: OnboardingPersona; label: string; description: string; icon: typeof Home }[] = [
+  { value: 'beginner', label: "I'm just getting started", description: 'Explore your first investment with guidance', icon: Compass },
+  { value: 'wholesale', label: 'I wholesale deals', description: 'Put properties under contract and assign to other investors', icon: Repeat },
+  { value: 'flip', label: 'I flip houses', description: 'Buy, renovate, and resell for profit', icon: Hammer },
+  { value: 'buy_and_hold', label: 'I buy and hold rentals', description: 'Buy rentals for long-term cash flow', icon: Home },
+  { value: 'brrrr', label: 'I use BRRRR strategy', description: 'Buy, Rehab, Rent, Refinance, Repeat', icon: RefreshCw },
+  { value: 'creative_finance', label: 'I use creative financing', description: 'Buy without traditional bank loans', icon: FileText },
+  { value: 'hybrid', label: 'I use multiple strategies', description: 'Mix strategies depending on the deal', icon: Layers },
+  { value: 'agent', label: "I'm an agent serving investors", description: 'Help your clients analyze investment deals', icon: Briefcase },
 ]
 
 const staggerContainer = prefersReducedMotion
@@ -128,7 +128,7 @@ export default function OnboardingPage() {
         animate="visible"
         className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-xl"
       >
-        {PERSONAS.map(({ value, label, icon: Icon }) => {
+        {PERSONAS.map(({ value, label, description, icon: Icon }) => {
           const isSelected = selected === value
           return (
             <motion.button
@@ -137,7 +137,7 @@ export default function OnboardingPage() {
               onClick={() => handleSelect(value)}
               disabled={loading}
               className={`
-                flex items-center gap-3 px-4 py-4 rounded-xl text-left transition-all duration-200
+                flex items-start gap-3 px-4 py-4 rounded-xl text-left transition-all duration-200
                 min-h-[52px]
                 ${isSelected
                   ? 'bg-app-surface border border-violet-400 shadow-[0_0_16px_rgba(139,122,255,0.1)]'
@@ -148,11 +148,14 @@ export default function OnboardingPage() {
             >
               <Icon
                 size={18}
-                className={isSelected ? 'text-violet-400' : 'text-violet-400/60'}
+                className={`mt-0.5 shrink-0 ${isSelected ? 'text-violet-400' : 'text-violet-400/60'}`}
               />
-              <span className={`text-sm font-brand ${isSelected ? 'text-text-primary' : 'text-text-secondary'}`}>
-                {label}
-              </span>
+              <div className="min-w-0">
+                <span className={`text-sm font-brand ${isSelected ? 'text-text-primary' : 'text-text-secondary'}`}>
+                  {label}
+                </span>
+                <p className="text-xs text-text-muted mt-0.5 leading-snug">{description}</p>
+              </div>
             </motion.button>
           )
         })}
