@@ -44,6 +44,15 @@ export function AuthSyncProvider({ children }: { children: ReactNode }) {
             setClerkToken(token)
             const user = await api.auth.me()
             setAuth(user)
+            try {
+              (window as any).posthog?.identify?.(user.id, {
+                email: user.email,
+                name: user.name,
+                plan_tier: user.plan_tier,
+                role: user.role,
+                created_at: user.created_at,
+              })
+            } catch { /* ignore */ }
             syncedRef.current = true
           }
         } catch {
