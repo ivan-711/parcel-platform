@@ -179,7 +179,7 @@ export function PlaceAutocompleteInput({
         className="parcel-autocomplete-input"
       />
       {isOpen && suggestions.length > 0 && (
-        <ul id="address-suggestions" role="listbox" className="parcel-autocomplete-dropdown">
+        <ul id="address-suggestions" role="listbox" aria-label="Address suggestions" className="parcel-autocomplete-dropdown">
           {suggestions.map((s, i) => {
             const prediction = s.placePrediction
             if (!prediction) return null
@@ -206,6 +206,11 @@ export function PlaceAutocompleteInput({
           })}
         </ul>
       )}
+      <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {isOpen && suggestions.length > 0
+          ? `${suggestions.length} suggestion${suggestions.length === 1 ? '' : 's'} available`
+          : ''}
+      </div>
     </div>
   )
 }
