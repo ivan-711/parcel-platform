@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { TrendingUp } from 'lucide-react'
 import { useBillingStore } from '@/stores/billingStore'
+import { useAuthStore } from '@/stores/authStore'
 import {
   Dialog,
   DialogContent,
@@ -23,6 +24,7 @@ const TIER_LABELS: Record<string, string> = {
 export function QuotaExceededModal() {
   const paywallError = useBillingStore((s) => s.paywallError)
   const clearPaywallError = useBillingStore((s) => s.clearPaywallError)
+  const user = useAuthStore((s) => s.user)
   const navigate = useNavigate()
 
   const isQuotaError = paywallError?.code === 'QUOTA_EXCEEDED'
@@ -53,6 +55,11 @@ export function QuotaExceededModal() {
               : ''}
             Upgrade to Carbon for unlimited analyses, AI insights, Pipeline, Portfolio, and more.
           </DialogDescription>
+          <p className="text-xs text-text-muted mt-2">
+            {user?.trial_active && user.trial_ends_at
+              ? `Your Carbon trial ends on ${new Date(user.trial_ends_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}.`
+              : 'Limits reset on the 1st of each month.'}
+          </p>
         </DialogHeader>
 
         <div className="mt-2 space-y-3">

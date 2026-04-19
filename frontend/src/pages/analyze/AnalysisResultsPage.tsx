@@ -277,13 +277,15 @@ export default function AnalysisResultsPage() {
               {saved ? <Check size={14} /> : <Save size={14} />}
               {saved ? 'Saved' : 'Save'}
             </button>
-            <button
-              onClick={handlePipeline}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-accent-primary/30 transition-all"
-            >
-              <GitBranch size={14} />
-              Pipeline
-            </button>
+            {persona !== 'beginner' && (
+              <button
+                onClick={handlePipeline}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-accent-primary/30 transition-all"
+              >
+                <GitBranch size={14} />
+                Pipeline
+              </button>
+            )}
             {activeStrategy !== 'wholesale' && (
               <button
                 onClick={() => setReverseModalOpen(true)}
@@ -300,16 +302,18 @@ export default function AnalysisResultsPage() {
               <FileText size={14} />
               Report
             </button>
-            <button
-              onClick={() => {
-                try { ;(window as any).posthog?.capture?.('find_buyers_clicked', { source: 'analysis' }) } catch {}
-                navigate(`/dispositions/matches/${propertyId}`)
-              }}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-accent-primary/30 hover:text-accent-primary transition-all cursor-pointer"
-            >
-              <Users size={14} />
-              Find Buyers
-            </button>
+            {persona !== 'beginner' && (
+              <button
+                onClick={() => {
+                  try { ;(window as any).posthog?.capture?.('find_buyers_clicked', { source: 'analysis' }) } catch {}
+                  navigate(`/dispositions/matches/${propertyId}`)
+                }}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border border-border-default text-text-secondary hover:border-accent-primary/30 hover:text-accent-primary transition-all cursor-pointer"
+              >
+                <Users size={14} />
+                Find Buyers
+              </button>
+            )}
           </div>
         </motion.div>
 

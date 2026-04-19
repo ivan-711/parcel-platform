@@ -38,7 +38,7 @@ export function AnalysisLoadingState({ address, steps, onCancel, onViewDraft }: 
         Analyzing Property
       </h2>
       <p className="text-sm text-text-muted text-center mb-10">
-        Evaluating market position and asset viability
+        Crunching the numbers on your property
       </p>
 
       {/* Steps */}
