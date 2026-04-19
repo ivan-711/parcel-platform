@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/stores/authStore'
 
 const DISPLAY_NAMES: Record<string, string> = {
   free: 'Steel',
@@ -55,7 +56,18 @@ export function PlanBadge({ planTier, trialActive }: PlanBadgeProps) {
         Steel
       </span>
       <Link
-        to="/pricing"
+        to="/pricing?from=plan_badge"
+        onClick={() => {
+          try {
+            const user = useAuthStore.getState().user
+            ;(window as any).posthog?.capture?.('upgrade_clicked', {
+              source: 'plan_badge',
+              target_tier: 'pro',
+              current_tier: planTier,
+              user_id: user?.id ?? null,
+            })
+          } catch { /* ignore */ }
+        }}
         className="text-[10px] text-violet-400 hover:text-violet-300 font-medium transition-colors"
       >
         Upgrade

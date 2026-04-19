@@ -5,6 +5,7 @@ import { prefersReducedMotion } from '@/lib/motion'
 import { Lock } from 'lucide-react'
 import { FEATURE_LABELS, type GatedFeature } from '@/types'
 import { useCheckout } from '@/hooks/useBilling'
+import { useAuthStore } from '@/stores/authStore'
 
 interface PaywallOverlayProps {
   feature: GatedFeature
@@ -17,6 +18,7 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
   const [visible, setVisible] = useState(!dismissed.has(feature))
   const { label, description } = FEATURE_LABELS[feature]
   const checkout = useCheckout()
+  const user = useAuthStore((s) => s.user)
   const overlayRef = useRef<HTMLDivElement>(null)
   const previousFocus = useRef<HTMLElement | null>(null)
 
@@ -106,7 +108,17 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
         </p>
 
         <button
-          onClick={() => checkout.mutate({ plan: 'pro', interval: 'annual' })}
+          onClick={() => {
+            try {
+              (window as any).posthog?.capture?.('upgrade_clicked', {
+                source: 'paywall_overlay',
+                target_tier: 'pro',
+                current_tier: user?.plan_tier ?? 'free',
+                user_id: user?.id ?? null,
+              })
+            } catch { /* ignore */ }
+            checkout.mutate({ plan: 'pro', interval: 'annual' })
+          }}
           disabled={checkout.isPending}
           className="w-full h-11 rounded-lg bg-gradient-to-r from-violet-400 to-violet-600 hover:brightness-110 hover:shadow-[0_0_20px_rgba(139,122,255,0.3)] text-accent-text-on-accent text-sm font-medium transition-all disabled:opacity-50 cursor-pointer"
         >
@@ -115,7 +127,7 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
 
         <div className="flex items-center justify-center gap-4 mt-4">
           <Link
-            to="/pricing"
+            to="/pricing?from=paywall_overlay"
             className="text-sm text-violet-400 hover:text-violet-300 transition-colors"
           >
             Compare plans &rarr;

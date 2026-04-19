@@ -212,13 +212,34 @@ export default function PricingPage() {
     }
   }, [searchParams, setSearchParams, queryClient])
 
+  // Track pricing page views with source attribution
+  useEffect(() => {
+    const source = searchParams.get('from') ?? 'organic'
+    try {
+      (window as any).posthog?.capture?.('pricing_page_viewed', {
+        referrer: document.referrer,
+        current_tier: user?.plan_tier ?? 'free',
+        user_id: userId ?? null,
+        source,
+      })
+    } catch { /* ignore */ }
+  }, [])
+
   const carbonPrice = interval === 'annual' ? '$63' : '$79'
   const titaniumPrice = interval === 'annual' ? '$119' : '$149'
 
-  function handleCarbonCta() {
+  function handleCarbonCta(source: string = 'pricing_page_card') {
     if (isPaidActive) {
       portal.mutate()
     } else {
+      try {
+        (window as any).posthog?.capture?.('upgrade_clicked', {
+          source,
+          target_tier: 'pro',
+          current_tier: currentPlan,
+          user_id: userId ?? null,
+        })
+      } catch { /* ignore */ }
       checkout.mutate({ plan: 'pro', interval })
     }
   }
@@ -227,6 +248,14 @@ export default function PricingPage() {
     if (isPaidActive) {
       portal.mutate()
     } else {
+      try {
+        (window as any).posthog?.capture?.('upgrade_clicked', {
+          source: 'pricing_page_card',
+          target_tier: 'business',
+          current_tier: currentPlan,
+          user_id: userId ?? null,
+        })
+      } catch { /* ignore */ }
       checkout.mutate({ plan: 'business', interval })
     }
   }
@@ -367,7 +396,7 @@ export default function PricingPage() {
                 <motion.button
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
-                  onClick={handleCarbonCta}
+                  onClick={() => handleCarbonCta()}
                   disabled={isCheckoutLoading}
                   className="w-full h-11 rounded-lg text-sm font-medium bg-gradient-to-r from-violet-400 to-violet-600 hover:from-violet-500 hover:to-violet-700 hover:shadow-[0_0_20px_rgba(139,122,255,0.3)] text-accent-text-on-accent transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                 >
@@ -384,7 +413,7 @@ export default function PricingPage() {
                 <motion.button
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
-                  onClick={handleCarbonCta}
+                  onClick={() => handleCarbonCta()}
                   disabled={isCheckoutLoading}
                   className="w-full h-11 rounded-lg text-sm font-medium bg-gradient-to-r from-violet-400 to-violet-600 hover:from-violet-500 hover:to-violet-700 hover:shadow-[0_0_20px_rgba(139,122,255,0.3)] text-accent-text-on-accent transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                 >
@@ -501,7 +530,7 @@ export default function PricingPage() {
             <motion.button
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
-              onClick={handleCarbonCta}
+              onClick={() => handleCarbonCta('pricing_page_sticky')}
               disabled={isCheckoutLoading}
               className="shrink-0 h-11 px-6 rounded-lg text-sm font-medium bg-gradient-to-r from-violet-400 to-violet-600 hover:from-violet-500 hover:to-violet-700 hover:shadow-[0_0_20px_rgba(139,122,255,0.3)] text-accent-text-on-accent transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
             >

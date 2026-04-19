@@ -634,3 +634,100 @@ class TestWebhookInfra:
             WebhookEvent.stripe_event_id == "evt_idem_001"
         ).count()
         assert count == 1
+
+
+# ---------------------------------------------------------------------------
+# Tests — PostHog billing event instrumentation
+# ---------------------------------------------------------------------------
+
+class TestBillingEvents:
+    """Verify PostHog billing events fire with correct payloads."""
+
+    @patch("routers.webhooks.track_event")
+    @patch("routers.webhooks._advisory_lock")
+    @patch("routers.webhooks.stripe.Subscription.retrieve")
+    @patch("routers.webhooks.stripe.Webhook.construct_event")
+    @patch("routers.webhooks.get_stripe_settings")
+    def test_checkout_completed_event(
+        self, mock_settings, mock_construct, mock_sub_retrieve, mock_lock, mock_track,
+        client, test_user, db,
+    ):
+        """checkout_completed fires with correct payload after successful checkout."""
+        test_user.plan_tier = "free"
+        test_user.stripe_customer_id = "cus_test_001"
+        db.commit()
+
+        mock_settings.return_value = _make_settings_mock()
+        mock_construct.return_value = _make_checkout_event(
+            test_user.id, event_id="evt_billing_co_001"
+        )
+        mock_sub_retrieve.return_value = _make_stripe_subscription()
+
+        resp = _post_webhook(client)
+        assert resp.status_code == 200
+
+        mock_track.assert_called_once_with(
+            str(test_user.id),
+            "checkout_completed",
+            {
+                "previous_tier": "free",
+                "new_tier": "pro",
+                "stripe_subscription_id": "sub_test_001",
+                "amount_usd": 79.0,
+                "trial_converted": False,
+            },
+        )
+
+    @patch("routers.webhooks.track_event")
+    @patch("routers.webhooks._advisory_lock")
+    @patch("routers.webhooks.stripe.Webhook.construct_event")
+    @patch("routers.webhooks.get_stripe_settings")
+    def test_subscription_canceled_event(
+        self, mock_settings, mock_construct, mock_lock, mock_track,
+        client, test_user, db,
+    ):
+        """subscription_canceled fires with correct tier and tenure_days."""
+        test_user.plan_tier = "pro"
+        test_user.stripe_customer_id = "cus_test_001"
+        db.commit()
+
+        _create_subscription(db, test_user)
+
+        mock_settings.return_value = _make_settings_mock()
+        event = _make_stripe_event(
+            "customer.subscription.deleted",
+            _canonical_subscription_data(status="canceled"),
+            event_id="evt_billing_cancel_001",
+        )
+        mock_construct.return_value = event
+
+        resp = _post_webhook(client)
+        assert resp.status_code == 200
+
+        mock_track.assert_called_once()
+        args = mock_track.call_args[0]
+        assert args[0] == str(test_user.id)
+        assert args[1] == "subscription_canceled"
+        props = args[2]
+        assert props["tier"] == "pro"
+        assert props["stripe_subscription_id"] == "sub_test_001"
+        assert isinstance(props["tenure_days"], int)
+
+    @patch("routers.webhooks.track_event")
+    @patch("routers.webhooks._advisory_lock")
+    @patch("routers.webhooks.stripe.Webhook.construct_event")
+    @patch("routers.webhooks.get_stripe_settings")
+    def test_no_event_on_missing_user(
+        self, mock_settings, mock_construct, mock_lock, mock_track,
+        client, db,
+    ):
+        """track_event not called when handler returns early (user not found)."""
+        mock_settings.return_value = _make_settings_mock()
+        mock_construct.return_value = _make_checkout_event(
+            "00000000-0000-0000-0000-000000000099",
+            event_id="evt_billing_nouser_001",
+        )
+
+        resp = _post_webhook(client)
+        assert resp.status_code == 200
+        mock_track.assert_not_called()

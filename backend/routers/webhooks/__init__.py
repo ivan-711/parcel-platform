@@ -25,6 +25,7 @@ from limiter import limiter
 from models.subscriptions import Subscription
 from models.users import User
 from models.webhook_events import WebhookEvent
+from core.telemetry import track_event
 
 logger = logging.getLogger(__name__)
 
@@ -203,9 +204,20 @@ def _handle_checkout_session_completed(db: Session, data: dict) -> None:
     if stripe_sub.get("trial_end"):
         sub.trial_end = datetime.utcfromtimestamp(stripe_sub["trial_end"])
 
+    previous_tier = user.plan_tier
+
     db.add(sub)
     user.plan_tier = _resolve_plan_from_subscription(stripe_sub)
     db.commit()
+
+    amount_cents = stripe_sub.get("plan", {}).get("amount") or 0
+    track_event(str(user.id), "checkout_completed", {
+        "previous_tier": previous_tier,
+        "new_tier": user.plan_tier,
+        "stripe_subscription_id": stripe_sub["id"],
+        "amount_usd": round(float(amount_cents) / 100, 2),
+        "trial_converted": user.trial_ends_at is not None,
+    })
 
 
 def _handle_customer_subscription_updated(db: Session, data: dict) -> None:
@@ -262,6 +274,14 @@ def _handle_customer_subscription_deleted(db: Session, data: dict) -> None:
         user.plan_tier = "free"
 
     db.commit()
+
+    if user:
+        tenure_days = (datetime.utcnow() - sub.created_at).days if sub.created_at else 0
+        track_event(str(user.id), "subscription_canceled", {
+            "tier": sub.plan_tier,
+            "tenure_days": tenure_days,
+            "stripe_subscription_id": sub.stripe_subscription_id,
+        })
 
 
 def _handle_invoice_payment_failed(db: Session, data: dict) -> None:

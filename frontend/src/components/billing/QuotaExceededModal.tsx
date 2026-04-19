@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TrendingUp } from 'lucide-react'
 import { useBillingStore } from '@/stores/billingStore'
@@ -27,6 +28,22 @@ export function QuotaExceededModal() {
   const user = useAuthStore((s) => s.user)
   const navigate = useNavigate()
 
+  useEffect(() => {
+    if (paywallError?.code !== 'QUOTA_EXCEEDED') return
+    const daysSinceSignup = user?.created_at
+      ? Math.floor((Date.now() - new Date(user.created_at).getTime()) / (1000 * 60 * 60 * 24))
+      : null
+    try {
+      (window as any).posthog?.capture?.('quota_exceeded_shown', {
+        metric: paywallError.metric ?? null,
+        current: paywallError.current ?? null,
+        limit: paywallError.limit ?? null,
+        current_tier: paywallError.current_tier ?? user?.plan_tier ?? 'free',
+        days_since_signup: daysSinceSignup,
+      })
+    } catch { /* ignore */ }
+  }, [paywallError])
+
   const isQuotaError = paywallError?.code === 'QUOTA_EXCEEDED'
   if (!isQuotaError) return null
 
@@ -35,8 +52,16 @@ export function QuotaExceededModal() {
   const tierLabel = (current_tier && TIER_LABELS[current_tier]) ?? current_tier ?? 'free'
 
   const handleUpgrade = () => {
+    try {
+      (window as any).posthog?.capture?.('upgrade_clicked', {
+        source: 'modal',
+        target_tier: 'pro',
+        current_tier: paywallError?.current_tier ?? user?.plan_tier ?? 'free',
+        user_id: user?.id ?? null,
+      })
+    } catch { /* ignore */ }
     clearPaywallError()
-    navigate(upgrade_url ?? '/pricing')
+    navigate(upgrade_url ?? '/pricing?from=modal')
   }
 
   return (

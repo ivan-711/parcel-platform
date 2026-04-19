@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Clock, AlertTriangle, XCircle, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useCheckout } from '@/hooks/useBilling'
+import { useAuthStore } from '@/stores/authStore'
 
 interface TrialBannerProps {
   trialEndsAt: string | null
@@ -21,6 +22,18 @@ function isSnoozed(): boolean {
 export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerProps) {
   const [snoozed, setSnoozed] = useState(isSnoozed)
   const checkout = useCheckout()
+  const user = useAuthStore((s) => s.user)
+
+  const fireUpgradeClicked = () => {
+    try {
+      (window as any).posthog?.capture?.('upgrade_clicked', {
+        source: 'trial_banner',
+        target_tier: 'pro',
+        current_tier: planTier,
+        user_id: user?.id ?? null,
+      })
+    } catch { /* ignore */ }
+  }
 
   const daysLeft = useMemo(() => {
     if (!trialEndsAt) return null
@@ -41,7 +54,7 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium text-error">Trial expired</p>
             <button
-              onClick={() => checkout.mutate({ plan: 'pro', interval: 'annual' })}
+              onClick={() => { fireUpgradeClicked(); checkout.mutate({ plan: 'pro', interval: 'annual' }) }}
               disabled={checkout.isPending}
               className="mt-2 w-full h-8 rounded-md bg-error hover:brightness-110 text-text-primary text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer"
             >
@@ -90,7 +103,7 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
 
           {isUrgent ? (
             <button
-              onClick={() => checkout.mutate({ plan: 'pro', interval: 'annual' })}
+              onClick={() => { fireUpgradeClicked(); checkout.mutate({ plan: 'pro', interval: 'annual' }) }}
               disabled={checkout.isPending}
               className="mt-2 w-full h-8 rounded-md bg-warning hover:brightness-110 text-app-bg text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer"
             >
@@ -98,7 +111,8 @@ export function TrialBanner({ trialEndsAt, planTier, trialActive }: TrialBannerP
             </button>
           ) : (
             <Link
-              to="/pricing"
+              to="/pricing?from=trial_banner"
+              onClick={fireUpgradeClicked}
               className="text-xs text-violet-400 hover:text-violet-300 mt-1 inline-block transition-colors"
             >
               Upgrade
