@@ -1,4 +1,5 @@
 {
+  "_comment": "The /ingest/* rewrites use `:path(.*)` — NOT `:path*`. Vercel's `:path*` matcher does not match URLs ending in '/', which silently breaks proxying of every PostHog SDK beacon (the SDK hardcodes trailing slashes: /ingest/e/, /ingest/decide/, /ingest/i/v0/e/, /ingest/batch/). Failing URLs fall through to the SPA catch-all and serve index.html → POSTs return 405. A post-deploy smoke test at .github/workflows/posthog-proxy-smoke.yml guards against regression. If restructuring: keep the named-regex form, or update the smoke test accordingly.",
   "headers": [
     {
       "source": "/(.*)",
@@ -18,8 +19,8 @@
     }
   ],
   "rewrites": [
-    { "source": "/ingest/static/:path*", "destination": "https://us-assets.i.posthog.com/static/:path*" },
-    { "source": "/ingest/:path*", "destination": "https://us.i.posthog.com/:path*" },
+    { "source": "/ingest/static/:path(.*)", "destination": "https://us-assets.i.posthog.com/static/:path" },
+    { "source": "/ingest/:path(.*)", "destination": "https://us.i.posthog.com/:path" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

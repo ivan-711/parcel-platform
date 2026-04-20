@@ -1,0 +1,76 @@
+name: PostHog proxy smoke test
+
+# Runs after a successful Production deploy from Vercel's GitHub integration,
+# or on manual dispatch. Asserts that /ingest/* URLs (which PostHog's SDK hits
+# with trailing slashes) proxy to PostHog and are NOT served by the SPA
+# catch-all. Historical bug: /ingest/:path* stopped matching trailing-slash
+# URLs in commit bc2f476, silently serving index.html for every telemetry
+# beacon. Fixed by switching to /ingest/:path(.*) — see frontend/vercel.json.
+
+on:
+  deployment_status:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe /ingest/* trailing-slash URLs + /pipeline regression
+        env:
+          TARGET: https://www.parceldesk.io
+        run: |
+          set -euo pipefail
+
+          fail() { echo "::error::$1"; exit 1; }
+
+          # `content-disposition: inline; filename="index.html"` is the exact
+          # signature of Vercel's static-file handler serving the SPA shell.
+          # Any /ingest/* path that returns it means the proxy rewrite missed.
+          served_index_html() {
+            grep -qi 'filename="index.html"' "$1"
+          }
+
+          probe_proxy() {
+            local method="$1" path="$2"
+            local headers body
+            headers=$(mktemp); body=$(mktemp)
+            curl -s -o "$body" -D "$headers" -X "$method" \
+              -H "Content-Type: application/json" \
+              --data '{}' \
+              "$TARGET$path" || true
+            if served_index_html "$headers"; then
+              echo "--- $method $path headers ---"
+              cat "$headers"
+              fail "$method $path served index.html — /ingest/* proxy rewrite is not firing"
+            fi
+            echo "OK  $method $path (proxied)"
+          }
+
+          probe_spa() {
+            local path="$1"
+            local headers
+            headers=$(mktemp)
+            curl -s -o /dev/null -D "$headers" "$TARGET$path"
+            if ! served_index_html "$headers"; then
+              echo "--- GET $path headers ---"
+              cat "$headers"
+              fail "GET $path did NOT serve index.html — SPA catch-all is broken"
+            fi
+            echo "OK  GET $path (served index.html as expected)"
+          }
+
+          # PostHog SDK hits these with trailing slashes — the exact paths
+          # that broke in the original bug.
+          probe_proxy POST /ingest/decide/
+          probe_proxy POST /ingest/i/v0/e/
+          probe_proxy POST /ingest/e/
+          probe_proxy GET  /ingest/static/array.js
+
+          # Regression: SPA routing still works for app routes.
+          probe_spa /pipeline
+
+          echo "All PostHog proxy + SPA smoke checks passed."
