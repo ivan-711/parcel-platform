@@ -152,4 +152,28 @@ describe('PipelinePage 402 → PaywallOverlay', () => {
     expect(err.status).toBe(402)
     expect(err.code).toBe('FEATURE_GATED')
   })
+
+  it('renders a height-matching spacer to prevent paywall layout shift', async () => {
+    // Regression guard for the layout-shift fix (2026-04-20). Without this
+    // spacer, FeatureGate's container collapses from ~100vh (loading, with
+    // the kanban) to ~200px (error, header-only), causing PaywallOverlay
+    // to visibly jump upward mid-render. jsdom doesn't compute layout, so
+    // we can't assert pixel heights — but we can assert the structural
+    // element that stabilizes the container is present with the matching
+    // height token.
+    //
+    // Uses findByTestId (not getByTestId) because the spacer only exists
+    // in the post-402 error-branch render; the paywall dialog itself
+    // renders earlier (during isLoading, from FeatureGate's plan_tier
+    // check) so findByRole(dialog) resolves before the error branch does.
+    renderPipeline()
+    const spacer = await screen.findByTestId(
+      'pipeline-paywall-spacer',
+      {},
+      { timeout: 3000 },
+    )
+    expect(spacer).toBeInTheDocument()
+    expect(spacer).toHaveAttribute('aria-hidden', 'true')
+    expect(spacer.className).toMatch(/min-h-\[calc\(100vh-180px\)\]/)
+  })
 })

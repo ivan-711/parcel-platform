@@ -304,11 +304,30 @@ export default function PipelinePage() {
     // Route 402 FEATURE_GATED to the FeatureGate → PaywallOverlay path so
     // free-tier users see persona-matched upgrade copy (commit 9277f37)
     // instead of a generic "Failed to load pipeline" error.
+    //
+    // The `min-h-[calc(100vh-180px)]` spacer matches the happy-path kanban
+    // container height (same token used below on the board wrapper). Without
+    // it, FeatureGate's container shrinks from ~100vh (loading, with kanban
+    // skeleton) to its ~200px floor (error, header-only) between render
+    // phases — and PaywallOverlay's `absolute inset-0` re-centers, visibly
+    // jumping upward. Regression diagnosed 2026-04-20.
+    //
+    // Why a spacer instead of mirroring the kanban tree structure: the
+    // happy-path kanban includes expensive subscriptions, DnD wiring, and
+    // real-time state — rendering it just for height parity in an error
+    // branch would regress performance and create bug surface. A bare
+    // aria-hidden spacer matches the height token exactly with zero runtime
+    // cost. See the commit message for the full alternatives analysis.
     if (isFeatureGatedError(error)) {
       return (
         <AppShell>
           <FeatureGate feature="pipeline">
             <PageHeader title="Pipeline" />
+            <div
+              data-testid="pipeline-paywall-spacer"
+              className="min-h-[calc(100vh-180px)]"
+              aria-hidden="true"
+            />
           </FeatureGate>
         </AppShell>
       )
