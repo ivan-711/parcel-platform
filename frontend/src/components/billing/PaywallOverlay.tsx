@@ -6,6 +6,7 @@ import { Lock } from 'lucide-react'
 import { FEATURE_LABELS, type GatedFeature, type OnboardingPersona } from '@/types'
 import { useCheckout } from '@/hooks/useBilling'
 import { useAuthStore } from '@/stores/authStore'
+import { useBillingStore } from '@/stores/billingStore'
 import { useOnboardingStore } from '@/stores/onboardingStore'
 
 interface PaywallOverlayProps {
@@ -50,6 +51,7 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
   const checkout = useCheckout()
   const user = useAuthStore((s) => s.user)
   const persona = useOnboardingStore((s) => s.persona)
+  const paywallError = useBillingStore((s) => s.paywallError)
   const personaCopy = persona ? PAYWALL_COPY[feature]?.[persona] : undefined
   const bodyCopy = personaCopy ?? description
   const copyVariant: 'persona' | 'generic' = personaCopy ? 'persona' : 'generic'
@@ -61,14 +63,22 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
     if (!visible || matchTracked.current) return
     matchTracked.current = true
     try {
-      (window as any).posthog?.capture?.('paywall_copy_persona_matched', {
+      const posthog = (window as any).posthog
+      const base = {
         feature,
         persona: persona ?? null,
         copy_variant: copyVariant,
         user_id: user?.id ?? null,
+      }
+      posthog?.capture?.('paywall_copy_persona_matched', base)
+      // Paired event — measures how often free-tier users land on the
+      // paywall from an error (402) vs. the gate rendering synchronously.
+      posthog?.capture?.('paywall_overlay_rendered', {
+        ...base,
+        error_status: paywallError?.code === 'FEATURE_GATED' ? 402 : null,
       })
     } catch { /* ignore */ }
-  }, [visible, feature, persona, copyVariant, user?.id])
+  }, [visible, feature, persona, copyVariant, user?.id, paywallError?.code])
 
   const handleDismiss = useCallback(() => {
     dismissed.add(feature)

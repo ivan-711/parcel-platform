@@ -7,6 +7,7 @@
  */
 import { useState, useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { useAuth as useClerkAuth } from '@clerk/clerk-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   DndContext,
@@ -23,7 +24,7 @@ import {
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { api } from '@/lib/api'
+import { api, isFeatureGatedError } from '@/lib/api'
 import { AppShell } from '@/components/layout/AppShell'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { PageContent } from '@/components/layout/PageContent'
@@ -73,6 +74,7 @@ const STRATEGY_FILTERS = [
 ]
 
 export default function PipelinePage() {
+  const { isLoaded: clerkLoaded, isSignedIn } = useClerkAuth()
   const userId = useAuthStore((s) => s.user?.id)
   const queryClient = useQueryClient()
   const [activeCard, setActiveCard] = useState<PipelineCard | null>(null)
@@ -107,9 +109,15 @@ export default function PipelinePage() {
   )
 
   // ── Data fetching ──────────────────────────────────────────────────────
+  // Gate the query on Clerk readiness. Without this the first request can
+  // fire before AuthSyncProvider registers the token getter, producing a
+  // spurious 401 that React Query retries past — and, on free-tier users,
+  // the subsequent 402 currently short-circuits to PipelineError rather
+  // than PaywallOverlay.
   const { data: pipelineData, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['u', userId, 'pipeline', strategyFilter],
     queryFn: () => api.pipeline.list(strategyFilter || undefined),
+    enabled: clerkLoaded && !!isSignedIn,
   })
 
   // Local board state — derived from server, mutated optimistically
@@ -293,6 +301,18 @@ export default function PipelinePage() {
 
   // ── Error state ──────────────────────────────────────────────────────
   if (isError) {
+    // Route 402 FEATURE_GATED to the FeatureGate → PaywallOverlay path so
+    // free-tier users see persona-matched upgrade copy (commit 9277f37)
+    // instead of a generic "Failed to load pipeline" error.
+    if (isFeatureGatedError(error)) {
+      return (
+        <AppShell>
+          <FeatureGate feature="pipeline">
+            <PageHeader title="Pipeline" />
+          </FeatureGate>
+        </AppShell>
+      )
+    }
     return (
       <PipelineError
         error={error instanceof Error ? error : null}

@@ -35,6 +35,24 @@ import type {
 const _rawUrl = import.meta.env.VITE_API_URL ?? 'https://api.parceldesk.io'
 const API_URL = _rawUrl.includes('localhost') || _rawUrl.includes('127.0.0.1') ? _rawUrl : _rawUrl.replace('http://', 'https://')
 
+/** Error thrown from `request()` — carries HTTP status and backend error code
+ * so callers can branch on them (e.g. 402 FEATURE_GATED → render PaywallOverlay). */
+export class ApiError extends Error {
+  status: number
+  code?: string
+  constructor(message: string, status: number, code?: string) {
+    super(message)
+    this.name = 'ApiError'
+    this.status = status
+    this.code = code
+  }
+}
+
+/** Type guard — true when the error is a FEATURE_GATED 402. */
+export function isFeatureGatedError(err: unknown): err is ApiError {
+  return err instanceof ApiError && (err.status === 402 || err.code === 'FEATURE_GATED')
+}
+
 /** Module-level Clerk token cache — set by authStore when Clerk is active. */
 let _clerkTokenCache: string | null = null
 
@@ -94,7 +112,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   if (res.status === 401) {
     // Clerk handles token lifecycle — on 401, just clear local state
     useAuthStore.getState().clearAuth()
-    throw new Error('Session expired')
+    throw new ApiError('Session expired', 401)
   }
 
   if (res.status === 402) {
@@ -110,12 +128,13 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
       limit: parsed.limit,
       current_tier: parsed.current_tier,
     })
-    throw new Error(parsed.error ?? 'Upgrade required')
+    throw new ApiError(parsed.error ?? 'Upgrade required', 402, parsed.code ?? 'FEATURE_GATED')
   }
 
   if (!res.ok) {
     const error = await res.json().catch(() => ({ error: 'Unknown error' }))
-    throw new Error((error as { error?: string }).error ?? `HTTP ${res.status}`)
+    const parsed = error as { error?: string; code?: string }
+    throw new ApiError(parsed.error ?? `HTTP ${res.status}`, res.status, parsed.code)
   }
 
   if (res.status === 204) {
