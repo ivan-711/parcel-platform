@@ -9,12 +9,15 @@ import App from './App'
 import './index.css'
 
 /* ─── PostHog Analytics ─── */
+// Events are proxied through /ingest (see frontend/vercel.json rewrites) so
+// ad blockers that target posthog.com hostnames don't drop beacons client-side.
+// ui_host keeps dashboard links (e.g. "View person") pointing at real PostHog.
 const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY
-const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST ?? 'https://us.i.posthog.com'
 
 if (POSTHOG_KEY) {
   posthog.init(POSTHOG_KEY, {
-    api_host: POSTHOG_HOST,
+    api_host: '/ingest',
+    ui_host: 'https://us.i.posthog.com',
     person_profiles: 'identified_only',
     capture_pageview: false,
     capture_performance: false,
