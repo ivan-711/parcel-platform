@@ -159,6 +159,11 @@ app.include_router(skip_trace_router.router, prefix="/api")
 app.include_router(mail_router.router, prefix="/api")
 app.include_router(service_status.router, prefix="/api")
 
+# Test-only endpoints — registered ONLY in dev/test environments. Never in prod.
+if os.getenv("ENVIRONMENT", "development") in ("development", "test"):
+    from routers import testing as testing_router  # noqa: E402
+    app.include_router(testing_router.router, prefix="/api")
+
 
 @app.get("/health")
 async def health() -> dict[str, str]:
