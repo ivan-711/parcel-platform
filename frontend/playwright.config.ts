@@ -1,9 +1,17 @@
 import { defineConfig, devices } from '@playwright/test'
+import dotenv from 'dotenv'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+
+// Load Playwright-only env from frontend/.env.test. Intentionally does NOT
+// fall back to .env.local: that file contains production Clerk keys and
+// points at the production backend. Playwright needs dev Clerk + local
+// backend. If .env.test is missing the preflight check in
+// tests/e2e/global.setup.ts will fail fast with instructions.
+dotenv.config({ path: path.resolve(__dirname, '.env.test') })
 
 /**
  * Playwright E2E config — local dev only.

@@ -9,17 +9,25 @@ const __dirname = path.dirname(__filename)
 const authFile = path.join(__dirname, '..', '..', 'playwright/.clerk/user.json')
 
 setup('authenticate with Clerk', async ({ page }) => {
-  await clerkSetup()
-
-  const username = process.env.E2E_CLERK_USER_USERNAME
-  const password = process.env.E2E_CLERK_USER_PASSWORD
-
-  if (!username || !password) {
+  const required = [
+    'CLERK_PUBLISHABLE_KEY',
+    'CLERK_SECRET_KEY',
+    'E2E_CLERK_USER_USERNAME',
+    'E2E_CLERK_USER_PASSWORD',
+  ]
+  const missing = required.filter((k) => !process.env[k])
+  if (missing.length > 0) {
     throw new Error(
-      'Missing E2E_CLERK_USER_USERNAME or E2E_CLERK_USER_PASSWORD. ' +
-        'See tests/e2e/README.md for setup.',
+      `Missing required env vars: ${missing.join(', ')}.\n` +
+        'Create frontend/.env.test with these values. ' +
+        'See frontend/tests/e2e/README.md for details.',
     )
   }
+
+  await clerkSetup()
+
+  const username = process.env.E2E_CLERK_USER_USERNAME!
+  const password = process.env.E2E_CLERK_USER_PASSWORD!
 
   await page.goto('/')
 
