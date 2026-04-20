@@ -418,10 +418,13 @@ export const api = {
   onboarding: {
     status: () =>
       request<import('@/types').OnboardingStatus>('/api/onboarding/status'),
-    setPersona: (persona: string) =>
+    setPersona: (persona: string, opts?: { notify_agent_features?: boolean }) =>
       request<import('@/types').PersonaResponse>('/api/onboarding/persona', {
         method: 'POST',
-        body: JSON.stringify({ persona }),
+        body: JSON.stringify({
+          persona,
+          ...(opts?.notify_agent_features ? { notify_agent_features: true } : {}),
+        }),
       }),
     clearSampleData: () =>
       request<{ message: string; count: number }>('/api/onboarding/sample-data', {

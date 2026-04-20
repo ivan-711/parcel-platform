@@ -37,6 +37,8 @@ const staggerItem = prefersReducedMotion
 
 export default function OnboardingPage() {
   const [selected, setSelected] = useState<OnboardingPersona | null>(null)
+  const [agentModalOpen, setAgentModalOpen] = useState(false)
+  const [agentNotifyOptIn, setAgentNotifyOptIn] = useState(false)
   const { setPersona, loading } = useOnboardingStore()
   const navigate = useNavigate()
   const mountTime = useRef(Date.now())
@@ -49,6 +51,13 @@ export default function OnboardingPage() {
     } catch { /* ignore */ }
   }, [])
 
+  useEffect(() => {
+    if (!agentModalOpen) return
+    try {
+      (window as any).posthog?.capture?.('agent_acknowledgment_shown', { persona: 'agent' })
+    } catch { /* ignore */ }
+  }, [agentModalOpen])
+
   const handleSelect = (persona: OnboardingPersona) => {
     if (loading) return
     setSelected(persona)
@@ -58,21 +67,44 @@ export default function OnboardingPage() {
     } catch { /* ignore */ }
   }
 
-  const handleContinue = async () => {
-    if (!selected || loading) return
+  const completeOnboarding = async (
+    persona: OnboardingPersona,
+    opts?: { notify_agent_features?: boolean },
+  ) => {
     try {
-      await setPersona(selected)
+      await setPersona(persona, opts)
       try {
-        const posthog = (window as any).posthog
-        posthog?.capture?.('onboarding_completed', {
-          persona: selected,
+        (window as any).posthog?.capture?.('onboarding_completed', {
+          persona,
           time_on_page_ms: Date.now() - mountTime.current,
+          notify_agent_features: opts?.notify_agent_features ?? false,
         })
       } catch { /* ignore */ }
       navigate('/today', { replace: true })
     } catch {
       // error handled in store
     }
+  }
+
+  const handleContinue = async () => {
+    if (!selected || loading) return
+    if (selected === 'agent') {
+      setAgentNotifyOptIn(false)
+      setAgentModalOpen(true)
+      return
+    }
+    await completeOnboarding(selected)
+  }
+
+  const handleAgentContinue = async () => {
+    if (loading) return
+    if (agentNotifyOptIn) {
+      try {
+        (window as any).posthog?.capture?.('agent_notify_opted_in', { persona: 'agent' })
+      } catch { /* ignore */ }
+    }
+    setAgentModalOpen(false)
+    await completeOnboarding('agent', { notify_agent_features: agentNotifyOptIn })
   }
 
   const handleSkip = async () => {
@@ -206,6 +238,71 @@ export default function OnboardingPage() {
       >
         Skip for now
       </button>
+
+      {/* Agent acknowledgment modal — shown only when user picks 'agent' */}
+      {agentModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="agent-ack-title"
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+        >
+          <div
+            className="absolute inset-0 bg-app-bg/80 backdrop-blur-xl backdrop-saturate-150"
+            aria-hidden="true"
+          />
+          <motion.div
+            initial={prefersReducedMotion ? {} : { opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+            className="relative z-10 w-full max-w-md bg-app-surface rounded-xl border border-border-default shadow-2xl p-6"
+          >
+            <h2
+              id="agent-ack-title"
+              className="text-lg text-text-primary font-brand font-light mb-3"
+            >
+              Parcel is built for investors — for now.
+            </h2>
+            <p className="text-sm text-text-secondary leading-relaxed mb-4">
+              You&apos;re welcome here. Agent-specific features — client management, branded reports, client-segmented portfolios — are on our roadmap but aren&apos;t ready yet. For now, you&apos;ll use Parcel as investors do: deal analysis, financial modeling, market research.
+            </p>
+            <p className="text-sm text-text-secondary mb-4">
+              Want to be notified when agent features launch?
+            </p>
+            <label className="flex items-start gap-2 mb-6 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={agentNotifyOptIn}
+                onChange={(e) => setAgentNotifyOptIn(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-border-default text-violet-400 focus:ring-violet-400/30 cursor-pointer"
+              />
+              <span className="text-sm text-text-secondary select-none">
+                Notify me when Parcel is ready for agents
+              </span>
+            </label>
+            <button
+              onClick={handleAgentContinue}
+              disabled={loading}
+              className={`
+                w-full h-11 rounded-lg text-sm font-medium transition-all duration-200
+                ${loading
+                  ? 'bg-border-default text-text-muted cursor-not-allowed'
+                  : 'bg-violet-400 text-white hover:bg-violet-500 cursor-pointer'
+                }
+              `}
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 size={16} className="animate-spin" />
+                  Setting up...
+                </span>
+              ) : (
+                'Continue as investor'
+              )}
+            </button>
+          </motion.div>
+        </div>
+      )}
     </div>
   )
 }

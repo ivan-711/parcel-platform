@@ -14,7 +14,7 @@ interface OnboardingState {
   fetched: boolean
 
   fetchStatus: () => Promise<void>
-  setPersona: (persona: OnboardingPersona) => Promise<void>
+  setPersona: (persona: OnboardingPersona, opts?: { notify_agent_features?: boolean }) => Promise<void>
   clearSampleData: () => Promise<void>
   reset: () => void
 }
@@ -51,10 +51,10 @@ export const useOnboardingStore = create<OnboardingState>()((set, get) => ({
     }
   },
 
-  setPersona: async (persona: OnboardingPersona) => {
+  setPersona: async (persona: OnboardingPersona, opts?: { notify_agent_features?: boolean }) => {
     set({ loading: true })
     try {
-      await api.onboarding.setPersona(persona)
+      await api.onboarding.setPersona(persona, opts)
       set({
         completed: true,
         persona,

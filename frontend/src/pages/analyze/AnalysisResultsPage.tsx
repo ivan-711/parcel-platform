@@ -60,7 +60,9 @@ export default function AnalysisResultsPage() {
     () => localStorage.getItem(GUIDANCE_DISMISSED_KEY) === 'true'
   )
   const showGuidance = persona === 'beginner' && !guidanceDismissed
+  const isHybrid = persona === 'hybrid'
   const guidanceShownAt = useRef<number>(0)
+  const hybridShownTracked = useRef(false)
 
   useEffect(() => {
     if (!showGuidance) return
@@ -73,6 +75,19 @@ export default function AnalysisResultsPage() {
       })
     } catch { /* ignore */ }
   }, [showGuidance])
+
+  useEffect(() => {
+    if (!isHybrid || hybridShownTracked.current) return
+    if (loading || !property) return
+    hybridShownTracked.current = true
+    try {
+      (window as any).posthog?.capture?.('hybrid_comparison_shown', {
+        persona: 'hybrid',
+        deal_id: dealId,
+        user_id: user?.id ?? null,
+      })
+    } catch { /* ignore */ }
+  }, [isHybrid, loading, property, dealId, user?.id])
 
   const handleDismissGuidance = () => {
     localStorage.setItem(GUIDANCE_DISMISSED_KEY, 'true')
@@ -384,6 +399,28 @@ export default function AnalysisResultsPage() {
           </div>
         )}
 
+        {/* Hybrid strategy comparison banner — surfaces multi-strategy view first */}
+        {isHybrid && (
+          <div className="flex items-start gap-3 rounded-lg border border-violet-400/10 bg-violet-400/[0.04] px-4 py-3 mb-6">
+            <Info size={16} className="text-violet-400 mt-0.5 shrink-0" />
+            <p className="text-sm text-text-secondary flex-1">
+              You said you use multiple strategies, so we&apos;re showing all of them side-by-side. Tap any strategy below for the deeper view.
+            </p>
+          </div>
+        )}
+
+        {/* Strategy comparison — rendered first for hybrid persona */}
+        {isHybrid && propertyId && activeScenario && (
+          <div className="mb-6">
+            <StrategyComparison
+              propertyId={propertyId}
+              activeStrategy={activeStrategy}
+              scenarios={scenarios}
+              onStrategySwitch={handleStrategySwitch}
+            />
+          </div>
+        )}
+
         {/* Strategy + Metrics + Inputs layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 mb-6">
           {/* Strategy selector */}
@@ -498,8 +535,8 @@ export default function AnalysisResultsPage() {
           </div>
         )}
 
-        {/* Strategy comparison */}
-        {propertyId && activeScenario && (
+        {/* Strategy comparison — rendered at bottom for non-hybrid personas (hybrid sees it at top) */}
+        {!isHybrid && propertyId && activeScenario && (
           <div className="mb-6">
             <StrategyComparison
               propertyId={propertyId}

@@ -9,6 +9,10 @@ from pydantic import BaseModel, Field
 class PersonaRequest(BaseModel):
     """Request to set the user's onboarding persona."""
     persona: str = Field(..., description="One of: wholesale, flip, buy_and_hold, creative_finance, brrrr, hybrid, agent, beginner")
+    notify_agent_features: Optional[bool] = Field(
+        None,
+        description="When persona='agent', set True to opt in to notifications about future agent-specific features.",
+    )
 
 
 class OnboardingPropertyResponse(BaseModel):

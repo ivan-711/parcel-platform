@@ -3,13 +3,43 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { prefersReducedMotion } from '@/lib/motion'
 import { Lock } from 'lucide-react'
-import { FEATURE_LABELS, type GatedFeature } from '@/types'
+import { FEATURE_LABELS, type GatedFeature, type OnboardingPersona } from '@/types'
 import { useCheckout } from '@/hooks/useBilling'
 import { useAuthStore } from '@/stores/authStore'
+import { useOnboardingStore } from '@/stores/onboardingStore'
 
 interface PaywallOverlayProps {
   feature: GatedFeature
   onDismiss?: () => void
+}
+
+/**
+ * Persona-specific paywall body copy. Falls back to FEATURE_LABELS[feature].description
+ * when no entry exists for a (feature, persona) pair. Source:
+ * docs/PERSONA-DIFFERENTIATION-AUDIT.md → Top opportunity #1.
+ */
+const PAYWALL_COPY: Partial<
+  Record<GatedFeature, Partial<Record<OnboardingPersona, string>>>
+> = {
+  pipeline: {
+    wholesale: 'Move deals from lead to assignment. Track contracts, buyers, and close dates for every wholesale deal in one pipeline.',
+    flip: 'Track every flip from offer to resale. Pipeline keeps your rehab timeline, budget, and exit strategy aligned.',
+    buy_and_hold: 'Manage rentals from acquisition to tenant placement. Pipeline tracks your full hold lifecycle.',
+    brrrr: 'Track each BRRRR property through buy → rehab → rent → refinance. See refinance-readiness at a glance.',
+    creative_finance: 'Track sub-to, wrap, and seller-finance deals with stage-specific milestones other tools don\u2019t handle.',
+    hybrid: 'Manage multiple strategies side-by-side. Pipeline adapts to whichever strategy each deal needs.',
+    beginner: 'See where every deal you\u2019re considering stands. Pipeline helps you stay organized as you learn.',
+  },
+  skip_tracing: {
+    wholesale: 'Find off-market property owners. Skip tracing unlocks direct contact info \u2014 the lifeblood of every wholesale business.',
+    buy_and_hold: 'Find motivated sellers of tired rentals. Skip tracing turns driving-for-dollars lists into phone calls.',
+    creative_finance: 'Reach distressed owners who need creative solutions. Skip tracing connects you directly to sellers other investors can\u2019t find.',
+  },
+  mail_campaigns: {
+    wholesale: 'Run direct mail at scale. Mail campaigns turn your skip trace list into a predictable lead pipeline.',
+    buy_and_hold: 'Reach landlords thinking about selling. Mail campaigns put your offer in front of tired owners.',
+    creative_finance: 'Reach sellers with non-traditional problems. Direct mail finds the \u201CI\u2019ll sell to you subject-to\u201D conversations.',
+  },
 }
 
 const dismissed = new Set<string>()
@@ -19,8 +49,26 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
   const { label, description } = FEATURE_LABELS[feature]
   const checkout = useCheckout()
   const user = useAuthStore((s) => s.user)
+  const persona = useOnboardingStore((s) => s.persona)
+  const personaCopy = persona ? PAYWALL_COPY[feature]?.[persona] : undefined
+  const bodyCopy = personaCopy ?? description
+  const copyVariant: 'persona' | 'generic' = personaCopy ? 'persona' : 'generic'
   const overlayRef = useRef<HTMLDivElement>(null)
   const previousFocus = useRef<HTMLElement | null>(null)
+  const matchTracked = useRef(false)
+
+  useEffect(() => {
+    if (!visible || matchTracked.current) return
+    matchTracked.current = true
+    try {
+      (window as any).posthog?.capture?.('paywall_copy_persona_matched', {
+        feature,
+        persona: persona ?? null,
+        copy_variant: copyVariant,
+        user_id: user?.id ?? null,
+      })
+    } catch { /* ignore */ }
+  }, [visible, feature, persona, copyVariant, user?.id])
 
   const handleDismiss = useCallback(() => {
     dismissed.add(feature)
@@ -104,7 +152,7 @@ export function PaywallOverlay({ feature, onDismiss }: PaywallOverlayProps) {
           {label}
         </h3>
         <p className="text-sm text-text-secondary text-center mt-2 mb-6">
-          {description}
+          {bodyCopy}
         </p>
 
         <button

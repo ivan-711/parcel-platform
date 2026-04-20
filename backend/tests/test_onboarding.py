@@ -265,3 +265,42 @@ class TestAutoArchive:
         # Sample data should still exist
         status_resp = auth_client.get("/api/onboarding/status")
         assert status_resp.json()["has_sample_data"] is True
+
+
+# ---------------------------------------------------------------------------
+# Agent persona — notify_agent_features opt-in
+# ---------------------------------------------------------------------------
+
+class TestNotifyAgentFeatures:
+    def test_column_exists_and_defaults_false(self, db, test_user):
+        """Schema check: User.notify_agent_features defaults to False."""
+        db.refresh(test_user)
+        assert test_user.notify_agent_features is False
+
+    def test_agent_persona_with_opt_in_sets_flag(self, auth_client, db, test_user):
+        resp = auth_client.post(
+            "/api/onboarding/persona",
+            json={"persona": "agent", "notify_agent_features": True},
+        )
+        assert resp.status_code == 200
+        db.refresh(test_user)
+        assert test_user.notify_agent_features is True
+
+    def test_agent_persona_without_opt_in_leaves_flag_false(self, auth_client, db, test_user):
+        resp = auth_client.post(
+            "/api/onboarding/persona",
+            json={"persona": "agent"},
+        )
+        assert resp.status_code == 200
+        db.refresh(test_user)
+        assert test_user.notify_agent_features is False
+
+    def test_non_agent_persona_with_opt_in_is_ignored(self, auth_client, db, test_user):
+        """Opt-in flag only applies when persona='agent'."""
+        resp = auth_client.post(
+            "/api/onboarding/persona",
+            json={"persona": "wholesale", "notify_agent_features": True},
+        )
+        assert resp.status_code == 200
+        db.refresh(test_user)
+        assert test_user.notify_agent_features is False

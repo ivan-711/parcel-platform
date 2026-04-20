@@ -107,6 +107,8 @@ async def set_persona(
     # Update user
     current_user.onboarding_persona = body.persona
     current_user.onboarding_completed_at = datetime.utcnow()
+    if body.persona == "agent" and body.notify_agent_features:
+        current_user.notify_agent_features = True
 
     # Create sample data
     prop, scenarios = _create_sample_data(db, current_user.id, body.persona)
@@ -119,6 +121,8 @@ async def set_persona(
     from core.telemetry import track_event
     track_event(current_user.id, "onboarding_persona_selected", {"persona": body.persona})
     track_event(current_user.id, "onboarding_completed", {"persona": body.persona})
+    if body.persona == "agent" and body.notify_agent_features:
+        track_event(current_user.id, "agent_notify_opted_in", {"persona": "agent"})
 
     return PersonaResponse(
         persona=body.persona,
